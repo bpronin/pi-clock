@@ -1,60 +1,45 @@
 package com.bopr.piclock
 
-import android.annotation.SuppressLint
-import android.os.Build
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View.*
-import android.view.WindowInsets.Type
-import android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bopr.piclock.databinding.ActivityMainBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
 
-    private lateinit var binding: ActivityMainBinding
     private lateinit var hoursView: TextView
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var fullscreenSupport:FullscreenSupport
+    private val handler = Handler(Looper.getMainLooper())
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    private val hoursFormat = SimpleDateFormat("HH:MM", Locale.getDefault())
+    private val secondsFormat = SimpleDateFormat("ss", Locale.getDefault())
 
-    private var fullscreenMode: Boolean = false
-        set(value) {
-            /* NOTE: Some older devices needs a small delay between UI widget updates
-            and a change of the status and navigation bar. */
+    private val timerTask = object : Runnable {
 
-            val handler = Handler(Looper.getMainLooper())
-            field = value
-            if (field) {
-                handler.postDelayed(object : Runnable {
-
-                    override fun run() {
-                        handler.removeCallbacks(this)
-                        hideSystemUI()
-                    }
-                }, 300)
-            } else {
-                handler.postDelayed(object : Runnable {
-
-                    override fun run() {
-                        handler.removeCallbacks(this)
-                        showSystemUI()
-                    }
-                }, 300)
-            }
+        override fun run() {
+            updateTimeControls()
+            handler.postDelayed(this, 1000)
         }
+    }
 
-
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        fullscreenSupport = FullscreenSupport(window)
 
         hoursView = binding.hoursView
         hoursView.setOnClickListener {
-            fullscreenMode = !fullscreenMode
+            fullscreenSupport.fullscreen = !fullscreenSupport.fullscreen
         }
     }
 
@@ -64,35 +49,27 @@ class MainActivity : AppCompatActivity() {
         /* Trigger the fullscreen mode shortly after the activity has been
          created, to briefly hint to the user that UI controls
          are available. */
-        fullscreenMode = true
+        fullscreenSupport.fullscreen = true
     }
 
-    private fun showSystemUI() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(true)
-            window.insetsController?.show(Type.statusBars() or Type.navigationBars())
-        } else {
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = (SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
-        }
+    override fun onResume() {
+        super.onResume()
+        handler.post(timerTask)
     }
 
-    private fun hideSystemUI() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(false)
-            window.insetsController?.let {
-                it.hide(Type.statusBars() or Type.navigationBars())
-                it.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            }
-        } else {
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = (SYSTEM_UI_FLAG_FULLSCREEN
-                    or SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    or SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
-        }
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(timerTask)
     }
+
+    override fun onSharedPreferenceChanged(preferences: SharedPreferences?, key: String?) {
+        TODO("Not yet implemented")
+    }
+
+    private fun updateTimeControls() {
+        val time = Date()
+        hoursView.text = hoursFormat.format(time)
+    }
+
+
 }
