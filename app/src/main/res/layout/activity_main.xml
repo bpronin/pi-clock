@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,15 +7,91 @@
     android:theme="@style/ThemeOverlay.Piclock.FullscreenContainer"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/hours_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:keepScreenOn="true"
-        android:text="12:00"
-        android:textColor="?attr/hoursTextColor"
-        android:textSize="50sp"
-        tools:ignore="HardcodedText" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/hours_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/gruppo"
+                android:text="11"
+                android:textColor="?attr/hoursTextColor"
+                android:textSize="96sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/minutes_separator"
+                android:layout_width="16dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/gruppo"
+                android:text=":"
+                android:textColor="?attr/hoursTextColor"
+                android:textSize="96sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/minutes_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/gruppo"
+                android:text="11"
+                android:textColor="?attr/hoursTextColor"
+                android:textSize="96sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/seconds_separator"
+                android:layout_width="8dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/gruppo"
+                android:text="."
+                android:textColor="?attr/hoursTextColor"
+                android:textSize="48sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/seconds_view"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/gruppo"
+                android:text="11"
+                android:textColor="?attr/hoursTextColor"
+                android:textSize="48sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/am_pm_marker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/gruppo"
+                android:text="AM"
+                android:textColor="?attr/hoursTextColor"
+                android:textSize="48sp"
+                tools:ignore="HardcodedText"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/date_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/gruppo"
+            android:text="april 13 "
+            android:textColor="?attr/hoursTextColor"
+            android:textSize="28sp"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>
