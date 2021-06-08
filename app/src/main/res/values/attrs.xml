@@ -1,6 +1,6 @@
 <resources>
     <declare-styleable name="FullscreenAttrs">
-        <attr name="fullscreenBackgroundColor" format="color" />
-        <attr name="fullscreenTextColor" format="color" />
+        <attr name="mainBackgroundColor" format="color" />
+        <attr name="hoursTextColor" format="color" />
     </declare-styleable>
 </resources>
