@@ -2,10 +2,12 @@ package com.bopr.piclock.util
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import kotlin.reflect.KClass
 
 /* Must be subclass of SharedPreferences! Otherwise it leads to unpredictable results */
 @Suppress("unused")
-open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPreferences) : SharedPreferences {
+open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPreferences) :
+    SharedPreferences {
 
     override fun getAll(): MutableMap<String, *> {
         return wrappedPreferences.all
@@ -37,23 +39,37 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
     }
 
     fun getString(key: String): String? {
+        checkKeyExists(key)
         return getString(key, null)
     }
 
+    fun getLong(key: String): Long {
+        checkKeyExists(key)
+        return wrappedPreferences.getLong(key, 0)
+    }
+
     fun getBoolean(key: String): Boolean {
+        checkKeyExists(key)
         return getBoolean(key, false)
     }
 
     fun getStringSet(key: String): MutableSet<String> {
+        checkKeyExists(key)
         return getStringSet(key, mutableSetOf())!!
     }
 
     fun getStringList(key: String): MutableList<String> {
+        checkKeyExists(key)
         return getString(key)?.let { commaSplit(it).toMutableList() } ?: mutableListOf()
     }
 
     override fun contains(key: String): Boolean {
         return wrappedPreferences.contains(key)
+    }
+
+    fun contains(key: String, clazz: KClass<*>): Boolean {
+        val value = wrappedPreferences.all.get(key)
+        return value != null && value.javaClass == clazz.java.javaClass
     }
 
     override fun edit(): EditorWrapper {
@@ -66,6 +82,12 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         editor.apply()
     }
 
+    private fun checkKeyExists(key: String) {
+        if (!contains(key)) {
+            throw IllegalArgumentException("Setting does not exists: $key")
+        }
+    }
+
     override fun registerOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) {
         wrappedPreferences.registerOnSharedPreferenceChangeListener(listener)
     }
@@ -74,7 +96,8 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         wrappedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
-    open inner class EditorWrapper(private val wrappedEditor: SharedPreferences.Editor) : SharedPreferences.Editor {
+    open inner class EditorWrapper(private val wrappedEditor: SharedPreferences.Editor) :
+        SharedPreferences.Editor {
 
         override fun putString(key: String, value: String?): EditorWrapper {
             wrappedEditor.putString(key, value)
@@ -111,25 +134,31 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
             return this
         }
 
-        fun putStringOptional(key: String, value: String?): EditorWrapper {
-            if (!contains(key)) {
-                putString(key, value)
+        private fun putOptional(key: String, action: () -> Unit): EditorWrapper {
+            if (!contains(key)) {  //todo:replace with contains(key, class)
+                action()
             }
             return this
+        }
+
+        fun putStringOptional(key: String, value: String?): EditorWrapper {
+            return putOptional(key) { putString(key, value) }
         }
 
         fun putStringSetOptional(key: String, values: Set<String>?): EditorWrapper {
-            if (!contains(key)) {
-                putStringSet(key, values)
-            }
-            return this
+            return putOptional(key) { putStringSet(key, values) }
         }
 
         fun putBooleanOptional(key: String, value: Boolean): EditorWrapper {
-            if (!contains(key)) {
-                putBoolean(key, value)
-            }
-            return this
+            return putOptional(key) { putBoolean(key, value) }
+        }
+
+        fun putIntOptional(key: String, value: Int): EditorWrapper {
+            return putOptional(key) { putInt(key, value) }
+        }
+
+        fun putLongOptional(key: String, value: Long): EditorWrapper {
+            return putOptional(key) { putLong(key, value) }
         }
 
         override fun remove(key: String): EditorWrapper {

@@ -8,15 +8,31 @@ import android.view.Window
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 
-class FullscreenSupport(private val window: Window, private var onChange: (Boolean) -> Unit) {
+class FullscreenSupport(private val window: Window) {
+
+    var onChange: (Boolean) -> Unit = {}
+    var autoFullscreenDelay = 1000L
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val fullscreenDelay = 300L
+    private var autoFullscreenTask: Runnable? = null
 
     var fullscreen: Boolean = false
         set(value) {
+            removeTask(autoFullscreenTask)
             field = value
             if (field) {
-                executeLater { hideSystemUI() }
+                runTask(fullscreenDelay) {
+                    hideSystemUI()
+                }
             } else {
-                executeLater { showSystemUI() }
+                runTask(fullscreenDelay) {
+                    showSystemUI()
+                    autoFullscreenTask = runTask(autoFullscreenDelay) {
+                        autoFullscreenTask = null
+                        fullscreen = true
+                    }
+                }
             }
         }
 
@@ -57,16 +73,21 @@ class FullscreenSupport(private val window: Window, private var onChange: (Boole
      * Some older devices needs a small delay between UI widget updates
      * and a change of the status and navigation bar.
      */
-    private fun executeLater(action: () -> Unit) {
-        val handler = Handler(Looper.getMainLooper())
-        handler.postDelayed(object : Runnable {
+    private fun runTask(delay: Long, action: () -> Unit): Runnable {
+        val task = object : Runnable {
 
             override fun run() {
-                handler.removeCallbacks(this)
+                removeTask(this)
                 action()
                 onChange(fullscreen)
             }
-        }, 300)
+        }
+        handler.postDelayed(task, delay)
+        return task
+    }
+
+    private fun removeTask(task: Runnable?) {
+        task?.run { handler.removeCallbacks(this) }
     }
 
 }
