@@ -3,40 +3,65 @@ plugins {
     id "kotlin-android"
 }
 
+apply from: "user.gradle"
+
 android {
-    
+
     compileSdkVersion 30
 
     defaultConfig {
-        targetSdkVersion 30
-        minSdkVersion 21
-        
-        applicationId "com.bopr.piclock"
         versionCode 1
         versionName "1.0.0"
+        targetSdkVersion 30
+        minSdkVersion 21
+        applicationId "com.bopr.piclock"
+        vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        archivesBaseName = "piclock-${versionName}"
+    }
+
+    signingConfigs {
+        release {
+            keyAlias "sample"
+            storeFile file("keystore.p12")
+            storePassword store_password
+            keyPassword key_password
+        }
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
+        all {
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            resValue("string", "developer_email", developer_email)
+        }
+        debug {
+            signingConfig signingConfigs.debug
+            shrinkResources false
+            minifyEnabled false
+            manifestPlaceholders = [crashlyticsEnabled: "false"]
+        }
+        release {
+            signingConfig signingConfigs.release
+            shrinkResources true
+            minifyEnabled true
+            manifestPlaceholders = [crashlyticsEnabled: "true"]
         }
     }
-    
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
 //      uncomment to use LocalDateTime: coreLibraryDesugaringEnabled = true
     }
-    
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    
+
     buildFeatures {
         viewBinding true
     }
+    buildToolsVersion '30.0.2'
 }
 
 dependencies {
@@ -50,7 +75,7 @@ dependencies {
 //      uncomment to use LocalDateTime:    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.5"
 
     testImplementation "junit:junit:4.13.2"
-    
+
     androidTestImplementation "androidx.test.ext:junit:1.1.2"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.3.0"
 }

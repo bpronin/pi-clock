@@ -60,7 +60,7 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
 
     fun getStringList(key: String): MutableList<String> {
         checkKeyExists(key)
-        return getString(key).let { commaSplit(it).toMutableList() } ?: mutableListOf()
+        return commaSplit(getString(key)).toMutableList()
     }
 
     override fun contains(key: String): Boolean {

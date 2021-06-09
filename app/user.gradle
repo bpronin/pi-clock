@@ -1,0 +1,57 @@
+if (file("local.gradle").exists()) {
+    apply from: "local.gradle"
+} else {
+    apply from: "../.github/workflows/local.gradle"
+}
+
+import java.text.SimpleDateFormat
+
+/* user defined procedures */
+
+def updateReleaseInfo = {
+    def propFile = new File(projectDir, "src/main/assets/release.properties")
+    Properties props = new Properties()
+    props.load(new FileInputStream(propFile))
+
+    def buildNumber = Integer.parseInt(props.getProperty("build_number")) + 1
+
+    def df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z")
+    df.setTimeZone(TimeZone.getTimeZone('UTC'))
+    def buildTime = df.format(new Date())
+
+    props.setProperty("build_number", String.valueOf(buildNumber))
+    props.setProperty("build_time", String.valueOf(buildTime))
+    props.store(new FileOutputStream(propFile), "Release properties. Do not change manually.")
+
+    println("updating release build to: " + buildNumber)
+}
+
+def uploadApk = { apkName ->
+    if (project.hasProperty("upload_path")) {
+        def srcPath = new File(projectDir, "build/outputs/apk/")
+        def dstPath = new File(upload_path)
+        println("copying apk from: " + srcPath + " to: " + dstPath)
+        copy {
+            from fileTree(srcPath).include("**/*" + apkName + ".apk").files
+            into dstPath
+        }
+    } else {
+        println("Property not set")
+    }
+}
+
+tasks.register("upload-release") {
+    doLast {
+        uploadApk("")
+    }
+}
+
+assemble.doLast {
+    updateReleaseInfo()
+}
+
+afterEvaluate {
+    assemble.doLast {
+        uploadApk("release")
+    }
+}
