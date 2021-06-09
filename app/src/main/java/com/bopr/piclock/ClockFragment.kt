@@ -1,5 +1,6 @@
 package com.bopr.piclock
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
@@ -7,8 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_MINUTES_SEPARATOR
@@ -16,14 +16,18 @@ import com.bopr.piclock.Settings.Companion.PREF_MINUTES_SEPARATOR_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_SEPARATOR
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.databinding.FragmentClockBinding
+import com.bopr.piclock.util.hideAnimated
+import com.bopr.piclock.util.showAnimated
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
-    private lateinit var binding: FragmentClockBinding
     private lateinit var settings: Settings
+    private lateinit var binding: FragmentClockBinding
+
     private val handler = Handler(Looper.getMainLooper())
     private var hoursFormat24 = SimpleDateFormat("HH", Locale.getDefault())
     private var hoursFormatAmPm = SimpleDateFormat("h", Locale.getDefault())
@@ -31,6 +35,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private var minutesFormat = SimpleDateFormat("mm", Locale.getDefault())
     private var secondsFormat = SimpleDateFormat("ss", Locale.getDefault())
     private var dateFormat = SimpleDateFormat("EEEE, MMMM dd", Locale.getDefault())
+    private var controlsVisible = false
 
     private val timerTask = object : Runnable {
 
@@ -58,6 +63,14 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentClockBinding.inflate(layoutInflater)
+
+        binding.settingsButton.apply {
+            visibility = if (controlsVisible) VISIBLE else INVISIBLE
+            setOnClickListener {
+                showSettings()
+            }
+        }
+
         return binding.root
     }
 
@@ -72,7 +85,16 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
+    }
+
+    fun showControls(visible: Boolean) {
+        controlsVisible = visible
+        if (controlsVisible) {
+            binding.settingsButton.showAnimated(R.anim.fab_show, 200)
+        } else {
+            binding.settingsButton.hideAnimated(R.anim.fab_hide, 200)
+        }
     }
 
     private fun updateTimeViews() {
@@ -111,7 +133,11 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun getSecondsVisibility(): Int {
-        return if (settings.getBoolean(PREF_SECONDS_VISIBLE)) VISIBLE else INVISIBLE
+        return if (settings.getBoolean(PREF_SECONDS_VISIBLE)) VISIBLE else GONE
+    }
+
+    private fun showSettings() {
+        startActivity(Intent(requireContext(), SettingsActivity::class.java))
     }
 
 }

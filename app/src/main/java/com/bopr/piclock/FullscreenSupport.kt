@@ -8,13 +8,7 @@ import android.view.Window
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 
-class FullscreenSupport(private val window: Window, controlView: View?) {
-
-    init {
-        controlView?.setOnClickListener {
-            fullscreen = !fullscreen
-        }
-    }
+class FullscreenSupport(private val window: Window, private var onChange: (Boolean) -> Unit) {
 
     var fullscreen: Boolean = false
         set(value) {
@@ -25,6 +19,10 @@ class FullscreenSupport(private val window: Window, controlView: View?) {
                 executeLater { showSystemUI() }
             }
         }
+
+    fun toggle() {
+        fullscreen = !fullscreen
+    }
 
     private fun showSystemUI() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -66,6 +64,7 @@ class FullscreenSupport(private val window: Window, controlView: View?) {
             override fun run() {
                 handler.removeCallbacks(this)
                 action()
+                onChange(fullscreen)
             }
         }, 300)
     }
