@@ -24,7 +24,7 @@ class MainActivity : BaseActivity(ClockFragment::class), OnSharedPreferenceChang
         fullscreenSupport = FullscreenSupport(window)
         fullscreenSupport.autoFullscreenDelay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
         fullscreenSupport.onChange = {
-            (fragment as ClockFragment).showControls(!it)
+            (fragment as ClockFragment).showControls(!it) //todo:get rid of cast
         }
     }
 

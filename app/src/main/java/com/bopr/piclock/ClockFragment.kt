@@ -12,9 +12,9 @@ import android.view.View.*
 import android.view.ViewGroup
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_MINUTES_SEPARATOR
-import com.bopr.piclock.Settings.Companion.PREF_MINUTES_SEPARATOR_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_SEPARATOR
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
+import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.databinding.FragmentClockBinding
 import com.bopr.piclock.util.hideAnimated
 import com.bopr.piclock.util.showAnimated
@@ -63,6 +63,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentClockBinding.inflate(layoutInflater)
+        applySettings()
 
         binding.settingsButton.apply {
             visibility = if (controlsVisible) VISIBLE else INVISIBLE
@@ -85,15 +86,17 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-//        TODO("Not yet implemented")
+        applySettings()
     }
 
     fun showControls(visible: Boolean) {
         controlsVisible = visible
-        if (controlsVisible) {
-            binding.settingsButton.showAnimated(R.anim.fab_show, 200)
-        } else {
-            binding.settingsButton.hideAnimated(R.anim.fab_hide, 200)
+        binding.settingsButton.apply {
+            if (controlsVisible) {
+                showAnimated(R.anim.fab_show, 200)
+            } else {
+                hideAnimated(R.anim.fab_hide, 200)
+            }
         }
     }
 
@@ -102,19 +105,20 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         binding.run {
             hoursView.text = getHoursFormat().format(time)
             minutesView.text = minutesFormat.format(time)
-
-            minutesSeparator.visibility = getMinutesSeparatorVisibility(time)
-            minutesSeparator.text = settings.getString(PREF_MINUTES_SEPARATOR)
-
-            secondsSeparator.text = settings.getString(PREF_SECONDS_SEPARATOR)
-
-            secondsView.visibility = getSecondsVisibility()
             secondsView.text = secondsFormat.format(time)
-
-            amPmMarker.visibility = getAmPmMarkerVisibility()
             amPmMarker.text = amPmFormat.format(time)
-
             dateView.text = dateFormat.format(time)
+            minutesSeparator.visibility = getMinutesSeparatorVisibility(time)
+        }
+    }
+
+    private fun applySettings() {
+        binding.run {
+            minutesSeparator.text = settings.getString(PREF_MINUTES_SEPARATOR)
+            secondsSeparator.visibility = getSecondsVisibility()
+            secondsSeparator.text = settings.getString(PREF_SECONDS_SEPARATOR)
+            secondsView.visibility = getSecondsVisibility()
+            amPmMarker.visibility = getAmPmMarkerVisibility()
         }
     }
 
@@ -127,9 +131,9 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun getMinutesSeparatorVisibility(time: Date): Int {
-        return if (settings.getBoolean(PREF_MINUTES_SEPARATOR_BLINKING)
-            && (time.time / 1000 % 2 == 0L)
-        ) VISIBLE else INVISIBLE
+        return if (settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)
+            && (time.time / 1000 % 2 != 0L)
+        ) INVISIBLE else VISIBLE
     }
 
     private fun getSecondsVisibility(): Int {

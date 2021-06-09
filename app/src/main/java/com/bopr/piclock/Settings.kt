@@ -10,7 +10,7 @@ class Settings(context: Context) : SharedPreferencesWrapper(
 
     fun loadDefaults() = update {
         putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
-        putBooleanOptional(PREF_MINUTES_SEPARATOR_BLINKING, DEFAULT_MINUTES_SEPARATOR_BLINKING)
+        putBooleanOptional(PREF_TIME_SEPARATOR_BLINKING, DEFAULT_MINUTES_SEPARATOR_BLINKING)
         putBooleanOptional(PREF_24_HOURS_FORMAT, DEFAULT_24_HOURS_FORMAT)
         putStringOptional(PREF_MINUTES_SEPARATOR, DEFAULT_MINUTES_SEPARATOR)
         putStringOptional(PREF_SECONDS_SEPARATOR, DEFAULT_SECONDS_SEPARATOR)
@@ -25,7 +25,7 @@ class Settings(context: Context) : SharedPreferencesWrapper(
         const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
 
         const val PREF_MINUTES_SEPARATOR = "minutes_separator"
-        const val PREF_MINUTES_SEPARATOR_BLINKING = "minutes_separator_blinking"
+        const val PREF_TIME_SEPARATOR_BLINKING = "time_separator_blinking"
         const val PREF_SECONDS_SEPARATOR = "seconds_separator"
         const val PREF_SECONDS_VISIBLE = "seconds_visible"
         const val PREF_24_HOURS_FORMAT = "24_hours_format"
