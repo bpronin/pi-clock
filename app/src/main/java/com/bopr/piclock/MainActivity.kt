@@ -15,51 +15,32 @@ class MainActivity : BaseActivity(ClockFragment::class), OnSharedPreferenceChang
     private lateinit var settings: Settings
     private lateinit var fullscreenSupport: FullscreenSupport
 
-//    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-//        super.onCreate(savedInstanceState, persistentState)
-//        settings = Settings(this)
-//
-//        val fragment = (fragment as ClockFragment)
-//
-//        fullscreenSupport = FullscreenSupport(window)
-////        fullscreenSupport.autoFullscreenDelay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
-//        fullscreenSupport.onChange = { fragment.showControls(!it) }
-//
-//        fragment.requireView().setOnClickListener {
-//            fullscreenSupport.toggle()
-//        }
-//
-//        /* Trigger the fullscreen mode shortly after the activity has been
-//         created, to briefly hint to the user that UI controls are available. */
-//        fullscreenSupport.fullscreen = true
-//
-//        settings.registerOnSharedPreferenceChangeListener(this)
-//    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
         settings = Settings(this)
-
-        val fragment = (fragment as ClockFragment)
+        settings.registerOnSharedPreferenceChangeListener(this)
 
         fullscreenSupport = FullscreenSupport(window)
         fullscreenSupport.autoFullscreenDelay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
-        fullscreenSupport.onChange = { fragment.showControls(!it) }
-
-        fragment.requireView().setOnClickListener {
-            fullscreenSupport.toggle()
+        fullscreenSupport.onChange = {
+            (fragment as ClockFragment).showControls(!it)
         }
-
-        /* Trigger the fullscreen mode shortly after the activity has been
-         created, to briefly hint to the user that UI controls are available. */
-        fullscreenSupport.fullscreen = true
-
-        settings.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         settings.unregisterOnSharedPreferenceChangeListener(this)
+        super.onDestroy()
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        fragment!!.requireView().setOnClickListener {
+            fullscreenSupport.toggle()
+        }
+        /* Trigger the fullscreen mode shortly after the activity has been
+         created, to briefly hint to the user that UI controls are available. */
+        fullscreenSupport.fullscreen = true
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {

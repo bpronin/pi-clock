@@ -24,7 +24,7 @@ import com.bopr.piclock.R
  */
 fun Context.underwivedText(value: CharSequence?): Spannable {
     val spannable: Spannable = SpannableString(value)
-    val span: ParagraphStyle = WavyUnderlineSpan(ContextCompat.getColor(this, R.color.errorLine))
+    val span: ParagraphStyle = WavyUnderlineSpan(ContextCompat.getColor(this, R.color.error_underline))
     spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
     return spannable
@@ -36,7 +36,7 @@ fun Context.underwivedText(value: CharSequence?): Spannable {
 fun Context.accentedText(value: CharSequence?): Spannable {
     val spannable: Spannable = SpannableString(value)
     val span: CharacterStyle =
-        ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorAccent))
+        ForegroundColorSpan(ContextCompat.getColor(this, R.color.color_accent))
     spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
     return spannable
