@@ -20,6 +20,7 @@ class MainActivity : BaseActivity(ClockFragment::class), OnSharedPreferenceChang
 
         settings = Settings(this)
         settings.registerOnSharedPreferenceChangeListener(this)
+        settings.loadDefaults()
 
         fullscreenSupport = FullscreenSupport(window)
         fullscreenSupport.autoFullscreenDelay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)

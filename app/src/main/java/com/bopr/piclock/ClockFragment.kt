@@ -50,7 +50,6 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         settings = Settings(requireContext())
-        settings.loadDefaults()
         settings.registerOnSharedPreferenceChangeListener(this)
     }
 
