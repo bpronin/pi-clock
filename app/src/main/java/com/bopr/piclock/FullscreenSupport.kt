@@ -8,32 +8,21 @@ import android.view.Window
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 
-class FullscreenSupport(private val window: Window) {
+class FullscreenSupport(private val window: Window, controlView: View?) {
 
-    private val handler = Handler(Looper.getMainLooper())
+    init {
+        controlView?.setOnClickListener {
+            fullscreen = !fullscreen
+        }
+    }
 
     var fullscreen: Boolean = false
         set(value) {
-            /* NOTE: Some older devices needs a small delay between UI widget updates
-            and a change of the status and navigation bar. */
-
             field = value
             if (field) {
-                handler.postDelayed(object : Runnable {
-
-                    override fun run() {
-                        handler.removeCallbacks(this)
-                        hideSystemUI()
-                    }
-                }, 300)
+                executeLater { hideSystemUI() }
             } else {
-                handler.postDelayed(object : Runnable {
-
-                    override fun run() {
-                        handler.removeCallbacks(this)
-                        showSystemUI()
-                    }
-                }, 300)
+                executeLater { showSystemUI() }
             }
         }
 
@@ -64,6 +53,21 @@ class FullscreenSupport(private val window: Window) {
                     or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
         }
+    }
+
+    /**
+     * Some older devices needs a small delay between UI widget updates
+     * and a change of the status and navigation bar.
+     */
+    private fun executeLater(action: () -> Unit) {
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed(object : Runnable {
+
+            override fun run() {
+                handler.removeCallbacks(this)
+                action()
+            }
+        }, 300)
     }
 
 }
