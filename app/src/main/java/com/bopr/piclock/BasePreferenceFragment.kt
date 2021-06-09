@@ -106,7 +106,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
     protected fun updateSummary(
         preference: Preference,
         value: CharSequence?,
-        @SummaryStyle style: Int
+        @SummaryStyle style: Int = SUMMARY_STYLE_DEFAULT
     ) {
         preference.summary = null  /* clean to refresh spannable style */
         when (style) {

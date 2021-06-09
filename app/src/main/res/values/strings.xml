@@ -5,4 +5,12 @@
     <string name="settings_button">Settings button</string>
     <string name="blink_time_separator">Blink time separator</string>
     <string name="use_24_hours_format">24 hours format</string>
+    <string name="date_format">Date format</string>
+
+    <string-array name="date_format_names">
+        <item>Date</item>
+        <item>Short</item>
+        <item>Long</item>
+    </string-array>
+
 </resources>

@@ -38,14 +38,14 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         return wrappedPreferences.getBoolean(key, defValue)
     }
 
-    fun getString(key: String): String? {
+    fun getString(key: String): String {
         checkKeyExists(key)
-        return getString(key, null)
+        return getString(key, "")!!
     }
 
     fun getLong(key: String): Long {
         checkKeyExists(key)
-        return wrappedPreferences.getLong(key, 0)
+        return getLong(key, 0)
     }
 
     fun getBoolean(key: String): Boolean {
@@ -60,7 +60,7 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
 
     fun getStringList(key: String): MutableList<String> {
         checkKeyExists(key)
-        return getString(key)?.let { commaSplit(it).toMutableList() } ?: mutableListOf()
+        return getString(key).let { commaSplit(it).toMutableList() } ?: mutableListOf()
     }
 
     override fun contains(key: String): Boolean {

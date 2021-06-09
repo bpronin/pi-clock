@@ -11,11 +11,13 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_MINUTES_SEPARATOR
+import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_SEPARATOR
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
+import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.databinding.FragmentClockBinding
+import com.bopr.piclock.util.clockDateFormat
 import com.bopr.piclock.util.hideAnimated
 import com.bopr.piclock.util.showAnimated
 import java.text.DateFormat
@@ -121,7 +123,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
         binding.run {
             minutesSeparator.visibility = VISIBLE
-            minutesSeparator.text = settings.getString(PREF_MINUTES_SEPARATOR)
+            minutesSeparator.text = settings.getString(PREF_TIME_SEPARATOR)
             secondsSeparator.visibility = getSecondsVisibility()
             secondsSeparator.text = settings.getString(PREF_SECONDS_SEPARATOR)
             secondsView.visibility = getSecondsVisibility()
@@ -134,7 +136,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                 amPmMarker.visibility = VISIBLE
             }
 
-            dateFormat = SimpleDateFormat("EEEE, MMMM dd", locale)
+            dateFormat = clockDateFormat(settings.getString(PREF_DATE_FORMAT))
         }
     }
 

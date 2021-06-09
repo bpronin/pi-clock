@@ -16,16 +16,12 @@
         android:title="@string/use_24_hours_format"
         />
 
-<!--    <androidx.preference.Preference-->
-<!--        android:key="reset_dialogs"-->
-<!--        android:title="@string/reset_dialogs"-->
-<!--        android:summary="@string/reset_dialogs_summary"-->
-<!--        />-->
+    <androidx.preference.ListPreference
+        android:key="date_format"
+        android:title="@string/date_format"
+        android:entries="@array/date_format_names"
+        android:entryValues="@array/date_format_values"
+        />
 
-<!--    <androidx.preference.Preference-->
-<!--        android:key="sent_test_email"-->
-<!--        android:title="@string/send_test_email"-->
-<!--        android:summary="@string/send_test_email_summary"-->
-<!--        />-->
 
 </androidx.preference.PreferenceScreen>
