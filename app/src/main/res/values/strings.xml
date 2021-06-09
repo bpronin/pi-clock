@@ -4,4 +4,5 @@
     <string name="show_seconds">Show seconds</string>
     <string name="settings_button">Settings button</string>
     <string name="blink_time_separator">Blink time separator</string>
+    <string name="use_24_hours_format">24 hours format</string>
 </resources>

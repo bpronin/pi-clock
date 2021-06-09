@@ -11,11 +11,10 @@
         android:title="@string/blink_time_separator"
         />
 
-<!--    <androidx.preference.SwitchPreference-->
-<!--        android:key="notify_send_success"-->
-<!--        android:title="@string/info_notifications"-->
-<!--        android:summary="@string/notify_send_success"-->
-<!--        />-->
+    <androidx.preference.SwitchPreference
+        android:key="24_hours_format"
+        android:title="@string/use_24_hours_format"
+        />
 
 <!--    <androidx.preference.Preference-->
 <!--        android:key="reset_dialogs"-->

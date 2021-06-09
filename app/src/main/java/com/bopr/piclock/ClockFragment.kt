@@ -25,16 +25,16 @@ import java.util.*
 
 class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
+    private val handler = Handler(Looper.getMainLooper())
     private lateinit var settings: Settings
     private lateinit var binding: FragmentClockBinding
 
-    private val handler = Handler(Looper.getMainLooper())
-    private var hoursFormat24 = SimpleDateFormat("HH", Locale.getDefault())
-    private var hoursFormatAmPm = SimpleDateFormat("h", Locale.getDefault())
-    private var amPmFormat = SimpleDateFormat("a", Locale.getDefault())
-    private var minutesFormat = SimpleDateFormat("mm", Locale.getDefault())
-    private var secondsFormat = SimpleDateFormat("ss", Locale.getDefault())
-    private var dateFormat = SimpleDateFormat("EEEE, MMMM dd", Locale.getDefault())
+    private lateinit var amPmFormat: DateFormat
+    private lateinit var minutesFormat: DateFormat
+    private lateinit var secondsFormat: DateFormat
+    private lateinit var hoursFormat: DateFormat
+    private lateinit var dateFormat: DateFormat
+
     private var controlsVisible = false
 
     private val timerTask = object : Runnable {
@@ -103,41 +103,55 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private fun updateTimeViews() {
         val time = Date()
         binding.run {
-            hoursView.text = getHoursFormat().format(time)
+            hoursView.text = hoursFormat.format(time)
             minutesView.text = minutesFormat.format(time)
             secondsView.text = secondsFormat.format(time)
             amPmMarker.text = amPmFormat.format(time)
             dateView.text = dateFormat.format(time)
-            minutesSeparator.visibility = getMinutesSeparatorVisibility(time)
         }
+
+        blinkTimeSeparator(time)
     }
 
     private fun applySettings() {
+        val locale = Locale.getDefault()
+        amPmFormat = SimpleDateFormat("a", locale)
+        minutesFormat = SimpleDateFormat("mm", locale)
+        secondsFormat = SimpleDateFormat("ss", locale)
+
         binding.run {
+            minutesSeparator.visibility = VISIBLE
             minutesSeparator.text = settings.getString(PREF_MINUTES_SEPARATOR)
             secondsSeparator.visibility = getSecondsVisibility()
             secondsSeparator.text = settings.getString(PREF_SECONDS_SEPARATOR)
             secondsView.visibility = getSecondsVisibility()
-            amPmMarker.visibility = getAmPmMarkerVisibility()
+
+            if (settings.getBoolean(PREF_24_HOURS_FORMAT)) {
+                hoursFormat = SimpleDateFormat("HH", locale)
+                amPmMarker.visibility = INVISIBLE
+            } else {
+                hoursFormat = SimpleDateFormat("h", locale)
+                amPmMarker.visibility = VISIBLE
+            }
+
+            dateFormat = SimpleDateFormat("EEEE, MMMM dd", locale)
         }
-    }
-
-    private fun getHoursFormat(): DateFormat {
-        return if (settings.getBoolean(PREF_24_HOURS_FORMAT)) hoursFormat24 else hoursFormatAmPm
-    }
-
-    private fun getAmPmMarkerVisibility(): Int {
-        return if (settings.getBoolean(PREF_24_HOURS_FORMAT)) INVISIBLE else VISIBLE
-    }
-
-    private fun getMinutesSeparatorVisibility(time: Date): Int {
-        return if (settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)
-            && (time.time / 1000 % 2 != 0L)
-        ) INVISIBLE else VISIBLE
     }
 
     private fun getSecondsVisibility(): Int {
         return if (settings.getBoolean(PREF_SECONDS_VISIBLE)) VISIBLE else GONE
+    }
+
+    private fun blinkTimeSeparator(time: Date) {
+        if (settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
+            binding.minutesSeparator.apply {
+                if (time.time / 1000 % 2 != 0L) {
+                    showAnimated(R.anim.time_separator_show, 0)
+                } else {
+                    hideAnimated(R.anim.time_separator_hide, 0)
+                }
+            }
+        }
     }
 
     private fun showSettings() {
