@@ -12,6 +12,7 @@ import android.view.View.*
 import android.view.ViewGroup
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_DATE_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_SEPARATOR
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR
@@ -134,12 +135,17 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                 amPmMarker.visibility = VISIBLE
             }
 
+            dateView.visibility = getDateVisibility()
             dateFormat = SimpleDateFormat(settings.getString(PREF_DATE_FORMAT), Locale.getDefault())
         }
     }
 
     private fun getSecondsVisibility(): Int {
         return if (settings.getBoolean(PREF_SECONDS_VISIBLE)) VISIBLE else GONE
+    }
+
+    private fun getDateVisibility(): Int {
+        return if (settings.getBoolean(PREF_DATE_VISIBLE)) VISIBLE else GONE
     }
 
     private fun blinkTimeSeparator(time: Date) {

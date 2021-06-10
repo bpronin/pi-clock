@@ -1,6 +1,11 @@
 <resources>
     <declare-styleable name="FullscreenAttrs">
-        <attr name="mainBackgroundColor" format="color" />
-        <attr name="hoursTextColor" format="color" />
+        <attr name="clockBackgroundColor" format="color" />
+        <attr name="timeTextColor" format="color" />
+        <attr name="timeFont" format="string" />
+        <attr name="hoursFontSize" format="dimension" />
+        <attr name="secondsFontSize" format="dimension" />
+        <attr name="dateFontSize" format="dimension" />
+        <attr name="amPmFontSize" format="dimension" />
     </declare-styleable>
 </resources>

@@ -9,4 +9,5 @@
     <string name="time_separator">Time separator</string>
     <string name="seconds_separator">Seconds separator</string>
     <string name="none">[none]</string>
+    <string name="show_date">Show date</string>
 </resources>

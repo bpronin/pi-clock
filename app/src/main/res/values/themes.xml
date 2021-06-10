@@ -12,11 +12,14 @@
 <!--        <item name="colorSecondaryVariant">@color/color_accent_text</item>-->
 <!--        <item name="colorOnSecondary">@color/black</item>-->
 <!--        <item name="android:textColor">@color/black</item>-->
-    </style>
-
-    <style name="ThemeOverlay.Piclock.FullscreenContainer" parent="">
-        <item name="mainBackgroundColor">@color/black</item>
-        <item name="hoursTextColor">@color/white_overlay</item>
+        <item name="clockBackgroundColor">@color/black</item>
+        <item name="timeTextColor">@color/white_overlay</item>
+<!--        <item name="timeFont">@font/gruppo</item>-->
+        <item name="timeFont">serif</item>
+        <item name="hoursFontSize">96sp</item>
+        <item name="secondsFontSize">48sp</item>
+        <item name="amPmFontSize">36sp</item>
+        <item name="dateFontSize">20sp</item>
     </style>
 
 </resources>

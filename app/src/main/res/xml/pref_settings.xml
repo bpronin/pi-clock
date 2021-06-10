@@ -16,6 +16,11 @@
         android:title="@string/use_24_hours_format"
         />
 
+    <SwitchPreference
+        android:key="date_visible"
+        android:title="@string/show_date"
+        />
+
 <!-- android:entries are build in code! -->
     <ListPreference
         android:key="date_format"
