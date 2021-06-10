@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/gruppo"
-                android:text="11"
+                android:text="21"
                 android:textColor="?attr/hoursTextColor"
                 android:textSize="96sp"
                 tools:ignore="HardcodedText" />
@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/gruppo"
-                android:text="11"
+                android:text="56"
                 android:textColor="?attr/hoursTextColor"
                 android:textSize="96sp"
                 tools:ignore="HardcodedText" />
@@ -62,10 +62,10 @@
 
             <TextView
                 android:id="@+id/seconds_view"
-                android:layout_width="60dp"
+                android:layout_width="52sp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/gruppo"
-                android:text="11"
+                android:text="04"
                 android:textColor="?attr/hoursTextColor"
                 android:textSize="48sp"
                 tools:ignore="HardcodedText" />
@@ -85,12 +85,12 @@
 
         <TextView
             android:id="@+id/date_view"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/gruppo"
-            android:text="april 13 "
+            android:text="Wednesday, January 13 "
             android:textColor="?attr/hoursTextColor"
-            android:textSize="28sp"
+            android:textSize="20sp"
             tools:ignore="HardcodedText" />
 
     </LinearLayout>
@@ -99,11 +99,8 @@
         android:id="@+id/settings_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
         android:layout_marginStart="@dimen/fab_margin"
-        android:layout_marginTop="@dimen/fab_margin"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_margin_top"
         android:contentDescription="@string/settings_button"
         app:srcCompat="@drawable/ic_baseline_menu" />
 

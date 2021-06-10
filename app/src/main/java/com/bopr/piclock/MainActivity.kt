@@ -19,7 +19,6 @@ class MainActivity : BaseActivity(ClockFragment::class), OnSharedPreferenceChang
         super.onCreate(savedInstanceState)
 
         settings = Settings(this)
-        settings.registerOnSharedPreferenceChangeListener(this)
         settings.loadDefaults()
 
         fullscreenSupport = FullscreenSupport(window)
@@ -27,6 +26,8 @@ class MainActivity : BaseActivity(ClockFragment::class), OnSharedPreferenceChang
         fullscreenSupport.onChange = {
             (fragment as ClockFragment).showControls(!it) //todo:get rid of cast
         }
+
+        settings.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onDestroy() {

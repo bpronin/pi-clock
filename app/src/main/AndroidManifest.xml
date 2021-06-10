@@ -10,6 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Piclock">
 
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="${crashlyticsEnabled}" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
