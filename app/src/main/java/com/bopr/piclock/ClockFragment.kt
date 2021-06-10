@@ -150,11 +150,16 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     private fun blinkTimeSeparator(time: Date) {
         if (settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
-            binding.timeSeparator.apply {
-                if (time.time / 1000 % 2 != 0L) {
-                    showAnimated(R.anim.time_separator_show, 0)
-                } else {
-                    hideAnimated(R.anim.time_separator_hide, 0)
+            val secondsVisible = settings.getBoolean(PREF_SECONDS_VISIBLE)
+            if (time.time / 1000 % 2 != 0L) {
+                binding.timeSeparator.showAnimated(R.anim.time_separator_show, 0)
+                if (secondsVisible) {
+                    binding.secondsSeparator.showAnimated(R.anim.time_separator_show, 0)
+                }
+            } else {
+                binding.timeSeparator.hideAnimated(R.anim.time_separator_hide, 0)
+                if (secondsVisible) {
+                    binding.secondsSeparator.hideAnimated(R.anim.time_separator_hide, 0)
                 }
             }
         }

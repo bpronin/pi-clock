@@ -53,7 +53,7 @@
                 tools:ignore="HardcodedText" />
 
             <LinearLayout
-                android:layout_width="80sp"
+                android:layout_width="68sp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
@@ -61,6 +61,7 @@
                     android:id="@+id/am_pm_marker"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="12sp"
                     android:fontFamily="?attr/timeFont"
                     android:includeFontPadding="false"
                     android:text="AM"
@@ -72,6 +73,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="-8sp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -81,13 +83,14 @@
                         android:fontFamily="?attr/timeFont"
                         android:includeFontPadding="false"
                         android:text=":"
+                        android:textAlignment="center"
                         android:textColor="?attr/timeTextColor"
                         android:textSize="?attr/secondsFontSize"
                         tools:ignore="HardcodedText" />
 
                     <TextView
                         android:id="@+id/seconds_view"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="?attr/timeFont"
                         android:includeFontPadding="false"
