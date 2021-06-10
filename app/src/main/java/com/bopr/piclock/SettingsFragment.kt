@@ -2,10 +2,11 @@ package com.bopr.piclock
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import androidx.preference.ListPreference
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
-import com.bopr.piclock.util.clockDateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 
 class SettingsFragment : BasePreferenceFragment() {
@@ -38,9 +39,19 @@ class SettingsFragment : BasePreferenceFragment() {
     }
 
     private fun updateDateFormatPreferenceView() {
-        requirePreference(PREF_DATE_FORMAT).apply {
-            val format = clockDateFormat(settings.getString(key))
-            updateSummary(this, format.format(Date()))
+        val preference = requirePreference(PREF_DATE_FORMAT) as ListPreference
+        val patterns = resources.getStringArray(R.array.date_format_values)
+        val date = Date()
+        val locale = Locale.getDefault()
+
+        val entries = arrayOfNulls<String>(patterns.size)
+        for (i in entries.indices) {
+            entries[i] = SimpleDateFormat(patterns[i], locale).format(date)
+        }
+
+        preference.apply {
+            this.entries = entries
+            updateSummary(this, SimpleDateFormat(settings.getString(key), locale).format(date))
         }
     }
 

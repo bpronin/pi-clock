@@ -16,7 +16,7 @@ class Settings(context: Context) : SharedPreferencesWrapper(
         putStringOptional(PREF_SECONDS_SEPARATOR, DEFAULT_SECONDS_SEPARATOR)
         putBooleanOptional(PREF_SECONDS_VISIBLE, DEFAULT_SECONDS_VISIBLE)
         putLongOptional(PREF_AUTO_FULLSCREEN_DELAY, DEFAULT_AUTO_FULLSCREEN_DELAY)
-        putStringOptional(PREF_DATE_FORMAT, DATE_FORMAT_LONG)
+        putStringOptional(PREF_DATE_FORMAT, "yyyy-MM-dd")
     }
 
     companion object {
@@ -39,14 +39,10 @@ class Settings(context: Context) : SharedPreferencesWrapper(
         const val DEFAULT = "default"
         const val DEFAULT_AUTO_FULLSCREEN_DELAY = 3000L
         const val DEFAULT_MINUTES_SEPARATOR = ":"
-        const val DEFAULT_SECONDS_SEPARATOR = "."
+        const val DEFAULT_SECONDS_SEPARATOR = ":"
         const val DEFAULT_MINUTES_SEPARATOR_BLINKING = true
         const val DEFAULT_SECONDS_VISIBLE = true
         const val DEFAULT_24_HOURS_FORMAT = true
-
-        const val DATE_FORMAT_LONG = "long"
-        const val DATE_FORMAT_SHORT = "short"
-        const val DATE_FORMAT_DATE = "date"
     }
 
 }

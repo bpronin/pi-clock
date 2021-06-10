@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="hours_formats" translatable="false">
-        <item>HH:mm</item>
-        <item>h:mm a</item>
-        <item>EEEE, MMMM dd</item>
-    </string-array>
-
     <string-array name="date_format_values" translatable="false">
-        <item>date</item>
-        <item>short</item>
-        <item>long</item>
+        <item>yyyy-MM-dd</item>
+        <item>EEEE, MMMM dd</item>
+        <item>EEE, MMM d</item>
     </string-array>
 
 </resources>

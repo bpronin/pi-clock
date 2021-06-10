@@ -17,7 +17,6 @@ import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.databinding.FragmentClockBinding
-import com.bopr.piclock.util.clockDateFormat
 import com.bopr.piclock.util.hideAnimated
 import com.bopr.piclock.util.showAnimated
 import java.text.DateFormat
@@ -135,7 +134,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                 amPmMarker.visibility = VISIBLE
             }
 
-            dateFormat = clockDateFormat(settings.getString(PREF_DATE_FORMAT))
+            dateFormat = SimpleDateFormat(settings.getString(PREF_DATE_FORMAT), Locale.getDefault())
         }
     }
 
