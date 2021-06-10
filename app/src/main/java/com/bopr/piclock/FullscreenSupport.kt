@@ -11,7 +11,7 @@ import android.view.WindowInsetsController
 class FullscreenSupport(private val window: Window) {
 
     var onChange: (Boolean) -> Unit = {}
-    var autoFullscreenDelay = 1000L
+    var autoFullscreenDelay = 3000L
 
     private val handler = Handler(Looper.getMainLooper())
     private val fullscreenDelay = 300L

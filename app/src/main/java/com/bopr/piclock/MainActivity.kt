@@ -3,7 +3,6 @@ package com.bopr.piclock
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
-import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
 
 /**
  * Main activity.
@@ -22,7 +21,7 @@ class MainActivity : BaseActivity(ClockFragment::class), OnSharedPreferenceChang
         settings.loadDefaults()
 
         fullscreenSupport = FullscreenSupport(window)
-        fullscreenSupport.autoFullscreenDelay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
+//        fullscreenSupport.autoFullscreenDelay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
         fullscreenSupport.onChange = {
             (fragment as ClockFragment).showControls(!it) //todo:get rid of cast
         }
@@ -46,9 +45,9 @@ class MainActivity : BaseActivity(ClockFragment::class), OnSharedPreferenceChang
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if (key == PREF_AUTO_FULLSCREEN_DELAY) {
-            fullscreenSupport.autoFullscreenDelay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
-        }
+//        if (key == PREF_AUTO_FULLSCREEN_DELAY) {
+//            fullscreenSupport.autoFullscreenDelay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
+//        }
     }
 
 }

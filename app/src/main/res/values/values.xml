@@ -2,9 +2,15 @@
 <resources>
 
     <string-array name="date_format_values" translatable="false">
-        <item>yyyy-MM-dd</item>
         <item>EEEE, MMMM dd</item>
         <item>EEE, MMM d</item>
+        <item>MMMM d</item>
+        <item>dd MMMM, EEEE</item>
+        <item>d MMM, EEE</item>
+        <item>d MMMM</item>
+        <item>dd.MM.yyyy</item>
+        <item>MM.dd.yyyy</item>
+        <item>yyyy-MM-dd</item>
     </string-array>
 
 </resources>

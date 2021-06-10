@@ -6,4 +6,7 @@
     <string name="blink_time_separator">Blink time separator</string>
     <string name="use_24_hours_format">24 hours format</string>
     <string name="date_format">Date format</string>
+    <string name="time_separator">Time separator</string>
+    <string name="seconds_separator">Seconds separator</string>
+    <string name="none">[none]</string>
 </resources>

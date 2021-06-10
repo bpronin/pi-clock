@@ -5,7 +5,9 @@ import android.os.Bundle
 import androidx.preference.ListPreference
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_SECONDS_SEPARATOR
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
+import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -20,6 +22,8 @@ class SettingsFragment : BasePreferenceFragment() {
         updateHourFormatPreferenceView()
         updateDateFormatPreferenceView()
         updateShowSecondsPreferenceView()
+        updateTimeSeparatorPreferenceView()
+        updateSecondsSeparatorPreferenceView()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -28,6 +32,28 @@ class SettingsFragment : BasePreferenceFragment() {
             PREF_SECONDS_VISIBLE -> updateShowSecondsPreferenceView()
             PREF_24_HOURS_FORMAT -> updateHourFormatPreferenceView()
             PREF_DATE_FORMAT -> updateDateFormatPreferenceView()
+            PREF_TIME_SEPARATOR -> updateTimeSeparatorPreferenceView()
+            PREF_SECONDS_SEPARATOR -> updateSecondsSeparatorPreferenceView()
+        }
+    }
+
+    private fun updateSecondsSeparatorPreferenceView() {
+        requirePreference(PREF_SECONDS_SEPARATOR).apply {
+            var value = settings.getString(key)
+            if (value.isEmpty()){
+                value = resources.getString(R.string.none)
+            }
+            updateSummary(this, value)
+        }
+    }
+
+    private fun updateTimeSeparatorPreferenceView() {
+        requirePreference(PREF_TIME_SEPARATOR).apply {
+            var value = settings.getString(key)
+            if (value.isEmpty()){
+                value = resources.getString(R.string.none)
+            }
+            updateSummary(this, value)
         }
     }
 

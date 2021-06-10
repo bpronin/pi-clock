@@ -120,8 +120,8 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         secondsFormat = SimpleDateFormat("ss", locale)
 
         binding.run {
-            minutesSeparator.visibility = VISIBLE
-            minutesSeparator.text = settings.getString(PREF_TIME_SEPARATOR)
+            timeSeparator.visibility = VISIBLE
+            timeSeparator.text = settings.getString(PREF_TIME_SEPARATOR)
             secondsSeparator.visibility = getSecondsVisibility()
             secondsSeparator.text = settings.getString(PREF_SECONDS_SEPARATOR)
             secondsView.visibility = getSecondsVisibility()
@@ -144,7 +144,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     private fun blinkTimeSeparator(time: Date) {
         if (settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
-            binding.minutesSeparator.apply {
+            binding.timeSeparator.apply {
                 if (time.time / 1000 % 2 != 0L) {
                     showAnimated(R.anim.time_separator_show, 0)
                 } else {
