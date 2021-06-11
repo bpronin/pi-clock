@@ -15,34 +15,34 @@
             android:id="@+id/hours_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="?attr/timeFont"
+            android:fontFamily="@font/gruppo"
+            android:includeFontPadding="false"
             android:text="21"
             android:textColor="?attr/timeTextColor"
-            android:textSize="?attr/hoursFontSize"
-            android:includeFontPadding="false"
+            android:textSize="96sp"
             tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/time_separator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="?attr/timeFont"
-            android:textColor="?attr/timeTextColor"
-            android:textSize="?attr/hoursFontSize"
-            android:includeFontPadding="false"
             android:layout_marginTop="-8sp"
+            android:fontFamily="@font/gruppo"
+            android:includeFontPadding="false"
             android:text=":"
+            android:textColor="?attr/timeTextColor"
+            android:textSize="96sp"
             tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/minutes_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="?attr/timeFont"
+            android:fontFamily="@font/gruppo"
+            android:includeFontPadding="false"
             android:text="56"
             android:textColor="?attr/timeTextColor"
-            android:textSize="?attr/hoursFontSize"
-            android:includeFontPadding="false"
+            android:textSize="96sp"
             tools:ignore="HardcodedText" />
 
         <LinearLayout
@@ -56,12 +56,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8sp"
-                android:fontFamily="?attr/timeFont"
+                android:fontFamily="@font/gruppo"
                 android:includeFontPadding="false"
                 android:text="AM"
                 android:textAlignment="center"
                 android:textColor="?attr/timeTextColor"
-                android:textSize="?attr/amPmFontSize"
+                android:textSize="34sp"
                 tools:ignore="HardcodedText" />
 
             <LinearLayout
@@ -76,23 +76,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="-4sp"
-                    android:fontFamily="?attr/timeFont"
+                    android:fontFamily="@font/gruppo"
                     android:includeFontPadding="false"
                     android:text=":"
                     android:textAlignment="center"
                     android:textColor="?attr/timeTextColor"
-                    android:textSize="?attr/secondsFontSize"
+                    android:textSize="48sp"
                     tools:ignore="HardcodedText" />
 
                 <TextView
                     android:id="@+id/seconds_view"
                     android:layout_width="58sp"
                     android:layout_height="wrap_content"
-                    android:fontFamily="?attr/timeFont"
+                    android:fontFamily="@font/gruppo"
                     android:includeFontPadding="false"
                     android:text="04"
                     android:textColor="?attr/timeTextColor"
-                    android:textSize="?attr/secondsFontSize"
+                    android:textSize="48sp"
                     tools:ignore="HardcodedText" />
             </LinearLayout>
 
@@ -104,12 +104,12 @@
         android:id="@+id/date_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="?attr/timeFont"
+        android:fontFamily="@font/comfortaa"
         android:includeFontPadding="false"
         android:text="Wednesday, January 13 "
         android:textAlignment="center"
         android:textColor="?attr/timeTextColor"
-        android:textSize="?attr/dateFontSize"
+        android:textSize="18sp"
         tools:ignore="HardcodedText" />
 
 </LinearLayout>
