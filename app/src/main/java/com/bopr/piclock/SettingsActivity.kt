@@ -1,8 +1,15 @@
 package com.bopr.piclock
 
+import androidx.fragment.app.Fragment
+
 /**
  * Settings activity.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class SettingsActivity : BaseActivity(SettingsFragment::class)
+class SettingsActivity : BaseActivity() {
+
+    override fun onCreateFragment(): Fragment {
+        return SettingsFragment()
+    }
+}

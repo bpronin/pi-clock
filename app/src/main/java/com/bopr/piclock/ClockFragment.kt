@@ -25,18 +25,14 @@ import java.util.*
 
 class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
-    private val handler = Handler(Looper.getMainLooper())
     private lateinit var settings: Settings
     private lateinit var binding: FragmentMainBinding
-
     private lateinit var amPmFormat: DateFormat
     private lateinit var minutesFormat: DateFormat
     private lateinit var secondsFormat: DateFormat
     private lateinit var hoursFormat: DateFormat
     private lateinit var dateFormat: DateFormat
-
-    private var controlsVisible = false
-
+    private val handler = Handler(Looper.getMainLooper())
     private val timerTask = object : Runnable {
 
         override fun run() {
@@ -44,6 +40,9 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
             handler.postDelayed(this, 1000)
         }
     }
+    private var controlsVisible = false
+
+    var onClick: () -> Unit = {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,8 +66,12 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         binding.settingsButton.apply {
             visibility = if (controlsVisible) VISIBLE else INVISIBLE
             setOnClickListener {
-                onShowSettings()
+                startActivity(Intent(requireContext(), SettingsActivity::class.java))
             }
+        }
+
+        binding.root.setOnClickListener {
+            onClick()
         }
 
         return binding.root
@@ -92,7 +95,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         startActivity(Intent(requireContext(), SettingsActivity::class.java))
     }
 
-    fun showControls(visible: Boolean) {
+    fun setControlsVisible(visible: Boolean) {
         controlsVisible = visible
         binding.settingsButton.apply {
             if (controlsVisible) {

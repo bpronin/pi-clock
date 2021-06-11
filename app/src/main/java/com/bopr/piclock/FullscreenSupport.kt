@@ -11,7 +11,6 @@ import android.view.WindowInsetsController
 class FullscreenSupport(private val window: Window) {
 
     var onChange: (Boolean) -> Unit = {}
-    var autoFullscreenDelay = 3000L
 
     private val handler = Handler(Looper.getMainLooper())
     private val fullscreenDelay = 300L
@@ -28,7 +27,7 @@ class FullscreenSupport(private val window: Window) {
             } else {
                 runTask(fullscreenDelay) {
                     showSystemUI()
-                    autoFullscreenTask = runTask(autoFullscreenDelay) {
+                    autoFullscreenTask = runTask(3000L) {
                         autoFullscreenTask = null
                         fullscreen = true
                     }

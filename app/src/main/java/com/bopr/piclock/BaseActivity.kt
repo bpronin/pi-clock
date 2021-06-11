@@ -4,17 +4,17 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import kotlin.reflect.KClass
 
 /**
  * Base application activity with default behaviour.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class BaseActivity(private val fragmentClass: KClass<out Fragment>) : AppCompatActivity() {
+abstract class BaseActivity() : AppCompatActivity() {
 
-    protected var fragment: Fragment? = null
+    private var fragment: Fragment? = null
 
+    @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHomeButtonEnabled(true)
@@ -23,13 +23,15 @@ abstract class BaseActivity(private val fragmentClass: KClass<out Fragment>) : A
         val fragmentManager = supportFragmentManager
         fragment = fragmentManager.findFragmentByTag("fragment")
         if (fragment == null) {
-            fragment = fragmentClass.java.newInstance()
+            fragment = onCreateFragment()
             fragmentManager
                     .beginTransaction()
                     .replace(R.id.content, fragment!!, "fragment")
                     .commit()
         }
     }
+
+    abstract fun onCreateFragment(): Fragment
 
     protected fun setHomeButtonEnabled(enabled: Boolean) {
         supportActionBar?.setDisplayHomeAsUpEnabled(enabled)
