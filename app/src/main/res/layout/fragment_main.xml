@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,84 +8,20 @@
     android:keepScreenOn="true"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/time_separator"
+    <include
+        android:id="@+id/content"
+        layout="@layout/view_clock"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/settings_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="?attr/timeFont"
-        android:textColor="?attr/timeTextColor"
-        android:textSize="?attr/hoursFontSize"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text=":"
-        tools:ignore="HardcodedText" />
+        android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_margin_top"
+        android:contentDescription="@string/settings_button"
+        app:srcCompat="@drawable/ic_baseline_menu" />
 
-    <TextView
-        android:id="@+id/hours_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="?attr/timeFont"
-        android:textColor="?attr/timeTextColor"
-        android:textSize="?attr/hoursFontSize"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/time_separator"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text="00"
-        tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/minutes_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="?attr/timeFont"
-        android:textColor="?attr/timeTextColor"
-        android:textSize="?attr/hoursFontSize"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/time_separator"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text="00"
-        tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/seconds_separator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="?attr/timeFont"
-        android:textColor="?attr/timeTextColor"
-        android:textSize="?attr/secondsFontSize"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/minutes_view"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text=":"
-        tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/seconds_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="?attr/timeFont"
-        android:textColor="?attr/timeTextColor"
-        android:textSize="?attr/secondsFontSize"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/seconds_separator"
-        app:layout_constraintTop_toTopOf="parent"
-        android:text="00"
-        tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/date_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="?attr/timeFont"
-        android:textColor="?attr/timeTextColor"
-        android:textSize="?attr/dateFontSize"
-        app:layout_constraintEnd_toStartOf="@+id/seconds_separator"
-        app:layout_constraintLeft_toRightOf="@id/seconds_separator"
-        app:layout_constraintStart_toStartOf="@+id/hours_view"
-        app:layout_constraintTop_toBottomOf="@+id/time_separator"
-        android:text="Wednesday, April 13"
-        tools:ignore="HardcodedText" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

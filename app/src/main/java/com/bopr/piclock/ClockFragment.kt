@@ -17,7 +17,7 @@ import com.bopr.piclock.Settings.Companion.PREF_SECONDS_SEPARATOR
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
-import com.bopr.piclock.databinding.FragmentClockBinding
+import com.bopr.piclock.databinding.FragmentMainBinding
 import com.bopr.piclock.util.hideAnimated
 import com.bopr.piclock.util.showAnimated
 import java.text.DateFormat
@@ -29,7 +29,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var settings: Settings
-    private lateinit var binding: FragmentClockBinding
+    private lateinit var binding: FragmentMainBinding
 
     private lateinit var amPmFormat: DateFormat
     private lateinit var minutesFormat: DateFormat
@@ -63,7 +63,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentClockBinding.inflate(layoutInflater)
+        binding = FragmentMainBinding.inflate(layoutInflater)
         applySettings()
 
         binding.settingsButton.apply {
@@ -103,7 +103,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     private fun updateTimeViews() {
         val time = Date()
-        binding.run {
+        binding.content.run {
             hoursView.text = hoursFormat.format(time)
             minutesView.text = minutesFormat.format(time)
             secondsView.text = secondsFormat.format(time)
@@ -119,47 +119,54 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         amPmFormat = SimpleDateFormat("a", locale)
         minutesFormat = SimpleDateFormat("mm", locale)
         secondsFormat = SimpleDateFormat("ss", locale)
+        dateFormat = SimpleDateFormat(settings.getString(PREF_DATE_FORMAT), locale)
 
-        binding.run {
-            timeSeparator.visibility = VISIBLE
+        binding.content.run {
             timeSeparator.text = settings.getString(PREF_TIME_SEPARATOR)
-            secondsSeparator.visibility = getSecondsVisibility()
             secondsSeparator.text = settings.getString(PREF_SECONDS_SEPARATOR)
-            secondsView.visibility = getSecondsVisibility()
+
+            timeSeparator.visibility = VISIBLE
+
+            if (settings.getBoolean(PREF_SECONDS_VISIBLE)) {
+                secondsView.visibility = VISIBLE
+                secondsSeparator.visibility = VISIBLE
+            } else {
+                secondsSeparator.visibility = GONE
+                secondsView.visibility = GONE
+            }
 
             if (settings.getBoolean(PREF_24_HOURS_FORMAT)) {
                 hoursFormat = SimpleDateFormat("HH", locale)
-                amPmMarker.visibility = INVISIBLE
+                amPmMarker.visibility = GONE
             } else {
                 hoursFormat = SimpleDateFormat("h", locale)
                 amPmMarker.visibility = VISIBLE
             }
 
-            dateView.visibility = getDateVisibility()
-            dateFormat = SimpleDateFormat(settings.getString(PREF_DATE_FORMAT), Locale.getDefault())
+            if (settings.getBoolean(PREF_DATE_VISIBLE)) {
+                dateView.visibility = VISIBLE
+            } else {
+                dateView.visibility = GONE
+            }
         }
-    }
 
-    private fun getSecondsVisibility(): Int {
-        return if (settings.getBoolean(PREF_SECONDS_VISIBLE)) VISIBLE else GONE
-    }
-
-    private fun getDateVisibility(): Int {
-        return if (settings.getBoolean(PREF_DATE_VISIBLE)) VISIBLE else GONE
+//        binding.root.requestLayout()
     }
 
     private fun blinkTimeSeparator(time: Date) {
         if (settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
             val secondsVisible = settings.getBoolean(PREF_SECONDS_VISIBLE)
-            if (time.time / 1000 % 2 != 0L) {
-                binding.timeSeparator.showAnimated(R.anim.time_separator_show, 0)
-                if (secondsVisible) {
-                    binding.secondsSeparator.showAnimated(R.anim.time_separator_show, 0)
-                }
-            } else {
-                binding.timeSeparator.hideAnimated(R.anim.time_separator_hide, 0)
-                if (secondsVisible) {
-                    binding.secondsSeparator.hideAnimated(R.anim.time_separator_hide, 0)
+            binding.content.apply {
+                if (time.time / 1000 % 2 != 0L) {
+                    timeSeparator.showAnimated(R.anim.time_separator_show, 0)
+                    if (secondsVisible) {
+                        secondsSeparator.showAnimated(R.anim.time_separator_show, 0)
+                    }
+                } else {
+                    timeSeparator.hideAnimated(R.anim.time_separator_hide, 0)
+                    if (secondsVisible) {
+                        secondsSeparator.hideAnimated(R.anim.time_separator_hide, 0)
+                    }
                 }
             }
         }
