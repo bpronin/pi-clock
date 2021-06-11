@@ -1,7 +1,0 @@
-<resources>
-
-    <style name="Widget.Theme.Piclock.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/black_overlay</item>
-    </style>
-
-</resources>

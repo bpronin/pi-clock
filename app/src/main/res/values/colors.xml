@@ -4,8 +4,9 @@
     <color name="gray">#FF808080</color>
     <color name="white">#FFFFFFFF</color>
     <color name="black_overlay">#66000000</color>
+    <color name="gray_overlay">#66808080</color>
     <color name="white_overlay">#66FFFFFF</color>
-    <color name="color_accent">#872E3D</color>
-    <color name="color_accent_text">#E4DDC2</color>
+    <color name="bordo">#872E3D</color>
+<!--    <color name="color_accent_text">#E4DDC2</color>-->
     <color name="error_underline">#ff5722</color> <!-- same as private error_color_material_light -->
 </resources>

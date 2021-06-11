@@ -94,9 +94,11 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         controlsVisible = visible
         binding.settingsButton.apply {
             if (controlsVisible) {
-                showAnimated(R.anim.fab_show, 200)
+//                show()
+                showAnimated(R.anim.fab_show, 0)
             } else {
-                hideAnimated(R.anim.fab_hide, 200)
+//                hide()
+                hideAnimated(R.anim.fab_hide, 0)
             }
         }
     }
@@ -149,8 +151,6 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                 dateView.visibility = GONE
             }
         }
-
-//        binding.root.requestLayout()
     }
 
     private fun blinkTimeSeparator(time: Date) {

@@ -22,6 +22,7 @@
         android:layout_marginStart="@dimen/fab_margin"
         android:layout_marginTop="@dimen/fab_margin_top"
         android:contentDescription="@string/settings_button"
+        app:maxImageSize="32dp"
         app:srcCompat="@drawable/ic_baseline_menu" />
 
 </RelativeLayout>

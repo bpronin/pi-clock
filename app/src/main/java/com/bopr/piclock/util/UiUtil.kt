@@ -36,7 +36,7 @@ fun Context.underwivedText(value: CharSequence?): Spannable {
 fun Context.accentedText(value: CharSequence?): Spannable {
     val spannable: Spannable = SpannableString(value)
     val span: CharacterStyle =
-        ForegroundColorSpan(ContextCompat.getColor(this, R.color.color_accent))
+        ForegroundColorSpan(ContextCompat.getColor(this, R.color.bordo))
     spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
     return spannable
