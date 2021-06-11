@@ -28,4 +28,11 @@
         android:entryValues="@array/date_format_values"
         />
 
+    <ListPreference
+        android:key="tick_sound"
+        android:title="@string/tick_sound"
+        android:entries="@array/tick_sound_names"
+        android:entryValues="@array/tick_sound_resources"
+        />
+
 </PreferenceScreen>

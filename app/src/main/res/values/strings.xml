@@ -10,4 +10,15 @@
     <string name="seconds_separator">Seconds separator</string>
     <string name="none">[none]</string>
     <string name="show_date">Show date</string>
+    <string name="tick_sound">Tick sound</string>
+
+    <string-array name="tick_sound_names">
+        <item>No sound</item>
+        <item>Alarm clock</item>
+        <item>Tick-tick</item>
+        <item>Mantle clock</item>
+        <item>Wall clock</item>
+        <item>Wrist watch</item>
+    </string-array>
+
 </resources>

@@ -3,6 +3,7 @@ package com.bopr.piclock
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,6 +15,7 @@ import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
+import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.databinding.FragmentMainBinding
 import com.bopr.piclock.util.hideAnimated
@@ -36,11 +38,12 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private val timerTask = object : Runnable {
 
         override fun run() {
-            updateTimeViews()
+            onTimer()
             handler.postDelayed(this, 1000)
         }
     }
     private var controlsVisible = false
+    private var tickSound: MediaPlayer? = null
 
     var onClick: () -> Unit = {}
 
@@ -48,10 +51,16 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         super.onCreate(savedInstanceState)
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
+
+        val locale = Locale.getDefault()
+        amPmFormat = SimpleDateFormat("a", locale)
+        minutesFormat = SimpleDateFormat("mm", locale)
+        secondsFormat = SimpleDateFormat("ss", locale)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        tickSound?.release()
         settings.unregisterOnSharedPreferenceChangeListener(this)
     }
 
@@ -84,6 +93,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     override fun onPause() {
         super.onPause()
+        tickSound?.stop()
         handler.removeCallbacks(timerTask)
     }
 
@@ -91,8 +101,18 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         applySettings()
     }
 
-    private fun onShowSettings() {
-        startActivity(Intent(requireContext(), SettingsActivity::class.java))
+    private fun onTimer() {
+        val time = Date()
+        binding.content.run {
+            hoursView.text = hoursFormat.format(time)
+            minutesView.text = minutesFormat.format(time)
+            secondsView.text = secondsFormat.format(time)
+            amPmMarker.text = amPmFormat.format(time)
+            dateView.text = dateFormat.format(time)
+        }
+
+        blinkTimeSeparator(time)
+        playTickSound(time)
     }
 
     fun setControlsVisible(visible: Boolean) {
@@ -106,24 +126,10 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun updateTimeViews() {
-        val time = Date()
-        binding.content.run {
-            hoursView.text = hoursFormat.format(time)
-            minutesView.text = minutesFormat.format(time)
-            secondsView.text = secondsFormat.format(time)
-            amPmMarker.text = amPmFormat.format(time)
-            dateView.text = dateFormat.format(time)
-        }
-
-        blinkTimeSeparator(time)
-    }
+    private fun isOddSecond(time: Date) = time.time / 1000 % 2 != 0L
 
     private fun applySettings() {
         val locale = Locale.getDefault()
-        amPmFormat = SimpleDateFormat("a", locale)
-        minutesFormat = SimpleDateFormat("mm", locale)
-        secondsFormat = SimpleDateFormat("ss", locale)
         dateFormat = SimpleDateFormat(settings.getString(PREF_DATE_FORMAT), locale)
 
         binding.content.run {
@@ -151,13 +157,38 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                 dateView.visibility = GONE
             }
         }
+
+        setUpTickSound()
+    }
+
+    private fun setUpTickSound() {
+        tickSound?.run {
+            stop()
+            release()
+        }
+
+        tickSound = null
+
+        settings.getString(PREF_TICK_SOUND, null)?.let {
+            val resId = resources.getIdentifier(it, "raw", requireContext().packageName)
+            if (resId != 0) {
+                tickSound = MediaPlayer.create(requireContext(), resId)
+            }
+        }
+    }
+
+    private fun playTickSound(time: Date) {
+        tickSound?.run {
+            seekTo(0)
+            start()
+        }
     }
 
     private fun blinkTimeSeparator(time: Date) {
         if (settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
             val secondsVisible = settings.getBoolean(PREF_SECONDS_VISIBLE)
             binding.content.apply {
-                if (time.time / 1000 % 2 != 0L) {
+                if (isOddSecond(time)) {
                     timeSeparator.showAnimated(R.anim.time_separator_show, 0)
                     if (secondsVisible) {
                         secondsSeparator.showAnimated(R.anim.time_separator_show, 0)

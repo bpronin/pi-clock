@@ -12,7 +12,7 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Settings(this).loadDefaults()
+        Settings(this).validate()
     }
 
     override fun onCreateFragment(): Fragment {

@@ -13,4 +13,14 @@
         <item>yyyy-MM-dd</item>
     </string-array>
 
+    <!--  See res/raw/*.mp3 resources  -->
+    <string-array name="tick_sound_resources">
+        <item />
+        <item>alarm_clock</item>
+        <item>clock_tick_tick</item>
+        <item>mantle_clock</item>
+        <item>wooden_wall_clock</item>
+        <item>wrist_watch</item>
+    </string-array>
+
 </resources>

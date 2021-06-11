@@ -134,31 +134,51 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
             return this
         }
 
-        private fun putOptional(key: String, action: () -> Unit): EditorWrapper {
-            if (!contains(key)) {  //todo:replace with contains(key, class)
-                action()
+        private fun putOptional(
+            key: String,
+            validate: () -> Boolean,
+            put: () -> Unit
+        ): EditorWrapper {
+            if (!contains(key) || !validate()) {  //todo:replace with contains(key, class)
+                put()
             }
             return this
         }
 
-        fun putStringOptional(key: String, value: String?): EditorWrapper {
-            return putOptional(key) { putString(key, value) }
+        fun putStringOptional(
+            key: String, value: String?,
+            validate: () -> Boolean = { true }
+        ): EditorWrapper {
+            return putOptional(key, validate) { putString(key, value) }
         }
 
-        fun putStringSetOptional(key: String, values: Set<String>?): EditorWrapper {
-            return putOptional(key) { putStringSet(key, values) }
+        fun putStringSetOptional(
+            key: String,
+            values: Set<String>?,
+            validate: () -> Boolean = { true }
+        ): EditorWrapper {
+            return putOptional(key, validate) { putStringSet(key, values) }
         }
 
-        fun putBooleanOptional(key: String, value: Boolean): EditorWrapper {
-            return putOptional(key) { putBoolean(key, value) }
+        fun putBooleanOptional(
+            key: String, value: Boolean,
+            validate: () -> Boolean = { true }
+        ): EditorWrapper {
+            return putOptional(key, validate) { putBoolean(key, value) }
         }
 
-        fun putIntOptional(key: String, value: Int): EditorWrapper {
-            return putOptional(key) { putInt(key, value) }
+        fun putIntOptional(
+            key: String, value: Int,
+            validate: () -> Boolean = { true }
+        ): EditorWrapper {
+            return putOptional(key, validate) { putInt(key, value) }
         }
 
-        fun putLongOptional(key: String, value: Long): EditorWrapper {
-            return putOptional(key) { putLong(key, value) }
+        fun putLongOptional(
+            key: String, value: Long,
+            validate: () -> Boolean = { true }
+        ): EditorWrapper {
+            return putOptional(key, validate) { putLong(key, value) }
         }
 
         override fun remove(key: String): EditorWrapper {

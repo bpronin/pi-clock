@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.preference.ListPreference
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -18,6 +19,7 @@ class SettingsFragment : BasePreferenceFragment() {
         super.onStart()
         updateHourFormatPreferenceView()
         updateDateFormatPreferenceView()
+        updateTickSoundPreferenceView()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -25,6 +27,7 @@ class SettingsFragment : BasePreferenceFragment() {
         when (key) {
             PREF_24_HOURS_FORMAT -> updateHourFormatPreferenceView()
             PREF_DATE_FORMAT -> updateDateFormatPreferenceView()
+            PREF_TICK_SOUND -> updateTickSoundPreferenceView()
         }
     }
 
@@ -36,7 +39,6 @@ class SettingsFragment : BasePreferenceFragment() {
     }
 
     private fun updateDateFormatPreferenceView() {
-        val preference = requirePreference(PREF_DATE_FORMAT) as ListPreference
         val patterns = resources.getStringArray(R.array.date_format_values)
         val date = Date()
         val locale = Locale.getDefault()
@@ -46,9 +48,16 @@ class SettingsFragment : BasePreferenceFragment() {
             entries[i] = SimpleDateFormat(patterns[i], locale).format(date)
         }
 
-        preference.apply {
+        (requirePreference(PREF_DATE_FORMAT) as ListPreference).apply {
             this.entries = entries
             updateSummary(this, SimpleDateFormat(settings.getString(key), locale).format(date))
+        }
+    }
+
+    private fun updateTickSoundPreferenceView() {
+        (requirePreference(PREF_TICK_SOUND) as ListPreference).apply {
+            val value = settings.getString(PREF_TICK_SOUND)
+            updateSummary(this, entries[findIndexOfValue(value)])
         }
     }
 
