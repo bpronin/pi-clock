@@ -13,9 +13,7 @@ import android.view.ViewGroup
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_VISIBLE
-import com.bopr.piclock.Settings.Companion.PREF_SECONDS_SEPARATOR
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
-import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.databinding.FragmentMainBinding
 import com.bopr.piclock.util.hideAnimated
@@ -69,7 +67,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         binding.settingsButton.apply {
             visibility = if (controlsVisible) VISIBLE else INVISIBLE
             setOnClickListener {
-                showSettings()
+                onShowSettings()
             }
         }
 
@@ -90,14 +88,16 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         applySettings()
     }
 
+    private fun onShowSettings() {
+        startActivity(Intent(requireContext(), SettingsActivity::class.java))
+    }
+
     fun showControls(visible: Boolean) {
         controlsVisible = visible
         binding.settingsButton.apply {
             if (controlsVisible) {
-//                show()
                 showAnimated(R.anim.fab_show, 0)
             } else {
-//                hide()
                 hideAnimated(R.anim.fab_hide, 0)
             }
         }
@@ -124,9 +124,6 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         dateFormat = SimpleDateFormat(settings.getString(PREF_DATE_FORMAT), locale)
 
         binding.content.run {
-            timeSeparator.text = settings.getString(PREF_TIME_SEPARATOR)
-            secondsSeparator.text = settings.getString(PREF_SECONDS_SEPARATOR)
-
             timeSeparator.visibility = VISIBLE
 
             if (settings.getBoolean(PREF_SECONDS_VISIBLE)) {
@@ -170,10 +167,6 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                 }
             }
         }
-    }
-
-    private fun showSettings() {
-        startActivity(Intent(requireContext(), SettingsActivity::class.java))
     }
 
 }

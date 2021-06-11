@@ -28,14 +28,4 @@
         android:entryValues="@array/date_format_values"
         />
 
-    <EditTextPreference
-        android:key="time_separator"
-        android:title="@string/time_separator"
-        />
-
-    <EditTextPreference
-        android:key="seconds_separator"
-        android:title="@string/seconds_separator"
-        />
-
 </PreferenceScreen>
