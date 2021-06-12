@@ -6,6 +6,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -27,6 +28,8 @@ import java.util.*
 
 
 class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
+
+    private val TAG = "ClockFragment"
 
     private lateinit var contentContainer: ViewGroup
     private lateinit var settingsButton: FloatingActionButton
@@ -54,7 +57,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         }
     }
     private var active = false
-    private var controlsVisible = false
+    private var controlsShown = false
 
     var onClick: () -> Unit = {}
 
@@ -138,25 +141,25 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     fun setActive(active: Boolean) {
         this.active = active
-//        Log.w("ClockFragment", "active: $active")
+        Log.d(TAG, "active: $active")
         if (this.active) {
             settingsButton.showAnimated(R.anim.fab_show, 300)
             contentContainer.animateRes(R.anim.fade_in_50, 300,
                 onStart = {
-//                Log.w("ClockFragment", "show animation start")
-                    controlsVisible = true
+                    Log.d(TAG, "show animation start")
+                    controlsShown = true
                 }, onEnd = {
-//                    Log.w("ClockFragment", "show animation end")
+                    Log.d(TAG, "show animation end")
                 })
         } else {
             settingsButton.hideAnimated(R.anim.fab_hide, 300)
             contentContainer.animateRes(R.anim.fade_out_50, 300,
                 onStart = {
-//                    Log.w("ClockFragment", "hide animation start")
+                    Log.d(TAG, "hide animation start")
                 },
                 onEnd = {
-//                    Log.w("ClockFragment", "hide animation end")
-                    controlsVisible = false
+                    Log.d(TAG, "hide animation end")
+                    controlsShown = false
                 })
         }
     }
@@ -227,7 +230,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun playTickSound() {
-        if (settings.getBoolean(PREF_TICK_SOUND_ALWAYS) || controlsVisible) {
+        if (settings.getBoolean(PREF_TICK_SOUND_ALWAYS) || controlsShown) {
             tickPlayer.play()
         }
     }

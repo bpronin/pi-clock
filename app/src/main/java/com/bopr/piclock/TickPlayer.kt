@@ -3,23 +3,22 @@ package com.bopr.piclock
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.media.MediaPlayer
+import android.util.Log
 import android.view.animation.LinearInterpolator
 import androidx.core.animation.doOnEnd
 import com.bopr.piclock.util.getResourceId
 
 internal class TickPlayer(private val context: Context) {
 
+    private val TAG = "TickPlayer"
+
     private lateinit var player: MediaPlayer
-    private var volumeAnimator: ObjectAnimator? = null
+    private val volumeAnimator: ObjectAnimator = ObjectAnimator().apply {
+        setPropertyName("volume")
+        duration = 3000
+        interpolator = LinearInterpolator()
+    }
     private var ready: Boolean = false
-//    private val handler = Handler(Looper.getMainLooper())
-//    private val timerTask = object : Runnable {
-//
-//        override fun run() {
-//            onTimer()
-//            handler.postDelayed(this, 1000)
-//        }
-//    }
 
     var soundName: String? = null
         set(value) {
@@ -35,30 +34,7 @@ internal class TickPlayer(private val context: Context) {
             if (resId != 0) {
                 player = MediaPlayer.create(context, resId)
                 ready = true
-            }
-        }
-    }
-
-    fun stop() {
-        if (ready) {
-            player.stop()
-            player.release()
-            ready = false
-        }
-    }
-
-    fun fadeOut(onEnd: () -> Unit = {}) {
-        if (ready) {
-            volumeAnimator?.cancel()
-            volumeAnimator = ObjectAnimator().apply {
-                target = player
-                setPropertyName("volume")
-                setFloatValues(1.0f, 0.0f)
-                duration = 3000
-                interpolator = LinearInterpolator()
-                doOnEnd { onEnd() }
-
-                start()
+                Log.d(TAG, "Ready")
             }
         }
     }
@@ -69,8 +45,46 @@ internal class TickPlayer(private val context: Context) {
         }
 
         if (ready) {
+            Log.d(TAG, "Playing")
             player.run {
                 seekTo(0)
+                start()
+            }
+        }
+    }
+
+    fun stop() {
+        if (ready) {
+            player.stop()
+            player.release()
+            ready = false
+            Log.d(TAG, "Stopped")
+        }
+    }
+
+    fun fadeIn(onEnd: () -> Unit = {}) {
+        if (ready) {
+            volumeAnimator.apply {
+                cancel()
+
+                target = player
+                setFloatValues(0.0f, 1.0f)
+                doOnEnd { onEnd() }
+
+                start()
+            }
+        }
+    }
+
+    fun fadeOut(onEnd: () -> Unit = {}) {
+        if (ready) {
+            volumeAnimator.apply {
+                cancel()
+
+                target = player
+                setFloatValues(1.0f, 0.0f)
+                doOnEnd { onEnd() }
+
                 start()
             }
         }

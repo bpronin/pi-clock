@@ -11,43 +11,45 @@ import android.view.WindowInsetsController
 
 class FullscreenSupport(private val window: Window) {
 
-    private val tag = "FullscreenSupport"
+    private val TAG = "FullscreenSupport"
+
+    private val handler = Handler(Looper.getMainLooper())
 
     var onChange: (Boolean) -> Unit = {}
-    private val handler = Handler(Looper.getMainLooper())
-    private val autoFullscreenDelay = 3000L
+    var autoTurnOnDelay = 5000L
+
     /**
      * Some older devices needs a small delay between UI widget updates
      * and a change of the status and navigation bar.
      */
     private val startDelay = 300L
 
-    private val showTask = Runnable {
+    private val turnOnTask = Runnable {
         showSystemUI()
         onChange(fullscreen)
     }
 
-    private val hideTask = Runnable {
+    private val turnOffTask = Runnable {
         hideSystemUI()
         onChange(fullscreen)
     }
 
-    private val autoHideTask = Runnable {
-        Log.d(tag, "Auto")
+    private val autoTurnOnTask = Runnable {
+        Log.d(TAG, "Auto")
         fullscreen = true
     }
 
     var fullscreen: Boolean = false
         set(value) {
-            handler.removeCallbacks(autoHideTask)
+            handler.removeCallbacks(autoTurnOnTask)
             field = value
             if (field) {
-                handler.postDelayed(hideTask, startDelay)
+                handler.postDelayed(turnOffTask, startDelay)
             } else {
-                handler.postDelayed(showTask, startDelay)
-                handler.postDelayed(autoHideTask, autoFullscreenDelay)
+                handler.postDelayed(turnOnTask, startDelay)
+                handler.postDelayed(autoTurnOnTask, autoTurnOnDelay)
             }
-            Log.d(tag, "Fullscreen: $field")
+            Log.d(TAG, "Fullscreen: $field")
         }
 
     fun toggle() {
@@ -64,7 +66,7 @@ class FullscreenSupport(private val window: Window) {
                     or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
         }
 
-        Log.d(tag, "System UI shown")
+        Log.d(TAG, "System UI shown")
     }
 
     private fun hideSystemUI() {
@@ -84,7 +86,7 @@ class FullscreenSupport(private val window: Window) {
                     or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
         }
 
-        Log.d(tag, "System UI hidden")
+        Log.d(TAG, "System UI hidden")
     }
 
 }
