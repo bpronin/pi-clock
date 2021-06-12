@@ -7,8 +7,10 @@ import android.text.style.CharacterStyle
 import android.text.style.ForegroundColorSpan
 import android.text.style.ParagraphStyle
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.animation.Animation
-import android.view.animation.AnimationUtils
+import android.view.animation.AnimationUtils.loadAnimation
 import androidx.annotation.AnimRes
 import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
@@ -49,54 +51,42 @@ fun Context.accentedText(value: CharSequence?): Spannable {
     return spannable
 }
 
-fun View.showAnimated(@AnimRes animationRes: Int, delay: Long) {
-    if (visibility != View.VISIBLE) {
-        clearAnimation()
-        val animation = AnimationUtils.loadAnimation(context, animationRes).apply {
-            startOffset = delay
+fun View.animateRes(
+    @AnimRes animationRes: Int,
+    startDelay: Long,
+    onStart: () -> Unit = {},
+    onEnd: () -> Unit = {}
+) {
+    clearAnimation()
+    val animation = loadAnimation(context, animationRes).apply {
+        startOffset = startDelay
 
-            setAnimationListener(object : Animation.AnimationListener {
+        setAnimationListener(object : Animation.AnimationListener {
 
-                override fun onAnimationStart(animation: Animation?) {
-                    visibility = View.VISIBLE
-                }
+            override fun onAnimationStart(animation: Animation?) {
+                onStart()
+            }
 
-                override fun onAnimationEnd(animation: Animation?) {
-                    /* nothing */
-                }
+            override fun onAnimationEnd(animation: Animation?) {
+                onEnd()
+            }
 
-                override fun onAnimationRepeat(animation: Animation?) {
-                    /* nothing */
-                }
-            })
-        }
-        visibility = View.INVISIBLE /* to properly animate coordinates ensure it is not GONE here */
-        startAnimation(animation)
+            override fun onAnimationRepeat(animation: Animation?) {
+                /* do nothing */
+            }
+        })
+    }
+    startAnimation(animation)
+}
+
+fun View.showAnimated(@AnimRes animationRes: Int, startDelay: Long) {
+    if (visibility != VISIBLE) {
+        animateRes(animationRes, startDelay, onStart = { visibility = VISIBLE })
     }
 }
 
-fun View.hideAnimated(@AnimRes animationRes: Int, delay: Long) {
-    if (visibility == View.VISIBLE) {
-        clearAnimation()
-        val animation = AnimationUtils.loadAnimation(context, animationRes).apply {
-            startOffset = delay
-
-            setAnimationListener(object : Animation.AnimationListener {
-
-                override fun onAnimationStart(animation: Animation?) {
-                    visibility = View.INVISIBLE
-                }
-
-                override fun onAnimationEnd(animation: Animation?) {
-                    /* nothing */
-                }
-
-                override fun onAnimationRepeat(animation: Animation?) {
-                    /* nothing */
-                }
-            })
-        }
-        visibility = View.VISIBLE /* to properly animate coordinates ensure it is not GONE here */
-        startAnimation(animation)
+fun View.hideAnimated(@AnimRes animationRes: Int, startDelay: Long) {
+    if (visibility == VISIBLE) {
+        animateRes(animationRes, startDelay, onStart = { visibility = INVISIBLE })
     }
 }

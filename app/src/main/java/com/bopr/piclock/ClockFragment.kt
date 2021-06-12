@@ -19,10 +19,7 @@ import com.bopr.piclock.Settings.Companion.PREF_DATE_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
-import com.bopr.piclock.util.getResourceId
-import com.bopr.piclock.util.hideAnimated
-import com.bopr.piclock.util.requireViewByIdCompat
-import com.bopr.piclock.util.showAnimated
+import com.bopr.piclock.util.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -136,19 +133,19 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     fun setControlsVisible(visible: Boolean) {
         controlsVisible = visible
-        settingsButton.apply {
-            if (controlsVisible) {
-                showAnimated(R.anim.fab_show, 0)
-            } else {
-                hideAnimated(R.anim.fab_hide, 0)
-            }
+        if (controlsVisible) {
+            settingsButton.showAnimated(R.anim.fab_show, 300)
+            contentContainer.animateRes(R.anim.fade_in_50, 300)
+        } else {
+            settingsButton.hideAnimated(R.anim.fab_hide, 300)
+            contentContainer.animateRes(R.anim.fade_out_50, 2000)
         }
     }
 
     private fun bindViews() {
         val resName = settings.getString(PREF_CLOCK_LAYOUT)
         val resId = requireContext().getResourceId("layout", resName)
-        layoutInflater.inflate(resId, contentContainer, false).apply{
+        layoutInflater.inflate(resId, contentContainer, false).apply {
             contentContainer.removeAllViews()
             contentContainer.addView(this)
 
@@ -211,7 +208,8 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     private fun playTickSound() {
         tickSound?.run {
-//            pause()
+//            stop()
+//            prepare()
             seekTo(0)
             start()
         }
