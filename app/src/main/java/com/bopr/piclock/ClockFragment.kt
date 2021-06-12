@@ -17,6 +17,7 @@ import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
+import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.util.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -52,6 +53,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
             handler.postDelayed(this, 1000)
         }
     }
+    private var active = false
     private var controlsVisible = false
 
     var onClick: () -> Unit = {}
@@ -89,7 +91,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
         settingsButton = view.requireViewByIdCompat(R.id.settings_button)
         settingsButton.apply {
-            visibility = if (controlsVisible) VISIBLE else INVISIBLE
+            visibility = if (active) VISIBLE else INVISIBLE
             setOnClickListener {
                 startActivity(Intent(requireContext(), SettingsActivity::class.java))
             }
@@ -131,27 +133,39 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         dateView.text = dateFormat.format(time)
 
         blinkTimeSeparator(time)
-        tickPlayer.play()
+        playTickSound()
     }
 
-    fun setControlsVisible(visible: Boolean) {
-        controlsVisible = visible
-        if (controlsVisible) {
+    fun setActive(active: Boolean) {
+        this.active = active
+//        Log.w("ClockFragment", "active: $active")
+        if (this.active) {
             settingsButton.showAnimated(R.anim.fab_show, 300)
-            contentContainer.animateRes(R.anim.fade_in_50, 300)
+            contentContainer.animateRes(R.anim.fade_in_50, 300,
+                onStart = {
+//                Log.w("ClockFragment", "show animation start")
+                    controlsVisible = true
+                }, onEnd = {
+//                    Log.w("ClockFragment", "show animation end")
+                })
         } else {
             settingsButton.hideAnimated(R.anim.fab_hide, 300)
-            contentContainer.animateRes(R.anim.fade_out_50, 300)
+            contentContainer.animateRes(R.anim.fade_out_50, 300,
+                onStart = {
+//                    Log.w("ClockFragment", "hide animation start")
+                },
+                onEnd = {
+//                    Log.w("ClockFragment", "hide animation end")
+                    controlsVisible = false
+                })
         }
     }
 
     private fun createContentView() {
+        contentContainer.removeAllViews()
         val resName = settings.getString(PREF_CLOCK_LAYOUT)
         val resId = requireContext().getResourceId("layout", resName)
-        layoutInflater.inflate(resId, contentContainer, false).apply {
-            contentContainer.removeAllViews()
-            contentContainer.addView(this)
-
+        contentContainer.addView(layoutInflater.inflate(resId, contentContainer, false).apply {
             hoursView = requireViewByIdCompat(R.id.hours_view)
             minutesView = requireViewByIdCompat(R.id.minutes_view)
             secondsView = requireViewByIdCompat(R.id.seconds_view)
@@ -159,7 +173,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
             dateView = requireViewByIdCompat(R.id.date_view)
             timeSeparator = requireViewByIdCompat(R.id.time_separator)
             secondsSeparator = requireViewByIdCompat(R.id.seconds_separator)
-        }
+        })
     }
 
     private fun applySettings() {
@@ -208,10 +222,16 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun isOddSecond(time: Date) = time.time / 1000 % 2 != 0L
-
     private fun updateTickPlayer() {
         tickPlayer.soundName = settings.getString(PREF_TICK_SOUND, null)
     }
+
+    private fun playTickSound() {
+        if (settings.getBoolean(PREF_TICK_SOUND_ALWAYS) || controlsVisible) {
+            tickPlayer.play()
+        }
+    }
+
+    private fun isOddSecond(time: Date) = time.time / 1000 % 2 != 0L
 
 }

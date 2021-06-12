@@ -20,7 +20,7 @@ class MainActivity : BaseActivity() {
         val fragment = ClockFragment()
 
         fullscreenSupport.onChange = {
-            fragment.setControlsVisible(!it)
+            fragment.setActive(!it)
         }
 
         fragment.onClick = {

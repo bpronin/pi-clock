@@ -3,6 +3,7 @@ package com.bopr.piclock
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowInsets
@@ -10,29 +11,43 @@ import android.view.WindowInsetsController
 
 class FullscreenSupport(private val window: Window) {
 
-    var onChange: (Boolean) -> Unit = {}
+    private val tag = "FullscreenSupport"
 
+    var onChange: (Boolean) -> Unit = {}
     private val handler = Handler(Looper.getMainLooper())
-    private val fullscreenDelay = 300L
-    private var autoFullscreenTask: Runnable? = null
+    private val autoFullscreenDelay = 3000L
+    /**
+     * Some older devices needs a small delay between UI widget updates
+     * and a change of the status and navigation bar.
+     */
+    private val startDelay = 300L
+
+    private val showTask = Runnable {
+        showSystemUI()
+        onChange(fullscreen)
+    }
+
+    private val hideTask = Runnable {
+        hideSystemUI()
+        onChange(fullscreen)
+    }
+
+    private val autoHideTask = Runnable {
+        Log.d(tag, "Auto")
+        fullscreen = true
+    }
 
     var fullscreen: Boolean = false
         set(value) {
-            removeTask(autoFullscreenTask)
+            handler.removeCallbacks(autoHideTask)
             field = value
             if (field) {
-                runTask(fullscreenDelay) {
-                    hideSystemUI()
-                }
+                handler.postDelayed(hideTask, startDelay)
             } else {
-                runTask(fullscreenDelay) {
-                    showSystemUI()
-                    autoFullscreenTask = runTask(3000L) {
-                        autoFullscreenTask = null
-                        fullscreen = true
-                    }
-                }
+                handler.postDelayed(showTask, startDelay)
+                handler.postDelayed(autoHideTask, autoFullscreenDelay)
             }
+            Log.d(tag, "Fullscreen: $field")
         }
 
     fun toggle() {
@@ -48,6 +63,8 @@ class FullscreenSupport(private val window: Window) {
             window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
         }
+
+        Log.d(tag, "System UI shown")
     }
 
     private fun hideSystemUI() {
@@ -66,27 +83,8 @@ class FullscreenSupport(private val window: Window) {
                     or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION)
         }
-    }
 
-    /**
-     * Some older devices needs a small delay between UI widget updates
-     * and a change of the status and navigation bar.
-     */
-    private fun runTask(delay: Long, action: () -> Unit): Runnable {
-        val task = object : Runnable {
-
-            override fun run() {
-                removeTask(this)
-                action()
-                onChange(fullscreen)
-            }
-        }
-        handler.postDelayed(task, delay)
-        return task
-    }
-
-    private fun removeTask(task: Runnable?) {
-        task?.run { handler.removeCallbacks(this) }
+        Log.d(tag, "System UI hidden")
     }
 
 }
