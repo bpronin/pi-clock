@@ -3,7 +3,6 @@ package com.bopr.piclock
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -44,6 +43,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private lateinit var secondsFormat: DateFormat
     private lateinit var hoursFormat: DateFormat
     private lateinit var dateFormat: DateFormat
+    private lateinit var tickPlayer: TickPlayer
     private val handler = Handler(Looper.getMainLooper())
     private val timerTask = object : Runnable {
 
@@ -52,7 +52,6 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
             handler.postDelayed(this, 1000)
         }
     }
-    private var tickSound: MediaPlayer? = null
     private var controlsVisible = false
 
     var onClick: () -> Unit = {}
@@ -66,11 +65,13 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         amPmFormat = SimpleDateFormat("a", locale)
         minutesFormat = SimpleDateFormat("mm", locale)
         secondsFormat = SimpleDateFormat("ss", locale)
+
+        tickPlayer = TickPlayer(requireContext())
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        tickSound?.release()
+        tickPlayer.stop()
         settings.unregisterOnSharedPreferenceChangeListener(this)
     }
 
@@ -94,7 +95,8 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
             }
         }
 
-        bindViews()
+        createContentView()
+        updateTickPlayer()
         applySettings()
 
         return view
@@ -107,13 +109,14 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     override fun onPause() {
         super.onPause()
-        tickSound?.stop()
+        tickPlayer.stop()
         handler.removeCallbacks(timerTask)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if (key == PREF_CLOCK_LAYOUT) {
-            bindViews()
+        when (key) {
+            PREF_CLOCK_LAYOUT -> createContentView()
+            PREF_TICK_SOUND -> updateTickPlayer()
         }
 
         applySettings()
@@ -128,7 +131,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         dateView.text = dateFormat.format(time)
 
         blinkTimeSeparator(time)
-        playTickSound()
+        tickPlayer.play()
     }
 
     fun setControlsVisible(visible: Boolean) {
@@ -138,11 +141,11 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
             contentContainer.animateRes(R.anim.fade_in_50, 300)
         } else {
             settingsButton.hideAnimated(R.anim.fab_hide, 300)
-            contentContainer.animateRes(R.anim.fade_out_50, 2000)
+            contentContainer.animateRes(R.anim.fade_out_50, 300)
         }
     }
 
-    private fun bindViews() {
+    private fun createContentView() {
         val resName = settings.getString(PREF_CLOCK_LAYOUT)
         val resId = requireContext().getResourceId("layout", resName)
         layoutInflater.inflate(resId, contentContainer, false).apply {
@@ -186,33 +189,6 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         } else {
             dateView.visibility = GONE
         }
-
-        setUpTickSound()
-    }
-
-    private fun setUpTickSound() {
-        tickSound?.run {
-            stop()
-            release()
-        }
-
-        tickSound = null
-
-        settings.getString(PREF_TICK_SOUND, null)?.let {
-            val resId = requireContext().getResourceId("raw", it)
-            if (resId != 0) {
-                tickSound = MediaPlayer.create(requireContext(), resId)
-            }
-        }
-    }
-
-    private fun playTickSound() {
-        tickSound?.run {
-//            stop()
-//            prepare()
-            seekTo(0)
-            start()
-        }
     }
 
     private fun blinkTimeSeparator(time: Date) {
@@ -233,5 +209,9 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun isOddSecond(time: Date) = time.time / 1000 % 2 != 0L
+
+    private fun updateTickPlayer() {
+        tickPlayer.soundName = settings.getString(PREF_TICK_SOUND, null)
+    }
 
 }

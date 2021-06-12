@@ -7,6 +7,7 @@ import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
+import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -22,6 +23,7 @@ class SettingsFragment : BasePreferenceFragment() {
         updateDateFormatPreferenceView()
         updateTickSoundPreferenceView()
         updateClockLayoutPreferenceView()
+        updateTickAlwaysPreferenceView()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -31,6 +33,18 @@ class SettingsFragment : BasePreferenceFragment() {
             PREF_DATE_FORMAT -> updateDateFormatPreferenceView()
             PREF_TICK_SOUND -> updateTickSoundPreferenceView()
             PREF_CLOCK_LAYOUT -> updateClockLayoutPreferenceView()
+            PREF_TICK_SOUND_ALWAYS -> updateTickAlwaysPreferenceView()
+        }
+    }
+
+    private fun updateTickAlwaysPreferenceView() {
+        requirePreference(PREF_TICK_SOUND_ALWAYS).apply {
+            val text = if (settings.getBoolean(key)) {
+                R.string.play_always
+            } else {
+                R.string.play_only_when_tapped
+            }
+            updateSummary(this, resources.getString(text))
         }
     }
 

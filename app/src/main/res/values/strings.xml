@@ -12,6 +12,9 @@
     <string name="show_date">Show date</string>
     <string name="tick_sound">Tick sound</string>
     <string name="clock_layout">Clock layout</string>
+    <string name="tick_sound_always">Tick always</string>
+    <string name="play_always">Play always</string>
+    <string name="play_only_when_tapped">Play only when tapped</string>
 
     <string-array name="clock_layout_names">
         <item>Digital default</item>

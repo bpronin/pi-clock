@@ -42,4 +42,10 @@
         android:entryValues="@array/tick_sound_resources"
         />
 
+    <SwitchPreference
+        android:key="tick_sound_always"
+        android:title="@string/tick_sound_always"
+        />
+
+
 </PreferenceScreen>
