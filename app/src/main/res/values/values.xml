@@ -23,4 +23,9 @@
         <item>wrist_watch</item>
     </string-array>
 
+    <string-array name="clock_layout_resources">
+        <item>view_digital_default</item>
+        <item>view_digital_round</item>
+    </string-array>
+
 </resources>

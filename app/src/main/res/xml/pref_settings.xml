@@ -29,6 +29,13 @@
         />
 
     <ListPreference
+        android:key="clock_layout"
+        android:title="@string/clock_layout"
+        android:entries="@array/clock_layout_names"
+        android:entryValues="@array/clock_layout_resources"
+        />
+
+    <ListPreference
         android:key="tick_sound"
         android:title="@string/tick_sound"
         android:entries="@array/tick_sound_names"

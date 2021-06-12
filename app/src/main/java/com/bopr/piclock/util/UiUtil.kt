@@ -10,6 +10,7 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.annotation.AnimRes
+import androidx.annotation.IdRes
 import androidx.core.content.ContextCompat
 import com.bopr.piclock.R
 
@@ -19,12 +20,18 @@ import com.bopr.piclock.R
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 
+fun <T : View?> View.requireViewByIdCompat(@IdRes id: Int): T {
+    return findViewById(id)
+        ?: throw IllegalArgumentException("ID does not reference a View inside this View")
+}
+
 /**
  * Returns text underlined with wavy red line.
  */
 fun Context.underwivedText(value: CharSequence?): Spannable {
     val spannable: Spannable = SpannableString(value)
-    val span: ParagraphStyle = WavyUnderlineSpan(ContextCompat.getColor(this, R.color.error_underline))
+    val span: ParagraphStyle =
+        WavyUnderlineSpan(ContextCompat.getColor(this, R.color.error_underline))
     spannable.setSpan(span, 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
     return spannable

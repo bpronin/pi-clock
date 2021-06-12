@@ -11,6 +11,12 @@
     <string name="none">[none]</string>
     <string name="show_date">Show date</string>
     <string name="tick_sound">Tick sound</string>
+    <string name="clock_layout">Clock layout</string>
+
+    <string-array name="clock_layout_names">
+        <item>Digital default</item>
+        <item>Digital round</item>
+    </string-array>
 
     <string-array name="tick_sound_names">
         <item>No sound</item>

@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.preference.ListPreference
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import java.text.SimpleDateFormat
@@ -20,6 +21,7 @@ class SettingsFragment : BasePreferenceFragment() {
         updateHourFormatPreferenceView()
         updateDateFormatPreferenceView()
         updateTickSoundPreferenceView()
+        updateClockLayoutPreferenceView()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -28,6 +30,7 @@ class SettingsFragment : BasePreferenceFragment() {
             PREF_24_HOURS_FORMAT -> updateHourFormatPreferenceView()
             PREF_DATE_FORMAT -> updateDateFormatPreferenceView()
             PREF_TICK_SOUND -> updateTickSoundPreferenceView()
+            PREF_CLOCK_LAYOUT -> updateClockLayoutPreferenceView()
         }
     }
 
@@ -39,9 +42,9 @@ class SettingsFragment : BasePreferenceFragment() {
     }
 
     private fun updateDateFormatPreferenceView() {
+        val locale = Locale.getDefault()
         val patterns = resources.getStringArray(R.array.date_format_values)
         val date = Date()
-        val locale = Locale.getDefault()
 
         val entries = arrayOfNulls<String>(patterns.size)
         for (i in entries.indices) {
@@ -51,6 +54,13 @@ class SettingsFragment : BasePreferenceFragment() {
         (requirePreference(PREF_DATE_FORMAT) as ListPreference).apply {
             this.entries = entries
             updateSummary(this, SimpleDateFormat(settings.getString(key), locale).format(date))
+        }
+    }
+
+    private fun updateClockLayoutPreferenceView() {
+        (requirePreference(PREF_CLOCK_LAYOUT) as ListPreference).apply {
+            val value = settings.getString(PREF_CLOCK_LAYOUT)
+            updateSummary(this, entries[findIndexOfValue(value)])
         }
     }
 
