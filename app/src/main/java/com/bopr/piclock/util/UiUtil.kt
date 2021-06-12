@@ -53,15 +53,17 @@ fun Context.accentedText(value: CharSequence?): Spannable {
 
 fun View.animateRes(
     @AnimRes animationRes: Int,
-    startDelay: Long,
+    startDelay: Long?,
+    duration: Long?,
     onStart: () -> Unit = {},
     onEnd: () -> Unit = {}
 ) {
     clearAnimation()
-    val animation = loadAnimation(context, animationRes).apply {
-        startOffset = startDelay
+    val animation = loadAnimation(context, animationRes).also {
+        duration?.apply { it.duration = this }
+        startDelay?.apply { it.startOffset = this }
 
-        setAnimationListener(object : Animation.AnimationListener {
+        it.setAnimationListener(object : Animation.AnimationListener {
 
             override fun onAnimationStart(animation: Animation?) {
                 onStart()
@@ -76,17 +78,18 @@ fun View.animateRes(
             }
         })
     }
+
     startAnimation(animation)
 }
 
 fun View.showAnimated(@AnimRes animationRes: Int, startDelay: Long) {
     if (visibility != VISIBLE) {
-        animateRes(animationRes, startDelay, onStart = { visibility = VISIBLE })
+        animateRes(animationRes, startDelay, null, onStart = { visibility = VISIBLE })
     }
 }
 
 fun View.hideAnimated(@AnimRes animationRes: Int, startDelay: Long) {
     if (visibility == VISIBLE) {
-        animateRes(animationRes, startDelay, onStart = { visibility = INVISIBLE })
+        animateRes(animationRes, startDelay, null, onStart = { visibility = INVISIBLE })
     }
 }

@@ -139,26 +139,36 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         playTickSound()
     }
 
-    fun setActive(active: Boolean) {
-        this.active = active
+    fun setActive(value: Boolean) {
+        active = value
         Log.d(TAG, "active: $active")
-        if (this.active) {
-            settingsButton.showAnimated(R.anim.fab_show, 300)
-            contentContainer.animateRes(R.anim.fade_in_50, 300,
+
+        val wantControlVolume = !settings.getBoolean(PREF_TICK_SOUND_ALWAYS)
+        val startDelay = 100L
+        val duration: Long = 3000
+
+        if (active) {
+            settingsButton.showAnimated(R.anim.fab_show, startDelay)
+
+            contentContainer.animateRes(R.anim.fade_in_50, startDelay,
+                duration,
                 onStart = {
-                    Log.d(TAG, "show animation start")
+                    if (wantControlVolume) {
+                        tickPlayer.fadeVolume(0f, 1f, duration)
+                    }
                     controlsShown = true
-                }, onEnd = {
-                    Log.d(TAG, "show animation end")
                 })
         } else {
-            settingsButton.hideAnimated(R.anim.fab_hide, 300)
-            contentContainer.animateRes(R.anim.fade_out_50, 300,
+            settingsButton.hideAnimated(R.anim.fab_hide, startDelay)
+
+            contentContainer.animateRes(R.anim.fade_out_50, startDelay,
+                duration,
                 onStart = {
-                    Log.d(TAG, "hide animation start")
+                    if (wantControlVolume) {
+                        tickPlayer.fadeVolume(1f, 0f, duration)
+                    }
                 },
                 onEnd = {
-                    Log.d(TAG, "hide animation end")
                     controlsShown = false
                 })
         }

@@ -5,7 +5,6 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.util.Log
 import android.view.animation.LinearInterpolator
-import androidx.core.animation.doOnEnd
 import com.bopr.piclock.util.getResourceId
 
 internal class TickPlayer(private val context: Context) {
@@ -13,12 +12,11 @@ internal class TickPlayer(private val context: Context) {
     private val TAG = "TickPlayer"
 
     private lateinit var player: MediaPlayer
-    private val volumeAnimator: ObjectAnimator = ObjectAnimator().apply {
+    private val volumeAnimator = ObjectAnimator().apply {
         setPropertyName("volume")
-        duration = 3000
         interpolator = LinearInterpolator()
     }
-    private var ready: Boolean = false
+    private var ready = false
 
     var soundName: String? = null
         set(value) {
@@ -34,6 +32,7 @@ internal class TickPlayer(private val context: Context) {
             if (resId != 0) {
                 player = MediaPlayer.create(context, resId)
                 ready = true
+
                 Log.d(TAG, "Ready")
             }
         }
@@ -45,7 +44,7 @@ internal class TickPlayer(private val context: Context) {
         }
 
         if (ready) {
-            Log.d(TAG, "Playing")
+//            Log.d(TAG, "Playing")
             player.run {
                 seekTo(0)
                 start()
@@ -55,37 +54,27 @@ internal class TickPlayer(private val context: Context) {
 
     fun stop() {
         if (ready) {
+            volumeAnimator.cancel()
             player.stop()
             player.release()
             ready = false
+
             Log.d(TAG, "Stopped")
         }
     }
 
-    fun fadeIn(onEnd: () -> Unit = {}) {
+    fun fadeVolume(from: Float, to: Float, duration: Long) {
         if (ready) {
-            volumeAnimator.apply {
-                cancel()
+            player.setVolume(from, from)
 
-                target = player
-                setFloatValues(0.0f, 1.0f)
-                doOnEnd { onEnd() }
+            volumeAnimator.also {
+                it.cancel()
 
-                start()
-            }
-        }
-    }
+                it.target = player
+                it.duration = duration
+                it.setFloatValues(from, to)
 
-    fun fadeOut(onEnd: () -> Unit = {}) {
-        if (ready) {
-            volumeAnimator.apply {
-                cancel()
-
-                target = player
-                setFloatValues(1.0f, 0.0f)
-                doOnEnd { onEnd() }
-
-                start()
+                it.start()
             }
         }
     }
