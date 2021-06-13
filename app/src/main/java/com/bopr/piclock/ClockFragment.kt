@@ -55,6 +55,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private lateinit var tickPlayer: TickPlayer
     private var autoDeactivateDelay: Long = 1000L
 
+    private val locale = Locale.getDefault()
     private val handler = Handler(Looper.getMainLooper())
     private val timerTask = object : Runnable {
 
@@ -94,19 +95,18 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val locale = Locale.getDefault()
         amPmFormat = SimpleDateFormat("a", locale)
         minutesFormat = SimpleDateFormat("mm", locale)
         secondsFormat = SimpleDateFormat("ss", locale)
 
         tickPlayer = TickPlayer(requireContext())
 
-        settings = Settings(requireContext()).also {
-            autoDeactivateDelay = it.getLong(PREF_AUTO_FULLSCREEN_DELAY)
-            tickPlayer.soundName = it.getString(PREF_TICK_SOUND, null)
-            //      todo:  active = settings.getBoolean(PREF_LAST_ACTIVE)
-            it.registerOnSharedPreferenceChangeListener(this)
+        settings = Settings(requireContext()).apply {
+            autoDeactivateDelay = getLong(PREF_AUTO_FULLSCREEN_DELAY)
+            dateFormat = SimpleDateFormat(getString(PREF_DATE_FORMAT), locale)
+            tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
         }
+        settings.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onDestroy() {
@@ -136,7 +136,6 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         }
 
         createContentView()
-        applySettings()
 
         return view
     }
@@ -158,20 +157,30 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        when (key) {
-            PREF_CLOCK_LAYOUT ->
-                createContentView()
-            PREF_TICK_SOUND ->
-                tickPlayer.soundName = settings.getString(PREF_TICK_SOUND, null)
-            PREF_AUTO_FULLSCREEN_DELAY ->
-                autoDeactivateDelay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
+        settings.apply {
+            when (key) {
+                PREF_CLOCK_LAYOUT -> createContentView()
+                PREF_24_HOURS_FORMAT ->
+                    updateHoursView(getBoolean(PREF_24_HOURS_FORMAT))
+                PREF_SECONDS_VISIBLE ->
+                    updateSecondsView(getBoolean(PREF_SECONDS_VISIBLE))
+                PREF_DATE_VISIBLE ->
+                    updateDateView(getBoolean(PREF_DATE_VISIBLE))
+                PREF_TIME_SEPARATOR_BLINKING ->
+                    updateTimeSeparatorView(getBoolean(PREF_TIME_SEPARATOR_BLINKING))
+                PREF_DATE_FORMAT ->
+                    dateFormat = SimpleDateFormat(getString(PREF_DATE_FORMAT), locale)
+                PREF_TICK_SOUND ->
+                    tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
+                PREF_AUTO_FULLSCREEN_DELAY ->
+                    autoDeactivateDelay = getLong(PREF_AUTO_FULLSCREEN_DELAY)
+            }
         }
-
-        applySettings()
     }
 
     private fun onTimer() {
         val time = Date()
+
         hoursView.text = hoursFormat.format(time)
         minutesView.text = minutesFormat.format(time)
         secondsView.text = secondsFormat.format(time)
@@ -217,50 +226,72 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun createContentView() {
-        contentContainer.removeAllViews()
-        val resName = settings.getString(PREF_CLOCK_LAYOUT)
-        val resId = requireContext().getResourceId("layout", resName)
-        contentContainer.addView(layoutInflater.inflate(resId, contentContainer, false).apply {
-            hoursView = requireViewByIdCompat(R.id.hours_view)
-            minutesView = requireViewByIdCompat(R.id.minutes_view)
-            secondsView = requireViewByIdCompat(R.id.seconds_view)
-            amPmMarkerView = requireViewByIdCompat(R.id.am_pm_marker_view)
-            dateView = requireViewByIdCompat(R.id.date_view)
-            timeSeparator = requireViewByIdCompat(R.id.time_separator)
-            secondsSeparator = requireViewByIdCompat(R.id.seconds_separator)
-        })
+        contentContainer.apply {
+            removeAllViews()
+            val resName = settings.getString(PREF_CLOCK_LAYOUT)
+            val resId = requireContext().getResourceId("layout", resName)
+
+            addView(layoutInflater.inflate(resId, this, false).apply {
+                hoursView = requireViewByIdCompat(R.id.hours_view)
+                minutesView = requireViewByIdCompat(R.id.minutes_view)
+                secondsView = requireViewByIdCompat(R.id.seconds_view)
+                amPmMarkerView = requireViewByIdCompat(R.id.am_pm_marker_view)
+                dateView = requireViewByIdCompat(R.id.date_view)
+                timeSeparator = requireViewByIdCompat(R.id.time_separator)
+                secondsSeparator = requireViewByIdCompat(R.id.seconds_separator)
+            })
+        }
+
+        settings.apply {
+            updateHoursView(getBoolean(PREF_24_HOURS_FORMAT))
+            updateSecondsView(getBoolean(PREF_SECONDS_VISIBLE))
+            updateDateView(getBoolean(PREF_DATE_VISIBLE))
+            updateTimeSeparatorView(getBoolean(PREF_TIME_SEPARATOR_BLINKING))
+            //      todo:  active = settings.getBoolean(PREF_LAST_ACTIVE)
+        }
     }
 
-    private fun applySettings() {
-        val locale = Locale.getDefault()
-        dateFormat = SimpleDateFormat(settings.getString(PREF_DATE_FORMAT), locale)
+    private fun updateDateView(visible: Boolean) {
+        if (visible) {
+            dateView.visibility = VISIBLE
+        } else {
+            dateView.visibility = GONE
+        }
+    }
 
-        timeSeparator.visibility = VISIBLE
-
-        if (settings.getBoolean(PREF_SECONDS_VISIBLE)) {
+    private fun updateSecondsView(visible: Boolean) {
+        if (visible) {
             secondsView.visibility = VISIBLE
             secondsSeparator.visibility = VISIBLE
         } else {
-            secondsSeparator.visibility = GONE
             secondsView.visibility = GONE
+            secondsSeparator.visibility = GONE
         }
+    }
 
-        if (settings.getBoolean(PREF_24_HOURS_FORMAT)) {
+    private fun updateHoursView(format24: Boolean) {
+        if (format24) {
             hoursFormat = SimpleDateFormat("HH", locale)
             amPmMarkerView.visibility = GONE
         } else {
             hoursFormat = SimpleDateFormat("h", locale)
             amPmMarkerView.visibility = VISIBLE
         }
+    }
 
-        if (settings.getBoolean(PREF_DATE_VISIBLE)) {
-            dateView.visibility = VISIBLE
-        } else {
-            dateView.visibility = GONE
+    private fun updateTimeSeparatorView(blinking: Boolean) {
+        timeSeparator.visibility = if (blinking) INVISIBLE else VISIBLE
+        secondsSeparator.visibility = if (blinking) INVISIBLE else VISIBLE
+    }
+
+    private fun applyViewSettings() {
+        settings.apply {
+            updateHoursView(getBoolean(PREF_24_HOURS_FORMAT))
+            updateSecondsView(getBoolean(PREF_SECONDS_VISIBLE))
+            updateDateView(getBoolean(PREF_DATE_VISIBLE))
+            updateTimeSeparatorView(getBoolean(PREF_TIME_SEPARATOR_BLINKING))
+            //      todo:  active = settings.getBoolean(PREF_LAST_ACTIVE)
         }
-
-
-//      todo:  active = settings.getBoolean(PREF_LAST_ACTIVE)
     }
 
     private fun blinkTimeSeparator(time: Date) {

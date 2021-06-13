@@ -54,8 +54,14 @@ class SettingsFragment : BasePreferenceFragment() {
     }
 
     private fun updateHourFormatPreferenceView() {
+        val date = Date()
+        val locale = Locale.getDefault()
+
         requirePreference(PREF_24_HOURS_FORMAT).apply {
-            summary = if (settings.getBoolean(key)) "18:00" else "6:00 pm"
+            summary = if (settings.getBoolean(key))
+                SimpleDateFormat("HH:mm", locale).format(date)
+            else
+                SimpleDateFormat("a:mm", locale).format(date)
         }
     }
 

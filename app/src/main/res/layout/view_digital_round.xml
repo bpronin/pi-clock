@@ -57,16 +57,18 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/comfortaa"
                 android:includeFontPadding="false"
+                android:gravity="top|center_horizontal"
                 android:text="AM"
-                android:textAlignment="center"
                 android:textColor="?attr/timeTextColor"
                 android:textSize="34sp"
+                android:layout_marginTop="6sp"
                 tools:ignore="HardcodedText" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="10sp"
+                android:gravity="bottom"
                 android:orientation="horizontal">
 
                 <TextView
