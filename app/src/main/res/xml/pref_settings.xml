@@ -3,49 +3,46 @@
 
     <SwitchPreference
         android:key="seconds_visible"
-        android:title="@string/show_seconds"
-        />
+        android:title="@string/show_seconds" />
 
     <SwitchPreference
         android:key="time_separator_blinking"
-        android:title="@string/blink_time_separator"
-        />
+        android:title="@string/blink_time_separator" />
 
     <SwitchPreference
         android:key="24_hours_format"
-        android:title="@string/use_24_hours_format"
-        />
+        android:title="@string/use_24_hours_format" />
 
     <SwitchPreference
         android:key="date_visible"
-        android:title="@string/show_date"
-        />
+        android:title="@string/show_date" />
 
-<!-- android:entries are build in code! -->
     <ListPreference
         android:key="date_format"
         android:title="@string/date_format"
-        android:entryValues="@array/date_format_values"
-        />
+        android:entryValues="@array/date_format_values" />
+    <!-- android:entries for date_format are build in code -->
 
     <ListPreference
         android:key="clock_layout"
         android:title="@string/clock_layout"
         android:entries="@array/clock_layout_names"
-        android:entryValues="@array/clock_layout_resources"
-        />
+        android:entryValues="@array/clock_layout_values" />
 
     <ListPreference
         android:key="tick_sound"
         android:title="@string/tick_sound"
         android:entries="@array/tick_sound_names"
-        android:entryValues="@array/tick_sound_resources"
-        />
+        android:entryValues="@array/tick_sound_values" />
 
     <SwitchPreference
         android:key="tick_sound_always"
-        android:title="@string/tick_sound_always"
-        />
+        android:title="@string/tick_sound_always" />
 
+    <com.bopr.piclock.ui.preference.LongListPreference
+        android:key="auto_fullscreen_delay"
+        android:title="@string/auto_fullscreen"
+        android:entries="@array/auto_fullscreen_delay_names"
+        android:entryValues="@array/auto_fullscreen_delay_values" />
 
 </PreferenceScreen>

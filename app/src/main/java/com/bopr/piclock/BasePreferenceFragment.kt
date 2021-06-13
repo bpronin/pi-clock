@@ -4,7 +4,9 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import androidx.annotation.IntDef
+import androidx.fragment.app.DialogFragment
 import androidx.preference.*
+import com.bopr.piclock.ui.preference.CustomDialogPreference
 import com.bopr.piclock.util.accentedText
 import com.bopr.piclock.util.underwivedText
 import kotlin.annotation.AnnotationRetention.SOURCE
@@ -22,11 +24,11 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         preferenceManager.sharedPreferencesName = Settings.SHARED_PREFERENCES_NAME
-        setHasOptionsMenu(true)
+//        setHasOptionsMenu(true)
 
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
-        updatePreferenceViews()
+//        updatePreferenceViews()
     }
 
     override fun onDestroy() {
@@ -35,10 +37,21 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
     }
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
-        if (parentFragmentManager.findFragmentByTag(DIALOG_FRAGMENT_TAG) == null) {
+        if (preference is CustomDialogPreference) {
+            val dialogFragment: DialogFragment =
+                (preference as CustomDialogPreference).createDialogFragment()
+            dialogFragment.setTargetFragment(this, 0)
+            dialogFragment.show(parentFragmentManager, null)
+        } else {
             super.onDisplayPreferenceDialog(preference)
         }
     }
+
+//    override fun onDisplayPreferenceDialog(preference: Preference) {
+//        if (parentFragmentManager.findFragmentByTag(DIALOG_FRAGMENT_TAG) == null) {
+//            super.onDisplayPreferenceDialog(preference)
+//        }
+//    }
 
 //    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
 //        super.onCreateOptionsMenu(menu, inflater)
@@ -54,7 +67,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
 //    }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        updatePreferenceViews()
+//        updatePreferenceViews()
     }
 
     private fun updatePreferenceViews() {

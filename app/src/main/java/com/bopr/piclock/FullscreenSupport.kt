@@ -14,30 +14,30 @@ class FullscreenSupport(private val window: Window) {
     private val TAG = "FullscreenSupport"
 
     private val handler = Handler(Looper.getMainLooper())
-
-    var onChange: (Boolean) -> Unit = {}
-    var autoTurnOnDelay = 5000L
-
     /**
      * Some older devices needs a small delay between UI widget updates
      * and a change of the status and navigation bar.
      */
     private val startDelay = 300L
-
     private val turnOnTask = Runnable {
         showSystemUI()
         onChange(fullscreen)
     }
-
     private val turnOffTask = Runnable {
         hideSystemUI()
         onChange(fullscreen)
     }
-
     private val autoTurnOnTask = Runnable {
         Log.d(TAG, "Auto")
         fullscreen = true
     }
+
+    var onChange: (Boolean) -> Unit = {}
+
+    /**
+     * Value less than zero = no auto turn on.
+     */
+    var autoTurnOnDelay = 1000L
 
     var fullscreen: Boolean = false
         set(value) {
@@ -47,7 +47,9 @@ class FullscreenSupport(private val window: Window) {
                 handler.postDelayed(turnOffTask, startDelay)
             } else {
                 handler.postDelayed(turnOnTask, startDelay)
-                handler.postDelayed(autoTurnOnTask, autoTurnOnDelay)
+                if (autoTurnOnDelay > 0) {
+                    handler.postDelayed(autoTurnOnTask, autoTurnOnDelay)
+                }
             }
             Log.d(TAG, "Fullscreen: $field")
         }

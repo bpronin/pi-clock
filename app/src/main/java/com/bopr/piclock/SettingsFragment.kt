@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.preference.ListPreference
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
@@ -24,6 +25,7 @@ class SettingsFragment : BasePreferenceFragment() {
         updateTickSoundPreferenceView()
         updateClockLayoutPreferenceView()
         updateTickAlwaysPreferenceView()
+        updateAutoFullscreenPreferenceView()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -34,6 +36,7 @@ class SettingsFragment : BasePreferenceFragment() {
             PREF_TICK_SOUND -> updateTickSoundPreferenceView()
             PREF_CLOCK_LAYOUT -> updateClockLayoutPreferenceView()
             PREF_TICK_SOUND_ALWAYS -> updateTickAlwaysPreferenceView()
+            PREF_AUTO_FULLSCREEN_DELAY -> updateAutoFullscreenPreferenceView()
         }
     }
 
@@ -82,6 +85,19 @@ class SettingsFragment : BasePreferenceFragment() {
         (requirePreference(PREF_TICK_SOUND) as ListPreference).apply {
             val value = settings.getString(PREF_TICK_SOUND)
             updateSummary(this, entries[findIndexOfValue(value)])
+        }
+    }
+
+    private fun updateAutoFullscreenPreferenceView() {
+        (requirePreference(PREF_AUTO_FULLSCREEN_DELAY) as ListPreference).apply {
+            val value = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
+            val summary = if (value > 0) {
+                val index = findIndexOfValue(value.toString())
+                getString(R.string.auto_fullscreen_summary, entries[index])
+            } else {
+                getString(R.string.auto_fullscreen_never_summary)
+            }
+            updateSummary(this, summary)
         }
     }
 

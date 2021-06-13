@@ -1,35 +1,60 @@
 package com.bopr.piclock
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
 
 /**
  * Main activity.
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private lateinit var settings: Settings
+    private lateinit var fullscreenControl: FullscreenSupport
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Settings(this).validate()
+
+        settings = Settings(this)
+        settings.validate()
+        settings.registerOnSharedPreferenceChangeListener(this)
+
+        fullscreenControl = FullscreenSupport(window)
+        updateFullscreenControl()
+    }
+
+    override fun onDestroy() {
+        settings.unregisterOnSharedPreferenceChangeListener(this)
+        super.onDestroy()
     }
 
     override fun onCreateFragment(): Fragment {
-        val fullscreenSupport = FullscreenSupport(window)
         val fragment = ClockFragment()
 
-        fullscreenSupport.onChange = {
+        fullscreenControl.onChange = {
             fragment.setActive(!it)
         }
 
         fragment.onClick = {
-            fullscreenSupport.toggle()
+            fullscreenControl.toggle()
         }
 
-        fullscreenSupport.fullscreen = true
+        fullscreenControl.fullscreen = true
 
         return fragment
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        if (key == PREF_AUTO_FULLSCREEN_DELAY){
+            updateFullscreenControl()
+        }
+    }
+
+    private fun updateFullscreenControl() {
+        fullscreenControl.autoTurnOnDelay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
     }
 
 }

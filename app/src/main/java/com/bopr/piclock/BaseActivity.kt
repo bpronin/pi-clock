@@ -19,15 +19,19 @@ abstract class BaseActivity() : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setHomeButtonEnabled(true)
         setContentView(R.layout.activity_default)
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
 
         val fragmentManager = supportFragmentManager
         fragment = fragmentManager.findFragmentByTag("fragment")
         if (fragment == null) {
             fragment = onCreateFragment()
             fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.content, fragment!!, "fragment")
-                    .commit()
+                .beginTransaction()
+                .replace(R.id.content, fragment!!, "fragment")
+                .commit()
         }
     }
 

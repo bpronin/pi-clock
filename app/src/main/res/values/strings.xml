@@ -15,6 +15,9 @@
     <string name="tick_sound_always">Tick always</string>
     <string name="play_always">Play always</string>
     <string name="play_only_when_tapped">Play only when tapped</string>
+    <string name="auto_fullscreen">Auto-fullscreen</string>
+    <string name="auto_fullscreen_summary">Go to fullscreen after %s</string>
+    <string name="auto_fullscreen_never_summary">Go to fullscreen only when screen touched</string>
 
     <string-array name="clock_layout_names">
         <item>Digital default</item>
@@ -28,6 +31,17 @@
         <item>Mantle clock</item>
         <item>Wall clock</item>
         <item>Wrist watch</item>
+    </string-array>
+
+    <string-array name="auto_fullscreen_delay_names">
+        <item>1 second</item>
+        <item>3 seconds</item>
+        <item>5 seconds</item>
+        <item>10 seconds</item>
+        <item>1 minute</item>
+        <item>3 minutes</item>
+        <item>5 minutes</item>
+        <item>Never</item>
     </string-array>
 
 </resources>
