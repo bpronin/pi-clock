@@ -104,7 +104,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         settings = Settings(requireContext()).also {
             autoDeactivateDelay = it.getLong(PREF_AUTO_FULLSCREEN_DELAY)
             tickPlayer.soundName = it.getString(PREF_TICK_SOUND, null)
-
+            //      todo:  active = settings.getBoolean(PREF_LAST_ACTIVE)
             it.registerOnSharedPreferenceChangeListener(this)
         }
     }
@@ -139,6 +139,11 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         applySettings()
 
         return view
+    }
+
+    override fun onStart() {
+        super.onStart()
+        activate()
     }
 
     override fun onResume() {
