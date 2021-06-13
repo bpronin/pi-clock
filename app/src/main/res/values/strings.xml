@@ -18,6 +18,10 @@
     <string name="auto_fullscreen">Auto-fullscreen</string>
     <string name="auto_fullscreen_summary">Go to fullscreen after %s</string>
     <string name="auto_fullscreen_never_summary">Go to fullscreen only when screen touched</string>
+    <string name="fullscreen">Fullscreen mode</string>
+    <string name="enable_fullscreen_mode">Enable fullscreen</string>
+    <string name="sound">Sound</string>
+    <string name="appearance">Appearance</string>
 
     <string-array name="clock_layout_names">
         <item>Digital default</item>

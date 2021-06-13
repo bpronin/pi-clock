@@ -1,4 +1,4 @@
-package com.bopr.piclock
+package com.bopr.piclock.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

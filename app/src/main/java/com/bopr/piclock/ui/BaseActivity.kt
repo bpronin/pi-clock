@@ -1,9 +1,10 @@
-package com.bopr.piclock
+package com.bopr.piclock.ui
 
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.bopr.piclock.R
 
 /**
  * Base application activity with default behaviour.

@@ -13,6 +13,7 @@ import android.view.View.*
 import android.view.ViewGroup
 import android.widget.TextView
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_VISIBLE
@@ -20,6 +21,7 @@ import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
+import com.bopr.piclock.ui.BaseFragment
 import com.bopr.piclock.util.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
@@ -29,7 +31,10 @@ import java.util.*
 
 class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
-    private val TAG = "ClockFragment"
+    /**
+     * Logger tag.
+     */
+    private val _tag = "ClockFragment"
 
     private lateinit var contentContainer: ViewGroup
     private lateinit var settingsButton: FloatingActionButton
@@ -48,6 +53,8 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private lateinit var hoursFormat: DateFormat
     private lateinit var dateFormat: DateFormat
     private lateinit var tickPlayer: TickPlayer
+    private var autoDeactivateDelay: Long = 1000L
+
     private val handler = Handler(Looper.getMainLooper())
     private val timerTask = object : Runnable {
 
@@ -56,15 +63,36 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
             handler.postDelayed(this, 1000)
         }
     }
-    private var active = false
-    private var controlsShown = false
 
-    var onClick: () -> Unit = {}
+    private val autoDeactivateTask = Runnable {
+        Log.d(_tag, "Auto deactivate")
+        active = false
+    }
+
+    private var active = false
+        set(value) {
+            if (field != value) {
+                field = value
+                handler.removeCallbacks(autoDeactivateTask)
+                activate()
+            }
+        }
+
+    private var activated = false
+        set(value) {
+            if (field != value) {
+                field = value
+                if (autoDeactivateDelay > 0) {
+                    handler.postDelayed(autoDeactivateTask, autoDeactivateDelay)
+                }
+                onActivate(active)
+            }
+        }
+
+    var onActivate: (active: Boolean) -> Unit = {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settings = Settings(requireContext())
-        settings.registerOnSharedPreferenceChangeListener(this)
 
         val locale = Locale.getDefault()
         amPmFormat = SimpleDateFormat("a", locale)
@@ -72,6 +100,13 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         secondsFormat = SimpleDateFormat("ss", locale)
 
         tickPlayer = TickPlayer(requireContext())
+
+        settings = Settings(requireContext()).also {
+            autoDeactivateDelay = it.getLong(PREF_AUTO_FULLSCREEN_DELAY)
+            tickPlayer.soundName = it.getString(PREF_TICK_SOUND, null)
+
+            it.registerOnSharedPreferenceChangeListener(this)
+        }
     }
 
     override fun onDestroy() {
@@ -89,7 +124,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         contentContainer = view.findViewById(R.id.content_container)
 
         view.setOnClickListener {
-            onClick()
+            active = !active
         }
 
         settingsButton = view.requireViewByIdCompat(R.id.settings_button)
@@ -101,7 +136,6 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         }
 
         createContentView()
-        updateTickPlayer()
         applySettings()
 
         return view
@@ -120,8 +154,12 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         when (key) {
-            PREF_CLOCK_LAYOUT -> createContentView()
-            PREF_TICK_SOUND -> updateTickPlayer()
+            PREF_CLOCK_LAYOUT ->
+                createContentView()
+            PREF_TICK_SOUND ->
+                tickPlayer.soundName = settings.getString(PREF_TICK_SOUND, null)
+            PREF_AUTO_FULLSCREEN_DELAY ->
+                autoDeactivateDelay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
         }
 
         applySettings()
@@ -139,9 +177,8 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         playTickSound()
     }
 
-    fun setActive(value: Boolean) {
-        active = value
-        Log.d(TAG, "active: $active")
+    private fun activate() {
+        Log.d(_tag, "Activating: $active")
 
         val wantControlVolume = !settings.getBoolean(PREF_TICK_SOUND_ALWAYS)
         val startDelay = 100L
@@ -156,7 +193,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                     if (wantControlVolume) {
                         tickPlayer.fadeVolume(0f, 1f, duration)
                     }
-                    controlsShown = true
+                    activated = true
                 })
         } else {
             settingsButton.hideAnimated(R.anim.fab_hide, startDelay)
@@ -169,7 +206,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                     }
                 },
                 onEnd = {
-                    controlsShown = false
+                    activated = false
                 })
         }
     }
@@ -216,6 +253,9 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         } else {
             dateView.visibility = GONE
         }
+
+
+//      todo:  active = settings.getBoolean(PREF_LAST_ACTIVE)
     }
 
     private fun blinkTimeSeparator(time: Date) {
@@ -235,12 +275,8 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun updateTickPlayer() {
-        tickPlayer.soundName = settings.getString(PREF_TICK_SOUND, null)
-    }
-
     private fun playTickSound() {
-        if (settings.getBoolean(PREF_TICK_SOUND_ALWAYS) || controlsShown) {
+        if (settings.getBoolean(PREF_TICK_SOUND_ALWAYS) || activated) {
             tickPlayer.play()
         }
     }

@@ -3,7 +3,8 @@ package com.bopr.piclock
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
+import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
+import com.bopr.piclock.ui.BaseActivity
 
 /**
  * Main activity.
@@ -18,12 +19,14 @@ class MainActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceChangeL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        settings = Settings(this)
-        settings.validate()
-        settings.registerOnSharedPreferenceChangeListener(this)
+        settings = Settings(this).also {
+            it.validate()
+            it.registerOnSharedPreferenceChangeListener(this)
+        }
 
-        fullscreenControl = FullscreenSupport(window)
-        updateFullscreenControl()
+        fullscreenControl = FullscreenSupport(window).also {
+            it.enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
+        }
     }
 
     override fun onDestroy() {
@@ -34,27 +37,19 @@ class MainActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceChangeL
     override fun onCreateFragment(): Fragment {
         val fragment = ClockFragment()
 
-        fullscreenControl.onChange = {
-            fragment.setActive(!it)
+        fragment.onActivate = {
+            fullscreenControl.fullscreen = !it
         }
-
-        fragment.onClick = {
-            fullscreenControl.toggle()
-        }
-
         fullscreenControl.fullscreen = true
 
         return fragment
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if (key == PREF_AUTO_FULLSCREEN_DELAY){
-            updateFullscreenControl()
+        when (key) {
+            PREF_FULLSCREEN_ENABLED ->
+                fullscreenControl.enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
         }
-    }
-
-    private fun updateFullscreenControl() {
-        fullscreenControl.autoTurnOnDelay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
     }
 
 }

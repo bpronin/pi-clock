@@ -9,7 +9,10 @@ import com.bopr.piclock.util.getResourceId
 
 internal class TickPlayer(private val context: Context) {
 
-    private val TAG = "TickPlayer"
+    /**
+     * Logger tag.
+     */
+    private val _tag = "TickPlayer"
 
     private lateinit var player: MediaPlayer
     private val volumeAnimator = ObjectAnimator().apply {
@@ -33,7 +36,7 @@ internal class TickPlayer(private val context: Context) {
                 player = MediaPlayer.create(context, resId)
                 ready = true
 
-                Log.d(TAG, "Ready")
+                Log.d(_tag, "Ready")
             }
         }
     }
@@ -59,7 +62,7 @@ internal class TickPlayer(private val context: Context) {
             player.release()
             ready = false
 
-            Log.d(TAG, "Stopped")
+            Log.d(_tag, "Stopped")
         }
     }
 

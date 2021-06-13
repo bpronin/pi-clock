@@ -1,15 +1,12 @@
-package com.bopr.piclock
+package com.bopr.piclock.ui
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
-import androidx.annotation.IntDef
 import androidx.fragment.app.DialogFragment
 import androidx.preference.*
+import com.bopr.piclock.Settings
 import com.bopr.piclock.ui.preference.CustomDialogPreference
-import com.bopr.piclock.util.accentedText
-import com.bopr.piclock.util.underwivedText
-import kotlin.annotation.AnnotationRetention.SOURCE
 
 /**
  * Base [PreferenceFragmentCompat] with default behaviour.
@@ -110,41 +107,8 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
         }
     }
 
-    /**
-     * Updates summary of [Preference].
-     *
-     * @param value      value
-     * @param preference preference
-     */
-    protected fun updateSummary(
-        preference: Preference,
-        value: CharSequence?,
-        @SummaryStyle style: Int = SUMMARY_STYLE_DEFAULT
-    ) {
-        preference.summary = null  /* clean to refresh spannable style */
-        when (style) {
-            SUMMARY_STYLE_DEFAULT ->
-                preference.summary = value
-            SUMMARY_STYLE_UNDERWIVED ->
-                preference.summary = requireContext().underwivedText(value)
-            SUMMARY_STYLE_ACCENTED ->
-                preference.summary = requireContext().accentedText(value)
-        }
-    }
-
     protected fun requirePreference(key: CharSequence): Preference {
         return findPreference(key)!!
     }
 
-    @Retention(SOURCE)
-    @IntDef(SUMMARY_STYLE_DEFAULT, SUMMARY_STYLE_UNDERWIVED, SUMMARY_STYLE_ACCENTED)
-    annotation class SummaryStyle
-
-    companion object {
-        const val SUMMARY_STYLE_DEFAULT = 0
-        const val SUMMARY_STYLE_UNDERWIVED = 1
-        const val SUMMARY_STYLE_ACCENTED = 2
-
-        private const val DIALOG_FRAGMENT_TAG = "androidx.preference.PreferenceFragment.DIALOG"
-    }
 }
