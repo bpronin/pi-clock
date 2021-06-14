@@ -18,7 +18,6 @@ import com.bopr.piclock.Settings.Companion.PREF_CLOCK_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_VISIBLE
-import com.bopr.piclock.Settings.Companion.PREF_LAST_MODE
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
@@ -34,9 +33,7 @@ import java.util.*
 
 class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
-    /**
-     * Logger tag.
-     */
+    /** Logger tag. */
     private val _tag = "ClockFragment"
 
     private lateinit var contentContainer: ViewGroup
@@ -78,9 +75,10 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private var active = false
         set(value) {
             if (field != value) {
-                Log.d(_tag, "Active: $field")
-
                 field = value
+
+                Log.d(_tag, "Active:` $field")
+
                 handler.removeCallbacks(autoDeactivateTask)
                 activate()
             }
@@ -89,10 +87,13 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private var activated = false
         set(value) {
             if (field != value) {
+                field = value
+
                 Log.d(_tag, "Activate complete: $field")
 
-                field = value
-                if (autoDeactivateDelay > 0) {
+                if (field && autoDeactivateDelay > 0) {
+                    Log.d(_tag, "Schedule auto deactivate")
+
                     handler.postDelayed(autoDeactivateTask, autoDeactivateDelay)
                 }
                 onActivate(active)
@@ -114,7 +115,6 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         amPmFormat = SimpleDateFormat("a", locale)
         minutesFormat = SimpleDateFormat("mm", locale)
         secondsFormat = SimpleDateFormat("ss", locale)
-
         tickPlayer = TickPlayer(requireContext())
         animations = ClockFragmentAnimations()
 
@@ -123,13 +123,13 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
             dateFormat = SimpleDateFormat(getString(PREF_DATE_FORMAT), locale)
             tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
             clockBrightness = getInt(PREF_CLOCK_BRIGHTNESS)
+
+            registerOnSharedPreferenceChangeListener(this@ClockFragment)
         }
-        settings.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        tickPlayer.stop()
         settings.unregisterOnSharedPreferenceChangeListener(this)
     }
 
@@ -160,7 +160,12 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     override fun onStart() {
         super.onStart()
-        activate()
+        active = true
+    }
+
+    override fun onStop() {
+        active = false
+        super.onStop()
     }
 
     override fun onResume() {
@@ -170,9 +175,9 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     override fun onPause() {
         super.onPause()
-        animations.cancel()
+        handler.removeCallbacksAndMessages(null)
+        animations.stop()
         tickPlayer.stop()
-        handler.removeCallbacks(timerTask)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -239,9 +244,9 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                 })
         }
 
-        settings.update {
-            putString(PREF_LAST_MODE, if (active) MODE_ACTIVE else MODE_INACTIVE)
-        }
+//        settings.update {
+//            putString(PREF_LAST_MODE, if (active) MODE_ACTIVE else MODE_INACTIVE)
+//        }
     }
 
     private fun createContentView() {
@@ -268,7 +273,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         updateDateView()
         updateTimeSeparatorView()
 
-        active = settings.getString(PREF_LAST_MODE, MODE_INACTIVE) == MODE_ACTIVE
+//        active = settings.getString(PREF_LAST_MODE, MODE_INACTIVE) == MODE_ACTIVE
     }
 
     private fun updateHoursView() {

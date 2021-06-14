@@ -7,6 +7,7 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
+import androidx.core.animation.doOnCancel
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 
@@ -52,6 +53,7 @@ internal class ClockFragmentAnimations {
             setFloatValues(0f, 1f)
             duration = 2000L
             interpolator = CycleInterpolator(1f)
+            doOnCancel { }
         }
     }
 
@@ -66,13 +68,17 @@ internal class ClockFragmentAnimations {
 
     private val animators = mutableSetOf<Animator>()
 
-    private inline fun addAnimator(setup: ObjectAnimator.() -> Unit) = ObjectAnimator().apply {
-        setup()
-        animators.add(this)
-    }
+    private inline fun addAnimator(setup: ObjectAnimator.() -> Unit) =
+        ObjectAnimator().apply {
+            setup()
+            animators.add(this)
+        }
 
     private inline fun ObjectAnimator.play(view: View, setup: ObjectAnimator.() -> Unit = {}) {
         apply {
+//            if (isStarted) {
+//                end()
+//            }
             cancel()
             target = view
             setup()
@@ -80,9 +86,11 @@ internal class ClockFragmentAnimations {
         }
     }
 
-    fun cancel() {
+    fun stop() {
         for (animator in animators) {
-            animator.cancel()
+            if (animator.isStarted) {
+                animator.end()
+            }
         }
     }
 
@@ -123,11 +131,15 @@ internal class ClockFragmentAnimations {
     }
 
     fun blinkTimeSeparator(view: View) {
-        timeSeparatorAnimator.play(view)
+        timeSeparatorAnimator.play(view) {
+            doOnCancel { view.alpha = 1f }
+        }
     }
 
     fun blinkSecondsSeparator(view: View) {
-        secondsSeparatorAnimator.play(view)
+        secondsSeparatorAnimator.play(view) {
+            doOnCancel { view.alpha = 1f }
+        }
     }
 
 }

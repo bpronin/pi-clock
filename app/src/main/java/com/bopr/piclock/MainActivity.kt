@@ -19,17 +19,18 @@ class MainActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceChangeL
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        settings = Settings(this).also {
-            it.validate()
-            it.registerOnSharedPreferenceChangeListener(this)
+        settings = Settings(this).apply {
+            validate()
+            registerOnSharedPreferenceChangeListener(this@MainActivity)
         }
 
-        fullscreenControl = FullscreenSupport(window).also {
-            it.enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
+        fullscreenControl = FullscreenSupport(window).apply {
+            enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
         }
     }
 
     override fun onDestroy() {
+        fullscreenControl.destroy()
         settings.unregisterOnSharedPreferenceChangeListener(this)
         super.onDestroy()
     }
@@ -37,8 +38,8 @@ class MainActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceChangeL
     override fun onCreateFragment(): Fragment {
         val fragment = ClockFragment()
 
-        fragment.onActivate = {
-            fullscreenControl.fullscreen = !it
+        fragment.onActivate = { active ->
+            fullscreenControl.fullscreen = !active
         }
         fullscreenControl.fullscreen = true
 

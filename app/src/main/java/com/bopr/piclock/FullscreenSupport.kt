@@ -11,9 +11,7 @@ import android.view.WindowInsetsController
 
 class FullscreenSupport(private val window: Window) {
 
-    /**
-     * Logger tag.
-     */
+    /** Logger tag. */
     private val _tag = "FullscreenSupport"
 
     private val handler = Handler(Looper.getMainLooper())
@@ -23,9 +21,11 @@ class FullscreenSupport(private val window: Window) {
      * and a change of the status and navigation bar.
      */
     private val startDelay = 300L
+
     private val turnOnTask = Runnable {
         showSystemUI()
     }
+
     private val turnOffTask = Runnable {
         hideSystemUI()
     }
@@ -43,8 +43,7 @@ class FullscreenSupport(private val window: Window) {
     var fullscreen: Boolean = false
         set(value) {
             if (enabled && field != value) {
-                handler.removeCallbacks(turnOnTask)
-                handler.removeCallbacks(turnOffTask)
+                handler.removeCallbacksAndMessages(null)
                 field = value
                 if (field) {
                     handler.postDelayed(turnOffTask, startDelay)
@@ -54,6 +53,10 @@ class FullscreenSupport(private val window: Window) {
                 Log.d(_tag, "Fullscreen: $field")
             }
         }
+
+    fun destroy() {
+        handler.removeCallbacksAndMessages(null)
+    }
 
     private fun showSystemUI() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {

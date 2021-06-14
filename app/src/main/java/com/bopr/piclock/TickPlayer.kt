@@ -9,9 +9,7 @@ import com.bopr.piclock.util.getResId
 
 internal class TickPlayer(private val context: Context) {
 
-    /**
-     * Logger tag.
-     */
+    /** Logger tag. */
     private val _tag = "TickPlayer"
 
     private lateinit var player: MediaPlayer
