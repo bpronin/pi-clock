@@ -16,10 +16,6 @@
             android:key="seconds_visible"
             android:title="@string/show_seconds" />
 
-        <SwitchPreference
-            android:key="date_visible"
-            android:title="@string/show_date" />
-
         <ListPreference
             android:key="date_format"
             android:title="@string/date_format"

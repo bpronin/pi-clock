@@ -9,7 +9,6 @@
     <string name="time_separator">Time separator</string>
     <string name="seconds_separator">Seconds separator</string>
     <string name="none">[none]</string>
-    <string name="show_date">Show date</string>
     <string name="tick_sound">Tick sound</string>
     <string name="clock_layout">Clock layout</string>
     <string name="tick_sound_always">Tick always</string>
@@ -23,6 +22,7 @@
     <string name="sound">Sound</string>
     <string name="appearance">Appearance</string>
     <string name="clock_brightness">Clock brightness</string>
+    <string name="do_not_show_date">Do not show date</string>
 
     <string-array name="clock_layout_names">
         <item>Digital default</item>
@@ -39,14 +39,14 @@
     </string-array>
 
     <string-array name="auto_fullscreen_delay_names">
-        <item>1 second</item>
+        <item>Never</item>
+        <item>2 second</item>
         <item>3 seconds</item>
         <item>5 seconds</item>
         <item>10 seconds</item>
         <item>1 minute</item>
         <item>3 minutes</item>
         <item>5 minutes</item>
-        <item>Never</item>
     </string-array>
 
     <string-array name="clock_brightness_names">

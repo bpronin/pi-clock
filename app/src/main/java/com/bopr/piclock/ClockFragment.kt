@@ -17,7 +17,6 @@ import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_DATE_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
@@ -158,15 +157,15 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         return view
     }
 
-    override fun onStart() {
-        super.onStart()
-        active = true
-    }
-
-    override fun onStop() {
-        active = false
-        super.onStop()
-    }
+//    override fun onStart() {
+//        super.onStart()
+//        active = true
+//    }
+//
+//    override fun onStop() {
+//        active = false
+//        super.onStop()
+//    }
 
     override fun onResume() {
         super.onResume()
@@ -189,12 +188,10 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                     updateHoursView()
                 PREF_SECONDS_VISIBLE ->
                     updateSecondsView()
-                PREF_DATE_VISIBLE ->
-                    updateDateView()
                 PREF_TIME_SEPARATOR_BLINKING ->
                     updateTimeSeparatorView()
                 PREF_DATE_FORMAT ->
-                    dateFormat = SimpleDateFormat(getString(PREF_DATE_FORMAT), locale)
+                    updateDateView()
                 PREF_TICK_SOUND ->
                     tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
                 PREF_AUTO_FULLSCREEN_DELAY ->
@@ -297,8 +294,10 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun updateDateView() {
-        if (settings.getBoolean(PREF_DATE_VISIBLE)) {
+        val pattern = settings.getString(PREF_DATE_FORMAT)
+        if (pattern.isNotEmpty()) {
             dateView.visibility = VISIBLE
+            dateFormat = SimpleDateFormat(pattern, locale)
         } else {
             dateView.visibility = GONE
         }

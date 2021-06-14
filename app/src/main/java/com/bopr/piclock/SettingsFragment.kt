@@ -72,12 +72,17 @@ class SettingsFragment : BasePreferenceFragment() {
 
         val entryNames = arrayOfNulls<String>(patterns.size)
         for (i in entryNames.indices) {
-            entryNames[i] = SimpleDateFormat(patterns[i], locale).format(date)
+            val pattern = patterns[i]
+            entryNames[i] = if (pattern.isEmpty()) {
+                getString(R.string.do_not_show_date)
+            } else {
+                SimpleDateFormat(pattern, locale).format(date)
+            }
         }
 
         (requirePreference(PREF_DATE_FORMAT) as ListPreference).apply {
             entries = entryNames
-            summary = SimpleDateFormat(settings.getString(key), locale).format(date)
+            summary = entryNames[findIndexOfValue(settings.getString(key))]
         }
     }
 

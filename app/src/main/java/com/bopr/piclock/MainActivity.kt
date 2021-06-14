@@ -36,20 +36,16 @@ class MainActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceChangeL
     }
 
     override fun onCreateFragment(): Fragment {
-        val fragment = ClockFragment()
-
-        fragment.onActivate = { active ->
-            fullscreenControl.fullscreen = !active
+        return ClockFragment().apply {
+            onActivate = { active ->
+                fullscreenControl.fullscreen = !active
+            }
         }
-        fullscreenControl.fullscreen = true
-
-        return fragment
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        when (key) {
-            PREF_FULLSCREEN_ENABLED ->
-                fullscreenControl.enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
+        if (key == PREF_FULLSCREEN_ENABLED) {
+            fullscreenControl.enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
         }
     }
 

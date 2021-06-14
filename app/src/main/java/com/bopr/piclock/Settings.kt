@@ -15,14 +15,16 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             putBooleanOptional(PREF_TIME_SEPARATOR_BLINKING, true)
             putBooleanOptional(PREF_24_HOURS_FORMAT, true)
             putBooleanOptional(PREF_SECONDS_VISIBLE, true)
-            putBooleanOptional(PREF_DATE_VISIBLE, true)
             putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
             putBooleanOptional(PREF_TICK_SOUND_ALWAYS, true)
 
             putStringOptional(
                 PREF_DATE_FORMAT,
                 getResArrayValue(R.array.date_format_values, 0)
-            )
+            ) {
+                val current = getString(PREF_DATE_FORMAT).toString()
+                isResArrayValueExists(R.array.date_format_values, current)
+            }
 
             putLongOptional(
                 PREF_AUTO_FULLSCREEN_DELAY,
@@ -66,7 +68,6 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_24_HOURS_FORMAT = "24_hours_format"
         const val PREF_TIME_SEPARATOR_BLINKING = "time_separator_blinking"
         const val PREF_SECONDS_VISIBLE = "seconds_visible"
-        const val PREF_DATE_VISIBLE = "date_visible"
         const val PREF_DATE_FORMAT = "date_format"
         const val PREF_TICK_SOUND = "tick_sound"
         const val PREF_TICK_SOUND_ALWAYS = "tick_sound_always"
