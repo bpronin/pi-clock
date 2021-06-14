@@ -64,7 +64,6 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val SHARED_PREFERENCES_NAME = "com.bopr.piclock_preferences"
 
         const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
-        const val PREF_LAST_MODE = "last_mode" /* hidden */
         const val PREF_24_HOURS_FORMAT = "24_hours_format"
         const val PREF_TIME_SEPARATOR_BLINKING = "time_separator_blinking"
         const val PREF_SECONDS_VISIBLE = "seconds_visible"

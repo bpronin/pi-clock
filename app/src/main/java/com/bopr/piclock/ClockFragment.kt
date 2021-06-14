@@ -54,10 +54,9 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private lateinit var tickPlayer: TickPlayer
     private lateinit var animations: ClockFragmentAnimations
 
-    private var autoDeactivateDelay: Long = 1000L
-
     private val locale = Locale.getDefault()
     private val handler = Handler(Looper.getMainLooper())
+
     private val timerTask = object : Runnable {
 
         override fun run() {
@@ -68,45 +67,13 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     private val autoDeactivateTask = Runnable {
         Log.d(_tag, "Auto deactivate")
-        active = false
+        setActive(value = false, animate = true)
     }
 
     private var active = false
-        set(value) {
-            if (field != value) {
-                field = value
+    private var ready = false
 
-                Log.d(_tag, "Active:` $field")
-
-                handler.removeCallbacks(autoDeactivateTask)
-                activate()
-            }
-        }
-
-    private var activated = false
-        set(value) {
-            if (field != value) {
-                field = value
-
-                Log.d(_tag, "Activate complete: $field")
-
-                if (field && autoDeactivateDelay > 0) {
-                    Log.d(_tag, "Schedule auto deactivate")
-
-                    handler.postDelayed(autoDeactivateTask, autoDeactivateDelay)
-                }
-                onActivate(active)
-            }
-        }
-
-    private var clockBrightness: Int = 0
-        set(value) {
-            if (field != value) {
-                field = value
-            }
-        }
-
-    var onActivate: (active: Boolean) -> Unit = {}
+    var onReady: (active: Boolean) -> Unit = {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,54 +85,46 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         animations = ClockFragmentAnimations()
 
         settings = Settings(requireContext()).apply {
-            autoDeactivateDelay = getLong(PREF_AUTO_FULLSCREEN_DELAY)
             dateFormat = SimpleDateFormat(getString(PREF_DATE_FORMAT), locale)
             tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
-            clockBrightness = getInt(PREF_CLOCK_BRIGHTNESS)
 
             registerOnSharedPreferenceChangeListener(this@ClockFragment)
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedState: Bundle?
+    ): View {
+        val view = inflater.inflate(R.layout.fragment_main, container, false) as ViewGroup
+
+        view.setOnClickListener {
+            setActive(!active, true)
+        }
+
+        settingsButton = view.requireViewByIdCompat(R.id.settings_button)
+        settingsButton.setOnClickListener {
+            startActivity(Intent(requireContext(), SettingsActivity::class.java))
+        }
+
+        contentContainer = view.findViewById(R.id.content_container)
+
+        createContentView()
+        setActive(savedState?.getBoolean("active") ?: false, false)
+
+        return view
+    }
+
+    override fun onSaveInstanceState(savedState: Bundle) {
+        super.onSaveInstanceState(savedState)
+        savedState.putBoolean("active", active)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         settings.unregisterOnSharedPreferenceChangeListener(this)
     }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val view = inflater.inflate(R.layout.fragment_main, container, false) as ViewGroup
-        contentContainer = view.findViewById(R.id.content_container)
-
-        view.setOnClickListener {
-            active = !active
-        }
-
-        settingsButton = view.requireViewByIdCompat(R.id.settings_button)
-        settingsButton.apply {
-            visibility = if (active) VISIBLE else INVISIBLE
-            setOnClickListener {
-                startActivity(Intent(requireContext(), SettingsActivity::class.java))
-            }
-        }
-
-        createContentView()
-
-        return view
-    }
-
-//    override fun onStart() {
-//        super.onStart()
-//        active = true
-//    }
-//
-//    override fun onStop() {
-//        active = false
-//        super.onStop()
-//    }
 
     override fun onResume() {
         super.onResume()
@@ -174,7 +133,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     override fun onPause() {
         super.onPause()
-        handler.removeCallbacksAndMessages(null)
+        handler.removeCallbacks(timerTask)
         animations.stop()
         tickPlayer.stop()
     }
@@ -192,14 +151,18 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                     updateTimeSeparatorView()
                 PREF_DATE_FORMAT ->
                     updateDateView()
+                PREF_AUTO_FULLSCREEN_DELAY ->
+                    scheduleAutoDeactivate()
                 PREF_TICK_SOUND ->
                     tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
-                PREF_AUTO_FULLSCREEN_DELAY ->
-                    autoDeactivateDelay = getLong(PREF_AUTO_FULLSCREEN_DELAY)
                 PREF_CLOCK_BRIGHTNESS ->
-                    clockBrightness = getInt(PREF_CLOCK_BRIGHTNESS)
+                    updateClockBrightness()
             }
         }
+    }
+
+    private fun updateClockBrightness() {
+        contentContainer.alpha = if (active) 1f else minTextBrightness()
     }
 
     private fun onTimer() {
@@ -215,35 +178,63 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         playTickSound()
     }
 
-    private fun activate() {
-        Log.d(_tag, "Activating: $active")
+    private fun setActive(value: Boolean, animate: Boolean) {
+        Log.d(_tag, "Activating: $value")
 
-        val wantControlVolume = !settings.getBoolean(PREF_TICK_SOUND_ALWAYS)
-        if (active) {
-            animations.showFab(settingsButton)
-            animations.fadeInContent(contentContainer, clockBrightness,
-                onStart = { animator ->
-                    if (wantControlVolume) {
-                        tickPlayer.fadeVolume(0f, 1f, animator.duration)
-                    }
-                    activated = true
-                })
-        } else {
-            animations.hideFab(settingsButton)
-            animations.fadeOutContent(contentContainer, clockBrightness,
-                onStart = { animator ->
-                    if (wantControlVolume) {
-                        tickPlayer.fadeVolume(1f, 0f, animator.duration)
-                    }
-                },
-                onEnd = {
-                    activated = false
-                })
+        cancelAutoDeactivate()
+        active = value
+        ready = false
+
+        updateActiveControls(animate) {
+            Log.d(_tag, "Activate complete: $active")
+
+            ready = true
+            scheduleAutoDeactivate()
+            onReady(active)
         }
+    }
 
-//        settings.update {
-//            putString(PREF_LAST_MODE, if (active) MODE_ACTIVE else MODE_INACTIVE)
-//        }
+    private fun updateActiveControls(animate: Boolean, onEnd: () -> Unit) {
+        val wantControlVolume = !settings.getBoolean(PREF_TICK_SOUND_ALWAYS)
+        val minBrightness = minTextBrightness()
+
+        if (active) {
+            if (animate) {
+                animations.showFab(settingsButton)
+                animations.fadeInContent(contentContainer, minBrightness,
+                    onStart = { animator ->
+                        if (wantControlVolume) {
+                            tickPlayer.fadeVolume(0f, 1f, animator.duration)
+                        }
+                    },
+                    onEnd = {
+                        updateClockBrightness()
+                        onEnd()
+                    })
+            } else {
+                settingsButton.visibility = VISIBLE
+                updateClockBrightness()
+                onEnd()
+            }
+        } else {
+            if (animate) {
+                animations.hideFab(settingsButton)
+                animations.fadeOutContent(contentContainer, minBrightness,
+                    onStart = { animator ->
+                        if (wantControlVolume) {
+                            tickPlayer.fadeVolume(1f, 0f, animator.duration)
+                        }
+                    },
+                    onEnd = {
+                        updateClockBrightness()
+                        onEnd()
+                    })
+            } else {
+                settingsButton.visibility = INVISIBLE
+                updateClockBrightness()
+                onEnd()
+            }
+        }
     }
 
     private fun createContentView() {
@@ -269,8 +260,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         updateSecondsView()
         updateDateView()
         updateTimeSeparatorView()
-
-//        active = settings.getString(PREF_LAST_MODE, MODE_INACTIVE) == MODE_ACTIVE
+        updateClockBrightness()
     }
 
     private fun updateHoursView() {
@@ -311,6 +301,19 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         }
     }
 
+    private fun scheduleAutoDeactivate() {
+        val delay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
+        if (active && delay > 0) {
+            Log.d(_tag, "Schedule auto deactivate")
+            handler.postDelayed(autoDeactivateTask, delay)
+        }
+    }
+
+    private fun cancelAutoDeactivate() {
+        Log.d(_tag, "Cancel auto deactivate")
+        handler.removeCallbacks(autoDeactivateTask)
+    }
+
     private fun blinkTimeSeparator(time: Date) {
         if (settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
             if (isOddSecond(time)) {
@@ -323,18 +326,13 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun playTickSound() {
-        if (settings.getBoolean(PREF_TICK_SOUND_ALWAYS) || activated) {
+        if ((active && ready) || settings.getBoolean(PREF_TICK_SOUND_ALWAYS)) {
             tickPlayer.play()
         }
     }
 
+    private fun minTextBrightness() = settings.getInt(PREF_CLOCK_BRIGHTNESS) / 100f
+
     private fun isOddSecond(time: Date) = time.time / 1000 % 2 != 0L
-
-    companion object {
-
-        const val MODE_ACTIVE = "active"
-        const val MODE_INACTIVE = "inactive"
-
-    }
 
 }

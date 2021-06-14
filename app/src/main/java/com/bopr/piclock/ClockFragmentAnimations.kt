@@ -76,9 +76,6 @@ internal class ClockFragmentAnimations {
 
     private inline fun ObjectAnimator.play(view: View, setup: ObjectAnimator.() -> Unit = {}) {
         apply {
-//            if (isStarted) {
-//                end()
-//            }
             cancel()
             target = view
             setup()
@@ -108,23 +105,25 @@ internal class ClockFragmentAnimations {
 
     fun fadeInContent(
         view: View,
-        brightnessPercents: Int,
-        onStart: (Animator) -> Unit = {}
+        brightness: Float,
+        onStart: (Animator) -> Unit = {},
+        onEnd: (Animator) -> Unit = {}
     ) {
         fadeInContentAnimator.play(view) {
-            setFloatValues(brightnessPercents / 100f, 1f)
+            setFloatValues(brightness, 1f)
             doOnStart { onStart(this) }
+            doOnEnd { onEnd(this) }
         }
     }
 
     fun fadeOutContent(
         view: View,
-        brightnessPercents: Int,
+        brightness: Float,
         onStart: (Animator) -> Unit = {},
         onEnd: (Animator) -> Unit = {}
     ) {
         fadeOutContentAnimator.play(view) {
-            setFloatValues(1f, brightnessPercents / 100f)
+            setFloatValues(1f, brightness)
             doOnStart { onStart(this) }
             doOnEnd { onEnd(this) }
         }

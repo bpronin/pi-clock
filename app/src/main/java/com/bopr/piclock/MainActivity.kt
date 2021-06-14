@@ -37,7 +37,7 @@ class MainActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceChangeL
 
     override fun onCreateFragment(): Fragment {
         return ClockFragment().apply {
-            onActivate = { active ->
+            onReady = { active ->
                 fullscreenControl.fullscreen = !active
             }
         }
