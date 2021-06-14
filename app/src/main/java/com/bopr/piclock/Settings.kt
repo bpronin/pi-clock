@@ -13,14 +13,14 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         context.run {
             putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
             putBooleanOptional(PREF_TIME_SEPARATOR_BLINKING, true)
-            putBooleanOptional(PREF_24_HOURS_FORMAT, true)
+            putBooleanOptional(PREF_24_HOURS_FORMAT, is24HourLocale())
             putBooleanOptional(PREF_SECONDS_VISIBLE, true)
             putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
-            putBooleanOptional(PREF_TICK_SOUND_ALWAYS, true)
+            putBooleanOptional(PREF_TICK_SOUND_ALWAYS, false)
 
             putStringOptional(
                 PREF_DATE_FORMAT,
-                getResArrayValue(R.array.date_format_values, 0)
+                getResArrayValue(R.array.date_format_values, 1)
             ) {
                 val current = getString(PREF_DATE_FORMAT).toString()
                 isResArrayValueExists(R.array.date_format_values, current)
@@ -28,7 +28,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
             putLongOptional(
                 PREF_AUTO_FULLSCREEN_DELAY,
-                getResArrayValue(R.array.auto_fullscreen_delay_values, 0).toLong()
+                getResArrayValue(R.array.auto_fullscreen_delay_values, 1).toLong()
             ) {
                 val current = getLong(PREF_AUTO_FULLSCREEN_DELAY).toString()
                 isResArrayValueExists(R.array.auto_fullscreen_delay_values, current)
@@ -36,7 +36,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
             putIntOptional(
                 PREF_CLOCK_BRIGHTNESS,
-                getResArrayValue(R.array.clock_brightness_values, 0).toInt()
+                getResArrayValue(R.array.clock_brightness_values, 2).toInt()
             ) {
                 val current = getInt(PREF_CLOCK_BRIGHTNESS).toString()
                 isResArrayValueExists(R.array.clock_brightness_values, current)
