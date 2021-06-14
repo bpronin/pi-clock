@@ -22,7 +22,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
                 PREF_DATE_FORMAT,
                 getResArrayValue(R.array.date_format_values, 1)
             ) {
-                val current = getString(PREF_DATE_FORMAT).toString()
+                val current = getString(PREF_DATE_FORMAT)
                 isResArrayValueExists(R.array.date_format_values, current)
             }
 
