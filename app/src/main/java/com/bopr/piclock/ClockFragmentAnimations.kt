@@ -26,7 +26,7 @@ internal class ClockFragmentAnimations {
         addAnimator {
             setPropertyName("alpha")
             setFloatValues(1f, 0f)
-            duration = 1000L
+            duration = 3000L
             interpolator = AccelerateInterpolator()
         }
     }
@@ -130,15 +130,11 @@ internal class ClockFragmentAnimations {
     }
 
     fun blinkTimeSeparator(view: View) {
-        timeSeparatorAnimator.play(view) {
-            doOnCancel { view.alpha = 1f }
-        }
+        timeSeparatorAnimator.play(view)
     }
 
     fun blinkSecondsSeparator(view: View) {
-        secondsSeparatorAnimator.play(view) {
-            doOnCancel { view.alpha = 1f }
-        }
+        secondsSeparatorAnimator.play(view)
     }
 
 }

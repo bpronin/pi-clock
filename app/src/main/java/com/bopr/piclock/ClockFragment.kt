@@ -295,9 +295,16 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     private fun updateTimeSeparatorView() {
         if (!settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
+            timeSeparator.alpha = 1f
+            secondsSeparator.alpha = 1f
+
             timeSeparator.visibility = VISIBLE
-            secondsSeparator.visibility =
-                if (settings.getBoolean(PREF_SECONDS_VISIBLE)) VISIBLE else INVISIBLE
+
+            if (settings.getBoolean(PREF_SECONDS_VISIBLE)) {
+                secondsSeparator.visibility = VISIBLE
+            } else {
+                secondsSeparator.visibility = INVISIBLE
+            }
         }
     }
 
@@ -326,7 +333,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun playTickSound() {
-        if ((active && ready) || settings.getBoolean(PREF_TICK_SOUND_ALWAYS)) {
+        if (active || settings.getBoolean(PREF_TICK_SOUND_ALWAYS)) {
             tickPlayer.play()
         }
     }
