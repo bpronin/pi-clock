@@ -12,60 +12,70 @@ import androidx.core.animation.doOnStart
 
 internal class ClockFragmentAnimations {
 
+    private val fabShowAnimator by lazy {
+        addAnimator {
+            setPropertyName("alpha")
+            setFloatValues(0f, 1f)
+            duration = 1000L
+            interpolator = AccelerateInterpolator()
+        }
+    }
+
+    private val fabHideAnimator by lazy {
+        addAnimator {
+            setPropertyName("alpha")
+            setFloatValues(1f, 0f)
+            duration = 1000L
+            interpolator = AccelerateInterpolator()
+        }
+    }
+
+    private val fadeInContentAnimator by lazy {
+        addAnimator {
+            setPropertyName("alpha")
+            duration = 1000L
+            interpolator = AccelerateInterpolator()
+        }
+    }
+
+    private val fadeOutContentAnimator by lazy {
+        addAnimator {
+            setPropertyName("alpha")
+            duration = 1000L
+            interpolator = AccelerateInterpolator()
+        }
+    }
+
+    private val timeSeparatorAnimator by lazy {
+        addAnimator {
+            setPropertyName("alpha")
+            setFloatValues(0f, 1f)
+            duration = 2000L
+            interpolator = CycleInterpolator(1f)
+        }
+    }
+
+    private val secondsSeparatorAnimator by lazy {
+        addAnimator {
+            setPropertyName("alpha")
+            setFloatValues(0f, 1f)
+            duration = 2000L
+            interpolator = CycleInterpolator(1f)
+        }
+    }
+
     private val animators = mutableSetOf<Animator>()
 
-    private val fabShowAnimator = createAnimator {
-        setPropertyName("alpha")
-        setFloatValues(0f, 1f)
-        duration = 1000L
-        interpolator = AccelerateInterpolator()
+    private inline fun addAnimator(setup: ObjectAnimator.() -> Unit) = ObjectAnimator().apply {
+        setup()
+        animators.add(this)
     }
 
-    private val fabHideAnimator = createAnimator {
-        setPropertyName("alpha")
-        setFloatValues(1f, 0f)
-        duration = 1000L
-        interpolator = AccelerateInterpolator()
-    }
-
-    private val fadeInContentAnimator = createAnimator {
-        setPropertyName("alpha")
-        duration = 1000L
-        interpolator = AccelerateInterpolator()
-    }
-
-    private val fadeOutContentAnimator = createAnimator {
-        setPropertyName("alpha")
-        duration = 1000L
-        interpolator = AccelerateInterpolator()
-    }
-
-    private val timeSeparatorAnimator = createAnimator {
-        setPropertyName("alpha")
-        setFloatValues(0f, 1f)
-        duration = 2000L
-        interpolator = CycleInterpolator(1f)
-    }
-
-    private val secondsSeparatorAnimator = createAnimator {
-        setPropertyName("alpha")
-        setFloatValues(0f, 1f)
-        duration = 2000L
-        interpolator = CycleInterpolator(1f)
-    }
-
-    private fun createAnimator(initialize: ObjectAnimator.() -> Unit) = ObjectAnimator()
-        .apply(initialize).also { animators.add(it) }
-
-    private fun starAnimator(
-        view: View,
-        animator: ObjectAnimator,
-        initialize: ObjectAnimator.() -> Unit = {}
-    ) {
-        animator.apply {
+    private inline fun ObjectAnimator.play(view: View, setup: ObjectAnimator.() -> Unit = {}) {
+        apply {
             cancel()
             target = view
-            initialize()
+            setup()
             start()
         }
     }
@@ -77,13 +87,13 @@ internal class ClockFragmentAnimations {
     }
 
     fun showFab(view: View) {
-        starAnimator(view, fabShowAnimator) {
+        fabShowAnimator.play(view) {
             doOnStart { view.visibility = VISIBLE }
         }
     }
 
     fun hideFab(view: View) {
-        starAnimator(view, fabHideAnimator) {
+        fabHideAnimator.play(view) {
             doOnEnd { view.visibility = INVISIBLE }
         }
     }
@@ -93,18 +103,19 @@ internal class ClockFragmentAnimations {
         brightnessPercents: Int,
         onStart: (Animator) -> Unit = {}
     ) {
-        starAnimator(view, fadeInContentAnimator) {
+        fadeInContentAnimator.play(view) {
             setFloatValues(brightnessPercents / 100f, 1f)
             doOnStart { onStart(this) }
         }
     }
 
     fun fadeOutContent(
-        view: View, brightnessPercents: Int,
+        view: View,
+        brightnessPercents: Int,
         onStart: (Animator) -> Unit = {},
         onEnd: (Animator) -> Unit = {}
     ) {
-        starAnimator(view, fadeOutContentAnimator) {
+        fadeOutContentAnimator.play(view) {
             setFloatValues(1f, brightnessPercents / 100f)
             doOnStart { onStart(this) }
             doOnEnd { onEnd(this) }
@@ -112,11 +123,11 @@ internal class ClockFragmentAnimations {
     }
 
     fun blinkTimeSeparator(view: View) {
-        starAnimator(view, timeSeparatorAnimator)
+        timeSeparatorAnimator.play(view)
     }
 
     fun blinkSecondsSeparator(view: View) {
-        starAnimator(view, secondsSeparatorAnimator)
+        secondsSeparatorAnimator.play(view)
     }
 
 }
