@@ -17,7 +17,7 @@ internal class ClockFragmentAnimations {
         addAnimator {
             setPropertyName("alpha")
             setFloatValues(0f, 1f)
-            duration = 1000L
+            duration = 500L
             interpolator = AccelerateInterpolator()
         }
     }
@@ -26,7 +26,7 @@ internal class ClockFragmentAnimations {
         addAnimator {
             setPropertyName("alpha")
             setFloatValues(1f, 0f)
-            duration = 3000L
+            duration = 500L
             interpolator = AccelerateInterpolator()
         }
     }
@@ -34,7 +34,7 @@ internal class ClockFragmentAnimations {
     private val fadeInContentAnimator by lazy {
         addAnimator {
             setPropertyName("alpha")
-            duration = 1000L
+            duration = 2000L
             interpolator = AccelerateInterpolator()
         }
     }
@@ -42,7 +42,7 @@ internal class ClockFragmentAnimations {
     private val fadeOutContentAnimator by lazy {
         addAnimator {
             setPropertyName("alpha")
-            duration = 1000L
+            duration = 2000L
             interpolator = AccelerateInterpolator()
         }
     }

@@ -194,7 +194,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun updateActiveControls(animate: Boolean, onEnd: () -> Unit) {
+    private fun updateActiveControls(animate: Boolean, onComplete: () -> Unit) {
         val wantControlVolume = !settings.getBoolean(PREF_TICK_SOUND_ALWAYS)
         val minBrightness = minTextBrightness()
 
@@ -206,15 +206,15 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                         if (wantControlVolume) {
                             tickPlayer.fadeVolume(0f, 1f, animator.duration)
                         }
+                        onComplete()
                     },
                     onEnd = {
                         updateClockBrightness()
-                        onEnd()
                     })
             } else {
                 settingsButton.visibility = VISIBLE
                 updateClockBrightness()
-                onEnd()
+                onComplete()
             }
         } else {
             if (animate) {
@@ -227,12 +227,12 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                     },
                     onEnd = {
                         updateClockBrightness()
-                        onEnd()
+                        onComplete()
                     })
             } else {
                 settingsButton.visibility = INVISIBLE
                 updateClockBrightness()
-                onEnd()
+                onComplete()
             }
         }
     }
@@ -333,7 +333,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun playTickSound() {
-        if (active || settings.getBoolean(PREF_TICK_SOUND_ALWAYS)) {
+        if ((!active && !ready) || (active && ready) || settings.getBoolean(PREF_TICK_SOUND_ALWAYS)) {
             tickPlayer.play()
         }
     }
