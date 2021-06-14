@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.preference.ListPreference
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
+import com.bopr.piclock.Settings.Companion.PREF_CLOCK_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
@@ -27,6 +28,7 @@ class SettingsFragment : BasePreferenceFragment() {
         updateClockLayoutPreferenceView()
         updateTickAlwaysPreferenceView()
         updateAutoFullscreenPreferenceView()
+        updateClockBrightnessPreferenceView()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -38,6 +40,7 @@ class SettingsFragment : BasePreferenceFragment() {
             PREF_CLOCK_LAYOUT -> updateClockLayoutPreferenceView()
             PREF_TICK_SOUND_ALWAYS -> updateTickAlwaysPreferenceView()
             PREF_AUTO_FULLSCREEN_DELAY -> updateAutoFullscreenPreferenceView()
+            PREF_CLOCK_BRIGHTNESS -> updateClockBrightnessPreferenceView()
         }
     }
 
@@ -54,14 +57,11 @@ class SettingsFragment : BasePreferenceFragment() {
     }
 
     private fun updateHourFormatPreferenceView() {
-        val date = Date()
-        val locale = Locale.getDefault()
-
         requirePreference(PREF_24_HOURS_FORMAT).apply {
-            summary = if (settings.getBoolean(key))
-                SimpleDateFormat("HH:mm", locale).format(date)
-            else
-                SimpleDateFormat("a:mm", locale).format(date)
+            summary = SimpleDateFormat(
+                if (settings.getBoolean(key)) "HH:mm" else "h:mm a",
+                Locale.getDefault()
+            ).format(Date())
         }
     }
 
@@ -107,4 +107,11 @@ class SettingsFragment : BasePreferenceFragment() {
         }
     }
 
+    private fun updateClockBrightnessPreferenceView() {
+        (requirePreference(PREF_CLOCK_BRIGHTNESS) as ListPreference).apply {
+            val value = settings.getInt(PREF_CLOCK_BRIGHTNESS).toString()
+            /* NOTE: single percent signs in entry names causes an exception */
+            summary = entries[findIndexOfValue(value)].toString().replace("%", "%%")
+        }
+    }
 }

@@ -82,6 +82,7 @@
                     android:textAlignment="center"
                     android:textColor="?attr/timeTextColor"
                     android:textSize="48sp"
+                    android:layout_marginBottom="4sp"
                     tools:ignore="HardcodedText" />
 
                 <TextView

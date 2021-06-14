@@ -22,6 +22,7 @@
     <string name="enable_fullscreen_mode">Enable fullscreen</string>
     <string name="sound">Sound</string>
     <string name="appearance">Appearance</string>
+    <string name="clock_brightness">Clock brightness</string>
 
     <string-array name="clock_layout_names">
         <item>Digital default</item>
@@ -46,6 +47,14 @@
         <item>3 minutes</item>
         <item>5 minutes</item>
         <item>Never</item>
+    </string-array>
+
+    <string-array name="clock_brightness_names">
+        <item>10%</item>
+        <item>25%</item>
+        <item>50%</item>
+        <item>75%</item>
+        <item>100%</item>
     </string-array>
 
 </resources>

@@ -14,7 +14,7 @@
     </string-array>
 
     <!--  See res/raw/*.mp3 resources  -->
-    <string-array name="tick_sound_values">
+    <string-array name="tick_sound_values" translatable="false">
         <item />
         <item>alarm_clock</item>
         <item>clock_tick_tick</item>
@@ -23,12 +23,12 @@
         <item>wrist_watch</item>
     </string-array>
 
-    <string-array name="clock_layout_values">
+    <string-array name="clock_layout_values" translatable="false">
         <item>view_digital_default</item>
         <item>view_digital_round</item>
     </string-array>
 
-    <string-array name="auto_fullscreen_delay_values">
+    <string-array name="auto_fullscreen_delay_values" translatable="false">
         <item>1000</item>
         <item>3000</item>
         <item>5000</item>
@@ -37,6 +37,14 @@
         <item>180000</item>
         <item>300000</item>
         <item>-1</item>
+    </string-array>
+
+    <string-array name="clock_brightness_values" translatable="false">
+        <item>10</item>
+        <item>25</item>
+        <item>50</item>
+        <item>75</item>
+        <item>100</item>
     </string-array>
 
 </resources>

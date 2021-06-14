@@ -30,6 +30,12 @@
             android:key="time_separator_blinking"
             android:title="@string/blink_time_separator" />
 
+        <com.bopr.piclock.ui.preference.IntListPreference
+            android:key="clock_brightness"
+            android:title="@string/clock_brightness"
+            android:entries="@array/clock_brightness_names"
+            android:entryValues="@array/clock_brightness_values" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/sound">

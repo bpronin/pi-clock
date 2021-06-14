@@ -37,7 +37,7 @@ abstract class BasePreferenceFragment : PreferenceFragmentCompat(),
         if (preference is CustomDialogPreference) {
             val dialogFragment: DialogFragment =
                 (preference as CustomDialogPreference).createDialogFragment()
-            dialogFragment.setTargetFragment(this, 0)
+//            dialogFragment.setTargetFragment(this, 0)
             dialogFragment.show(parentFragmentManager, null)
         } else {
             super.onDisplayPreferenceDialog(preference)

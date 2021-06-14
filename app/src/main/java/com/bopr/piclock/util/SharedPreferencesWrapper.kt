@@ -43,6 +43,11 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         return getString(key, "")!!
     }
 
+    fun getInt(key: String): Int {
+        checkKeyExists(key)
+        return getInt(key, 0)
+    }
+
     fun getLong(key: String): Long {
         checkKeyExists(key)
         return getLong(key, 0)
@@ -67,9 +72,9 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         return wrappedPreferences.contains(key)
     }
 
-    fun contains(key: String, clazz: KClass<*>): Boolean {
+    fun contains(key: String, valueClass: KClass<*>): Boolean {
         val value = wrappedPreferences.all.get(key)
-        return value != null && value.javaClass == clazz.java.javaClass
+        return value != null && valueClass.isInstance(value)
     }
 
     override fun edit(): EditorWrapper {
@@ -136,10 +141,11 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
 
         private fun putOptional(
             key: String,
-            validate: () -> Boolean,
+            valueClass: KClass<*>,
+            isExistentValid: () -> Boolean,
             put: () -> Unit
         ): EditorWrapper {
-            if (!contains(key) || !validate()) {  //todo:replace with contains(key, class)
+            if (!contains(key, valueClass) || !isExistentValid()) {
                 put()
             }
             return this
@@ -147,38 +153,38 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
 
         fun putStringOptional(
             key: String, value: String?,
-            validate: () -> Boolean = { true }
+            isExistentValid: () -> Boolean = { true }
         ): EditorWrapper {
-            return putOptional(key, validate) { putString(key, value) }
+            return putOptional(key, String::class, isExistentValid) { putString(key, value) }
         }
 
         fun putStringSetOptional(
             key: String,
             values: Set<String>?,
-            validate: () -> Boolean = { true }
+            isExistentValid: () -> Boolean = { true }
         ): EditorWrapper {
-            return putOptional(key, validate) { putStringSet(key, values) }
+            return putOptional(key, Set::class, isExistentValid) { putStringSet(key, values) }
         }
 
         fun putBooleanOptional(
             key: String, value: Boolean,
-            validate: () -> Boolean = { true }
+            isExistentValid: () -> Boolean = { true }
         ): EditorWrapper {
-            return putOptional(key, validate) { putBoolean(key, value) }
+            return putOptional(key, Boolean::class, isExistentValid) { putBoolean(key, value) }
         }
 
         fun putIntOptional(
             key: String, value: Int,
-            validate: () -> Boolean = { true }
+            isExistentValid: () -> Boolean = { true }
         ): EditorWrapper {
-            return putOptional(key, validate) { putInt(key, value) }
+            return putOptional(key, Int::class, isExistentValid) { putInt(key, value) }
         }
 
         fun putLongOptional(
             key: String, value: Long,
-            validate: () -> Boolean = { true }
+            isExistentValid: () -> Boolean = { true }
         ): EditorWrapper {
-            return putOptional(key, validate) { putLong(key, value) }
+            return putOptional(key, Long::class, isExistentValid) { putLong(key, value) }
         }
 
         override fun remove(key: String): EditorWrapper {

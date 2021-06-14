@@ -14,15 +14,18 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
+import com.bopr.piclock.Settings.Companion.PREF_CLOCK_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_VISIBLE
+import com.bopr.piclock.Settings.Companion.PREF_LAST_MODE
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.ui.BaseFragment
-import com.bopr.piclock.util.*
+import com.bopr.piclock.util.getResId
+import com.bopr.piclock.util.requireViewByIdCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -53,6 +56,8 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private lateinit var hoursFormat: DateFormat
     private lateinit var dateFormat: DateFormat
     private lateinit var tickPlayer: TickPlayer
+    private lateinit var animations: ClockFragmentAnimations
+
     private var autoDeactivateDelay: Long = 1000L
 
     private val locale = Locale.getDefault()
@@ -73,6 +78,8 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private var active = false
         set(value) {
             if (field != value) {
+                Log.d(_tag, "Active: $field")
+
                 field = value
                 handler.removeCallbacks(autoDeactivateTask)
                 activate()
@@ -82,11 +89,20 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private var activated = false
         set(value) {
             if (field != value) {
+                Log.d(_tag, "Activate complete: $field")
+
                 field = value
                 if (autoDeactivateDelay > 0) {
                     handler.postDelayed(autoDeactivateTask, autoDeactivateDelay)
                 }
                 onActivate(active)
+            }
+        }
+
+    private var clockBrightness: Int = 0
+        set(value) {
+            if (field != value) {
+                field = value
             }
         }
 
@@ -100,11 +116,13 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         secondsFormat = SimpleDateFormat("ss", locale)
 
         tickPlayer = TickPlayer(requireContext())
+        animations = ClockFragmentAnimations()
 
         settings = Settings(requireContext()).apply {
             autoDeactivateDelay = getLong(PREF_AUTO_FULLSCREEN_DELAY)
             dateFormat = SimpleDateFormat(getString(PREF_DATE_FORMAT), locale)
             tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
+            clockBrightness = getInt(PREF_CLOCK_BRIGHTNESS)
         }
         settings.registerOnSharedPreferenceChangeListener(this)
     }
@@ -152,6 +170,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     override fun onPause() {
         super.onPause()
+        animations.cancel()
         tickPlayer.stop()
         handler.removeCallbacks(timerTask)
     }
@@ -159,21 +178,24 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         settings.apply {
             when (key) {
-                PREF_CLOCK_LAYOUT -> createContentView()
+                PREF_CLOCK_LAYOUT ->
+                    createContentView()
                 PREF_24_HOURS_FORMAT ->
-                    updateHoursView(getBoolean(PREF_24_HOURS_FORMAT))
+                    updateHoursView()
                 PREF_SECONDS_VISIBLE ->
-                    updateSecondsView(getBoolean(PREF_SECONDS_VISIBLE))
+                    updateSecondsView()
                 PREF_DATE_VISIBLE ->
-                    updateDateView(getBoolean(PREF_DATE_VISIBLE))
+                    updateDateView()
                 PREF_TIME_SEPARATOR_BLINKING ->
-                    updateTimeSeparatorView(getBoolean(PREF_TIME_SEPARATOR_BLINKING))
+                    updateTimeSeparatorView()
                 PREF_DATE_FORMAT ->
                     dateFormat = SimpleDateFormat(getString(PREF_DATE_FORMAT), locale)
                 PREF_TICK_SOUND ->
                     tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
                 PREF_AUTO_FULLSCREEN_DELAY ->
                     autoDeactivateDelay = getLong(PREF_AUTO_FULLSCREEN_DELAY)
+                PREF_CLOCK_BRIGHTNESS ->
+                    clockBrightness = getInt(PREF_CLOCK_BRIGHTNESS)
             }
         }
     }
@@ -195,41 +217,40 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         Log.d(_tag, "Activating: $active")
 
         val wantControlVolume = !settings.getBoolean(PREF_TICK_SOUND_ALWAYS)
-        val startDelay = 100L
-        val duration: Long = 3000
-
         if (active) {
-            settingsButton.showAnimated(R.anim.fab_show, startDelay)
-
-            contentContainer.animateRes(R.anim.fade_in_50, startDelay,
-                duration,
-                onStart = {
+            animations.showFab(settingsButton)
+            animations.fadeInContent(contentContainer, clockBrightness,
+                onStart = { animator ->
                     if (wantControlVolume) {
-                        tickPlayer.fadeVolume(0f, 1f, duration)
+                        tickPlayer.fadeVolume(0f, 1f, animator.duration)
                     }
                     activated = true
                 })
         } else {
-            settingsButton.hideAnimated(R.anim.fab_hide, startDelay)
-
-            contentContainer.animateRes(R.anim.fade_out_50, startDelay,
-                duration,
-                onStart = {
+            animations.hideFab(settingsButton)
+            animations.fadeOutContent(contentContainer, clockBrightness,
+                onStart = { animator ->
                     if (wantControlVolume) {
-                        tickPlayer.fadeVolume(1f, 0f, duration)
+                        tickPlayer.fadeVolume(1f, 0f, animator.duration)
                     }
                 },
                 onEnd = {
                     activated = false
                 })
         }
+
+        settings.update {
+            putString(PREF_LAST_MODE, if (active) MODE_ACTIVE else MODE_INACTIVE)
+        }
     }
 
     private fun createContentView() {
+        Log.d(_tag, "Creating content")
+
         contentContainer.apply {
             removeAllViews()
             val resName = settings.getString(PREF_CLOCK_LAYOUT)
-            val resId = requireContext().getResourceId("layout", resName)
+            val resId = requireContext().getResId("layout", resName)
 
             addView(layoutInflater.inflate(resId, this, false).apply {
                 hoursView = requireViewByIdCompat(R.id.hours_view)
@@ -242,35 +263,16 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
             })
         }
 
-        settings.apply {
-            updateHoursView(getBoolean(PREF_24_HOURS_FORMAT))
-            updateSecondsView(getBoolean(PREF_SECONDS_VISIBLE))
-            updateDateView(getBoolean(PREF_DATE_VISIBLE))
-            updateTimeSeparatorView(getBoolean(PREF_TIME_SEPARATOR_BLINKING))
-            //      todo:  active = settings.getBoolean(PREF_LAST_ACTIVE)
-        }
+        updateHoursView()
+        updateSecondsView()
+        updateDateView()
+        updateTimeSeparatorView()
+
+        active = settings.getString(PREF_LAST_MODE, MODE_INACTIVE) == MODE_ACTIVE
     }
 
-    private fun updateDateView(visible: Boolean) {
-        if (visible) {
-            dateView.visibility = VISIBLE
-        } else {
-            dateView.visibility = GONE
-        }
-    }
-
-    private fun updateSecondsView(visible: Boolean) {
-        if (visible) {
-            secondsView.visibility = VISIBLE
-            secondsSeparator.visibility = VISIBLE
-        } else {
-            secondsView.visibility = GONE
-            secondsSeparator.visibility = GONE
-        }
-    }
-
-    private fun updateHoursView(format24: Boolean) {
-        if (format24) {
+    private fun updateHoursView() {
+        if (settings.getBoolean(PREF_24_HOURS_FORMAT)) {
             hoursFormat = SimpleDateFormat("HH", locale)
             amPmMarkerView.visibility = GONE
         } else {
@@ -279,33 +281,38 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun updateTimeSeparatorView(blinking: Boolean) {
-        timeSeparator.visibility = if (blinking) INVISIBLE else VISIBLE
-        secondsSeparator.visibility = if (blinking) INVISIBLE else VISIBLE
+    private fun updateSecondsView() {
+        if (settings.getBoolean(PREF_SECONDS_VISIBLE)) {
+            secondsView.visibility = VISIBLE
+            secondsSeparator.visibility = VISIBLE
+        } else {
+            secondsView.visibility = GONE
+            secondsSeparator.visibility = GONE
+        }
     }
 
-    private fun applyViewSettings() {
-        settings.apply {
-            updateHoursView(getBoolean(PREF_24_HOURS_FORMAT))
-            updateSecondsView(getBoolean(PREF_SECONDS_VISIBLE))
-            updateDateView(getBoolean(PREF_DATE_VISIBLE))
-            updateTimeSeparatorView(getBoolean(PREF_TIME_SEPARATOR_BLINKING))
-            //      todo:  active = settings.getBoolean(PREF_LAST_ACTIVE)
+    private fun updateDateView() {
+        if (settings.getBoolean(PREF_DATE_VISIBLE)) {
+            dateView.visibility = VISIBLE
+        } else {
+            dateView.visibility = GONE
+        }
+    }
+
+    private fun updateTimeSeparatorView() {
+        if (!settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
+            timeSeparator.visibility = VISIBLE
+            secondsSeparator.visibility =
+                if (settings.getBoolean(PREF_SECONDS_VISIBLE)) VISIBLE else INVISIBLE
         }
     }
 
     private fun blinkTimeSeparator(time: Date) {
         if (settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
-            val secondsVisible = settings.getBoolean(PREF_SECONDS_VISIBLE)
             if (isOddSecond(time)) {
-                timeSeparator.showAnimated(R.anim.time_separator_show, 0)
-                if (secondsVisible) {
-                    secondsSeparator.showAnimated(R.anim.time_separator_show, 0)
-                }
-            } else {
-                timeSeparator.hideAnimated(R.anim.time_separator_hide, 0)
-                if (secondsVisible) {
-                    secondsSeparator.hideAnimated(R.anim.time_separator_hide, 0)
+                animations.blinkTimeSeparator(timeSeparator)
+                if (settings.getBoolean(PREF_SECONDS_VISIBLE)) {
+                    animations.blinkSecondsSeparator(secondsSeparator)
                 }
             }
         }
@@ -318,5 +325,12 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun isOddSecond(time: Date) = time.time / 1000 % 2 != 0L
+
+    companion object {
+
+        const val MODE_ACTIVE = "active"
+        const val MODE_INACTIVE = "inactive"
+
+    }
 
 }

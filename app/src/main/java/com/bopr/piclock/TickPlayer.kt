@@ -5,7 +5,7 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.util.Log
 import android.view.animation.LinearInterpolator
-import com.bopr.piclock.util.getResourceId
+import com.bopr.piclock.util.getResId
 
 internal class TickPlayer(private val context: Context) {
 
@@ -31,7 +31,7 @@ internal class TickPlayer(private val context: Context) {
 
     private fun prepare() {
         soundName?.let {
-            val resId = context.getResourceId("raw", it)
+            val resId = context.getResId("raw", it)
             if (resId != 0) {
                 player = MediaPlayer.create(context, resId)
                 ready = true
@@ -66,19 +66,17 @@ internal class TickPlayer(private val context: Context) {
         }
     }
 
-    fun fadeVolume(from: Float, to: Float, duration: Long) {
+    fun fadeVolume(from: Float, to: Float, fadeDuration: Long) {
         if (ready) {
             player.setVolume(from, from)
 
-            volumeAnimator.also {
-                it.cancel()
+            volumeAnimator.apply {
+                cancel()
 
-                it.target = player
-                it.duration = duration
-                it.setFloatValues(from, to)
-
-                it.start()
-            }
+                target = player
+                duration = fadeDuration
+                setFloatValues(from, to)
+            }.start()
         }
     }
 
