@@ -53,6 +53,11 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         return getLong(key, 0)
     }
 
+    fun getFloat(key: String): Float {
+        checkKeyExists(key)
+        return getFloat(key, 0f)
+    }
+
     fun getBoolean(key: String): Boolean {
         checkKeyExists(key)
         return getBoolean(key, false)
@@ -185,6 +190,13 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
             isExistentValid: () -> Boolean = { true }
         ): EditorWrapper {
             return putOptional(key, Long::class, isExistentValid) { putLong(key, value) }
+        }
+
+        fun putFloatOptional(
+            key: String, value: Float,
+            isExistentValid: () -> Boolean = { true }
+        ): EditorWrapper {
+            return putOptional(key, Float::class, isExistentValid) { putFloat(key, value) }
         }
 
         override fun remove(key: String): EditorWrapper {

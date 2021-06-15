@@ -16,6 +16,7 @@ import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
+import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_MIN_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
@@ -55,6 +56,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private lateinit var dateFormat: DateFormat
     private lateinit var tickPlayer: TickPlayer
     private lateinit var animations: ClockFragmentAnimations
+    private lateinit var scaleControl: ClockFragmentScaleControl
 
     private val locale = Locale.getDefault()
     private val handler = Handler(Looper.getMainLooper())
@@ -111,6 +113,13 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
         contentContainer = view.findViewById(R.id.content_container)
 
+        scaleControl = ClockFragmentScaleControl(requireContext(), view, contentContainer).apply {
+            factor = settings.getFloat(PREF_CLOCK_SCALE)
+            onEnd = { factor ->
+                settings.update { putFloat(PREF_CLOCK_SCALE, factor) }
+            }
+        }
+
         createContentView()
         setActive(savedState?.getBoolean("active") ?: false, false)
 
@@ -157,12 +166,15 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                 PREF_TICK_SOUND ->
                     tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
                 PREF_MIN_BRIGHTNESS ->
-                    updateClockBrightness()
+                    updateMinBrightness()
+                PREF_CLOCK_SCALE -> {
+                    scaleControl.factor = settings.getFloat(PREF_CLOCK_SCALE)
+                }
             }
         }
     }
 
-    private fun updateClockBrightness() {
+    private fun updateMinBrightness() {
         contentContainer.alpha = if (active) 1f else minTextBrightness()
     }
 
@@ -210,11 +222,11 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                         onComplete()
                     },
                     onEnd = {
-                        updateClockBrightness()
+                        updateMinBrightness()
                     })
             } else {
                 settingsButton.visibility = VISIBLE
-                updateClockBrightness()
+                updateMinBrightness()
                 onComplete()
             }
         } else {
@@ -227,12 +239,12 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                         }
                     },
                     onEnd = {
-                        updateClockBrightness()
+                        updateMinBrightness()
                         onComplete()
                     })
             } else {
                 settingsButton.visibility = INVISIBLE
-                updateClockBrightness()
+                updateMinBrightness()
                 onComplete()
             }
         }
@@ -261,7 +273,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         updateSecondsView()
         updateDateView()
         updateTimeSeparatorView()
-        updateClockBrightness()
+        updateMinBrightness()
     }
 
     private fun updateHoursView() {
