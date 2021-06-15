@@ -81,10 +81,10 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         return EditorWrapper(wrappedPreferences.edit())
     }
 
-    fun update(action: EditorWrapper.() -> Unit) {
-        val editor = edit()
-        action(editor)
-        editor.apply()
+    inline fun update(action: EditorWrapper.() -> Unit) {
+        edit().apply {
+            action(this)
+        }.apply()
     }
 
     private fun checkKeyExists(key: String) {

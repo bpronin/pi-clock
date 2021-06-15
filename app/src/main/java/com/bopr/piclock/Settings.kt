@@ -9,8 +9,8 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 ) {
 
     fun validate() = update {
-//        clear()
-        context.run {
+        /* do not clear settings here  */
+        context.apply {
             putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
             putBooleanOptional(PREF_TIME_SEPARATOR_BLINKING, true)
             putBooleanOptional(PREF_24_HOURS_FORMAT, is24HourLocale())
@@ -20,40 +20,58 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
             putStringOptional(
                 PREF_DATE_FORMAT,
-                getResArrayValue(R.array.date_format_values, 1)
+                ensureResExists(R.array.date_format_values, "EEEE, MMMM dd")
             ) {
-                val current = getString(PREF_DATE_FORMAT)
-                isResArrayValueExists(R.array.date_format_values, current)
+                isResExists(
+                    R.array.date_format_values,
+                    getString(PREF_DATE_FORMAT)
+                )
             }
 
             putLongOptional(
                 PREF_AUTO_FULLSCREEN_DELAY,
-                getResArrayValue(R.array.auto_fullscreen_delay_values, 1).toLong()
+                ensureResExists(R.array.auto_fullscreen_delay_values, 5000)
             ) {
-                val current = getLong(PREF_AUTO_FULLSCREEN_DELAY).toString()
-                isResArrayValueExists(R.array.auto_fullscreen_delay_values, current)
+                isResExists(
+                    R.array.auto_fullscreen_delay_values,
+                    getLong(PREF_AUTO_FULLSCREEN_DELAY)
+                )
             }
 
             putIntOptional(
                 PREF_CLOCK_BRIGHTNESS,
-                getResArrayValue(R.array.clock_brightness_values, 2).toInt()
+                ensureResExists(R.array.clock_brightness_values, 20)
             ) {
-                val current = getInt(PREF_CLOCK_BRIGHTNESS).toString()
-                isResArrayValueExists(R.array.clock_brightness_values, current)
+                isResExists(
+                    R.array.clock_brightness_values,
+                    getInt(PREF_CLOCK_BRIGHTNESS)
+                )
             }
 
             putStringOptional(
                 PREF_CLOCK_LAYOUT,
-                getResName(R.layout.view_digital_default)
+                ensureResExists(
+                    R.array.clock_layout_values,
+                    getResName(R.layout.view_digital_default)
+                )
             ) {
-                getString(PREF_CLOCK_LAYOUT, null)?.let {
-                    isResExists("layout", it)
-                } ?: false
+                isResExists(
+                    R.array.clock_layout_values,
+                    getString(PREF_CLOCK_LAYOUT)
+                )
             }
 
-            putStringOptional(PREF_TICK_SOUND, "") {
-                val current = getString(PREF_TICK_SOUND)
-                current.isEmpty() || isResExists("raw", current)
+            putStringOptional(
+                PREF_TICK_SOUND,
+                ensureResExists(
+                    R.array.tick_sound_values,
+                    getResName(R.raw.alarm_clock)
+                )
+            ) {
+                isResExists(
+                    R.array.tick_sound_values,
+                    getString(PREF_TICK_SOUND)
+                )
             }
         }
     }

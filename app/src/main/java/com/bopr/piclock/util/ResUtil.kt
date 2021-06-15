@@ -27,15 +27,21 @@ fun Context.getResName(resId: Int): String {
     }
 }
 
-fun Context.isResExists(defType: String, resourceName: String): Boolean {
-    return getResId(defType, resourceName) != 0
+/**
+ * Returns true if resource array contains value.
+ */
+fun <T> Context.isResExists(arrayResId: Int, value: T): Boolean {
+    return resources.getStringArray(arrayResId).contains(value.toString())
 }
 
-fun Context.getResArrayValue(arrayResId: Int, index: Int): String {
-    return resources.getStringArray(arrayResId)[index]
-}
-
-fun Context.isResArrayValueExists(arrayResId: Int, value: String): Boolean {
-    return resources.getStringArray(arrayResId).indexOf(value) != -1
+/**
+ * Throws an exception if resource array does not contain value.
+ */
+fun <T> Context.ensureResExists(arrayResId: Int, value: T): T {
+    if (!isResExists(arrayResId, value)) {
+        throw Error("Resource array value does not exists: $value")
+    } else {
+        return value
+    }
 }
 
