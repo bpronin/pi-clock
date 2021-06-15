@@ -3,10 +3,10 @@
     <PreferenceCategory android:title="@string/appearance">
 
         <ListPreference
-            android:key="clock_layout"
-            android:title="@string/clock_layout"
             android:entries="@array/clock_layout_names"
-            android:entryValues="@array/clock_layout_values" />
+            android:entryValues="@array/clock_layout_values"
+            android:key="clock_layout"
+            android:title="@string/clock_layout" />
 
         <SwitchPreference
             android:key="24_hours_format"
@@ -17,30 +17,28 @@
             android:title="@string/show_seconds" />
 
         <ListPreference
+            android:entryValues="@array/date_format_values"
             android:key="date_format"
-            android:title="@string/date_format"
-            android:entryValues="@array/date_format_values" />
+            android:title="@string/date_format" />
         <!-- android:entries for date_format are build in code -->
-        
+
         <com.bopr.piclock.ui.preference.FloatListPreference
-            android:key="clock_scale"
-            android:title="@string/scale"
             android:entries="@array/scale_names"
-            android:entryValues="@array/scale_values" />
+            android:entryValues="@array/scale_values"
+            android:key="clock_scale"
+            android:title="@string/scale" />
 
         <com.bopr.piclock.ui.preference.IntListPreference
-            android:key="min_brightness"
-            android:title="@string/min_brightness"
             android:entries="@array/min_brightness_names"
-            android:entryValues="@array/min_brightness_values" />
+            android:entryValues="@array/min_brightness_values"
+            android:key="min_brightness"
+            android:title="@string/min_brightness" />
 
-<!--
-todo:        <com.bopr.piclock.ui.preference.IntListPreference
-            android:key="max_brightness"
-            android:title="@string/max_brightness"
+        <com.bopr.piclock.ui.preference.IntListPreference
             android:entries="@array/max_brightness_names"
-            android:entryValues="@array/max_brightness_values" />
--->
+            android:entryValues="@array/max_brightness_values"
+            android:key="max_brightness"
+            android:title="@string/max_brightness" />
 
     </PreferenceCategory>
 
@@ -55,24 +53,24 @@ todo:        <com.bopr.piclock.ui.preference.IntListPreference
             android:title="@string/fullscreen" />
 
         <com.bopr.piclock.ui.preference.LongListPreference
-            android:key="auto_fullscreen_delay"
-            android:title="@string/auto_fullscreen"
             android:entries="@array/auto_fullscreen_delay_names"
-            android:entryValues="@array/auto_fullscreen_delay_values" />
+            android:entryValues="@array/auto_fullscreen_delay_values"
+            android:key="auto_fullscreen_delay"
+            android:title="@string/auto_fullscreen" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/sound">
 
         <ListPreference
-            android:key="tick_sound"
-            android:title="@string/tick_sound"
             android:entries="@array/tick_sound_names"
-            android:entryValues="@array/tick_sound_values" />
+            android:entryValues="@array/tick_sound_values"
+            android:key="tick_sound"
+            android:title="@string/tick_sound" />
 
         <SwitchPreference
             android:key="tick_sound_always"
             android:title="@string/tick_sound_always" />
     </PreferenceCategory>
-    
+
 
 </PreferenceScreen>

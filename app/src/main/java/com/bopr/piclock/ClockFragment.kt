@@ -18,6 +18,7 @@ import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_MAX_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_MIN_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
@@ -57,6 +58,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private lateinit var tickPlayer: TickPlayer
     private lateinit var animations: ClockFragmentAnimations
     private lateinit var scaleControl: ClockFragmentScaleControl
+    private lateinit var brightnessControl: ClockFragmentBrightnessControl
 
     private val locale = Locale.getDefault()
     private val handler = Handler(Looper.getMainLooper())
@@ -90,7 +92,6 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
         settings = Settings(requireContext()).apply {
             tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
-
             registerOnSharedPreferenceChangeListener(this@ClockFragment)
         }
     }
@@ -119,6 +120,18 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                 settings.update { putFloat(PREF_CLOCK_SCALE, factor) }
             }
         }
+
+        brightnessControl =
+            ClockFragmentBrightnessControl(requireContext(), view, contentContainer).apply {
+                minBrightness = settings.getInt(PREF_MIN_BRIGHTNESS)
+                maxBrightness = settings.getInt(PREF_MAX_BRIGHTNESS)
+                onEnd = {
+                    settings.update {
+                        putInt(PREF_MIN_BRIGHTNESS, minBrightness)
+                        putInt(PREF_MAX_BRIGHTNESS, maxBrightness)
+                    }
+                }
+            }
 
         createContentView()
         setActive(savedState?.getBoolean("active") ?: false, false)
@@ -166,16 +179,14 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                 PREF_TICK_SOUND ->
                     tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
                 PREF_MIN_BRIGHTNESS ->
-                    updateMinBrightness()
+                    brightnessControl.minBrightness = settings.getInt(PREF_MIN_BRIGHTNESS)
+                PREF_MAX_BRIGHTNESS ->
+                    brightnessControl.maxBrightness = settings.getInt(PREF_MAX_BRIGHTNESS)
                 PREF_CLOCK_SCALE -> {
                     scaleControl.factor = settings.getFloat(PREF_CLOCK_SCALE)
                 }
             }
         }
-    }
-
-    private fun updateMinBrightness() {
-        contentContainer.alpha = if (active) 1f else minTextBrightness()
     }
 
     private fun onTimer() {
@@ -209,12 +220,13 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     private fun updateActiveControls(animate: Boolean, onComplete: () -> Unit) {
         val wantControlVolume = !settings.getBoolean(PREF_TICK_SOUND_ALWAYS)
-        val minBrightness = minTextBrightness()
 
         if (active) {
             if (animate) {
                 animations.showFab(settingsButton)
-                animations.fadeInContent(contentContainer, minBrightness,
+                animations.fadeInContent(contentContainer,
+                    brightnessControl.minBrightness,
+                    brightnessControl.maxBrightness,
                     onStart = { animator ->
                         if (wantControlVolume) {
                             tickPlayer.fadeVolume(0f, 1f, animator.duration)
@@ -222,29 +234,31 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                         onComplete()
                     },
                     onEnd = {
-                        updateMinBrightness()
+                        brightnessControl.updateBrightness(active)
                     })
             } else {
                 settingsButton.visibility = VISIBLE
-                updateMinBrightness()
+                brightnessControl.updateBrightness(active)
                 onComplete()
             }
         } else {
             if (animate) {
                 animations.hideFab(settingsButton)
-                animations.fadeOutContent(contentContainer, minBrightness,
+                animations.fadeOutContent(contentContainer,
+                    brightnessControl.minBrightness,
+                    brightnessControl.maxBrightness,
                     onStart = { animator ->
                         if (wantControlVolume) {
                             tickPlayer.fadeVolume(1f, 0f, animator.duration)
                         }
                     },
                     onEnd = {
-                        updateMinBrightness()
+                        brightnessControl.updateBrightness(active)
                         onComplete()
                     })
             } else {
                 settingsButton.visibility = INVISIBLE
-                updateMinBrightness()
+                brightnessControl.updateBrightness(active)
                 onComplete()
             }
         }
@@ -273,7 +287,6 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         updateSecondsView()
         updateDateView()
         updateTimeSeparatorView()
-        updateMinBrightness()
     }
 
     private fun updateHoursView() {
@@ -354,8 +367,6 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
             tickPlayer.play()
         }
     }
-
-    private fun minTextBrightness() = settings.getInt(PREF_MIN_BRIGHTNESS) / 100f
 
     private fun isOddSecond(time: Date) = time.time / 1000 % 2 != 0L
 

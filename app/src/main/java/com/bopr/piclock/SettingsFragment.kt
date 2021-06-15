@@ -9,6 +9,7 @@ import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_MAX_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_MIN_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
@@ -33,6 +34,7 @@ class SettingsFragment : BasePreferenceFragment() {
         updateAutoFullscreenPreferenceView()
         updateScalePreferenceView()
         updateMinBrightnessPreferenceView()
+        updateMaxBrightnessPreferenceView()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -46,6 +48,7 @@ class SettingsFragment : BasePreferenceFragment() {
             PREF_AUTO_FULLSCREEN_DELAY -> updateAutoFullscreenPreferenceView()
             PREF_CLOCK_SCALE -> updateScalePreferenceView()
             PREF_MIN_BRIGHTNESS -> updateMinBrightnessPreferenceView()
+            PREF_MAX_BRIGHTNESS -> updateMaxBrightnessPreferenceView()
         }
     }
 
@@ -136,6 +139,14 @@ class SettingsFragment : BasePreferenceFragment() {
             val value = settings.getInt(PREF_MIN_BRIGHTNESS).toString()
             val percents = fixSummaryPercents(entries[findIndexOfValue(value)].toString())
             summary = getString(R.string.min_brightness_summary, percents)
+        }
+    }
+
+    private fun updateMaxBrightnessPreferenceView() {
+        (requirePreference(PREF_MAX_BRIGHTNESS) as ListPreference).apply {
+            val value = settings.getInt(PREF_MAX_BRIGHTNESS).toString()
+            val percents = fixSummaryPercents(entries[findIndexOfValue(value)].toString())
+            summary = getString(R.string.max_brightness_summary, percents)
         }
     }
 

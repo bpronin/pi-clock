@@ -13,7 +13,7 @@ import kotlin.math.min
 internal class ClockFragmentScaleControl(
     context: Context,
     controllerView: View,
-    private val controllingView: View,
+    private val controllingView: View
 ) : ScaleGestureDetector.OnScaleGestureListener, View.OnTouchListener {
 
     private val minFactor = context.resources.getStringArray(R.array.scale_values).first().toFloat()
