@@ -39,7 +39,7 @@ fun <T> Context.isResExists(arrayResId: Int, value: T): Boolean {
  */
 fun <T> Context.ensureResExists(arrayResId: Int, value: T): T {
     if (!isResExists(arrayResId, value)) {
-        throw Error("Resource array value does not exists: $value")
+        throw Error("Resource array: ${getResName(arrayResId)} does not contain value: $value")
     } else {
         return value
     }

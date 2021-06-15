@@ -21,17 +21,38 @@
             android:title="@string/date_format"
             android:entryValues="@array/date_format_values" />
         <!-- android:entries for date_format are build in code -->
+        
+        <com.bopr.piclock.ui.preference.IntListPreference
+            android:key="min_brightness"
+            android:title="@string/min_brightness"
+            android:entries="@array/min_brightness_names"
+            android:entryValues="@array/min_brightness_values" />
+
+<!--
+todo:        <com.bopr.piclock.ui.preference.IntListPreference
+            android:key="max_brightness"
+            android:title="@string/max_brightness"
+            android:entries="@array/max_brightness_names"
+            android:entryValues="@array/max_brightness_values" />
+-->
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/user_interface">
 
         <SwitchPreference
             android:key="time_separator_blinking"
             android:title="@string/blink_time_separator" />
 
-        <com.bopr.piclock.ui.preference.IntListPreference
-            android:key="clock_brightness"
-            android:title="@string/clock_brightness"
-            android:entries="@array/clock_brightness_names"
-            android:entryValues="@array/clock_brightness_values" />
+        <SwitchPreference
+            android:key="fullscreen_enabled"
+            android:title="@string/fullscreen" />
 
+        <com.bopr.piclock.ui.preference.LongListPreference
+            android:key="auto_fullscreen_delay"
+            android:title="@string/auto_fullscreen"
+            android:entries="@array/auto_fullscreen_delay_names"
+            android:entryValues="@array/auto_fullscreen_delay_values" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/sound">
@@ -46,19 +67,6 @@
             android:key="tick_sound_always"
             android:title="@string/tick_sound_always" />
     </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/fullscreen">
-
-        <SwitchPreference
-            android:key="fullscreen_enabled"
-            android:title="@string/enable_fullscreen_mode" />
-
-        <com.bopr.piclock.ui.preference.LongListPreference
-            android:key="auto_fullscreen_delay"
-            android:title="@string/auto_fullscreen"
-            android:entries="@array/auto_fullscreen_delay_names"
-            android:entryValues="@array/auto_fullscreen_delay_values" />
-    </PreferenceCategory>
-
+    
 
 </PreferenceScreen>

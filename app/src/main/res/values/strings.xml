@@ -2,17 +2,20 @@
     <string name="app_name">Pi Clock</string>
     <string name="appearance">Appearance</string>
     <string name="auto_fullscreen">Auto inactivate</string>
-    <string name="auto_fullscreen_never_summary">Switch active mode manually</string>
+    <string name="auto_fullscreen_never_summary">Disabled. Switch active mode manually</string>
     <string name="auto_fullscreen_summary">Switch to inactive mode after %s</string>
     <string name="blink_time_separator">Blink time separator</string>
-    <string name="clock_brightness">Clock brightness</string>
+    <string name="min_brightness">Minimal brightness</string>
+    <string name="max_brightness">Maximum brightness</string>
+    <string name="min_brightness_summary">Brightness in inactive mode %s</string>
+    <string name="max_brightness_summary">Brightness in active mode %s</string>
     <string name="clock_layout">Layout</string>
     <string name="date_format">Date format</string>
     <string name="do_not_show_date">Do not show date</string>
-    <string name="enable_fullscreen_mode">Enable fullscreen</string>
-    <string name="fullscreen">Fullscreen mode</string>
-    <string name="play_always">Play always</string>
-    <string name="play_only_when_tapped">Play only in active mode</string>
+    <string name="fullscreen">Fullscreen</string>
+    <string name="user_interface">Interface</string>
+    <string name="play_always">Play sound in any mode</string>
+    <string name="play_only_when_tapped">Play sound only in active mode</string>
     <string name="seconds_separator">Seconds separator</string>
     <string name="settings">Settings</string>
     <string name="settings_button">Settings button</string>
@@ -22,6 +25,7 @@
     <string name="tick_sound_always">Tick always</string>
     <string name="time_separator">Time separator</string>
     <string name="use_24_hours_format">24 hours format</string>
+    <string name="default_date_format">%s (system)</string>
 
     <string-array name="clock_layout_names">
         <item>Digital default</item>
@@ -29,22 +33,31 @@
     </string-array>
 
     <string-array name="tick_sound_names">
-        <item>No sound</item>
         <item>Alarm clock</item>
         <item>Tick-tick</item>
         <item>Mantle clock</item>
         <item>Wall clock</item>
         <item>Wrist watch</item>
+        <item>Disabled</item>
     </string-array>
 
     <string-array name="auto_fullscreen_delay_names">
         <item>2 second</item>
         <item>5 seconds</item>
         <item>10 seconds</item>
-        <item>Never</item>
+        <item>Disabled</item>
     </string-array>
 
-    <string-array name="clock_brightness_names">
+    <string-array name="min_brightness_names">
+        <item>5%</item>
+        <item>10%</item>
+        <item>20%</item>
+        <item>30%</item>
+        <item>50%</item>
+        <item>100%</item>
+    </string-array>
+
+    <string-array name="max_brightness_names">
         <item>5%</item>
         <item>10%</item>
         <item>20%</item>

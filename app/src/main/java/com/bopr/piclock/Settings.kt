@@ -3,6 +3,8 @@ package com.bopr.piclock
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import com.bopr.piclock.util.*
+import java.text.DateFormat
+import java.text.DateFormat.FULL
 
 class Settings(private val context: Context) : SharedPreferencesWrapper(
     context.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE)
@@ -20,7 +22,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
             putStringOptional(
                 PREF_DATE_FORMAT,
-                ensureResExists(R.array.date_format_values, "EEEE, MMMM dd")
+                ensureResExists(R.array.date_format_values, SYSTEM_DEFAULT)
             ) {
                 isResExists(
                     R.array.date_format_values,
@@ -39,12 +41,22 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             }
 
             putIntOptional(
-                PREF_CLOCK_BRIGHTNESS,
-                ensureResExists(R.array.clock_brightness_values, 20)
+                PREF_MIN_BRIGHTNESS,
+                ensureResExists(R.array.min_brightness_values, 20)
             ) {
                 isResExists(
-                    R.array.clock_brightness_values,
-                    getInt(PREF_CLOCK_BRIGHTNESS)
+                    R.array.min_brightness_values,
+                    getInt(PREF_MIN_BRIGHTNESS)
+                )
+            }
+
+            putIntOptional(
+                PREF_MAX_BRIGHTNESS,
+                ensureResExists(R.array.max_brightness_values, 100)
+            ) {
+                isResExists(
+                    R.array.max_brightness_values,
+                    getInt(PREF_MAX_BRIGHTNESS)
                 )
             }
 
@@ -81,17 +93,22 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         private const val SETTINGS_VERSION = 1
         const val SHARED_PREFERENCES_NAME = "com.bopr.piclock_preferences"
 
-        const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
+        const val SYSTEM_DEFAULT = "system_default"
+
+        val DEFAULT_DATE_FORMAT: DateFormat = DateFormat.getDateInstance(FULL)
+
         const val PREF_24_HOURS_FORMAT = "24_hours_format"
-        const val PREF_TIME_SEPARATOR_BLINKING = "time_separator_blinking"
-        const val PREF_SECONDS_VISIBLE = "seconds_visible"
+        const val PREF_AUTO_FULLSCREEN_DELAY = "auto_fullscreen_delay"
+        const val PREF_CLOCK_LAYOUT = "clock_layout"
         const val PREF_DATE_FORMAT = "date_format"
+        const val PREF_FULLSCREEN_ENABLED = "fullscreen_enabled"
+        const val PREF_MAX_BRIGHTNESS = "max_brightness"
+        const val PREF_MIN_BRIGHTNESS = "min_brightness"
+        const val PREF_SECONDS_VISIBLE = "seconds_visible"
+        const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
         const val PREF_TICK_SOUND = "tick_sound"
         const val PREF_TICK_SOUND_ALWAYS = "tick_sound_always"
-        const val PREF_CLOCK_LAYOUT = "clock_layout"
-        const val PREF_AUTO_FULLSCREEN_DELAY = "auto_fullscreen_delay"
-        const val PREF_FULLSCREEN_ENABLED = "fullscreen_enabled"
-        const val PREF_CLOCK_BRIGHTNESS = "clock_brightness"
+        const val PREF_TIME_SEPARATOR_BLINKING = "time_separator_blinking"
     }
 
 }

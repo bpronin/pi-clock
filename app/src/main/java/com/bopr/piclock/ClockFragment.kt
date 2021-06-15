@@ -12,15 +12,17 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.widget.TextView
+import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
-import com.bopr.piclock.Settings.Companion.PREF_CLOCK_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_MIN_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
+import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.ui.BaseFragment
 import com.bopr.piclock.util.getResId
 import com.bopr.piclock.util.requireViewByIdCompat
@@ -85,7 +87,6 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         animations = ClockFragmentAnimations()
 
         settings = Settings(requireContext()).apply {
-            dateFormat = SimpleDateFormat(getString(PREF_DATE_FORMAT), locale)
             tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
 
             registerOnSharedPreferenceChangeListener(this@ClockFragment)
@@ -155,7 +156,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                     scheduleAutoDeactivate()
                 PREF_TICK_SOUND ->
                     tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
-                PREF_CLOCK_BRIGHTNESS ->
+                PREF_MIN_BRIGHTNESS ->
                     updateClockBrightness()
             }
         }
@@ -286,8 +287,12 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     private fun updateDateView() {
         val pattern = settings.getString(PREF_DATE_FORMAT)
         if (pattern.isNotEmpty()) {
+            dateFormat = if (pattern == SYSTEM_DEFAULT) {
+                DEFAULT_DATE_FORMAT
+            } else {
+                SimpleDateFormat(pattern, locale)
+            }
             dateView.visibility = VISIBLE
-            dateFormat = SimpleDateFormat(pattern, locale)
         } else {
             dateView.visibility = GONE
         }
@@ -338,7 +343,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun minTextBrightness() = settings.getInt(PREF_CLOCK_BRIGHTNESS) / 100f
+    private fun minTextBrightness() = settings.getInt(PREF_MIN_BRIGHTNESS) / 100f
 
     private fun isOddSecond(time: Date) = time.time / 1000 % 2 != 0L
 

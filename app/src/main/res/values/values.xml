@@ -2,7 +2,7 @@
 <resources>
 
     <string-array name="date_format_values" translatable="false">
-        <item />
+        <item>system_default</item>
         <item>EEEE, MMMM dd</item>
         <item>EEE, MMM d</item>
         <item>MMMM d</item>
@@ -10,18 +10,20 @@
         <item>d MMM, EEE</item>
         <item>d MMMM</item>
         <item>dd.MM.yyyy</item>
-        <item>MM.dd.yyyy</item>
+        <item>dd/MM/yyyy</item>
+        <item>M/d/yyyy</item>
         <item>yyyy-MM-dd</item>
+        <item />
     </string-array>
 
     <!--  See res/raw/*.mp3 resources  -->
     <string-array name="tick_sound_values" translatable="false">
-        <item />
         <item>alarm_clock</item>
         <item>clock_tick_tick</item>
         <item>mantle_clock</item>
         <item>wooden_wall_clock</item>
         <item>wrist_watch</item>
+        <item />
     </string-array>
 
     <string-array name="clock_layout_values" translatable="false">
@@ -36,7 +38,16 @@
         <item>-1</item>
     </string-array>
 
-    <string-array name="clock_brightness_values" translatable="false">
+    <string-array name="min_brightness_values" translatable="false">
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>50</item>
+        <item>100</item>
+    </string-array>
+
+    <string-array name="max_brightness_values" translatable="false">
         <item>5</item>
         <item>10</item>
         <item>20</item>
