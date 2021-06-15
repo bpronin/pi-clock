@@ -2,7 +2,6 @@ package com.bopr.piclock
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
@@ -14,18 +13,16 @@ import kotlin.math.min
 internal class ClockFragmentScaleControl(
     context: Context,
     controllerView: View,
-    private val controlView: View,
+    private val controllingView: View,
 ) : ScaleGestureDetector.OnScaleGestureListener, View.OnTouchListener {
 
-    /** Logger tag. */
-    private val _tag = "ClockFragmentScaleControl"
-
+    private val minFactor = context.resources.getStringArray(R.array.scale_values).first().toFloat()
+    private val maxFactor = context.resources.getStringArray(R.array.scale_values).last().toFloat()
     private val scaleDetector: ScaleGestureDetector = ScaleGestureDetector(context, this)
-
-    var onChanged: (scale: Float) -> Unit = {}
+    private var scaled = false
 
     var onEnd: (scale: Float) -> Unit = {}
-    var factor = 1f
+    var factor = 0f
         set(value) {
             if (field != value) {
                 field = value
@@ -33,26 +30,22 @@ internal class ClockFragmentScaleControl(
             }
         }
 
-    private var scaled = false
-
     init {
         controllerView.setOnTouchListener(this)
     }
 
     override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
         scaled = true
-        Log.d(_tag, "BEGIN ")
         return true
     }
 
     override fun onScale(detector: ScaleGestureDetector): Boolean {
         val f = factor * detector.scaleFactor
-        factor = max(0.2f, min(f, 2.0f))
+        factor = max(minFactor, min(f, maxFactor))
         return true
     }
 
     override fun onScaleEnd(detector: ScaleGestureDetector?) {
-        Log.d(_tag, "END ")
         onEnd(factor)
     }
 
@@ -70,7 +63,7 @@ internal class ClockFragmentScaleControl(
     }
 
     private fun updateControlView() {
-        controlView.apply {
+        controllingView.apply {
             scaleX = factor
             scaleY = factor
         }

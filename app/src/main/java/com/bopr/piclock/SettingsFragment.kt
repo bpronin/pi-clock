@@ -7,6 +7,7 @@ import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
+import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_MIN_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
@@ -30,6 +31,7 @@ class SettingsFragment : BasePreferenceFragment() {
         updateClockLayoutPreferenceView()
         updateTickAlwaysPreferenceView()
         updateAutoFullscreenPreferenceView()
+        updateScalePreferenceView()
         updateMinBrightnessPreferenceView()
     }
 
@@ -42,7 +44,19 @@ class SettingsFragment : BasePreferenceFragment() {
             PREF_CLOCK_LAYOUT -> updateClockLayoutPreferenceView()
             PREF_TICK_SOUND_ALWAYS -> updateTickAlwaysPreferenceView()
             PREF_AUTO_FULLSCREEN_DELAY -> updateAutoFullscreenPreferenceView()
+            PREF_CLOCK_SCALE -> updateScalePreferenceView()
             PREF_MIN_BRIGHTNESS -> updateMinBrightnessPreferenceView()
+        }
+    }
+
+    private fun updateScalePreferenceView() {
+        (requirePreference(PREF_CLOCK_SCALE) as ListPreference).apply {
+            summary = fixSummaryPercents(
+                resources.getString(
+                    R.string.scale_summary,
+                    settings.getFloat(PREF_CLOCK_SCALE) * 100f
+                )
+            )
         }
     }
 
@@ -120,9 +134,11 @@ class SettingsFragment : BasePreferenceFragment() {
     private fun updateMinBrightnessPreferenceView() {
         (requirePreference(PREF_MIN_BRIGHTNESS) as ListPreference).apply {
             val value = settings.getInt(PREF_MIN_BRIGHTNESS).toString()
-            /* NOTE: single percent signs in entry names causes an exception */
-            val percents = entries[findIndexOfValue(value)].toString().replace("%", "%%")
+            val percents = fixSummaryPercents(entries[findIndexOfValue(value)].toString())
             summary = getString(R.string.min_brightness_summary, percents)
         }
     }
+
+    /** Single percent signs in entry names causes an exception */
+    private fun fixSummaryPercents(s: String) = s.replace("%", "%%")
 }

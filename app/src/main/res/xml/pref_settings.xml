@@ -22,6 +22,12 @@
             android:entryValues="@array/date_format_values" />
         <!-- android:entries for date_format are build in code -->
         
+        <com.bopr.piclock.ui.preference.FloatListPreference
+            android:key="clock_scale"
+            android:title="@string/scale"
+            android:entries="@array/scale_names"
+            android:entryValues="@array/scale_values" />
+
         <com.bopr.piclock.ui.preference.IntListPreference
             android:key="min_brightness"
             android:title="@string/min_brightness"

@@ -56,4 +56,13 @@
         <item>100</item>
     </string-array>
 
+    <string-array name="scale_values" translatable="false">
+        <item>0.25f</item>
+        <item>0.50f</item>
+        <item>0.75f</item>
+        <item>1.00f</item>
+        <item>1.50f</item>
+        <item>2.00f</item>
+    </string-array>
+
 </resources>

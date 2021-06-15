@@ -27,6 +27,13 @@ fun Context.getResName(resId: Int): String {
     }
 }
 
+///**
+// * Returns resource array value.
+// */
+//fun Context.getResValue(arrayResId: Int, index: Int): String {
+//    return resources.getStringArray(arrayResId)[index]
+//}
+
 /**
  * Returns true if resource array contains value.
  */
