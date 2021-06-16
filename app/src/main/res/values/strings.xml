@@ -26,6 +26,9 @@
     <string name="default_date_format">%s (system)</string>
     <string name="scale_summary">Scale factor %.1f%%</string>
     <string name="scale">Scale</string>
+    <string name="about_label">About</string>
+    <string name="about_summary">Build %s from %s</string>
+    <string name="about_version">Version %s</string>
 
     <string-array name="clock_layout_names">
         <item>Digital default</item>

@@ -65,5 +65,10 @@
             android:title="@string/tick_sound_always" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/about_label">
 
+        <Preference android:key="about_app" />
+        
+    </PreferenceCategory>
+    
 </PreferenceScreen>

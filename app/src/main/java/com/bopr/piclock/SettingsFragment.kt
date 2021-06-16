@@ -1,10 +1,15 @@
 package com.bopr.piclock
 
 import android.content.SharedPreferences
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.widget.Toast
 import androidx.preference.ListPreference
+import androidx.preference.Preference
+import androidx.preference.Preference.OnPreferenceClickListener
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_ABOUT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
@@ -29,6 +34,9 @@ class SettingsFragment : CustomPreferenceFragment(),
 
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
+
+        requirePreference(PREF_ABOUT).onPreferenceClickListener = AboutPreferenceClickListener()
+        updateAboutPreferenceView()
     }
 
     override fun onDestroy() {
@@ -62,6 +70,14 @@ class SettingsFragment : CustomPreferenceFragment(),
             PREF_AUTO_INACTIVATE_DELAY -> updateAutoFullscreenPreferenceView()
             PREF_CLOCK_SCALE -> updateScalePreferenceView()
             PREF_MIN_BRIGHTNESS -> updateMinBrightnessPreferenceView()
+        }
+    }
+
+    private fun updateAboutPreferenceView() {
+        requirePreference(PREF_ABOUT).apply {
+            val info = ReleaseInfo.get(requireContext())
+            title = resources.getString(R.string.about_version, info.versionName)
+            summary = resources.getString(R.string.about_summary, info.buildNumber, info.buildTime)
         }
     }
 
@@ -156,4 +172,45 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     /** Single percent signs in entry names causes an exception */
     private fun fixSummaryPercents(s: String) = s.replace("%", "%%")
+
+
+    private inner class AboutPreferenceClickListener : OnPreferenceClickListener {
+
+        private var clicksCount: Int = 0
+        private var messageIndex: Int = 0
+        private val messages = arrayListOf(
+            "Wrong rhythm! You are definitely not me.",
+            "Oops! Try again.",
+            "Well I'll tell you. The rhythm is ta ta-ta ta.",
+            "Almost. But not.",
+            "OK. I'm just kidding. There is nothing here.",
+            "Resetting messages counter...",
+            "Wrong rhythm! You are definitely not me.",
+            "And you are persistent!",
+            "I give up. The secret code is 42. Use it ... somewhere."
+        )
+
+        override fun onPreferenceClick(preference: Preference?): Boolean {
+            if (++clicksCount == 4) {
+                clicksCount = 0
+
+                Toast.makeText(
+                    requireContext(),
+                    messages[messageIndex++],
+                    Toast.LENGTH_LONG
+                ).show()
+
+                if (messageIndex >= messages.size) {
+                    messageIndex = 0
+                    
+                    MediaPlayer.create(requireContext(), R.raw.tada).run {
+                        setOnCompletionListener { release() }
+                        start()
+                    }
+                }
+            }
+            return true
+        }
+
+    }
 }

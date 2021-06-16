@@ -88,6 +88,9 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
         val DEFAULT_DATE_FORMAT: DateFormat = DateFormat.getDateInstance(FULL)
 
+        const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
+        const val PREF_ABOUT = "about_app" /* hidden, marker */
+
         const val PREF_24_HOURS_FORMAT = "24_hours_format"
         const val PREF_AUTO_INACTIVATE_DELAY = "auto_fullscreen_delay"
         const val PREF_CLOCK_LAYOUT = "clock_layout"
@@ -96,7 +99,6 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_FULLSCREEN_ENABLED = "fullscreen_enabled"
         const val PREF_MIN_BRIGHTNESS = "min_brightness"
         const val PREF_SECONDS_VISIBLE = "seconds_visible"
-        const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
         const val PREF_TICK_SOUND = "tick_sound"
         const val PREF_TICK_SOUND_ALWAYS = "tick_sound_always"
         const val PREF_TIME_SEPARATOR_BLINKING = "time_separator_blinking"
