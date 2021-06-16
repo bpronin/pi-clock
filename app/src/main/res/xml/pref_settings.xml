@@ -34,12 +34,6 @@
             android:key="min_brightness"
             android:title="@string/min_brightness" />
 
-        <com.bopr.piclock.ui.preference.IntListPreference
-            android:entries="@array/max_brightness_names"
-            android:entryValues="@array/max_brightness_values"
-            android:key="max_brightness"
-            android:title="@string/max_brightness" />
-
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/user_interface">

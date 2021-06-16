@@ -105,13 +105,13 @@ internal class ClockFragmentAnimations {
 
     fun fadeInContent(
         view: View,
-        minBrightness: Int,
-        maxBrightness: Int,
+        fromBrightness: Int,
+        toBrightness: Int,
         onStart: (Animator) -> Unit = {},
         onEnd: (Animator) -> Unit = {}
     ) {
         fadeInContentAnimator.play(view) {
-            setFloatValues(minBrightness / 100f, maxBrightness / 100f)
+            setFloatValues(fromBrightness / 100f, toBrightness / 100f)
             doOnStart { onStart(this) }
             doOnEnd { onEnd(this) }
         }
@@ -119,13 +119,13 @@ internal class ClockFragmentAnimations {
 
     fun fadeOutContent(
         view: View,
-        minBrightness: Int,
-        maxBrightness: Int,
+        fromBrightness: Int,
+        toBrightness: Int,
         onStart: (Animator) -> Unit = {},
         onEnd: (Animator) -> Unit = {}
     ) {
         fadeOutContentAnimator.play(view) {
-            setFloatValues(maxBrightness / 100f, minBrightness / 100f)
+            setFloatValues(fromBrightness / 100f, toBrightness / 100f)
             doOnStart { onStart(this) }
             doOnEnd { onEnd(this) }
         }

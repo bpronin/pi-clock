@@ -46,14 +46,6 @@
         <item>100</item>
     </string-array>
 
-    <string-array name="max_brightness_values" translatable="false">
-        <item>10</item>
-        <item>20</item>
-        <item>30</item>
-        <item>50</item>
-        <item>100</item>
-    </string-array>
-
     <string-array name="scale_values" translatable="false">
         <item>0.25f</item>
         <item>0.50f</item>

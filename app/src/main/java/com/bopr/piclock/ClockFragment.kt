@@ -1,5 +1,6 @@
 package com.bopr.piclock
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
@@ -8,6 +9,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent.*
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
@@ -18,7 +20,6 @@ import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_MAX_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_MIN_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
@@ -96,6 +97,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -107,6 +109,16 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
             setActive(!active, true)
         }
 
+        view.setOnTouchListener { v, event ->
+            when (event?.action) {
+                ACTION_UP ->
+                    scheduleAutoDeactivate()
+                ACTION_DOWN ->
+                    cancelAutoDeactivate()
+            }
+            brightnessControl.onTouch(event) || scaleControl.onTouch(v, event)
+        }
+
         settingsButton = view.requireViewByIdCompat(R.id.settings_button)
         settingsButton.setOnClickListener {
             startActivity(Intent(requireContext(), SettingsActivity::class.java))
@@ -114,7 +126,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
         contentContainer = view.findViewById(R.id.content_container)
 
-        scaleControl = ClockFragmentScaleControl(requireContext(), view, contentContainer).apply {
+        scaleControl = ClockFragmentScaleControl(requireContext(), contentContainer).apply {
             factor = settings.getFloat(PREF_CLOCK_SCALE)
             onEnd = { factor ->
                 settings.update { putFloat(PREF_CLOCK_SCALE, factor) }
@@ -122,18 +134,15 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         }
 
         brightnessControl =
-            ClockFragmentBrightnessControl(requireContext(), view, contentContainer).apply {
+            ClockFragmentBrightnessControl(requireContext(), contentContainer).apply {
                 minBrightness = settings.getInt(PREF_MIN_BRIGHTNESS)
-                maxBrightness = settings.getInt(PREF_MAX_BRIGHTNESS)
-                onEnd = {
-                    settings.update {
-                        putInt(PREF_MIN_BRIGHTNESS, minBrightness)
-                        putInt(PREF_MAX_BRIGHTNESS, maxBrightness)
-                    }
+                onEnd = { brightness ->
+                    settings.update { putInt(PREF_MIN_BRIGHTNESS, brightness) }
                 }
             }
 
         createContentView()
+
         setActive(savedState?.getBoolean("active") ?: false, false)
 
         return view
@@ -180,8 +189,6 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
                     tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
                 PREF_MIN_BRIGHTNESS ->
                     brightnessControl.minBrightness = settings.getInt(PREF_MIN_BRIGHTNESS)
-                PREF_MAX_BRIGHTNESS ->
-                    brightnessControl.maxBrightness = settings.getInt(PREF_MAX_BRIGHTNESS)
                 PREF_CLOCK_SCALE -> {
                     scaleControl.factor = settings.getFloat(PREF_CLOCK_SCALE)
                 }
@@ -213,7 +220,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
             Log.d(_tag, "Activate complete: $active")
 
             ready = true
-            scheduleAutoDeactivate()
+           scheduleAutoDeactivate()
             onReady(active)
         }
     }
@@ -225,40 +232,40 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
             if (animate) {
                 animations.showFab(settingsButton)
                 animations.fadeInContent(contentContainer,
-                    brightnessControl.minBrightness,
+                    brightnessControl.brightness,
                     brightnessControl.maxBrightness,
                     onStart = { animator ->
                         if (wantControlVolume) {
-                            tickPlayer.fadeVolume(0f, 1f, animator.duration)
+                            tickPlayer.fadeInVolume(animator.duration)
                         }
                         onComplete()
                     },
                     onEnd = {
-                        brightnessControl.updateBrightness(active)
+                        brightnessControl.setMaxBrightness()
                     })
             } else {
                 settingsButton.visibility = VISIBLE
-                brightnessControl.updateBrightness(active)
+                brightnessControl.setMaxBrightness()
                 onComplete()
             }
         } else {
             if (animate) {
                 animations.hideFab(settingsButton)
                 animations.fadeOutContent(contentContainer,
+                    brightnessControl.brightness,
                     brightnessControl.minBrightness,
-                    brightnessControl.maxBrightness,
                     onStart = { animator ->
                         if (wantControlVolume) {
-                            tickPlayer.fadeVolume(1f, 0f, animator.duration)
+                            tickPlayer.fadeOutVolume(animator.duration)
                         }
-                    },
-                    onEnd = {
-                        brightnessControl.updateBrightness(active)
-                        onComplete()
-                    })
+                    }
+                ) {
+                    brightnessControl.setMinBrightness()
+                    onComplete()
+                }
             } else {
                 settingsButton.visibility = INVISIBLE
-                brightnessControl.updateBrightness(active)
+                brightnessControl.setMinBrightness()
                 onComplete()
             }
         }
@@ -339,16 +346,20 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun scheduleAutoDeactivate() {
-        val delay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
-        if (active && delay > 0) {
-            Log.d(_tag, "Schedule auto deactivate")
-            handler.postDelayed(autoDeactivateTask, delay)
+        if (active) {
+            val delay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
+            if (delay > 0) {
+                handler.postDelayed(autoDeactivateTask, delay)
+
+                Log.d(_tag, "Auto-deactivate scheduled")
+            }
         }
     }
 
     private fun cancelAutoDeactivate() {
-        Log.d(_tag, "Cancel auto deactivate")
         handler.removeCallbacks(autoDeactivateTask)
+
+        Log.d(_tag, "Auto-deactivate canceled")
     }
 
     private fun blinkTimeSeparator(time: Date) {

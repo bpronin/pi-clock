@@ -5,10 +5,8 @@
     <string name="auto_fullscreen_never_summary">Disabled. Switch active mode manually</string>
     <string name="auto_fullscreen_summary">Switch to inactive mode after %s</string>
     <string name="blink_time_separator">Blink time separator</string>
-    <string name="min_brightness">Brightness in inactive mode</string>
-    <string name="max_brightness">Brightness in active mode</string>
-    <string name="min_brightness_summary">%s</string>
-    <string name="max_brightness_summary">%s</string>
+    <string name="min_brightness">Brightness</string>
+    <string name="min_brightness_summary">%d%%</string>
     <string name="clock_layout">Layout</string>
     <string name="date_format">Date format</string>
     <string name="do_not_show_date">Do not show date</string>
@@ -51,14 +49,6 @@
     </string-array>
 
     <string-array name="min_brightness_names">
-        <item>10%</item>
-        <item>20%</item>
-        <item>30%</item>
-        <item>50%</item>
-        <item>100%</item>
-    </string-array>
-
-    <string-array name="max_brightness_names">
         <item>10%</item>
         <item>20%</item>
         <item>30%</item>

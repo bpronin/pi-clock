@@ -51,16 +51,6 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
                 )
             }
 
-            putIntOptional(
-                PREF_MAX_BRIGHTNESS,
-                ensureResExists(R.array.max_brightness_values, 100)
-            ) {
-                isResExists(
-                    R.array.max_brightness_values,
-                    getInt(PREF_MAX_BRIGHTNESS)
-                )
-            }
-
             putStringOptional(
                 PREF_CLOCK_LAYOUT,
                 ensureResExists(
@@ -104,7 +94,6 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_CLOCK_SCALE = "clock_scale"
         const val PREF_DATE_FORMAT = "date_format"
         const val PREF_FULLSCREEN_ENABLED = "fullscreen_enabled"
-        const val PREF_MAX_BRIGHTNESS = "max_brightness"
         const val PREF_MIN_BRIGHTNESS = "min_brightness"
         const val PREF_SECONDS_VISIBLE = "seconds_visible"
         const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */

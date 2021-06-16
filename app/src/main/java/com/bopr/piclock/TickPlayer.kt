@@ -45,7 +45,6 @@ internal class TickPlayer(private val context: Context) {
         }
 
         if (ready) {
-//            Log.d(TAG, "Playing")
             player.run {
                 seekTo(0)
                 start()
@@ -64,7 +63,15 @@ internal class TickPlayer(private val context: Context) {
         }
     }
 
-    fun fadeVolume(from: Float, to: Float, fadeDuration: Long) {
+    fun fadeInVolume(duration: Long) {
+        fadeVolume(0f, 1f, duration)
+    }
+
+    fun fadeOutVolume(duration: Long) {
+        fadeVolume(1f, 0f, duration)
+    }
+
+    private fun fadeVolume(from: Float, to: Float, fadeDuration: Long) {
         if (ready) {
             player.setVolume(from, from)
 

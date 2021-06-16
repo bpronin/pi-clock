@@ -1,6 +1,5 @@
 package com.bopr.piclock
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
@@ -12,14 +11,13 @@ import kotlin.math.min
 
 internal class ClockFragmentScaleControl(
     context: Context,
-    controllerView: View,
     private val controllingView: View
-) : ScaleGestureDetector.OnScaleGestureListener, View.OnTouchListener {
+) : ScaleGestureDetector.OnScaleGestureListener {
 
     private val minFactor = context.resources.getStringArray(R.array.scale_values).first().toFloat()
     private val maxFactor = context.resources.getStringArray(R.array.scale_values).last().toFloat()
     private val scaleDetector: ScaleGestureDetector = ScaleGestureDetector(context, this)
-    private var scaled = false
+    private var changed = false
 
     var onEnd: (scale: Float) -> Unit = {}
     var factor = 0f
@@ -30,12 +28,8 @@ internal class ClockFragmentScaleControl(
             }
         }
 
-    init {
-        controllerView.setOnTouchListener(this)
-    }
-
     override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
-        scaled = true
+        changed = true
         return true
     }
 
@@ -49,14 +43,13 @@ internal class ClockFragmentScaleControl(
         onEnd(factor)
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouch(controllerView: View?, event: MotionEvent?): Boolean {
+    fun onTouch(v: View?, event: MotionEvent?): Boolean {
         scaleDetector.onTouchEvent(event)
 
         /* this is to prevent of calling onClick after scaling */
         when (event?.action) {
-            ACTION_DOWN -> scaled = false
-            ACTION_UP -> return scaled
+            ACTION_DOWN -> changed = false
+            ACTION_UP -> return changed
         }
 
         return false
