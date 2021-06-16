@@ -150,7 +150,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     private fun updateMinBrightnessPreferenceView() {
         requirePreference(PREF_MIN_BRIGHTNESS).apply {
             val value = settings.getInt(PREF_MIN_BRIGHTNESS)
-            summary = fixSummaryPercents(getString(R.string.min_brightness_summary, value))
+            summary = getString(R.string.min_brightness_summary, value)
         }
     }
 

@@ -9,7 +9,7 @@ import android.util.AttributeSet
 import androidx.fragment.app.DialogFragment
 import androidx.preference.EditTextPreference
 
-class EditIntPreference : EditTextPreference, CustomDialogPreference {
+class IntEditTextPreference : EditTextPreference, CustomDialogPreference {
 
     private var value = 0
 
@@ -65,7 +65,7 @@ class EditIntPreference : EditTextPreference, CustomDialogPreference {
     }
 
     override fun onCreateDialogFragment(): DialogFragment {
-        return EditIntPreferenceFragment.newInstance(key)
+        return IntEditTextPreferenceFragment.newInstance(key)
     }
 
     fun setValue(value: Int) {

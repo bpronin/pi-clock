@@ -28,14 +28,9 @@
             android:key="clock_scale"
             android:title="@string/scale" />
 
-<!--        <com.bopr.piclock.util.ui.preference.EditIntPreference-->
-<!--            android:key="min_brightness"-->
-<!--            android:title="@string/min_brightness" />-->
-
-        <com.bopr.piclock.util.ui.preference.IntListPreference
-            android:entries="@array/min_brightness_names"
-            android:entryValues="@array/min_brightness_values"
+        <SeekBarPreference
             android:key="min_brightness"
+            android:max="100"
             android:title="@string/min_brightness" />
 
     </PreferenceCategory>

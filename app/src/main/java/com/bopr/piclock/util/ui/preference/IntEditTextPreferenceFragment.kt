@@ -7,15 +7,15 @@ import android.view.View
 import android.widget.EditText
 import androidx.preference.PreferenceDialogFragmentCompat
 
-class EditIntPreferenceFragment : PreferenceDialogFragmentCompat() {
+class IntEditTextPreferenceFragment : PreferenceDialogFragmentCompat() {
 
-    private val editIntPreference get() = preference as EditIntPreference
+    private val thePreference get() = preference as IntEditTextPreference
     private lateinit var editText: EditText
     private var value = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        value = savedInstanceState?.getInt(SAVE_STATE_VALUE) ?: editIntPreference.getValue()
+        value = savedInstanceState?.getInt(SAVE_STATE_VALUE) ?: thePreference.getValue()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -44,8 +44,8 @@ class EditIntPreferenceFragment : PreferenceDialogFragmentCompat() {
                 return
             }
 
-            if (editIntPreference.callChangeListener(value)) {
-                editIntPreference.setValue(value)
+            if (thePreference.callChangeListener(value)) {
+                thePreference.setValue(value)
             }
         }
     }
@@ -54,8 +54,8 @@ class EditIntPreferenceFragment : PreferenceDialogFragmentCompat() {
 
         private const val SAVE_STATE_VALUE = "EditIntPreferenceFragment.value"
 
-        fun newInstance(key: String?): EditIntPreferenceFragment {
-            return EditIntPreferenceFragment().apply {
+        fun newInstance(key: String?): IntEditTextPreferenceFragment {
+            return IntEditTextPreferenceFragment().apply {
                 arguments = Bundle(1).apply {
                     putString(ARG_KEY, key)
                 }
