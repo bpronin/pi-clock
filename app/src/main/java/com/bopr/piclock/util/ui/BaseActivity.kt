@@ -1,4 +1,4 @@
-package com.bopr.piclock.ui
+package com.bopr.piclock.util.ui
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -25,11 +25,10 @@ abstract class BaseActivity() : AppCompatActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 
-        val fragmentManager = supportFragmentManager
-        fragment = fragmentManager.findFragmentByTag("fragment")
+        fragment = supportFragmentManager.findFragmentByTag("fragment")
         if (fragment == null) {
             fragment = onCreateFragment()
-            fragmentManager
+            supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.content, fragment!!, "fragment")
                 .commit()

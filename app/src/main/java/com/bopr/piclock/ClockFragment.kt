@@ -14,6 +14,7 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
@@ -26,7 +27,6 @@ import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
-import com.bopr.piclock.ui.BaseFragment
 import com.bopr.piclock.util.getResId
 import com.bopr.piclock.util.requireViewByIdCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -35,7 +35,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
+class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     /** Logger tag. */
     private val _tag = "ClockFragment"
@@ -220,7 +220,7 @@ class ClockFragment : BaseFragment(), OnSharedPreferenceChangeListener {
             Log.d(_tag, "Activate complete: $active")
 
             ready = true
-           scheduleAutoDeactivate()
+            scheduleAutoDeactivate()
             onReady(active)
         }
     }

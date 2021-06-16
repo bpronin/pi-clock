@@ -22,13 +22,13 @@
             android:title="@string/date_format" />
         <!-- android:entries for date_format are build in code -->
 
-        <com.bopr.piclock.ui.preference.FloatListPreference
+        <com.bopr.piclock.util.ui.preference.FloatListPreference
             android:entries="@array/scale_names"
             android:entryValues="@array/scale_values"
             android:key="clock_scale"
             android:title="@string/scale" />
 
-        <com.bopr.piclock.ui.preference.IntListPreference
+        <com.bopr.piclock.util.ui.preference.IntListPreference
             android:entries="@array/min_brightness_names"
             android:entryValues="@array/min_brightness_values"
             android:key="min_brightness"
@@ -46,7 +46,7 @@
             android:key="fullscreen_enabled"
             android:title="@string/fullscreen" />
 
-        <com.bopr.piclock.ui.preference.LongListPreference
+        <com.bopr.piclock.util.ui.preference.LongListPreference
             android:entries="@array/auto_fullscreen_delay_names"
             android:entryValues="@array/auto_fullscreen_delay_values"
             android:key="auto_fullscreen_delay"

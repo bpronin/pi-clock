@@ -1,10 +1,12 @@
-package com.bopr.piclock.ui.preference
+package com.bopr.piclock.util.ui.preference
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.preference.ListPreference
+import androidx.preference.DropDownPreference
 
-class LongListPreference : ListPreference {
+class FloatDropDownPreference : DropDownPreference {
+
+    /* NOTE! It fires unwanted onSelect event when current value is not in entries  */
 
     @Suppress("unused")
     constructor(
@@ -28,10 +30,10 @@ class LongListPreference : ListPreference {
     constructor(context: Context?) : super(context)
 
     override fun persistString(value: String): Boolean {
-        return persistLong(value.toLong())
+        return persistFloat(value.toFloat())
     }
 
     override fun getPersistedString(defaultReturnValue: String?): String {
-        return getPersistedLong(defaultReturnValue?.toLong() ?: 0).toString()
+        return getPersistedFloat(defaultReturnValue?.toFloat() ?: 0f).toString()
     }
 }

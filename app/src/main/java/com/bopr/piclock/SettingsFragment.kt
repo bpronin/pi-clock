@@ -12,12 +12,29 @@ import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_MIN_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
+import com.bopr.piclock.Settings.Companion.SHARED_PREFERENCES_NAME
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
-import com.bopr.piclock.ui.BasePreferenceFragment
+import com.bopr.piclock.util.ui.preference.CustomPreferenceFragment
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SettingsFragment : BasePreferenceFragment() {
+class SettingsFragment : CustomPreferenceFragment(),
+    SharedPreferences.OnSharedPreferenceChangeListener {
+
+    lateinit var settings: Settings
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        preferenceManager.sharedPreferencesName = SHARED_PREFERENCES_NAME
+
+        settings = Settings(requireContext())
+        settings.registerOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onDestroy() {
+        settings.unregisterOnSharedPreferenceChangeListener(this)
+        super.onDestroy()
+    }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_settings)
@@ -36,7 +53,6 @@ class SettingsFragment : BasePreferenceFragment() {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-        super.onSharedPreferenceChanged(sharedPreferences, key)
         when (key) {
             PREF_24_HOURS_FORMAT -> updateHourFormatPreferenceView()
             PREF_DATE_FORMAT -> updateDateFormatPreferenceView()

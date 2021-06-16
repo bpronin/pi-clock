@@ -1,7 +1,7 @@
 package com.bopr.piclock
 
 import androidx.fragment.app.Fragment
-import com.bopr.piclock.ui.BaseActivity
+import com.bopr.piclock.util.ui.BaseActivity
 
 /**
  * Settings activity.

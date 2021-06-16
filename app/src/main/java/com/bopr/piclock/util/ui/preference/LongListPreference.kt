@@ -1,10 +1,10 @@
-package com.bopr.piclock.ui.preference
+package com.bopr.piclock.util.ui.preference
 
 import android.content.Context
 import android.util.AttributeSet
 import androidx.preference.ListPreference
 
-class IntListPreference : ListPreference {
+class LongListPreference : ListPreference {
 
     @Suppress("unused")
     constructor(
@@ -28,10 +28,10 @@ class IntListPreference : ListPreference {
     constructor(context: Context?) : super(context)
 
     override fun persistString(value: String): Boolean {
-        return persistInt(value.toInt())
+        return persistLong(value.toLong())
     }
 
     override fun getPersistedString(defaultReturnValue: String?): String {
-        return getPersistedInt(defaultReturnValue?.toInt() ?: 0).toString()
+        return getPersistedLong(defaultReturnValue?.toLong() ?: 0).toString()
     }
 }

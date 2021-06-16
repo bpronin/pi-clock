@@ -1,4 +1,4 @@
-package com.bopr.piclock.ui.preference
+package com.bopr.piclock.util.ui.preference
 
 import androidx.fragment.app.DialogFragment
 

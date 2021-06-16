@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
-import com.bopr.piclock.ui.BaseActivity
+import com.bopr.piclock.util.ui.BaseActivity
 
 /**
  * Main activity.
