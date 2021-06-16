@@ -24,8 +24,14 @@ internal class ClockFragmentBrightnessControl(
                 controllingView.alpha = field / 100f
             }
         }
-    val maxBrightness = 100
     var minBrightness = 0
+        set(value) {
+            if (field != value) {
+                field = value
+                brightness = field
+            }
+        }
+    val maxBrightness = 100
     var onEnd: (brightness: Int) -> Unit = {}
 
     private var changed = false

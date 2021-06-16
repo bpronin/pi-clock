@@ -4,5 +4,5 @@ import androidx.fragment.app.DialogFragment
 
 internal interface CustomDialogPreference {
 
-    fun createDialogFragment(): DialogFragment
+    fun onCreateDialogFragment(): DialogFragment
 }

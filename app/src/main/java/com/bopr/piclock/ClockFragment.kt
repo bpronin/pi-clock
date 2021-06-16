@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,7 +19,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
+import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
@@ -63,19 +65,8 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val locale = Locale.getDefault()
     private val handler = Handler(Looper.getMainLooper())
-
-    private val timerTask = object : Runnable {
-
-        override fun run() {
-            onTimer()
-            handler.postDelayed(this, 1000)
-        }
-    }
-
-    private val autoDeactivateTask = Runnable {
-        Log.d(_tag, "Auto deactivate")
-        setActive(value = false, animate = true)
-    }
+    private val timerTask = Runnable { onTimer() }
+    private val autoInactivateTask = Runnable { onAutoInactivate() }
 
     private var active = false
     private var ready = false
@@ -111,10 +102,8 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         view.setOnTouchListener { v, event ->
             when (event?.action) {
-                ACTION_UP ->
-                    scheduleAutoDeactivate()
-                ACTION_DOWN ->
-                    cancelAutoDeactivate()
+                ACTION_DOWN -> cancelAutoInactivate()
+                ACTION_UP -> scheduleAutoInactivate()
             }
             brightnessControl.onTouch(event) || scaleControl.onTouch(v, event)
         }
@@ -154,8 +143,9 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        animations.stop()
         settings.unregisterOnSharedPreferenceChangeListener(this)
+        super.onDestroy()
     }
 
     override fun onResume() {
@@ -166,7 +156,6 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onPause() {
         super.onPause()
         handler.removeCallbacks(timerTask)
-        animations.stop()
         tickPlayer.stop()
     }
 
@@ -183,8 +172,8 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateTimeSeparatorView()
                 PREF_DATE_FORMAT ->
                     updateDateView()
-                PREF_AUTO_FULLSCREEN_DELAY ->
-                    scheduleAutoDeactivate()
+                PREF_AUTO_INACTIVATE_DELAY ->
+                    scheduleAutoInactivate()
                 PREF_TICK_SOUND ->
                     tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
                 PREF_MIN_BRIGHTNESS ->
@@ -207,12 +196,20 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         blinkTimeSeparator(time)
         playTickSound()
+
+        handler.postDelayed(timerTask, 1000)
+    }
+
+    private fun onAutoInactivate() {
+        Log.d(_tag, "Auto inactivating")
+
+        setActive(value = false, animate = true)
     }
 
     private fun setActive(value: Boolean, animate: Boolean) {
-        Log.d(_tag, "Activating: $value")
+        Log.d(_tag, "Setting active to: $value animted: $animate")
 
-        cancelAutoDeactivate()
+        cancelAutoInactivate()
         active = value
         ready = false
 
@@ -220,12 +217,14 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
             Log.d(_tag, "Activate complete: $active")
 
             ready = true
-            scheduleAutoDeactivate()
+            scheduleAutoInactivate()
             onReady(active)
         }
     }
 
     private fun updateActiveControls(animate: Boolean, onComplete: () -> Unit) {
+        Log.d(_tag, "Activating: $active")
+
         val wantControlVolume = !settings.getBoolean(PREF_TICK_SOUND_ALWAYS)
 
         if (active) {
@@ -345,21 +344,24 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun scheduleAutoDeactivate() {
+    private fun scheduleAutoInactivate() {
         if (active) {
-            val delay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
+            val delay = settings.getLong(PREF_AUTO_INACTIVATE_DELAY)
             if (delay > 0) {
-                handler.postDelayed(autoDeactivateTask, delay)
+                handler.postDelayed(autoInactivateTask, delay)
 
-                Log.d(_tag, "Auto-deactivate scheduled")
+                Log.d(_tag, "Auto-inactivate scheduled")
             }
         }
     }
 
-    private fun cancelAutoDeactivate() {
-        handler.removeCallbacks(autoDeactivateTask)
+    private fun cancelAutoInactivate() {
+        /* checking has callbacks if possible to reduce log messages */
+        if (VERSION.SDK_INT < VERSION_CODES.Q || handler.hasCallbacks(autoInactivateTask)) {
+            handler.removeCallbacks(autoInactivateTask)
 
-        Log.d(_tag, "Auto-deactivate canceled")
+            Log.d(_tag, "Auto-inactivation canceled")
+        }
     }
 
     private fun blinkTimeSeparator(time: Date) {

@@ -32,12 +32,12 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             }
 
             putLongOptional(
-                PREF_AUTO_FULLSCREEN_DELAY,
+                PREF_AUTO_INACTIVATE_DELAY,
                 ensureResExists(R.array.auto_fullscreen_delay_values, 5000)
             ) {
                 isResExists(
                     R.array.auto_fullscreen_delay_values,
-                    getLong(PREF_AUTO_FULLSCREEN_DELAY)
+                    getLong(PREF_AUTO_INACTIVATE_DELAY)
                 )
             }
 
@@ -89,7 +89,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         val DEFAULT_DATE_FORMAT: DateFormat = DateFormat.getDateInstance(FULL)
 
         const val PREF_24_HOURS_FORMAT = "24_hours_format"
-        const val PREF_AUTO_FULLSCREEN_DELAY = "auto_fullscreen_delay"
+        const val PREF_AUTO_INACTIVATE_DELAY = "auto_fullscreen_delay"
         const val PREF_CLOCK_LAYOUT = "clock_layout"
         const val PREF_CLOCK_SCALE = "clock_scale"
         const val PREF_DATE_FORMAT = "date_format"

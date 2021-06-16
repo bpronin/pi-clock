@@ -77,6 +77,7 @@ internal class ClockFragmentAnimations {
     private inline fun ObjectAnimator.play(view: View, setup: ObjectAnimator.() -> Unit = {}) {
         apply {
             cancel()
+            removeAllListeners() /*important. doOnStart(), doOnEnd() add! the listeners */
             target = view
             setup()
             start()

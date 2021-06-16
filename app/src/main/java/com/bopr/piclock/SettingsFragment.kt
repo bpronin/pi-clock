@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.preference.ListPreference
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
+import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
@@ -59,14 +59,14 @@ class SettingsFragment : CustomPreferenceFragment(),
             PREF_TICK_SOUND -> updateTickSoundPreferenceView()
             PREF_CLOCK_LAYOUT -> updateClockLayoutPreferenceView()
             PREF_TICK_SOUND_ALWAYS -> updateTickAlwaysPreferenceView()
-            PREF_AUTO_FULLSCREEN_DELAY -> updateAutoFullscreenPreferenceView()
+            PREF_AUTO_INACTIVATE_DELAY -> updateAutoFullscreenPreferenceView()
             PREF_CLOCK_SCALE -> updateScalePreferenceView()
             PREF_MIN_BRIGHTNESS -> updateMinBrightnessPreferenceView()
         }
     }
 
     private fun updateScalePreferenceView() {
-        (requirePreference(PREF_CLOCK_SCALE) as ListPreference).apply {
+        requirePreference(PREF_CLOCK_SCALE).apply {
             summary = fixSummaryPercents(
                 resources.getString(
                     R.string.scale_summary,
@@ -136,8 +136,8 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateAutoFullscreenPreferenceView() {
-        (requirePreference(PREF_AUTO_FULLSCREEN_DELAY) as ListPreference).apply {
-            val value = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
+        (requirePreference(PREF_AUTO_INACTIVATE_DELAY) as ListPreference).apply {
+            val value = settings.getLong(PREF_AUTO_INACTIVATE_DELAY)
             summary = if (value > 0) {
                 val index = findIndexOfValue(value.toString())
                 getString(R.string.auto_fullscreen_summary, entries[index])
@@ -148,7 +148,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateMinBrightnessPreferenceView() {
-        (requirePreference(PREF_MIN_BRIGHTNESS) as ListPreference).apply {
+        requirePreference(PREF_MIN_BRIGHTNESS).apply {
             val value = settings.getInt(PREF_MIN_BRIGHTNESS)
             summary = fixSummaryPercents(getString(R.string.min_brightness_summary, value))
         }
