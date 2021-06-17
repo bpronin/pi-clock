@@ -7,10 +7,6 @@
     <color name="onyx_overlay">#663D3D3D</color>
     <color name="white">#FFFFFF</color>
     <color name="white_overlay">#66FFFFFF</color>
-
-    <color name="dark_sienna">#38060C</color>
-    <color name="oxford_blue">#0C1731</color>
-    <color name="sapphire">#2B50AA</color>
-<!--    <color name="color_accent_text">#E4DDC2</color>-->
+    <color name="_3am_in_shibuya">#1E5277</color>
     <color name="error_underline">#ff5722</color> <!-- same as private error_color_material_light -->
 </resources>

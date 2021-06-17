@@ -6,7 +6,7 @@
         <item name="colorPrimaryDark">@color/eerie_black</item>
 <!--        <item name="colorPrimaryVariant">@color/color_accent</item>-->
 <!--        <item name="colorOnPrimary">@color/white</item>-->
-        <item name="colorAccent">@color/onyx</item>
+        <item name="colorAccent">@color/_3am_in_shibuya</item>
 
         <!-- Secondary brand color. -->
 <!--        <item name="colorSecondary">@color/black_overlay</item>-->
