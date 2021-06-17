@@ -8,5 +8,6 @@
     <color name="white">#FFFFFF</color>
     <color name="white_overlay">#66FFFFFF</color>
     <color name="_3am_in_shibuya">#1E5277</color>
+    <color name="_3am_in_shibuya_overlay">#661E5277</color>
     <color name="error_underline">#ff5722</color> <!-- same as private error_color_material_light -->
 </resources>

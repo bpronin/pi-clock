@@ -22,6 +22,10 @@
             android:title="@string/date_format" />
         <!-- android:entries for date_format are build in code -->
 
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/user_interface">
+
         <com.bopr.piclock.util.ui.preference.FloatListPreference
             android:entries="@array/scale_names"
             android:entryValues="@array/scale_values"
@@ -32,10 +36,6 @@
             android:key="min_brightness"
             android:max="100"
             android:title="@string/min_brightness" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/user_interface">
 
         <SwitchPreference
             android:key="time_separator_blinking"

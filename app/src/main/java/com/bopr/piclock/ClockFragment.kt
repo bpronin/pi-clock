@@ -222,54 +222,6 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun updateActiveControls(animate: Boolean, onComplete: () -> Unit) {
-        Log.d(_tag, "Activating: $active")
-
-        val wantControlVolume = !settings.getBoolean(PREF_TICK_SOUND_ALWAYS)
-
-        if (active) {
-            if (animate) {
-                animations.showFab(settingsButton)
-                animations.fadeInContent(contentContainer,
-                    brightnessControl.brightness,
-                    brightnessControl.maxBrightness,
-                    onStart = { animator ->
-                        if (wantControlVolume) {
-                            tickPlayer.fadeInVolume(animator.duration)
-                        }
-                        onComplete()
-                    },
-                    onEnd = {
-                        brightnessControl.setMaxBrightness()
-                    })
-            } else {
-                settingsButton.visibility = VISIBLE
-                brightnessControl.setMaxBrightness()
-                onComplete()
-            }
-        } else {
-            if (animate) {
-                animations.hideFab(settingsButton)
-                animations.fadeOutContent(contentContainer,
-                    brightnessControl.brightness,
-                    brightnessControl.minBrightness,
-                    onStart = { animator ->
-                        if (wantControlVolume) {
-                            tickPlayer.fadeOutVolume(animator.duration)
-                        }
-                    }
-                ) {
-                    brightnessControl.setMinBrightness()
-                    onComplete()
-                }
-            } else {
-                settingsButton.visibility = INVISIBLE
-                brightnessControl.setMinBrightness()
-                onComplete()
-            }
-        }
-    }
-
     private fun createContentView() {
         Log.d(_tag, "Creating content")
 
@@ -293,6 +245,56 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateSecondsView()
         updateDateView()
         updateTimeSeparatorView()
+    }
+
+    private fun updateActiveControls(animate: Boolean, onComplete: () -> Unit) {
+        Log.d(_tag, "Activating: $active")
+
+        val wantControlVolume = !settings.getBoolean(PREF_TICK_SOUND_ALWAYS)
+
+        if (active) {
+            if (animate) {
+//                animations.showFab(settingsButton)
+                settingsButton.show()
+                animations.fadeInContent(contentContainer,
+                    brightnessControl.brightness,
+                    brightnessControl.maxBrightness,
+                    onStart = { animator ->
+                        if (wantControlVolume) {
+                            tickPlayer.fadeInVolume(animator.duration)
+                        }
+                        onComplete()
+                    },
+                    onEnd = {
+                        brightnessControl.setMaxBrightness()
+                    })
+            } else {
+                settingsButton.visibility = VISIBLE
+                brightnessControl.setMaxBrightness()
+                onComplete()
+            }
+        } else {
+            if (animate) {
+                settingsButton.hide()
+//                animations.hideFab(settingsButton)
+                animations.fadeOutContent(contentContainer,
+                    brightnessControl.brightness,
+                    brightnessControl.minBrightness,
+                    onStart = { animator ->
+                        if (wantControlVolume) {
+                            tickPlayer.fadeOutVolume(animator.duration)
+                        }
+                    }
+                ) {
+                    brightnessControl.setMinBrightness()
+                    onComplete()
+                }
+            } else {
+                settingsButton.visibility = INVISIBLE
+                brightnessControl.setMinBrightness()
+                onComplete()
+            }
+        }
     }
 
     private fun updateHoursView() {
