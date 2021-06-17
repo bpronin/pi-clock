@@ -1,9 +1,11 @@
 package com.bopr.piclock
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
+import com.bopr.piclock.util.sha512
 import com.bopr.piclock.util.ui.BaseActivity
 
 /**
@@ -27,6 +29,8 @@ class MainActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceChangeL
         fullscreenControl = FullscreenSupport(window).apply {
             enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
         }
+
+        handleStartupParams(intent)
     }
 
     override fun onDestroy() {
@@ -49,4 +53,21 @@ class MainActivity : BaseActivity(), SharedPreferences.OnSharedPreferenceChangeL
         }
     }
 
+    private fun handleStartupParams(intent: Intent) {
+        intent.getStringExtra("target")?.also { target ->
+            when (target) {
+                "settings" ->
+                    startActivity(Intent(this, SettingsActivity::class.java))
+                "debug" -> {
+                    intent.getStringExtra("pwd")?.also { pwd ->
+                        if (getString(R.string.debug_sha) == sha512(pwd)) {
+                            startActivity(Intent(this, DebugActivity::class.java))
+                        }
+                    }
+                }
+                else ->
+                    throw IllegalArgumentException("Invalid target: $target")
+            }
+        }
+    }
 }

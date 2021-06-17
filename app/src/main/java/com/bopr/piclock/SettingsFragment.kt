@@ -1,9 +1,8 @@
 package com.bopr.piclock
 
+import android.content.Intent
 import android.content.SharedPreferences
-import android.media.MediaPlayer
 import android.os.Bundle
-import android.widget.Toast
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
@@ -19,9 +18,13 @@ import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import com.bopr.piclock.Settings.Companion.SHARED_PREFERENCES_NAME
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
+import com.bopr.piclock.util.messageBox
+import com.bopr.piclock.util.passwordBox
+import com.bopr.piclock.util.sha512
 import com.bopr.piclock.util.ui.preference.CustomPreferenceFragment
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class SettingsFragment : CustomPreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
@@ -35,7 +38,6 @@ class SettingsFragment : CustomPreferenceFragment(),
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
 
-        requirePreference(PREF_ABOUT).onPreferenceClickListener = AboutPreferenceClickListener()
         updateAboutPreferenceView()
     }
 
@@ -76,8 +78,10 @@ class SettingsFragment : CustomPreferenceFragment(),
     private fun updateAboutPreferenceView() {
         requirePreference(PREF_ABOUT).apply {
             val info = ReleaseInfo.get(requireContext())
-            title = resources.getString(R.string.about_version, info.versionName)
-            summary = resources.getString(R.string.about_summary, info.buildNumber, info.buildTime)
+            title = resources.getString(R.string.about_version)
+            summary =
+                resources.getString(R.string.about_summary, info.versionName, info.buildNumber)
+            onPreferenceClickListener = AboutPreferenceClickListener()
         }
     }
 
@@ -173,10 +177,10 @@ class SettingsFragment : CustomPreferenceFragment(),
     /** Single percent signs in entry names causes an exception */
     private fun fixSummaryPercents(s: String) = s.replace("%", "%%")
 
-
     private inner class AboutPreferenceClickListener : OnPreferenceClickListener {
 
         private var clicksCount: Int = 0
+/*
         private var messageIndex: Int = 0
         private val messages = arrayListOf(
             "Wrong rhythm! You are definitely not me.",
@@ -189,28 +193,37 @@ class SettingsFragment : CustomPreferenceFragment(),
             "And you are persistent!",
             "I give up. The secret code is 42. Use it ... somewhere."
         )
+*/
 
         override fun onPreferenceClick(preference: Preference?): Boolean {
             if (++clicksCount == 4) {
                 clicksCount = 0
 
-                Toast.makeText(
-                    requireContext(),
-                    messages[messageIndex++],
-                    Toast.LENGTH_LONG
-                ).show()
+                context?.run {
+                    passwordBox("Enter some secret code") {
+                        if (getString(R.string.debug_sha) == sha512(it)) {
+                            startActivity(Intent(context, DebugActivity::class.java))
+                        } else {
+                            messageBox("Are you really trying to hack the clock app?")
+                        }
+                    }
+                }
+/*
+                toast(messages[messageIndex++])
 
                 if (messageIndex >= messages.size) {
                     messageIndex = 0
-                    
+
                     MediaPlayer.create(requireContext(), R.raw.tada).run {
                         setOnCompletionListener { release() }
                         start()
                     }
                 }
+*/
+
             }
             return true
         }
-
     }
+
 }
