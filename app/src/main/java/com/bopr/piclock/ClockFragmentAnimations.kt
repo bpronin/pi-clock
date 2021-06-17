@@ -1,6 +1,7 @@
 package com.bopr.piclock
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.view.View
 import android.view.View.INVISIBLE
@@ -12,24 +13,6 @@ import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 
 internal class ClockFragmentAnimations {
-
-    private val fabShowAnimator by lazy {
-        addAnimator {
-            setPropertyName("alpha")
-            setFloatValues(0f, 1f)
-            duration = 500L
-            interpolator = AccelerateInterpolator()
-        }
-    }
-
-    private val fabHideAnimator by lazy {
-        addAnimator {
-            setPropertyName("alpha")
-            setFloatValues(1f, 0f)
-            duration = 500L
-            interpolator = AccelerateInterpolator()
-        }
-    }
 
     private val fadeInContentAnimator by lazy {
         addAnimator {
@@ -84,23 +67,39 @@ internal class ClockFragmentAnimations {
         }
     }
 
-    fun stop() {
-        for (animator in animators) {
-            if (animator.isStarted) {
-                animator.end()
-            }
-        }
-    }
-
     fun showFab(view: View) {
-        fabShowAnimator.play(view) {
-            doOnStart { view.visibility = VISIBLE }
+        view.apply {
+            alpha = 0f
+            rotation = -90f
+            visibility = VISIBLE
+            animate()
+                .setDuration(500)
+                .alpha(1f)
+                .rotation(0f)
+                .setInterpolator(AccelerateInterpolator())
+                .setListener(null)  /* important. see android.view.View.animate realisation */
+                .start()
         }
     }
 
-    fun hideFab(view: View) {
-        fabHideAnimator.play(view) {
-            doOnEnd { view.visibility = INVISIBLE }
+    fun hideFab(view: View, onEnd: () -> Unit = {}) {
+        view.apply {
+            visibility = VISIBLE
+            alpha = 1f
+            rotation = 0f
+            animate()
+                .setDuration(500)
+                .alpha(0f)
+                .rotation(-90f)
+                .setInterpolator(AccelerateInterpolator())
+                .setListener(object : AnimatorListenerAdapter() {
+
+                    override fun onAnimationEnd(animation: Animator?) {
+                        visibility = INVISIBLE
+                        onEnd()
+                    }
+                })
+                .start()
         }
     }
 

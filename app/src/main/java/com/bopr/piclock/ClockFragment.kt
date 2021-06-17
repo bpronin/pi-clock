@@ -110,7 +110,9 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         settingsButton = view.requireViewByIdCompat(R.id.settings_button)
         settingsButton.setOnClickListener {
-            startActivity(Intent(requireContext(), SettingsActivity::class.java))
+            animations.hideFab(settingsButton) {
+                startActivity(Intent(requireContext(), SettingsActivity::class.java))
+            }
         }
 
         contentContainer = view.findViewById(R.id.content_container)
@@ -143,7 +145,6 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onDestroy() {
-        animations.stop()
         settings.unregisterOnSharedPreferenceChangeListener(this)
         super.onDestroy()
     }
@@ -254,8 +255,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         if (active) {
             if (animate) {
-//                animations.showFab(settingsButton)
-                settingsButton.show()
+                animations.showFab(settingsButton)
                 animations.fadeInContent(contentContainer,
                     brightnessControl.brightness,
                     brightnessControl.maxBrightness,
@@ -275,8 +275,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
         } else {
             if (animate) {
-                settingsButton.hide()
-//                animations.hideFab(settingsButton)
+                animations.hideFab(settingsButton)
                 animations.fadeOutContent(contentContainer,
                     brightnessControl.brightness,
                     brightnessControl.minBrightness,
