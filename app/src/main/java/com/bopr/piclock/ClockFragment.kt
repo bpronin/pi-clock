@@ -142,7 +142,6 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onDestroy() {
-        animations.stop()
         settings.unregisterOnSharedPreferenceChangeListener(this)
         super.onDestroy()
     }
@@ -187,7 +186,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun onTimer() {
         val time = Date()
 
-        Log.d(_tag, "On timer: $time")
+//        Log.d(_tag, "On timer: $time")
 
         hoursView.text = hoursFormat.format(time)
         minutesView.text = minutesFormat.format(time)
@@ -248,28 +247,23 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         if (animate) {
             if (active) {
                 animations.showFab(settingsButton)
-                animations.fadeInContent(contentContainer,
+                animations.fadeInContent(
+                    contentContainer,
                     brightnessControl.brightness,
-                    brightnessControl.maxBrightness,
-                    onStart = {
-                        fadeInTickSoundVolume()
-                        onComplete()
-                    },
-                    onEnd = {
-                        brightnessControl.setMaxBrightness()
-                    })
+                    brightnessControl.maxBrightness
+                )
+                fadeInTickSoundVolume()
+                onComplete()
             } else {
                 animations.hideFab(settingsButton)
-                animations.fadeOutContent(contentContainer,
+                animations.fadeOutContent(
+                    contentContainer,
                     brightnessControl.brightness,
-                    brightnessControl.minBrightness,
-                    onStart = {
-                        fadeOutTickSoundVolume()
-                    }
+                    brightnessControl.minBrightness
                 ) {
-                    brightnessControl.setMinBrightness()
                     onComplete()
                 }
+                fadeOutTickSoundVolume()
             }
         } else {
             if (active) {

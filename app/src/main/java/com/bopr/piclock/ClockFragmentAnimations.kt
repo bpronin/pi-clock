@@ -4,12 +4,11 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.view.View
-import android.view.View.INVISIBLE
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
 import androidx.core.animation.doOnEnd
-import androidx.core.animation.doOnStart
 
 internal class ClockFragmentAnimations {
 
@@ -27,8 +26,6 @@ internal class ClockFragmentAnimations {
                     setFloatValues(-90f, 0f)
                 }
             )
-
-            animators.add(this)
         }
     }
 
@@ -46,8 +43,6 @@ internal class ClockFragmentAnimations {
                     setFloatValues(0f, -90f)
                 }
             )
-
-            animators.add(this)
         }
     }
 
@@ -56,8 +51,6 @@ internal class ClockFragmentAnimations {
             duration = 2000
             interpolator = AccelerateInterpolator()
             setPropertyName("alpha")
-
-            animators.add(this)
         }
     }
 
@@ -66,8 +59,6 @@ internal class ClockFragmentAnimations {
             duration = 2000
             interpolator = AccelerateInterpolator()
             setPropertyName("alpha")
-
-            animators.add(this)
         }
     }
 
@@ -77,8 +68,6 @@ internal class ClockFragmentAnimations {
             interpolator = CycleInterpolator(1f)
             setPropertyName("alpha")
             setFloatValues(0f, 1f)
-
-            animators.add(this)
         }
     }
 
@@ -88,12 +77,8 @@ internal class ClockFragmentAnimations {
             interpolator = CycleInterpolator(1f)
             setPropertyName("alpha")
             setFloatValues(0f, 1f)
-
-            animators.add(this)
         }
     }
-
-    private val animators = mutableSetOf<Animator>()
 
     private fun Animator.reset(view: View) = apply {
         cancel()
@@ -101,18 +86,10 @@ internal class ClockFragmentAnimations {
         setTarget(view)
     }
 
-    fun stop() {
-        for (animator in animators) {
-            if (animator.isStarted) {
-                animator.end()
-            }
-        }
-    }
-
     fun showFab(view: View) {
+        view.visibility = VISIBLE
         fabShowAnimator.apply {
             reset(view)
-            doOnStart { view.visibility = VISIBLE }
             start()
         }
     }
@@ -120,7 +97,7 @@ internal class ClockFragmentAnimations {
     fun hideFab(view: View) {
         fabHideAnimator.apply {
             reset(view)
-            doOnEnd { view.visibility = INVISIBLE }
+            doOnEnd { view.visibility = GONE }
             start()
         }
     }
@@ -129,14 +106,12 @@ internal class ClockFragmentAnimations {
         view: View,
         fromBrightness: Int,
         toBrightness: Int,
-        onStart: (Animator) -> Unit = {},
         onEnd: (Animator) -> Unit = {}
     ) {
         fadeInContentAnimator.apply {
             reset(view)
             setFloatValues(fromBrightness / 100f, toBrightness / 100f)
-            doOnStart(onStart)
-            doOnEnd (onEnd)
+            doOnEnd(onEnd)
             start()
         }
     }
@@ -145,14 +120,12 @@ internal class ClockFragmentAnimations {
         view: View,
         fromBrightness: Int,
         toBrightness: Int,
-        onStart: (Animator) -> Unit = {},
         onEnd: (Animator) -> Unit = {}
     ) {
         fadeOutContentAnimator.apply {
             reset(view)
             setFloatValues(fromBrightness / 100f, toBrightness / 100f)
-            doOnStart (onStart)
-            doOnEnd (onEnd)
+            doOnEnd(onEnd)
             start()
         }
     }
