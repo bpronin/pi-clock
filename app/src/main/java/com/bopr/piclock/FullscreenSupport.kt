@@ -1,17 +1,20 @@
 package com.bopr.piclock
 
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowInsets
 import android.view.WindowInsetsController
-import com.bopr.piclock.util.mainHandler
 
 class FullscreenSupport(private val window: Window) {
 
     /** Logger tag. */
     private val _tag = "FullscreenSupport"
+
+    private val handler = Handler(Looper.getMainLooper())
 
     /**
      * Some older devices needs a small delay between UI widget updates
@@ -40,19 +43,19 @@ class FullscreenSupport(private val window: Window) {
     var fullscreen: Boolean = false
         set(value) {
             if (enabled && field != value) {
-                mainHandler.removeCallbacksAndMessages(null)
+                handler.removeCallbacksAndMessages(null)
                 field = value
                 if (field) {
-                    mainHandler.postDelayed(turnOffTask, startDelay)
+                    handler.postDelayed(turnOffTask, startDelay)
                 } else {
-                    mainHandler.postDelayed(turnOnTask, startDelay)
+                    handler.postDelayed(turnOnTask, startDelay)
                 }
                 Log.d(_tag, "Fullscreen: $field")
             }
         }
 
     fun destroy() {
-        mainHandler.removeCallbacksAndMessages(null)
+        handler.removeCallbacksAndMessages(null)
     }
 
     private fun showSystemUI() {

@@ -46,6 +46,7 @@ internal class TickPlayer(private val context: Context) {
 
         if (ready) {
             player.run {
+                Log.d(_tag, "tik")
                 seekTo(0)
                 start()
             }
@@ -73,15 +74,16 @@ internal class TickPlayer(private val context: Context) {
 
     private fun fadeVolume(from: Float, to: Float, fadeDuration: Long) {
         if (ready) {
-            player.setVolume(from, from)
-
             volumeAnimator.apply {
                 cancel()
+
+                player.setVolume(from, from)
 
                 target = player
                 duration = fadeDuration
                 setFloatValues(from, to)
-            }.start()
+                start()
+            }
         }
     }
 
