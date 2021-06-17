@@ -7,8 +7,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent.*
@@ -30,6 +28,7 @@ import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.getResId
+import com.bopr.piclock.util.mainHandler
 import com.bopr.piclock.util.requireViewByIdCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
@@ -64,7 +63,6 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var brightnessControl: ClockFragmentBrightnessControl
 
     private val locale = Locale.getDefault()
-    private val handler = Handler(Looper.getMainLooper())
     private val timerTask = Runnable { onTimer() }
     private val autoInactivateTask = Runnable { onAutoInactivate() }
 
@@ -150,12 +148,12 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     override fun onResume() {
         super.onResume()
-        handler.post(timerTask)
+        mainHandler.post(timerTask)
     }
 
     override fun onPause() {
         super.onPause()
-        handler.removeCallbacks(timerTask)
+        mainHandler.removeCallbacks(timerTask)
         tickPlayer.stop()
     }
 
@@ -197,7 +195,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         blinkTimeSeparator(time)
         playTickSound()
 
-        handler.postDelayed(timerTask, 1000)
+        mainHandler.postDelayed(timerTask, 1000)
     }
 
     private fun onAutoInactivate() {
@@ -350,7 +348,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         if (active) {
             val delay = settings.getLong(PREF_AUTO_INACTIVATE_DELAY)
             if (delay > 0) {
-                handler.postDelayed(autoInactivateTask, delay)
+                mainHandler.postDelayed(autoInactivateTask, delay)
 
                 Log.d(_tag, "Auto-inactivate scheduled")
             }
@@ -359,8 +357,8 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun cancelAutoInactivate() {
         /* checking has callbacks if possible to reduce log messages */
-        if (VERSION.SDK_INT < VERSION_CODES.Q || handler.hasCallbacks(autoInactivateTask)) {
-            handler.removeCallbacks(autoInactivateTask)
+        if (VERSION.SDK_INT < VERSION_CODES.Q || mainHandler.hasCallbacks(autoInactivateTask)) {
+            mainHandler.removeCallbacks(autoInactivateTask)
 
             Log.d(_tag, "Auto-inactivation canceled")
         }

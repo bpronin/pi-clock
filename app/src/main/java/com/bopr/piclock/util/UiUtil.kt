@@ -2,6 +2,8 @@ package com.bopr.piclock.util
 
 import android.app.AlertDialog
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.text.InputType
 import android.view.View
 import android.widget.EditText
@@ -13,6 +15,7 @@ import com.bopr.piclock.R
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+val mainHandler get() = Handler(Looper.getMainLooper())
 
 fun <T : View?> View.requireViewByIdCompat(@IdRes id: Int): T {
     return findViewById(id)
