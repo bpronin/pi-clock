@@ -13,11 +13,13 @@ import android.view.MotionEvent.*
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.view.ViewGroup.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
+import com.bopr.piclock.Settings.Companion.PREF_CLOCK_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
@@ -30,6 +32,7 @@ import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.getResId
 import com.bopr.piclock.util.requireViewByIdCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.lang.Math.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -40,7 +43,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     /** Logger tag. */
     private val _tag = "ClockFragment"
 
-    private lateinit var contentContainer: ViewGroup
+    private lateinit var contentView: ViewGroup
     private lateinit var settingsButton: FloatingActionButton
     private lateinit var hoursView: TextView
     private lateinit var minutesView: TextView
@@ -58,12 +61,14 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var dateFormat: DateFormat
     private lateinit var tickPlayer: TickPlayer
     private lateinit var animations: ClockFragmentAnimations
+
     private lateinit var scaleControl: ClockFragmentScaleControl
     private lateinit var brightnessControl: ClockFragmentBrightnessControl
 
     private val locale = Locale.getDefault()
     private val autoInactivateTask = Runnable { onAutoInactivate() }
     private val timerTask = Runnable { onTimer() }
+    private val moveContentTask = Runnable { onMoveContent() }
     private val handler = Handler(Looper.getMainLooper())
 
     private var active = false
@@ -83,7 +88,6 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         settings = Settings(requireContext()).apply {
             tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
-            registerOnSharedPreferenceChangeListener(this@ClockFragment)
         }
     }
 
@@ -112,9 +116,9 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
             startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
 
-        contentContainer = view.findViewById(R.id.content_container)
+        contentView = view.findViewById(R.id.content_container)
 
-        scaleControl = ClockFragmentScaleControl(requireContext(), contentContainer).apply {
+        scaleControl = ClockFragmentScaleControl(requireContext(), contentView).apply {
             factor = settings.getFloat(PREF_CLOCK_SCALE)
             onEnd = { factor ->
                 settings.update { putFloat(PREF_CLOCK_SCALE, factor) }
@@ -122,7 +126,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
 
         brightnessControl =
-            ClockFragmentBrightnessControl(requireContext(), contentContainer).apply {
+            ClockFragmentBrightnessControl(requireContext(), contentView).apply {
                 minBrightness = settings.getInt(PREF_MIN_BRIGHTNESS)
                 onEnd = { brightness ->
                     settings.update { putInt(PREF_MIN_BRIGHTNESS, brightness) }
@@ -132,6 +136,8 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         createContentView()
 
         setActive(savedState?.getBoolean("active") ?: false, false)
+
+        settings.registerOnSharedPreferenceChangeListener(this@ClockFragment)
 
         return view
     }
@@ -148,10 +154,12 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     override fun onResume() {
         super.onResume()
-        handler.post(timerTask)
+        scheduleTimerTask()
+        scheduleMoveContent()
     }
 
     override fun onPause() {
+        handler.removeCallbacks(moveContentTask)
         handler.removeCallbacks(timerTask)
         tickPlayer.stop()
         super.onPause()
@@ -175,12 +183,18 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_TICK_SOUND ->
                     tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
                 PREF_MIN_BRIGHTNESS ->
-                    brightnessControl.minBrightness = settings.getInt(PREF_MIN_BRIGHTNESS)
-                PREF_CLOCK_SCALE -> {
-                    scaleControl.factor = settings.getFloat(PREF_CLOCK_SCALE)
-                }
+                    brightnessControl.minBrightness = getInt(PREF_MIN_BRIGHTNESS)
+                PREF_CLOCK_SCALE ->
+                    scaleControl.factor = getFloat(PREF_CLOCK_SCALE)
+                PREF_CLOCK_FLOAT_INTERVAL ->
+                    scheduleMoveContent()
             }
         }
+    }
+
+    private fun scheduleTimerTask() {
+        handler.removeCallbacks(timerTask)
+        handler.postDelayed(timerTask, 1000)
     }
 
     private fun onTimer() {
@@ -197,13 +211,24 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         blinkTimeSeparator(time)
         playTickSound()
 
-        handler.postDelayed(timerTask, 1000)
+        scheduleTimerTask()
+    }
+
+    private fun scheduleMoveContent() {
+        handler.removeCallbacks(moveContentTask)
+        handler.postDelayed(moveContentTask, settings.getInt(PREF_CLOCK_FLOAT_INTERVAL) * 1000L)
+    }
+
+    private fun onMoveContent() {
+        animations.moveSomewhere(contentView) {
+            scheduleMoveContent()
+        }
     }
 
     private fun createContentView() {
         Log.d(_tag, "Creating content")
 
-        contentContainer.apply {
+        contentView.apply {
             removeAllViews()
             val resName = settings.getString(PREF_CLOCK_LAYOUT)
             val resId = requireContext().getResId("layout", resName)
@@ -248,7 +273,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
             if (active) {
                 animations.showFab(settingsButton)
                 animations.fadeInContent(
-                    contentContainer,
+                    contentView,
                     brightnessControl.brightness,
                     brightnessControl.maxBrightness
                 )
@@ -257,7 +282,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
             } else {
                 animations.hideFab(settingsButton)
                 animations.fadeOutContent(
-                    contentContainer,
+                    contentView,
                     brightnessControl.brightness,
                     brightnessControl.minBrightness
                 ) {

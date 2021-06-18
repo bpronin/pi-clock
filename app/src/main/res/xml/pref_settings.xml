@@ -41,6 +41,11 @@
             android:key="time_separator_blinking"
             android:title="@string/blink_time_separator" />
 
+        <SeekBarPreference
+            android:key="clock_float_interval"
+            android:max="600"
+            android:title="@string/clock_floating" />
+
         <SwitchPreference
             android:key="fullscreen_enabled"
             android:title="@string/fullscreen" />

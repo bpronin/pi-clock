@@ -19,6 +19,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             putBooleanOptional(PREF_SECONDS_VISIBLE, true)
             putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
             putBooleanOptional(PREF_TICK_SOUND_ALWAYS, false)
+            putIntOptional(PREF_CLOCK_FLOAT_INTERVAL, 10 * 60)
             putFloatOptional(PREF_CLOCK_SCALE, 1f)
 
             putStringOptional(
@@ -93,6 +94,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
         const val PREF_24_HOURS_FORMAT = "24_hours_format"
         const val PREF_AUTO_INACTIVATE_DELAY = "auto_fullscreen_delay"
+        const val PREF_CLOCK_FLOAT_INTERVAL = "clock_float_interval"
         const val PREF_CLOCK_LAYOUT = "clock_layout"
         const val PREF_CLOCK_SCALE = "clock_scale"
         const val PREF_DATE_FORMAT = "date_format"

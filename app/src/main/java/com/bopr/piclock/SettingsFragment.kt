@@ -10,6 +10,7 @@ import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ABOUT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
+import com.bopr.piclock.Settings.Companion.PREF_CLOCK_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
@@ -52,26 +53,39 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     override fun onStart() {
         super.onStart()
-        updateHourFormatPreferenceView()
-        updateDateFormatPreferenceView()
-        updateTickSoundPreferenceView()
-        updateClockLayoutPreferenceView()
-        updateTickAlwaysPreferenceView()
         updateAutoFullscreenPreferenceView()
-        updateScalePreferenceView()
+        updateClockFloatingPreferenceView()
+        updateClockLayoutPreferenceView()
+        updateDateFormatPreferenceView()
+        updateHourFormatPreferenceView()
         updateMinBrightnessPreferenceView()
+        updateScalePreferenceView()
+        updateTickAlwaysPreferenceView()
+        updateTickSoundPreferenceView()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
             PREF_24_HOURS_FORMAT -> updateHourFormatPreferenceView()
-            PREF_DATE_FORMAT -> updateDateFormatPreferenceView()
-            PREF_TICK_SOUND -> updateTickSoundPreferenceView()
-            PREF_CLOCK_LAYOUT -> updateClockLayoutPreferenceView()
-            PREF_TICK_SOUND_ALWAYS -> updateTickAlwaysPreferenceView()
             PREF_AUTO_INACTIVATE_DELAY -> updateAutoFullscreenPreferenceView()
+            PREF_CLOCK_FLOAT_INTERVAL -> updateClockFloatingPreferenceView()
+            PREF_CLOCK_LAYOUT -> updateClockLayoutPreferenceView()
             PREF_CLOCK_SCALE -> updateScalePreferenceView()
+            PREF_DATE_FORMAT -> updateDateFormatPreferenceView()
             PREF_MIN_BRIGHTNESS -> updateMinBrightnessPreferenceView()
+            PREF_TICK_SOUND -> updateTickSoundPreferenceView()
+            PREF_TICK_SOUND_ALWAYS -> updateTickAlwaysPreferenceView()
+        }
+    }
+
+    private fun updateClockFloatingPreferenceView() {
+        requirePreference(PREF_CLOCK_FLOAT_INTERVAL).apply {
+            val value = settings.getInt(key)
+            summary = if (value > 0) {
+                getString(R.string.float_clock_view, value)
+            } else {
+                getString(R.string.keep_clock_view)
+            }
         }
     }
 

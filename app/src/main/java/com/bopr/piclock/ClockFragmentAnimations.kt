@@ -3,12 +3,18 @@ package com.bopr.piclock
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.graphics.Path
+import android.graphics.Point
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup.X
+import android.view.ViewGroup.Y
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
 import androidx.core.animation.doOnEnd
+import java.lang.Math.random
 
 internal class ClockFragmentAnimations {
 
@@ -18,11 +24,11 @@ internal class ClockFragmentAnimations {
             interpolator = AccelerateInterpolator()
             playTogether(
                 ObjectAnimator().apply {
-                    setPropertyName("alpha")
+                    setProperty(View.ALPHA)
                     setFloatValues(0f, 1f)
                 },
                 ObjectAnimator().apply {
-                    setPropertyName("rotation")
+                    setProperty(View.ROTATION)
                     setFloatValues(-90f, 0f)
                 }
             )
@@ -35,11 +41,11 @@ internal class ClockFragmentAnimations {
             interpolator = AccelerateInterpolator()
             playTogether(
                 ObjectAnimator().apply {
-                    setPropertyName("alpha")
+                    setProperty(View.ALPHA)
                     setFloatValues(1f, 0f)
                 },
                 ObjectAnimator().apply {
-                    setPropertyName("rotation")
+                    setProperty(View.ROTATION)
                     setFloatValues(0f, -90f)
                 }
             )
@@ -50,7 +56,7 @@ internal class ClockFragmentAnimations {
         ObjectAnimator().apply {
             duration = 2000
             interpolator = AccelerateInterpolator()
-            setPropertyName("alpha")
+            setProperty(View.ALPHA)
         }
     }
 
@@ -58,7 +64,7 @@ internal class ClockFragmentAnimations {
         ObjectAnimator().apply {
             duration = 2000
             interpolator = AccelerateInterpolator()
-            setPropertyName("alpha")
+            setProperty(View.ALPHA)
         }
     }
 
@@ -66,7 +72,7 @@ internal class ClockFragmentAnimations {
         ObjectAnimator().apply {
             duration = 2000
             interpolator = CycleInterpolator(1f)
-            setPropertyName("alpha")
+            setProperty(View.ALPHA)
             setFloatValues(0f, 1f)
         }
     }
@@ -75,7 +81,7 @@ internal class ClockFragmentAnimations {
         ObjectAnimator().apply {
             duration = 2000
             interpolator = CycleInterpolator(1f)
-            setPropertyName("alpha")
+            setProperty(View.ALPHA)
             setFloatValues(0f, 1f)
         }
     }
@@ -140,6 +146,30 @@ internal class ClockFragmentAnimations {
     fun blinkSecondsSeparator(view: View) {
         secondsSeparatorAnimator.apply {
             reset(view)
+            start()
+        }
+    }
+
+    fun moveSomewhere(view: View, onEnd: (Animator) -> Unit={}) {
+        val ds = Point()
+        view.context.display?.getRealSize(ds)
+
+        val vw = view.width * view.scaleX
+        val vh = view.height * view.scaleY
+
+        val x = random() * (ds.x - vw)
+        val y = random() * (ds.y - vh)
+
+        val path = Path().apply {
+            moveTo(view.x, view.y)
+            lineTo(x.toFloat(), y.toFloat())
+        }
+
+        ObjectAnimator.ofFloat(view, X, Y, path).apply {
+            interpolator = AccelerateDecelerateInterpolator()
+            duration = 2000
+            doOnEnd(onEnd)
+
             start()
         }
     }
