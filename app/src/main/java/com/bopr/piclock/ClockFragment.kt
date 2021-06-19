@@ -37,7 +37,6 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     /** Logger tag. */
@@ -68,7 +67,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val locale = Locale.getDefault()
     private val autoInactivateTask = Runnable { onAutoInactivate() }
     private val timerTask = Runnable { onTimer() }
-    private val moveContentTask = Runnable { onMoveContent() }
+    private val contentFloatTask = Runnable { onContentFloat() }
     private val handler = Handler(Looper.getMainLooper())
 
     private var active = false
@@ -117,6 +116,9 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
 
         contentView = view.findViewById(R.id.content_container)
+        contentView.setOnClickListener {
+            animations.floatContentSomewhere(requireView(), contentView)
+        }
 
         scaleControl = ClockFragmentScaleControl(requireContext(), contentView).apply {
             factor = settings.getFloat(PREF_CLOCK_SCALE)
@@ -155,17 +157,19 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onResume() {
         super.onResume()
         scheduleTimerTask()
-        scheduleMoveContent()
+        scheduleContentFloat()
     }
 
     override fun onPause() {
-        handler.removeCallbacks(moveContentTask)
+        handler.removeCallbacks(contentFloatTask)
         handler.removeCallbacks(timerTask)
         tickPlayer.stop()
         super.onPause()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        Log.d(_tag, "Setting: $key changed to: ${settings.all[key]}")
+
         settings.apply {
             when (key) {
                 PREF_CLOCK_LAYOUT ->
@@ -187,41 +191,8 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_CLOCK_SCALE ->
                     scaleControl.factor = getFloat(PREF_CLOCK_SCALE)
                 PREF_CLOCK_FLOAT_INTERVAL ->
-                    scheduleMoveContent()
+                    scheduleContentFloat()
             }
-        }
-    }
-
-    private fun scheduleTimerTask() {
-        handler.removeCallbacks(timerTask)
-        handler.postDelayed(timerTask, 1000)
-    }
-
-    private fun onTimer() {
-        val time = Date()
-
-//        Log.d(_tag, "On timer: $time")
-
-        hoursView.text = hoursFormat.format(time)
-        minutesView.text = minutesFormat.format(time)
-        secondsView.text = secondsFormat.format(time)
-        amPmMarkerView.text = amPmFormat.format(time)
-        dateView.text = dateFormat.format(time)
-
-        blinkTimeSeparator(time)
-        playTickSound()
-
-        scheduleTimerTask()
-    }
-
-    private fun scheduleMoveContent() {
-        handler.removeCallbacks(moveContentTask)
-        handler.postDelayed(moveContentTask, settings.getInt(PREF_CLOCK_FLOAT_INTERVAL) * 1000L)
-    }
-
-    private fun onMoveContent() {
-        animations.moveSomewhere(contentView) {
-            scheduleMoveContent()
         }
     }
 
@@ -351,14 +322,39 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
+    private fun scheduleTimerTask() {
+        if (isResumed) {
+//            Log.d(_tag, "Schedule timer")
+
+            handler.removeCallbacks(timerTask)
+            handler.postDelayed(timerTask, 1000)
+        }
+    }
+
+    private fun onTimer() {
+        val time = Date()
+//        Log.d(_tag, "On timer: $time")
+
+        hoursView.text = hoursFormat.format(time)
+        minutesView.text = minutesFormat.format(time)
+        secondsView.text = secondsFormat.format(time)
+        amPmMarkerView.text = amPmFormat.format(time)
+        dateView.text = dateFormat.format(time)
+
+        blinkTimeSeparator(time)
+        playTickSound()
+
+        scheduleTimerTask()
+    }
+
     private fun scheduleAutoInactivate() {
-        if (active && !autoInactivating) {
+        if (isResumed && active && !autoInactivating) {
             val delay = settings.getLong(PREF_AUTO_INACTIVATE_DELAY)
             if (delay > 0) {
+                Log.d(_tag, "Auto-inactivate scheduled")
+
                 autoInactivating = true
                 handler.postDelayed(autoInactivateTask, delay)
-
-                Log.d(_tag, "Auto-inactivate scheduled")
             }
         }
     }
@@ -378,6 +374,28 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
             setActive(value = false, animate = true)
 
             Log.d(_tag, "Auto-inactivation complete")
+        }
+    }
+
+    private fun scheduleContentFloat() {
+        if (isResumed) {
+            handler.removeCallbacks(contentFloatTask)
+            handler.postDelayed(
+                contentFloatTask,
+                settings.getInt(PREF_CLOCK_FLOAT_INTERVAL) * 1000L
+            )
+
+            Log.d(_tag, "Floating scheduled")
+        }
+    }
+
+    private fun onContentFloat() {
+        Log.d(_tag, "Start floating")
+
+        animations.floatContentSomewhere(requireView(), contentView) {
+            Log.d(_tag, "End floating")
+
+            scheduleContentFloat()
         }
     }
 

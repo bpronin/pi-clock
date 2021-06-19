@@ -3,17 +3,14 @@ package com.bopr.piclock
 import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.graphics.Path
-import android.graphics.Point
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup.X
-import android.view.ViewGroup.Y
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
 import androidx.core.animation.doOnEnd
+import com.bopr.piclock.util.getScaledRect
 import java.lang.Math.random
 
 internal class ClockFragmentAnimations {
@@ -150,28 +147,36 @@ internal class ClockFragmentAnimations {
         }
     }
 
-    fun moveSomewhere(view: View, onEnd: (Animator) -> Unit={}) {
-        val ds = Point()
-        view.context.display?.getRealSize(ds)
+    fun floatContentSomewhere(parent: View, view: View, onEnd: (Animator) -> Unit = {}) {
+        val pr = parent.getScaledRect()
+        val vr = view.getScaledRect()
 
-        val vw = view.width * view.scaleX
-        val vh = view.height * view.scaleY
+        val w = pr.width() - vr.width()
+        val h = pr.height() - vr.height()
 
-        val x = random() * (ds.x - vw)
-        val y = random() * (ds.y - vh)
+        floatTo(
+            view,
+            random().toFloat() * w,
+            random().toFloat() * h,
+            onEnd
+        )
+    }
 
-        val path = Path().apply {
-            moveTo(view.x, view.y)
-            lineTo(x.toFloat(), y.toFloat())
-        }
-
-        ObjectAnimator.ofFloat(view, X, Y, path).apply {
+    private fun floatTo(view: View, x: Float, y: Float, onEnd: (Animator) -> Unit = {}) {
+        AnimatorSet().apply {
+            duration = 5000
             interpolator = AccelerateDecelerateInterpolator()
-            duration = 2000
             doOnEnd(onEnd)
+
+            val r = view.getScaledRect()
+            playTogether(
+                ObjectAnimator.ofFloat(view, View.X, x - r.left),
+                ObjectAnimator.ofFloat(view, View.Y, y - r.top)
+            )
 
             start()
         }
     }
 
 }
+

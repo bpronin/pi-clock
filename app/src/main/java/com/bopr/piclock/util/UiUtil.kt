@@ -2,6 +2,7 @@ package com.bopr.piclock.util
 
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.RectF
 import android.text.InputType
 import android.view.View
 import android.widget.EditText
@@ -17,6 +18,17 @@ import com.bopr.piclock.R
 fun <T : View?> View.requireViewByIdCompat(@IdRes id: Int): T {
     return findViewById(id)
         ?: throw IllegalArgumentException("ID does not reference a View inside this View")
+}
+
+fun View.getScaledRect(): RectF {
+    val w = width * scaleX
+    val h = height * scaleY
+    return RectF().apply {
+        left = (width - w) / 2
+        right = left + w
+        top = (height - h) / 2
+        bottom = top + h
+    }
 }
 
 fun Context.messageBox(text: String) {
