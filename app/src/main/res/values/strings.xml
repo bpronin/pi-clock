@@ -70,6 +70,7 @@
         <item>100%</item>
         <item>150%</item>
         <item>200%</item>
+        <item>500%</item>
     </string-array>
 
     <string-array name="clock_float_interval_names">

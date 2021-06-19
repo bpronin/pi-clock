@@ -55,6 +55,7 @@
         <item>1.00f</item>
         <item>1.50f</item>
         <item>2.00f</item>
+        <item>5.00f</item>
     </string-array>
 
     <string-array name="clock_float_interval_values" translatable="false">
