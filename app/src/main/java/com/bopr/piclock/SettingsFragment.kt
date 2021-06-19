@@ -79,10 +79,11 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateClockFloatingPreferenceView() {
-        requirePreference(PREF_CLOCK_FLOAT_INTERVAL).apply {
-            val value = settings.getInt(key)
+        (requirePreference(PREF_CLOCK_FLOAT_INTERVAL) as ListPreference).apply {
+            val value = settings.getLong(key)
             summary = if (value > 0) {
-                getString(R.string.float_clock_view, value)
+                val entry = entries[findIndexOfValue(value.toString())]
+                getString(R.string.float_clock_view, entry)
             } else {
                 getString(R.string.keep_clock_view)
             }
@@ -92,7 +93,6 @@ class SettingsFragment : CustomPreferenceFragment(),
     private fun updateAboutPreferenceView() {
         requirePreference(PREF_ABOUT).apply {
             val info = ReleaseInfo.get(requireContext())
-            title = resources.getString(R.string.about_version)
             summary =
                 resources.getString(R.string.about_summary, info.versionName, info.buildNumber)
             onPreferenceClickListener = AboutPreferenceClickListener()

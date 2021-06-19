@@ -19,7 +19,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             putBooleanOptional(PREF_SECONDS_VISIBLE, true)
             putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
             putBooleanOptional(PREF_TICK_SOUND_ALWAYS, false)
-            putIntOptional(PREF_CLOCK_FLOAT_INTERVAL, 10 * 60)
+            putLongOptional(PREF_CLOCK_FLOAT_INTERVAL, 15 * 60 * 1000)
             putFloatOptional(PREF_CLOCK_SCALE, 1f)
 
             putStringOptional(
@@ -46,10 +46,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
                 PREF_MIN_BRIGHTNESS,
                 ensureResExists(R.array.min_brightness_values, 20)
             ) {
-                isResExists(
-                    R.array.min_brightness_values,
-                    getInt(PREF_MIN_BRIGHTNESS)
-                )
+                getInt(PREF_MIN_BRIGHTNESS) in 0..100
             }
 
             putStringOptional(

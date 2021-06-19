@@ -14,6 +14,7 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.view.ViewGroup.*
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
@@ -38,6 +39,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
+
+    //todo: separate date view into 'date' and 'day name'
 
     /** Logger tag. */
     private val _tag = "ClockFragment"
@@ -73,6 +76,8 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     private var active = false
     private var ready = false
     private var autoInactivating = false
+    private var contentViewDefaultX = 0f
+    private var contentViewDefaultY = 0f
 
     var onReady: (active: Boolean) -> Unit = {}
 
@@ -96,13 +101,24 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         container: ViewGroup?,
         savedState: Bundle?
     ): View {
-        val view = inflater.inflate(R.layout.fragment_main, container, false) as ViewGroup
+        val root = inflater.inflate(R.layout.fragment_main, container, false) as ViewGroup
 
-        view.setOnClickListener {
+        root.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+
+            override fun onGlobalLayout() {
+                /* this happens when layout is completely finished */
+                contentViewDefaultX = contentView.x
+                contentViewDefaultY = contentView.y
+                root.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
+
+        root.setOnClickListener {
             setActive(!active, true)
         }
 
-        view.setOnTouchListener { v, event ->
+        root.setOnTouchListener { v, event ->
             when (event?.action) {
                 ACTION_DOWN -> cancelAutoInactivate()
                 ACTION_UP -> scheduleAutoInactivate()
@@ -110,14 +126,14 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
             brightnessControl.onTouch(event) || scaleControl.onTouch(v, event)
         }
 
-        settingsButton = view.requireViewByIdCompat(R.id.settings_button)
+        settingsButton = root.requireViewByIdCompat(R.id.settings_button)
         settingsButton.setOnClickListener {
             startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
 
-        contentView = view.findViewById(R.id.content_container)
+        contentView = root.findViewById(R.id.content_container)
         contentView.setOnClickListener {
-            animations.floatContentSomewhere(requireView(), contentView)
+            resetContentViewPosition()
         }
 
         scaleControl = ClockFragmentScaleControl(requireContext(), contentView).apply {
@@ -141,7 +157,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         settings.registerOnSharedPreferenceChangeListener(this@ClockFragment)
 
-        return view
+        return root
     }
 
     override fun onSaveInstanceState(savedState: Bundle) {
@@ -161,9 +177,8 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onPause() {
-        handler.removeCallbacks(contentFloatTask)
-        handler.removeCallbacks(timerTask)
-        tickPlayer.stop()
+        cancelControlFloat()
+        cancelTimerTask()
         super.onPause()
     }
 
@@ -324,11 +339,18 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun scheduleTimerTask() {
         if (isResumed) {
-//            Log.d(_tag, "Schedule timer")
-
-            handler.removeCallbacks(timerTask)
+            cancelTimerTask()
             handler.postDelayed(timerTask, 1000)
+
+//            Log.d(_tag, "Timer scheduled")
         }
+    }
+
+    private fun cancelTimerTask() {
+        stopTickSound()
+        handler.removeCallbacks(timerTask)
+
+//        Log.d(_tag, "Timer canceled")
     }
 
     private fun onTimer() {
@@ -349,12 +371,13 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun scheduleAutoInactivate() {
         if (isResumed && active && !autoInactivating) {
+            cancelAutoInactivate()
             val delay = settings.getLong(PREF_AUTO_INACTIVATE_DELAY)
             if (delay > 0) {
-                Log.d(_tag, "Auto-inactivate scheduled")
-
                 autoInactivating = true
                 handler.postDelayed(autoInactivateTask, delay)
+
+                Log.d(_tag, "Auto-inactivate scheduled")
             }
         }
     }
@@ -379,14 +402,22 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun scheduleContentFloat() {
         if (isResumed) {
-            handler.removeCallbacks(contentFloatTask)
-            handler.postDelayed(
-                contentFloatTask,
-                settings.getInt(PREF_CLOCK_FLOAT_INTERVAL) * 1000L
-            )
+            cancelControlFloat()
+            val interval = settings.getLong(PREF_CLOCK_FLOAT_INTERVAL)
+            if (interval > 0) {
+                handler.postDelayed(contentFloatTask, interval)
 
-            Log.d(_tag, "Floating scheduled")
+                Log.d(_tag, "Floating scheduled")
+            } else {
+                resetContentViewPosition()
+            }
         }
+    }
+
+    private fun cancelControlFloat() {
+        handler.removeCallbacks(contentFloatTask)
+
+        Log.d(_tag, "Floating cancelled")
     }
 
     private fun onContentFloat() {
@@ -399,15 +430,26 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
+    private fun resetContentViewPosition() {
+        Log.d(_tag, "Restore default position x: $contentViewDefaultX y:$contentViewDefaultY")
+
+        animations.floatContentTo(contentView, contentViewDefaultX, contentViewDefaultY)
+    }
+
     private fun blinkTimeSeparator(time: Date) {
         if (settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
-            if (isOddSecond(time)) {
+            val oddSecond = time.time / 1000 % 2 != 0L
+            if (oddSecond) {
                 animations.blinkTimeSeparator(timeSeparator)
                 if (settings.getBoolean(PREF_SECONDS_VISIBLE)) {
                     animations.blinkSecondsSeparator(secondsSeparator)
                 }
             }
         }
+    }
+
+    private fun stopTickSound() {
+        tickPlayer.stop()
     }
 
     private fun playTickSound() {
@@ -427,7 +469,5 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
             tickPlayer.fadeOutVolume(6000)
         }
     }
-
-    private fun isOddSecond(time: Date) = time.time / 1000 % 2 != 0L
 
 }

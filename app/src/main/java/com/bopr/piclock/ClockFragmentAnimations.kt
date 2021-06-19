@@ -154,7 +154,7 @@ internal class ClockFragmentAnimations {
         val w = pr.width() - vr.width()
         val h = pr.height() - vr.height()
 
-        floatTo(
+        floatContentTo(
             view,
             random().toFloat() * w,
             random().toFloat() * h,
@@ -162,7 +162,7 @@ internal class ClockFragmentAnimations {
         )
     }
 
-    private fun floatTo(view: View, x: Float, y: Float, onEnd: (Animator) -> Unit = {}) {
+    fun floatContentTo(view: View, x: Float, y: Float, onEnd: (Animator) -> Unit = {}) {
         AnimatorSet().apply {
             duration = 5000
             interpolator = AccelerateDecelerateInterpolator()

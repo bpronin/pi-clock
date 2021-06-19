@@ -29,7 +29,7 @@
     <string name="time_separator">Time separator</string>
     <string name="use_24_hours_format">24 hours format</string>
     <string name="user_interface">Interface</string>
-    <string name="float_clock_view">Clock moves along the screen every %d sec</string>
+    <string name="float_clock_view">Clock moves along the screen every %s</string>
     <string name="keep_clock_view">Clock keeps its position on the screen</string>
     <string name="clock_floating">Floating interval</string>
 
@@ -70,6 +70,13 @@
         <item>100%</item>
         <item>150%</item>
         <item>200%</item>
+    </string-array>
+
+    <string-array name="clock_float_interval_names">
+        <item>10 second</item>
+        <item>1 minute</item>
+        <item>15 minutes</item>
+        <item>Never</item>
     </string-array>
 
 </resources>

@@ -56,6 +56,7 @@ internal class ClockFragmentScaleControl(
     }
 
     private fun updateControlView() {
+        //todo: fix position (move into screen) if new sizee does not fit
         controllingView.apply {
             scaleX = factor
             scaleY = factor

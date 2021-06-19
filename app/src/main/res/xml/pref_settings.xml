@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/appearance">
 
         <ListPreference
@@ -41,9 +42,10 @@
             android:key="time_separator_blinking"
             android:title="@string/blink_time_separator" />
 
-        <SeekBarPreference
+        <com.bopr.piclock.util.ui.preference.LongListPreference
+            android:entries="@array/clock_float_interval_names"
+            android:entryValues="@array/clock_float_interval_values"
             android:key="clock_float_interval"
-            android:max="600"
             android:title="@string/clock_floating" />
 
         <SwitchPreference
@@ -55,6 +57,7 @@
             android:entryValues="@array/auto_fullscreen_delay_values"
             android:key="auto_fullscreen_delay"
             android:title="@string/auto_fullscreen" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/sound">
@@ -68,12 +71,15 @@
         <SwitchPreference
             android:key="tick_sound_always"
             android:title="@string/tick_sound_always" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/about_label">
 
-        <Preference android:key="about_app" />
-        
+        <Preference
+            android:key="about_app"
+            app:title="@string/about_version" />
+
     </PreferenceCategory>
-    
+
 </PreferenceScreen>
