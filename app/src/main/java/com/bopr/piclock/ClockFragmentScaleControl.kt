@@ -43,7 +43,7 @@ internal class ClockFragmentScaleControl(
         onEnd(factor)
     }
 
-    fun onTouch(v: View?, event: MotionEvent?): Boolean {
+    fun onTouch(event: MotionEvent?): Boolean {
         scaleDetector.onTouchEvent(event)
 
         /* this is to prevent of calling onClick after scaling */
@@ -56,7 +56,7 @@ internal class ClockFragmentScaleControl(
     }
 
     private fun updateControlView() {
-        //todo: fix position (move into screen) if new sizee does not fit
+        //todo: fix position (move into screen) if new size does not fit
         controllingView.apply {
             scaleX = factor
             scaleY = factor

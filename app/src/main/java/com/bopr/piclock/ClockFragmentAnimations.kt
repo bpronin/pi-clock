@@ -83,6 +83,8 @@ internal class ClockFragmentAnimations {
         }
     }
 
+    private var floatContentAnimator: Animator? = null
+
     private fun Animator.reset(view: View) = apply {
         cancel()
         removeAllListeners() /*important. doOnStart(), doOnEnd() add! the listeners */
@@ -147,24 +149,40 @@ internal class ClockFragmentAnimations {
         }
     }
 
-    fun floatContentSomewhere(parent: View, view: View, onEnd: (Animator) -> Unit = {}) {
+    fun floatContentSomewhere(view: View, onEnd: (Animator) -> Unit = {}) {
+        val parent = view.parent as View
+        
         val pr = parent.getScaledRect()
         val vr = view.getScaledRect()
 
         val w = pr.width() - vr.width()
         val h = pr.height() - vr.height()
 
-        floatContentTo(
-            view,
-            random().toFloat() * w,
-            random().toFloat() * h,
-            onEnd
-        )
+        floatTo(view, random().toFloat() * w, random().toFloat() * h, 15000, onEnd)
     }
 
-    fun floatContentTo(view: View, x: Float, y: Float, onEnd: (Animator) -> Unit = {}) {
-        AnimatorSet().apply {
-            duration = 5000
+    fun floatContentHome(view: View, onEnd: (Animator) -> Unit = {}) {
+        val parent = view.parent as View
+
+        val pr = parent.getScaledRect()
+        val vr = view.getScaledRect()
+
+        val w = pr.width() / 2 - vr.width() / 2
+        val h = pr.height() / 2 - vr.height() / 2
+
+        floatTo(view, w, h, 1000, onEnd)
+    }
+
+    private fun floatTo(
+        view: View,
+        x: Float,
+        y: Float,
+        floatDuration: Long,
+        onEnd: (Animator) -> Unit = {}
+    ) {
+        floatContentAnimator?.cancel()
+        floatContentAnimator = AnimatorSet().apply {
+            duration = floatDuration
             interpolator = AccelerateDecelerateInterpolator()
             doOnEnd(onEnd)
 

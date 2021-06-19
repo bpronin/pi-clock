@@ -14,7 +14,6 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.view.ViewGroup.*
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
@@ -76,8 +75,6 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     private var active = false
     private var ready = false
     private var autoInactivating = false
-    private var contentViewDefaultX = 0f
-    private var contentViewDefaultY = 0f
 
     var onReady: (active: Boolean) -> Unit = {}
 
@@ -103,25 +100,16 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     ): View {
         val root = inflater.inflate(R.layout.fragment_main, container, false) as ViewGroup
 
-        root.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-
-            override fun onGlobalLayout() {
-                root.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                /* this happens when layout is completely finished */
-                onCreateLayoutComplete()
-            }
-        })
-
         root.setOnClickListener {
             setActive(!active, true)
         }
 
-        root.setOnTouchListener { v, event ->
+        root.setOnTouchListener { _, event ->
             when (event?.action) {
                 ACTION_DOWN -> cancelAutoInactivate()
                 ACTION_UP -> scheduleAutoInactivate()
             }
-            brightnessControl.onTouch(event) || scaleControl.onTouch(v, event)
+            (!active && brightnessControl.onTouch(event)) || scaleControl.onTouch(event)
         }
 
         settingsButton = root.requireViewByIdCompat(R.id.settings_button)
@@ -131,7 +119,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         contentView = root.findViewById(R.id.content_container)
         contentView.setOnClickListener {
-            resetContentViewPosition()
+            animations.floatContentHome(contentView)
         }
 
         scaleControl = ClockFragmentScaleControl(requireContext(), contentView).apply {
@@ -170,7 +158,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     override fun onResume() {
         super.onResume()
-        scheduleTimerTask()
+        onTimer()
         scheduleContentFloat()
     }
 
@@ -203,21 +191,16 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
                     brightnessControl.minBrightness = getInt(PREF_MIN_BRIGHTNESS)
                 PREF_CLOCK_SCALE ->
                     scaleControl.factor = getFloat(PREF_CLOCK_SCALE)
-                PREF_CLOCK_FLOAT_INTERVAL ->  {
+                PREF_CLOCK_FLOAT_INTERVAL -> {
                     if (getLong(PREF_CLOCK_FLOAT_INTERVAL) > 0) {
                         scheduleContentFloat()
                     } else {
-                        resetContentViewPosition()
+                        animations.floatContentHome(contentView)
                     }
                 }
 
             }
         }
-    }
-
-    private fun onCreateLayoutComplete() {
-        contentViewDefaultX = contentView.x
-        contentViewDefaultY = contentView.y
     }
 
     private fun createContentView() {
@@ -430,17 +413,11 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun onContentFloat() {
         Log.d(_tag, "Start floating")
 
-        animations.floatContentSomewhere(requireView(), contentView) {
+        animations.floatContentSomewhere(contentView) {
             Log.d(_tag, "End floating")
 
             scheduleContentFloat()
         }
-    }
-
-    private fun resetContentViewPosition() {
-        Log.d(_tag, "Restore default position x: $contentViewDefaultX y:$contentViewDefaultY")
-
-        animations.floatContentTo(contentView, contentViewDefaultX, contentViewDefaultY)
     }
 
     private fun blinkTimeSeparator(time: Date) {
