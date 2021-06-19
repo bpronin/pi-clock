@@ -106,12 +106,10 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         root.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
 
             override fun onGlobalLayout() {
-                /* this happens when layout is completely finished */
-                contentViewDefaultX = contentView.x
-                contentViewDefaultY = contentView.y
                 root.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                /* this happens when layout is completely finished */
+                onCreateLayoutComplete()
             }
-
         })
 
         root.setOnClickListener {
@@ -200,15 +198,26 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_AUTO_INACTIVATE_DELAY ->
                     scheduleAutoInactivate()
                 PREF_TICK_SOUND ->
-                    tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
+                    tickPlayer.soundName = getString(PREF_TICK_SOUND)
                 PREF_MIN_BRIGHTNESS ->
                     brightnessControl.minBrightness = getInt(PREF_MIN_BRIGHTNESS)
                 PREF_CLOCK_SCALE ->
                     scaleControl.factor = getFloat(PREF_CLOCK_SCALE)
-                PREF_CLOCK_FLOAT_INTERVAL ->
-                    scheduleContentFloat()
+                PREF_CLOCK_FLOAT_INTERVAL ->  {
+                    if (getLong(PREF_CLOCK_FLOAT_INTERVAL) > 0) {
+                        scheduleContentFloat()
+                    } else {
+                        resetContentViewPosition()
+                    }
+                }
+
             }
         }
+    }
+
+    private fun onCreateLayoutComplete() {
+        contentViewDefaultX = contentView.x
+        contentViewDefaultY = contentView.y
     }
 
     private fun createContentView() {
@@ -408,8 +417,6 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
                 handler.postDelayed(contentFloatTask, interval)
 
                 Log.d(_tag, "Floating scheduled")
-            } else {
-                resetContentViewPosition()
             }
         }
     }
