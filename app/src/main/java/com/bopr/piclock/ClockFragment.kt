@@ -23,7 +23,7 @@ import com.bopr.piclock.Settings.Companion.PREF_CLOCK_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_MIN_BRIGHTNESS
+import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
@@ -36,6 +36,8 @@ import java.lang.Math.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
@@ -63,8 +65,8 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var tickPlayer: TickPlayer
     private lateinit var animations: ClockFragmentAnimations
 
-    private lateinit var scaleControl: ClockFragmentScaleControl
-    private lateinit var brightnessControl: ClockFragmentBrightnessControl
+    private lateinit var scaleControl: ScaleControl
+    private lateinit var brightnessControl: BrightnessControl
 
     private val locale = Locale.getDefault()
     private val autoInactivateTask = Runnable { onAutoInactivate() }
@@ -75,6 +77,19 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     private var active = false
     private var ready = false
     private var autoInactivating = false
+
+    private val minBrightness = 10
+    private val maxBrightness = 100
+    private var inactiveBrightness: Int
+        get() = settings.getInt(PREF_INACTIVE_BRIGHTNESS)
+        set(value) {
+            settings.update { putInt(PREF_INACTIVE_BRIGHTNESS, value) }
+        }
+    private var currentBrightness: Int
+        get() = (contentView.alpha * 100).toInt()
+        set(value) {
+            contentView.alpha = value / 100f
+        }
 
     var onReady: (active: Boolean) -> Unit = {}
 
@@ -109,7 +124,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
                 ACTION_DOWN -> cancelAutoInactivate()
                 ACTION_UP -> scheduleAutoInactivate()
             }
-            (!active && brightnessControl.onTouch(event)) || scaleControl.onTouch(event)
+            (!active && brightnessControl.processTouch(event)) || scaleControl.onTouch(event)
         }
 
         settingsButton = root.requireViewByIdCompat(R.id.settings_button)
@@ -122,20 +137,24 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
             animations.floatContentHome(contentView)
         }
 
-        scaleControl = ClockFragmentScaleControl(requireContext(), contentView).apply {
+        scaleControl = ScaleControl(requireContext(), contentView).apply {
             factor = settings.getFloat(PREF_CLOCK_SCALE)
             onEnd = { factor ->
                 settings.update { putFloat(PREF_CLOCK_SCALE, factor) }
             }
         }
 
-        brightnessControl =
-            ClockFragmentBrightnessControl(requireContext(), contentView).apply {
-                minBrightness = settings.getInt(PREF_MIN_BRIGHTNESS)
-                onEnd = { brightness ->
-                    settings.update { putInt(PREF_MIN_BRIGHTNESS, brightness) }
-                }
+        brightnessControl = BrightnessControl(requireContext()).apply {
+            onStartSlide = {
+                currentBrightness
             }
+            onSlide = { delta ->
+                currentBrightness = max(minBrightness, min(delta, maxBrightness))
+            }
+            onEndSlide = {
+                inactiveBrightness = currentBrightness
+            }
+        }
 
         createContentView()
 
@@ -187,8 +206,8 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
                     scheduleAutoInactivate()
                 PREF_TICK_SOUND ->
                     tickPlayer.soundName = getString(PREF_TICK_SOUND)
-                PREF_MIN_BRIGHTNESS ->
-                    brightnessControl.minBrightness = getInt(PREF_MIN_BRIGHTNESS)
+                PREF_INACTIVE_BRIGHTNESS ->
+                    updateBrightness()
                 PREF_CLOCK_SCALE ->
                     scaleControl.factor = getFloat(PREF_CLOCK_SCALE)
                 PREF_CLOCK_FLOAT_INTERVAL -> {
@@ -252,30 +271,28 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
                 animations.showFab(settingsButton)
                 animations.fadeInContent(
                     contentView,
-                    brightnessControl.brightness,
-                    brightnessControl.maxBrightness
-                )
+                    currentBrightness,
+                    maxBrightness
+                ) {
+                    updateBrightness()
+                }
                 fadeInTickSoundVolume()
                 onComplete()
             } else {
                 animations.hideFab(settingsButton)
                 animations.fadeOutContent(
                     contentView,
-                    brightnessControl.brightness,
-                    brightnessControl.minBrightness
+                    currentBrightness,
+                    inactiveBrightness
                 ) {
+                    updateBrightness()
                     onComplete()
                 }
                 fadeOutTickSoundVolume()
             }
         } else {
-            if (active) {
-                settingsButton.visibility = VISIBLE
-                brightnessControl.setMaxBrightness()
-            } else {
-                settingsButton.visibility = GONE
-                brightnessControl.setMinBrightness()
-            }
+            settingsButton.visibility = if (active) VISIBLE else GONE
+            updateBrightness()
             onComplete()
         }
     }
@@ -327,6 +344,10 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
                 secondsSeparator.visibility = INVISIBLE
             }
         }
+    }
+
+    private fun updateBrightness() {
+        currentBrightness = if (active) maxBrightness else inactiveBrightness
     }
 
     private fun scheduleTimerTask() {

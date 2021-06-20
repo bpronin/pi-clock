@@ -9,7 +9,7 @@ import android.view.View
 import kotlin.math.max
 import kotlin.math.min
 
-internal class ClockFragmentScaleControl(
+internal class ScaleControl(
     context: Context,
     private val controllingView: View
 ) : ScaleGestureDetector.OnScaleGestureListener {

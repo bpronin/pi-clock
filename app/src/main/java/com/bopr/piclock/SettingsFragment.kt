@@ -14,7 +14,7 @@ import com.bopr.piclock.Settings.Companion.PREF_CLOCK_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_MIN_BRIGHTNESS
+import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import com.bopr.piclock.Settings.Companion.SHARED_PREFERENCES_NAME
@@ -72,7 +72,7 @@ class SettingsFragment : CustomPreferenceFragment(),
             PREF_CLOCK_LAYOUT -> updateClockLayoutPreferenceView()
             PREF_CLOCK_SCALE -> updateScalePreferenceView()
             PREF_DATE_FORMAT -> updateDateFormatPreferenceView()
-            PREF_MIN_BRIGHTNESS -> updateMinBrightnessPreferenceView()
+            PREF_INACTIVE_BRIGHTNESS -> updateMinBrightnessPreferenceView()
             PREF_TICK_SOUND -> updateTickSoundPreferenceView()
             PREF_TICK_SOUND_ALWAYS -> updateTickAlwaysPreferenceView()
         }
@@ -182,8 +182,8 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateMinBrightnessPreferenceView() {
-        requirePreference(PREF_MIN_BRIGHTNESS).apply {
-            val value = settings.getInt(PREF_MIN_BRIGHTNESS)
+        requirePreference(PREF_INACTIVE_BRIGHTNESS).apply {
+            val value = settings.getInt(PREF_INACTIVE_BRIGHTNESS)
             summary = getString(R.string.min_brightness_summary, value)
         }
     }

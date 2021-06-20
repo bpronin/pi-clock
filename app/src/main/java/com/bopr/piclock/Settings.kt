@@ -43,10 +43,10 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             }
 
             putIntOptional(
-                PREF_MIN_BRIGHTNESS,
+                PREF_INACTIVE_BRIGHTNESS,
                 ensureResExists(R.array.min_brightness_values, 20)
             ) {
-                getInt(PREF_MIN_BRIGHTNESS) in 0..100
+                getInt(PREF_INACTIVE_BRIGHTNESS) in 0..100
             }
 
             putStringOptional(
@@ -96,7 +96,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_CLOCK_SCALE = "clock_scale"
         const val PREF_DATE_FORMAT = "date_format"
         const val PREF_FULLSCREEN_ENABLED = "fullscreen_enabled"
-        const val PREF_MIN_BRIGHTNESS = "min_brightness"
+        const val PREF_INACTIVE_BRIGHTNESS = "min_brightness"
         const val PREF_SECONDS_VISIBLE = "seconds_visible"
         const val PREF_TICK_SOUND = "tick_sound"
         const val PREF_TICK_SOUND_ALWAYS = "tick_sound_always"

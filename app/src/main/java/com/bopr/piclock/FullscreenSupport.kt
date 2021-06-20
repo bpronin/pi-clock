@@ -73,6 +73,7 @@ class FullscreenSupport(private val window: Window) {
     }
 
     private fun hideSystemUI() {
+        //todo: after rotating it does not hide UI
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.setDecorFitsSystemWindows(false)
             window.insetsController?.let {

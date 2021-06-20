@@ -42,7 +42,7 @@ android {
             signingConfig signingConfigs.debug
             shrinkResources false
             minifyEnabled false
-            manifestPlaceholders = [crashlyticsEnabled: "true"]
+            manifestPlaceholders = [crashlyticsEnabled: "false"]
         }
         release {
             signingConfig signingConfigs.release
