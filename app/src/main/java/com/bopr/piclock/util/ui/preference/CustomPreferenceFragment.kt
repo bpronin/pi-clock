@@ -13,7 +13,10 @@ abstract class CustomPreferenceFragment : PreferenceFragmentCompat() {
     override fun onDisplayPreferenceDialog(preference: Preference) {
         if (preference is CustomDialogPreference) {
             val dialogFragment = (preference as CustomDialogPreference).onCreateDialogFragment()
+
+            @Suppress("DEPRECATION")
             dialogFragment.setTargetFragment(this, 0)
+
             dialogFragment.show(parentFragmentManager, null)
         } else {
             super.onDisplayPreferenceDialog(preference)
