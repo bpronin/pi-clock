@@ -5,62 +5,51 @@ import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import android.view.ScaleGestureDetector
-import android.view.View
-import kotlin.math.max
-import kotlin.math.min
 
-internal class ScaleControl(
-    context: Context,
-    private val controllingView: View
-) : ScaleGestureDetector.OnScaleGestureListener {
+/**
+ * Convenience class to control scale by pinch gesture.
+ */
+internal class ScaleControl(context: Context) : ScaleGestureDetector.OnScaleGestureListener {
 
-    private val minFactor = context.resources.getStringArray(R.array.scale_values).first().toFloat()
-    private val maxFactor = context.resources.getStringArray(R.array.scale_values).last().toFloat()
-    private val scaleDetector: ScaleGestureDetector = ScaleGestureDetector(context, this)
-    private var changed = false
+    lateinit var onPinchStart: () -> Float
+    lateinit var onPinchEnd: () -> Unit
+    lateinit var onPinch: (Float) -> Unit
 
-    var onEnd: (scale: Float) -> Unit = {}
-    var factor = 0f
-        set(value) {
-            if (field != value) {
-                field = value
-                updateControlView()
-            }
-        }
+    private val detector: ScaleGestureDetector = ScaleGestureDetector(context, this)
+    private var pinched = false
+    private var factor = 0f
 
     override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
-        changed = true
+        pinched = true
+        factor = onPinchStart()
         return true
     }
 
     override fun onScale(detector: ScaleGestureDetector): Boolean {
-        val f = factor * detector.scaleFactor
-        factor = max(minFactor, min(f, maxFactor))
+        factor *= detector.scaleFactor
+        onPinch(factor)
         return true
     }
 
     override fun onScaleEnd(detector: ScaleGestureDetector?) {
-        onEnd(factor)
+        onPinchEnd()
     }
 
-    fun onTouch(event: MotionEvent?): Boolean {
-        scaleDetector.onTouchEvent(event)
+    /**
+     * To be called in owner's onTouch.
+     */
+    fun processTouch(event: MotionEvent): Boolean {
+        detector.onTouchEvent(event)
 
-        /* this is to prevent of calling onClick after scaling */
-        when (event?.action) {
-            ACTION_DOWN -> changed = false
-            ACTION_UP -> return changed
+        /* this is to prevent of calling onClick if pinched */
+        when (event.action) {
+            ACTION_DOWN ->
+                pinched = false
+            ACTION_UP ->
+                return pinched
         }
 
         return false
-    }
-
-    private fun updateControlView() {
-        //todo: fix position (move into screen) if new size does not fit
-        controllingView.apply {
-            scaleX = factor
-            scaleY = factor
-        }
     }
 
 }

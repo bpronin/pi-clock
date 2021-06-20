@@ -9,9 +9,9 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent.*
+import android.view.MotionEvent.ACTION_DOWN
+import android.view.MotionEvent.ACTION_UP
 import android.view.View
-import android.view.View.*
 import android.view.ViewGroup
 import android.view.ViewGroup.*
 import android.widget.TextView
@@ -32,7 +32,6 @@ import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.getResId
 import com.bopr.piclock.util.requireViewByIdCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.lang.Math.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -71,7 +70,6 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val locale = Locale.getDefault()
     private val autoInactivateTask = Runnable { onAutoInactivate() }
     private val timerTask = Runnable { onTimer() }
-    private val contentFloatTask = Runnable { onContentFloat() }
     private val handler = Handler(Looper.getMainLooper())
 
     private var active = false
@@ -80,7 +78,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val minBrightness = 10
     private val maxBrightness = 100
-    private var inactiveBrightness: Int
+    private var brightness: Int
         get() = settings.getInt(PREF_INACTIVE_BRIGHTNESS)
         set(value) {
             settings.update { putInt(PREF_INACTIVE_BRIGHTNESS, value) }
@@ -90,6 +88,28 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         set(value) {
             contentView.alpha = value / 100f
         }
+
+    private val minScale
+        get() = resources.getStringArray(R.array.scale_values).first().toFloat()
+    private val maxScale
+        get() = resources.getStringArray(R.array.scale_values).last().toFloat()
+    private var scale: Float
+        get() = settings.getFloat(PREF_CLOCK_SCALE)
+        set(value) {
+            settings.update { putFloat(PREF_CLOCK_SCALE, value) }
+        }
+    private var currentScale: Float
+        get() = contentView.scaleX
+        set(value) {
+            contentView.apply {
+                scaleX = value
+                scaleY = value
+            }
+        }
+
+    private val floatContentTask = Runnable { onFloatContent() }
+    private val floatContentInterval
+        get() = settings.getLong(PREF_CLOCK_FLOAT_INTERVAL)
 
     var onReady: (active: Boolean) -> Unit = {}
 
@@ -124,7 +144,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
                 ACTION_DOWN -> cancelAutoInactivate()
                 ACTION_UP -> scheduleAutoInactivate()
             }
-            (!active && brightnessControl.processTouch(event)) || scaleControl.onTouch(event)
+            (!active && brightnessControl.processTouch(event)) || scaleControl.processTouch(event)
         }
 
         settingsButton = root.requireViewByIdCompat(R.id.settings_button)
@@ -132,15 +152,20 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
             startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
 
-        contentView = root.findViewById(R.id.content_container)
+        contentView = root.requireViewByIdCompat(R.id.content_container)
         contentView.setOnClickListener {
             animations.floatContentHome(contentView)
         }
 
-        scaleControl = ScaleControl(requireContext(), contentView).apply {
-            factor = settings.getFloat(PREF_CLOCK_SCALE)
-            onEnd = { factor ->
-                settings.update { putFloat(PREF_CLOCK_SCALE, factor) }
+        scaleControl = ScaleControl(requireContext()).apply {
+            onPinchStart = {
+                currentScale
+            }
+            onPinch = { factor ->
+                currentScale = max(minScale, min(factor, maxScale))
+            }
+            onPinchEnd = {
+                scale = currentScale
             }
         }
 
@@ -152,7 +177,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
                 currentBrightness = max(minBrightness, min(delta, maxBrightness))
             }
             onEndSlide = {
-                inactiveBrightness = currentBrightness
+                brightness = currentBrightness
             }
         }
 
@@ -160,7 +185,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         setActive(savedState?.getBoolean("active") ?: false, false)
 
-        settings.registerOnSharedPreferenceChangeListener(this@ClockFragment)
+        settings.registerOnSharedPreferenceChangeListener(this)
 
         return root
     }
@@ -178,11 +203,11 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onResume() {
         super.onResume()
         onTimer()
-        scheduleContentFloat()
+        scheduleFloatContent()
     }
 
     override fun onPause() {
-        cancelControlFloat()
+        cancelFloatContent()
         cancelTimerTask()
         super.onPause()
     }
@@ -209,15 +234,9 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_INACTIVE_BRIGHTNESS ->
                     updateBrightness()
                 PREF_CLOCK_SCALE ->
-                    scaleControl.factor = getFloat(PREF_CLOCK_SCALE)
-                PREF_CLOCK_FLOAT_INTERVAL -> {
-                    if (getLong(PREF_CLOCK_FLOAT_INTERVAL) > 0) {
-                        scheduleContentFloat()
-                    } else {
-                        animations.floatContentHome(contentView)
-                    }
-                }
-
+                    updateScale()
+                PREF_CLOCK_FLOAT_INTERVAL ->
+                    updateFloatContentInterval()
             }
         }
     }
@@ -245,6 +264,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateSecondsView()
         updateDateView()
         updateTimeSeparatorView()
+        updateScale()
     }
 
     private fun setActive(value: Boolean, animate: Boolean) {
@@ -283,7 +303,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
                 animations.fadeOutContent(
                     contentView,
                     currentBrightness,
-                    inactiveBrightness
+                    brightness
                 ) {
                     updateBrightness()
                     onComplete()
@@ -347,7 +367,11 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun updateBrightness() {
-        currentBrightness = if (active) maxBrightness else inactiveBrightness
+        currentBrightness = if (active) maxBrightness else brightness
+    }
+
+    private fun updateScale() {
+        currentScale = scale
     }
 
     private fun scheduleTimerTask() {
@@ -413,31 +437,38 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun scheduleContentFloat() {
+    private fun updateFloatContentInterval() {
+        if (floatContentInterval > 0) {
+            scheduleFloatContent()
+        } else {
+            animations.floatContentHome(contentView)
+        }
+    }
+
+    private fun scheduleFloatContent() {
         if (isResumed) {
-            cancelControlFloat()
-            val interval = settings.getLong(PREF_CLOCK_FLOAT_INTERVAL)
-            if (interval > 0) {
-                handler.postDelayed(contentFloatTask, interval)
+            cancelFloatContent()
+            if (floatContentInterval > 0) {
+                handler.postDelayed(floatContentTask, floatContentInterval)
 
                 Log.d(_tag, "Floating scheduled")
             }
         }
     }
 
-    private fun cancelControlFloat() {
-        handler.removeCallbacks(contentFloatTask)
+    private fun cancelFloatContent() {
+        handler.removeCallbacks(floatContentTask)
 
         Log.d(_tag, "Floating cancelled")
     }
 
-    private fun onContentFloat() {
+    private fun onFloatContent() {
         Log.d(_tag, "Start floating")
 
         animations.floatContentSomewhere(contentView) {
             Log.d(_tag, "End floating")
 
-            scheduleContentFloat()
+            scheduleFloatContent()
         }
     }
 

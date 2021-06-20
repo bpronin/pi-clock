@@ -7,6 +7,9 @@ import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import androidx.core.view.GestureDetectorCompat
 
+/**
+ * Convenience class to control brightness by slide gesture.
+ */
 internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGestureListener() {
 
     lateinit var onStartSlide: () -> Int
@@ -29,6 +32,9 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
         return false
     }
 
+    /**
+     * To be called in owner's onTouch.
+     */
     fun processTouch(event: MotionEvent): Boolean {
         detector.onTouchEvent(event)
 
