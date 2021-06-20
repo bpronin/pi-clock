@@ -40,8 +40,10 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
 
         /* this is to prevent of calling onClick if scrolled */
         when (event.action) {
-            ACTION_DOWN ->
+            ACTION_DOWN -> {
+                delta = onStartSlide()
                 scrolled = false
+            }
             ACTION_UP -> {
                 if (scrolled) onEndSlide()
                 return scrolled

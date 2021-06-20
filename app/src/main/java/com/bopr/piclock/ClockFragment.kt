@@ -273,13 +273,13 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         cancelAutoInactivate()
         active = value
         ready = false
-
+        onReady(active)
         updateControls(animate) {
             Log.d(_tag, "Activate complete: $active")
 
             ready = true
             scheduleAutoInactivate()
-            onReady(active)
+
         }
     }
 
