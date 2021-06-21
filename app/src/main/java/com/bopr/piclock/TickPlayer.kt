@@ -1,22 +1,29 @@
 package com.bopr.piclock
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaPlayer
 import android.util.Log
 import android.view.animation.LinearInterpolator
+import androidx.core.animation.doOnCancel
+import androidx.core.animation.doOnEnd
 import com.bopr.piclock.util.getResId
 
+@SuppressLint("ObjectAnimatorBinding")
 internal class TickPlayer(private val context: Context) {
 
     /** Logger tag. */
     private val _tag = "TickPlayer"
 
     private lateinit var player: MediaPlayer
-    private val volumeAnimator = ObjectAnimator().apply {
-        setPropertyName("volume")
-        interpolator = LinearInterpolator()
+
+    private val volumeAnimator: ObjectAnimator by lazy {
+        ObjectAnimator.ofFloat(player, "volume", 0f).apply {
+            interpolator = LinearInterpolator()
+        }
     }
+
     private var ready = false
 
     var soundName: String? = null
@@ -24,6 +31,8 @@ internal class TickPlayer(private val context: Context) {
             if (field != value) {
                 stop()
                 field = value
+
+                Log.d(_tag, "Sound set to: $field")
             }
         }
 
@@ -45,8 +54,9 @@ internal class TickPlayer(private val context: Context) {
         }
 
         if (ready) {
+            Log.d(_tag, "tik")
+
             player.run {
-                Log.d(_tag, "tik")
                 seekTo(0)
                 start()
             }
@@ -64,24 +74,28 @@ internal class TickPlayer(private val context: Context) {
         }
     }
 
-    fun fadeInVolume(duration: Long) {
-        fadeVolume(0f, 1f, duration)
+    fun fadeInVolume(duration: Long, onEnd: () -> Unit) {
+        fadeVolume(0f, 1f, duration, onEnd)
     }
 
-    fun fadeOutVolume(duration: Long) {
-        fadeVolume(1f, 0f, duration)
+    fun fadeOutVolume(duration: Long, onEnd: () -> Unit) {
+        fadeVolume(1f, 0f, duration, onEnd)
     }
 
-    private fun fadeVolume(from: Float, to: Float, fadeDuration: Long) {
+    private fun fadeVolume(from: Float, to: Float, fadeDuration: Long, onEnd: () -> Unit) {
         if (ready) {
-            volumeAnimator.apply {
+            volumeAnimator.run {
                 cancel()
-
-                player.setVolume(from, from)
+                removeAllListeners()
 
                 target = player
                 duration = fadeDuration
                 setFloatValues(from, to)
+                doOnEnd { onEnd() }
+                doOnCancel {
+                    onEnd()
+                }
+
                 start()
             }
         }

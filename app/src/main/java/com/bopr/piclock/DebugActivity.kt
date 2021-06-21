@@ -1,6 +1,5 @@
 package com.bopr.piclock
 
-import androidx.fragment.app.Fragment
 import com.bopr.piclock.util.ui.BaseActivity
 
 /**
@@ -8,9 +7,4 @@ import com.bopr.piclock.util.ui.BaseActivity
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class DebugActivity : BaseActivity() {
-
-    override fun onCreateFragment(): Fragment {
-        return DebugFragment()
-    }
-}
+class DebugActivity : BaseActivity(DebugFragment::class.java)

@@ -111,12 +111,12 @@ internal class ClockFragmentAnimations {
         view: View,
         fromBrightness: Int,
         toBrightness: Int,
-        onEnd: (Animator) -> Unit = {}
+        onEnd: () -> Unit = {}
     ) {
         fadeInContentAnimator.apply {
             reset(view)
             setFloatValues(fromBrightness / 100f, toBrightness / 100f)
-            doOnEnd(onEnd)
+            doOnEnd { onEnd() }
             start()
         }
     }
@@ -125,12 +125,12 @@ internal class ClockFragmentAnimations {
         view: View,
         fromBrightness: Int,
         toBrightness: Int,
-        onEnd: (Animator) -> Unit = {}
+        onEnd: () -> Unit = {}
     ) {
         fadeOutContentAnimator.apply {
             reset(view)
             setFloatValues(fromBrightness / 100f, toBrightness / 100f)
-            doOnEnd(onEnd)
+            doOnEnd { onEnd() }
             start()
         }
     }
@@ -151,7 +151,7 @@ internal class ClockFragmentAnimations {
 
     fun floatContentSomewhere(view: View, onEnd: (Animator) -> Unit = {}) {
         val parent = view.parent as View
-        
+
         val pr = parent.getScaledRect()
         val vr = view.getScaledRect()
 

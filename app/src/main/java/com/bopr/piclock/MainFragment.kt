@@ -23,6 +23,7 @@ import com.bopr.piclock.Settings.Companion.PREF_CLOCK_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
@@ -38,7 +39,7 @@ import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
-class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
+class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     //todo: separate date view into 'date' and 'day name'
 
@@ -61,9 +62,9 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var secondsFormat: DateFormat
     private lateinit var hoursFormat: DateFormat
     private lateinit var dateFormat: DateFormat
-    private lateinit var tickPlayer: TickPlayer
     private lateinit var animations: ClockFragmentAnimations
 
+    private lateinit var fullscreenControl: FullscreenSupport
     private lateinit var scaleControl: ScaleControl
     private lateinit var brightnessControl: BrightnessControl
 
@@ -73,7 +74,6 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val handler = Handler(Looper.getMainLooper())
 
     private var active = false
-    private var ready = false
     private var autoInactivating = false
 
     private val minBrightness = 10
@@ -107,11 +107,14 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
         }
 
+    private lateinit var tickPlayer: TickPlayer
+    private val tickAlways
+        get() = settings.getBoolean(PREF_TICK_SOUND_ALWAYS)
+    private var tickVolumeFading = false
+
     private val floatContentTask = Runnable { onFloatContent() }
     private val floatContentInterval
         get() = settings.getLong(PREF_CLOCK_FLOAT_INTERVAL)
-
-    var onReady: (active: Boolean) -> Unit = {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -157,6 +160,10 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
             animations.floatContentHome(contentView)
         }
 
+        fullscreenControl = FullscreenSupport(requireActivity().window).apply {
+            enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
+        }
+
         scaleControl = ScaleControl(requireContext()).apply {
             onPinchStart = {
                 currentScale
@@ -196,6 +203,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onDestroy() {
+        fullscreenControl.destroy()
         settings.unregisterOnSharedPreferenceChangeListener(this)
         super.onDestroy()
     }
@@ -217,6 +225,8 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         settings.apply {
             when (key) {
+                PREF_FULLSCREEN_ENABLED ->
+                    fullscreenControl.enabled = getBoolean(PREF_FULLSCREEN_ENABLED)
                 PREF_CLOCK_LAYOUT ->
                     createContentView()
                 PREF_24_HOURS_FORMAT ->
@@ -268,51 +278,41 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun setActive(value: Boolean, animate: Boolean) {
-        Log.d(_tag, "Activating: $value, animated: $animate")
-
         cancelAutoInactivate()
         active = value
-        ready = false
-        onReady(active)
         updateControls(animate) {
-            Log.d(_tag, "Activate complete: $active")
-
-            ready = true
+            updateBrightness()
             scheduleAutoInactivate()
-
         }
+
+        Log.d(_tag, "Active mode: $value")
     }
 
     private fun updateControls(animate: Boolean, onComplete: () -> Unit) {
         Log.d(_tag, "Updating controls. active: $active, animated: $animate")
 
+        fullscreenControl.fullscreen = !active
+
         if (animate) {
             if (active) {
+                fadeInTickSoundVolume()
                 animations.showFab(settingsButton)
                 animations.fadeInContent(
                     contentView,
                     currentBrightness,
                     maxBrightness
-                ) {
-                    updateBrightness()
-                }
-                fadeInTickSoundVolume()
-                onComplete()
+                ) { onComplete() }
             } else {
+                fadeOutTickSoundVolume()
                 animations.hideFab(settingsButton)
                 animations.fadeOutContent(
                     contentView,
                     currentBrightness,
                     brightness
-                ) {
-                    updateBrightness()
-                    onComplete()
-                }
-                fadeOutTickSoundVolume()
+                ) { onComplete() }
             }
         } else {
             settingsButton.visibility = if (active) VISIBLE else GONE
-            updateBrightness()
             onComplete()
         }
     }
@@ -376,7 +376,6 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun scheduleTimerTask() {
         if (isResumed) {
-            cancelTimerTask()
             handler.postDelayed(timerTask, 1000)
 
 //            Log.d(_tag, "Timer scheduled")
@@ -387,7 +386,7 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
         stopTickSound()
         handler.removeCallbacks(timerTask)
 
-//        Log.d(_tag, "Timer canceled")
+        Log.d(_tag, "Timer canceled")
     }
 
     private fun onTimer() {
@@ -489,20 +488,27 @@ class ClockFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun playTickSound() {
-        if ((!active && !ready) || (active && ready) || settings.getBoolean(PREF_TICK_SOUND_ALWAYS)) {
+        if (tickAlways || active || tickVolumeFading) {
             tickPlayer.play()
         }
     }
 
     private fun fadeInTickSoundVolume() {
-        if (!settings.getBoolean(PREF_TICK_SOUND_ALWAYS)) {
-            tickPlayer.fadeInVolume(3000)
+        if (!tickAlways) {
+            tickVolumeFading = true
+            tickPlayer.fadeInVolume(3000) {
+                tickVolumeFading = false
+            }
         }
     }
 
     private fun fadeOutTickSoundVolume() {
-        if (!settings.getBoolean(PREF_TICK_SOUND_ALWAYS)) {
-            tickPlayer.fadeOutVolume(6000)
+        if (!tickAlways) {
+            tickVolumeFading = true
+            tickPlayer.fadeOutVolume(6000) {
+                tickVolumeFading = false
+                tickPlayer.stop()
+            }
         }
     }
 

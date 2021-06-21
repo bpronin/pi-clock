@@ -1,10 +1,13 @@
 package com.bopr.piclock
 
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View.*
 import android.view.Window
+import android.view.WindowInsets.Type.systemBars
+import android.view.WindowInsetsController.BEHAVIOR_SHOW_BARS_BY_SWIPE
 
 class FullscreenSupport(private val window: Window) {
 
@@ -52,43 +55,49 @@ class FullscreenSupport(private val window: Window) {
             }
         }
 
+    init {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.apply {
+                setDecorFitsSystemWindows(false)
+                insetsController?.systemBarsBehavior = BEHAVIOR_SHOW_BARS_BY_SWIPE
+            }
+        }
+    }
+
     fun destroy() {
         handler.removeCallbacksAndMessages(null)
     }
 
     private fun showSystemUI() {
-        /* new API produces flickering */
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-//            window.setDecorFitsSystemWindows(true)
-//            window.insetsController?.show(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
-//        } else {
-        @Suppress("DEPRECATION")
-        window.decorView.systemUiVisibility = (SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
-//        }
+        window.apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                insetsController?.show(systemBars())
+            } else {
+                @Suppress("DEPRECATION")
+                decorView.systemUiVisibility = (SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+            }
+        }
 
         Log.d(_tag, "System UI shown")
     }
 
     //todo: after rotating it does not hide UI
     private fun hideSystemUI() {
-        /* new API produces flickering */
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-//            window.setDecorFitsSystemWindows(false)
-//            window.insetsController?.let {
-//                it.hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
-//                it.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-//            }
-//        } else {
-        @Suppress("DEPRECATION")
-        window.decorView.systemUiVisibility = (SYSTEM_UI_FLAG_IMMERSIVE
-                or SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or SYSTEM_UI_FLAG_FULLSCREEN)
-//        }
+        window.apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                insetsController?.hide(systemBars())
+            } else {
+                @Suppress("DEPRECATION")
+                decorView.systemUiVisibility = (SYSTEM_UI_FLAG_IMMERSIVE
+                        or SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or SYSTEM_UI_FLAG_FULLSCREEN)
+            }
+        }
 
         Log.d(_tag, "System UI hidden")
     }
