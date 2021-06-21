@@ -19,7 +19,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             putBooleanOptional(PREF_SECONDS_VISIBLE, true)
             putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
             putBooleanOptional(PREF_TICK_SOUND_ALWAYS, false)
-            putLongOptional(PREF_CLOCK_FLOAT_INTERVAL, 15 * 60 * 1000)
+            putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 15 * 60 * 1000)
             putFloatOptional(PREF_CLOCK_SCALE, 1f)
 
             putStringOptional(
@@ -43,22 +43,21 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             }
 
             putIntOptional(
-                PREF_INACTIVE_BRIGHTNESS,
-                ensureResExists(R.array.min_brightness_values, 20)
+                PREF_INACTIVE_BRIGHTNESS, 20
             ) {
                 getInt(PREF_INACTIVE_BRIGHTNESS) in 0..100
             }
 
             putStringOptional(
-                PREF_CLOCK_LAYOUT,
+                PREF_CONTENT_LAYOUT,
                 ensureResExists(
-                    R.array.clock_layout_values,
+                    R.array.content_layout_values,
                     getResName(R.layout.view_digital_default)
                 )
             ) {
                 isResExists(
-                    R.array.clock_layout_values,
-                    getString(PREF_CLOCK_LAYOUT)
+                    R.array.content_layout_values,
+                    getString(PREF_CONTENT_LAYOUT)
                 )
             }
 
@@ -91,8 +90,8 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
         const val PREF_24_HOURS_FORMAT = "24_hours_format"
         const val PREF_AUTO_DEACTIVATION_DELAY = "auto_deactivation_delay"
-        const val PREF_CLOCK_FLOAT_INTERVAL = "clock_float_interval"
-        const val PREF_CLOCK_LAYOUT = "clock_layout"
+        const val PREF_CONTENT_FLOAT_INTERVAL = "content_float_interval"
+        const val PREF_CONTENT_LAYOUT = "content_layout"
         const val PREF_CLOCK_SCALE = "clock_scale"
         const val PREF_DATE_FORMAT = "date_format"
         const val PREF_FULLSCREEN_ENABLED = "fullscreen_enabled"

@@ -10,9 +10,9 @@ import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ABOUT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_DEACTIVATION_DELAY
-import com.bopr.piclock.Settings.Companion.PREF_CLOCK_FLOAT_INTERVAL
-import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
+import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
+import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
@@ -68,8 +68,8 @@ class SettingsFragment : CustomPreferenceFragment(),
         when (key) {
             PREF_24_HOURS_FORMAT -> updateHourFormatPreferenceView()
             PREF_AUTO_DEACTIVATION_DELAY -> updateAutoFullscreenPreferenceView()
-            PREF_CLOCK_FLOAT_INTERVAL -> updateClockFloatingPreferenceView()
-            PREF_CLOCK_LAYOUT -> updateClockLayoutPreferenceView()
+            PREF_CONTENT_FLOAT_INTERVAL -> updateClockFloatingPreferenceView()
+            PREF_CONTENT_LAYOUT -> updateClockLayoutPreferenceView()
             PREF_CLOCK_SCALE -> updateScalePreferenceView()
             PREF_DATE_FORMAT -> updateDateFormatPreferenceView()
             PREF_INACTIVE_BRIGHTNESS -> updateMinBrightnessPreferenceView()
@@ -79,7 +79,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateClockFloatingPreferenceView() {
-        (requirePreference(PREF_CLOCK_FLOAT_INTERVAL) as ListPreference).apply {
+        (requirePreference(PREF_CONTENT_FLOAT_INTERVAL) as ListPreference).apply {
             val value = settings.getLong(key)
             summary = if (value > 0) {
                 val entry = entries[findIndexOfValue(value.toString())]
@@ -156,8 +156,8 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateClockLayoutPreferenceView() {
-        (requirePreference(PREF_CLOCK_LAYOUT) as ListPreference).apply {
-            val value = settings.getString(PREF_CLOCK_LAYOUT)
+        (requirePreference(PREF_CONTENT_LAYOUT) as ListPreference).apply {
+            val value = settings.getString(PREF_CONTENT_LAYOUT)
             summary = entries[findIndexOfValue(value)]
         }
     }

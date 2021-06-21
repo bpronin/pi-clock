@@ -27,7 +27,7 @@
         <item />
     </string-array>
 
-    <string-array name="clock_layout_values" translatable="false">
+    <string-array name="content_layout_values" translatable="false">
         <item>view_digital_default</item>
         <item>view_digital_round</item>
         <item>view_digital_vertical_default</item>
@@ -40,14 +40,6 @@
         <item>-1</item>
     </string-array>
 
-    <string-array name="min_brightness_values" translatable="false">
-        <item>10</item>
-        <item>20</item>
-        <item>30</item>
-        <item>50</item>
-        <item>100</item>
-    </string-array>
-
     <string-array name="scale_values" translatable="false">
         <item>0.25f</item>
         <item>0.50f</item>
@@ -58,7 +50,7 @@
         <item>5.00f</item>
     </string-array>
 
-    <string-array name="clock_float_interval_values" translatable="false">
+    <string-array name="content_float_interval_values" translatable="false">
         <item>10000</item>
         <item>60000</item>
         <item>900000</item>

@@ -4,10 +4,10 @@
     <PreferenceCategory android:title="@string/appearance">
 
         <ListPreference
-            android:entries="@array/clock_layout_names"
-            android:entryValues="@array/clock_layout_values"
-            android:key="clock_layout"
-            android:title="@string/clock_layout" />
+            android:entries="@array/content_layout_names"
+            android:entryValues="@array/content_layout_values"
+            android:key="content_layout"
+            android:title="@string/layout" />
 
         <SwitchPreference
             android:key="24_hours_format"
@@ -43,10 +43,10 @@
             android:title="@string/blink_time_separator" />
 
         <com.bopr.piclock.util.ui.preference.LongListPreference
-            android:entries="@array/clock_float_interval_names"
-            android:entryValues="@array/clock_float_interval_values"
-            android:key="clock_float_interval"
-            android:title="@string/clock_floating" />
+            android:entries="@array/content_float_interval_names"
+            android:entryValues="@array/content_float_interval_values"
+            android:key="content_float_interval"
+            android:title="@string/floating_interval" />
 
         <SwitchPreference
             android:key="fullscreen_enabled"
@@ -55,7 +55,7 @@
         <com.bopr.piclock.util.ui.preference.LongListPreference
             android:entries="@array/deactivation_delay_names"
             android:entryValues="@array/deactivation_delay_values"
-            android:key="deactivation_delay"
+            android:key="auto_deactivation_delay"
             android:title="@string/deactivation" />
 
     </PreferenceCategory>

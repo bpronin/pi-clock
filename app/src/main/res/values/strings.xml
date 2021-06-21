@@ -8,7 +8,7 @@
     <string name="deactivation_never_summary">Disabled. Switch active mode manually</string>
     <string name="deactivation_summary">Switch to inactive mode after %s</string>
     <string name="blink_time_separator">Blink time separator</string>
-    <string name="clock_layout">Layout</string>
+    <string name="layout">Layout</string>
     <string name="date_format">Date format</string>
     <string name="default_date_format">%s (system)</string>
     <string name="do_not_show_date">Do not show date</string>
@@ -31,11 +31,11 @@
     <string name="user_interface">Interface</string>
     <string name="float_clock_view">Clock moves along the screen every %s</string>
     <string name="keep_clock_view">Clock keeps its position on the screen</string>
-    <string name="clock_floating">Floating interval</string>
+    <string name="floating_interval">Floating interval</string>
     <string name="min_brightness_info">Brightness %d%%</string>
     <string name="scale_info">Scale %.0f%%</string>
 
-    <string-array name="clock_layout_names">
+    <string-array name="content_layout_names">
         <item>Digital default</item>
         <item>Digital round</item>
         <item>Digital vertical default</item>
@@ -57,14 +57,6 @@
         <item>Disabled</item>
     </string-array>
 
-    <string-array name="min_brightness_names">
-        <item>10%</item>
-        <item>20%</item>
-        <item>30%</item>
-        <item>50%</item>
-        <item>100%</item>
-    </string-array>
-
     <string-array name="scale_names">
         <item>25%</item>
         <item>50%</item>
@@ -75,7 +67,7 @@
         <item>500%</item>
     </string-array>
 
-    <string-array name="clock_float_interval_names">
+    <string-array name="content_float_interval_names">
         <item>10 second</item>
         <item>1 minute</item>
         <item>15 minutes</item>

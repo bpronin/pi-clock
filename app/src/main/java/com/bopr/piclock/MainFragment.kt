@@ -19,9 +19,9 @@ import androidx.fragment.app.Fragment
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_DEACTIVATION_DELAY
-import com.bopr.piclock.Settings.Companion.PREF_CLOCK_FLOAT_INTERVAL
-import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
+import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
+import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
@@ -117,7 +117,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val floatContentTask = Runnable { onFloatContent() }
     private val floatContentInterval
-        get() = settings.getLong(PREF_CLOCK_FLOAT_INTERVAL)
+        get() = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -241,7 +241,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             when (key) {
                 PREF_FULLSCREEN_ENABLED ->
                     fullscreenControl.enabled = getBoolean(PREF_FULLSCREEN_ENABLED)
-                PREF_CLOCK_LAYOUT ->
+                PREF_CONTENT_LAYOUT ->
                     createContentView()
                 PREF_24_HOURS_FORMAT ->
                     updateHoursView()
@@ -259,7 +259,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateBrightness()
                 PREF_CLOCK_SCALE ->
                     updateScale()
-                PREF_CLOCK_FLOAT_INTERVAL ->
+                PREF_CONTENT_FLOAT_INTERVAL ->
                     updateFloatContentInterval()
             }
         }
@@ -281,7 +281,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         contentView.apply {
             removeAllViews()
-            val resName = settings.getString(PREF_CLOCK_LAYOUT)
+            val resName = settings.getString(PREF_CONTENT_LAYOUT)
             val resId = requireContext().getResId("layout", resName)
 
             addView(layoutInflater.inflate(resId, this, false).apply {
