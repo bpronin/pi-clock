@@ -6,7 +6,6 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.util.Log
 import android.view.animation.LinearInterpolator
-import androidx.core.animation.doOnCancel
 import androidx.core.animation.doOnEnd
 import com.bopr.piclock.util.getResId
 
@@ -92,9 +91,6 @@ internal class TickPlayer(private val context: Context) {
                 duration = fadeDuration
                 setFloatValues(from, to)
                 doOnEnd { onEnd() }
-                doOnCancel {
-                    onEnd()
-                }
 
                 start()
             }

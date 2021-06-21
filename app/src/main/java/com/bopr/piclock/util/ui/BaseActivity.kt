@@ -13,23 +13,17 @@ import com.bopr.piclock.R
 abstract class BaseActivity(private val fragmentClass: Class<out Fragment>) : AppCompatActivity() {
 
 /* NOTE: "To keep fragments self-contained, you SHOULD NOT have fragments communicate directly
-   with other fragments or with its host activity." (i.e. do not use fragment listeners etc. ) */
+   with other fragments or with its host activity." (i.e. do not use fragment listeners, references etc. ) */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_default)
-    }
-
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
-
-        var fragment = supportFragmentManager.findFragmentByTag("fragment")
-        if (fragment == null) {
-            fragment = fragmentClass.newInstance()
-            supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.content, fragment!!, "fragment")
-                .commit()
+        supportFragmentManager.apply {
+            findFragmentByTag("fragment") ?: run {
+                beginTransaction()
+                    .replace(R.id.content, fragmentClass.newInstance(), "fragment")
+                    .commit()
+            }
         }
     }
 
