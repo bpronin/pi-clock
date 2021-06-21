@@ -73,7 +73,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateClockFloatingPreferenceView() {
         (requirePreference(PREF_CONTENT_FLOAT_INTERVAL) as ListPreference).apply {
-            val value = settings.getLong(key)
+            val value = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
             summary = if (value > 0) {
                 val entry = entries[findIndexOfValue(value.toString())]
                 getString(R.string.clock_moves_along_screen, entry)
@@ -94,19 +94,16 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateScalePreferenceView() {
         requirePreference(PREF_CONTENT_SCALE).apply {
-            summary = fixSummaryPercents(
-                getString(
-                    R.string.scale_summary,
-                    settings.getFloat(PREF_CONTENT_SCALE) * 100f
-                )
-            )
+            val value = settings.getFloat(PREF_CONTENT_SCALE) * 100f
+            /* Single percent sign in summary of causes an exception here. */
+            summary = getString(R.string.scale_summary, value).replace("%", "%%")
         }
     }
 
     private fun updateTickAlwaysPreferenceView() {
         requirePreference(PREF_TICK_SOUND_ALWAYS).apply {
             summary = getString(
-                if (settings.getBoolean(key)) {
+                if (settings.getBoolean(PREF_TICK_SOUND_ALWAYS)) {
                     R.string.play_always
                 } else {
                     R.string.play_only_when_tapped
@@ -118,7 +115,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     private fun updateHourFormatPreferenceView() {
         requirePreference(PREF_24_HOURS_FORMAT).apply {
             summary = defaultDatetimeFormat(
-                if (settings.getBoolean(key)) "HH:mm" else "h:mm a",
+                if (settings.getBoolean(PREF_24_HOURS_FORMAT)) "HH:mm" else "h:mm a",
             ).format(Date())
         }
     }
@@ -142,7 +139,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
         (requirePreference(PREF_DATE_FORMAT) as ListPreference).apply {
             entries = entryNames
-            summary = entryNames[findIndexOfValue(settings.getString(key))]
+            summary = entryNames[findIndexOfValue(settings.getString(PREF_DATE_FORMAT))]
         }
     }
 
@@ -178,9 +175,6 @@ class SettingsFragment : CustomPreferenceFragment(),
             summary = getString(R.string.min_brightness_summary, value)
         }
     }
-
-    /** Single percent signs in entry names causes an exception */
-    private fun fixSummaryPercents(s: String) = s.replace("%", "%%")
 
     private inner class AboutPreferenceClickListener : OnPreferenceClickListener {
 
