@@ -19,9 +19,9 @@ import androidx.fragment.app.Fragment
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_DEACTIVATION_DELAY
-import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
+import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
@@ -97,9 +97,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val maxScale
         get() = resources.getStringArray(R.array.scale_values).last().toFloat()
     private var scale: Float
-        get() = settings.getFloat(PREF_CLOCK_SCALE)
+        get() = settings.getFloat(PREF_CONTENT_SCALE)
         set(value) {
-            settings.update { putFloat(PREF_CLOCK_SCALE, value) }
+            settings.update { putFloat(PREF_CONTENT_SCALE, value) }
         }
     private var currentScale: Float
         get() = contentView.scaleX
@@ -257,7 +257,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateTickSound()
                 PREF_INACTIVE_BRIGHTNESS ->
                     updateBrightness()
-                PREF_CLOCK_SCALE ->
+                PREF_CONTENT_SCALE ->
                     updateScale()
                 PREF_CONTENT_FLOAT_INTERVAL ->
                     updateFloatContentInterval()

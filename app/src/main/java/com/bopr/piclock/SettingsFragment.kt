@@ -10,9 +10,9 @@ import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ABOUT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_DEACTIVATION_DELAY
-import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
+import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
@@ -53,6 +53,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     override fun onStart() {
         super.onStart()
+        //todo: here
         updateAutoFullscreenPreferenceView()
         updateClockFloatingPreferenceView()
         updateClockLayoutPreferenceView()
@@ -70,7 +71,7 @@ class SettingsFragment : CustomPreferenceFragment(),
             PREF_AUTO_DEACTIVATION_DELAY -> updateAutoFullscreenPreferenceView()
             PREF_CONTENT_FLOAT_INTERVAL -> updateClockFloatingPreferenceView()
             PREF_CONTENT_LAYOUT -> updateClockLayoutPreferenceView()
-            PREF_CLOCK_SCALE -> updateScalePreferenceView()
+            PREF_CONTENT_SCALE -> updateScalePreferenceView()
             PREF_DATE_FORMAT -> updateDateFormatPreferenceView()
             PREF_INACTIVE_BRIGHTNESS -> updateMinBrightnessPreferenceView()
             PREF_TICK_SOUND -> updateTickSoundPreferenceView()
@@ -100,11 +101,11 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateScalePreferenceView() {
-        requirePreference(PREF_CLOCK_SCALE).apply {
+        requirePreference(PREF_CONTENT_SCALE).apply {
             summary = fixSummaryPercents(
                 resources.getString(
                     R.string.scale_summary,
-                    settings.getFloat(PREF_CLOCK_SCALE) * 100f
+                    settings.getFloat(PREF_CONTENT_SCALE) * 100f
                 )
             )
         }

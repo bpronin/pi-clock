@@ -30,7 +30,7 @@
         <com.bopr.piclock.util.ui.preference.FloatListPreference
             android:entries="@array/scale_names"
             android:entryValues="@array/scale_values"
-            android:key="clock_scale"
+            android:key="content_scale"
             android:title="@string/scale" />
 
         <SeekBarPreference
