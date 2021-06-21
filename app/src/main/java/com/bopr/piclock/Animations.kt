@@ -8,11 +8,13 @@ import android.view.View.*
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
+import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import com.bopr.piclock.util.getScaledRect
 import java.lang.Math.random
+import kotlin.math.min
 
-internal class ClockFragmentAnimations {
+internal class Animations {
 
     private val fabShowAnimator by lazy {
         AnimatorSet().apply {
@@ -100,6 +102,13 @@ internal class ClockFragmentAnimations {
         }
     }
 
+    private val fitScaleAnimator by lazy {
+        AnimatorSet().apply {
+            duration = 500
+            interpolator = DecelerateInterpolator()
+        }
+    }
+
     private var floatContentAnimator: Animator? = null
 
     private fun Animator.reset(view: View) = apply {
@@ -182,10 +191,23 @@ internal class ClockFragmentAnimations {
         }
     }
 
-    fun floatContentSomewhere(view: View, onEnd: (Animator) -> Unit = {}) {
-        val parent = view.parent as View
+    fun fitToParent(view: View, onEnd: () -> Unit) {
+        val pr = (view.parent as View).getScaledRect()
+        val scale = min(pr.width() / view.width, pr.height() / view.height)
 
-        val pr = parent.getScaledRect()
+        fitScaleAnimator.apply {
+            reset(view)
+            playTogether(
+                ObjectAnimator.ofFloat(view, SCALE_X, scale),
+                ObjectAnimator.ofFloat(view, SCALE_Y, scale)
+            )
+            doOnEnd { onEnd() }
+            start()
+        }
+    }
+
+    fun floatContentSomewhere(view: View, onEnd: (Animator) -> Unit = {}) {
+        val pr = (view.parent as View).getScaledRect()
         val vr = view.getScaledRect()
 
         val w = pr.width() - vr.width()

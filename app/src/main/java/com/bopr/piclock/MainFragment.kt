@@ -32,6 +32,7 @@ import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.defaultDatetimeFormat
 import com.bopr.piclock.util.getResId
+import com.bopr.piclock.util.getScaledRect
 import com.bopr.piclock.util.requireViewByIdCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
@@ -63,7 +64,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var secondsFormat: DateFormat
     private lateinit var hoursFormat: DateFormat
     private lateinit var dateFormat: DateFormat
-    private lateinit var animations: ClockFragmentAnimations
+    private lateinit var animations: Animations
 
     private lateinit var fullscreenControl: FullscreenSupport
     private lateinit var scaleControl: ScaleControl
@@ -93,8 +94,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val minScale
         get() = resources.getStringArray(R.array.scale_values).first().toFloat()
-    private val maxScale
-        get() = resources.getStringArray(R.array.scale_values).last().toFloat()
+//    private val maxScale
+//        get() = resources.getStringArray(R.array.scale_values).last().toFloat()
+    private val maxScale = 100f
     private var scale: Float
         get() = settings.getFloat(PREF_CONTENT_SCALE)
         set(value) {
@@ -125,7 +127,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         minutesFormat = defaultDatetimeFormat("mm")
         secondsFormat = defaultDatetimeFormat("ss")
         tickPlayer = TickPlayer(requireContext())
-        animations = ClockFragmentAnimations()
+        animations = Animations()
 
         settings = Settings(requireContext()).apply {
             tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
@@ -139,13 +141,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         savedState: Bundle?
     ): View {
         val root = inflater.inflate(R.layout.fragment_main, container, false) as ViewGroup
-
         root.setOnClickListener {
+            animations.floatContentHome(contentView)
             setActive(!active, true)
         }
-
         root.setOnTouchListener { _, event ->
-            when (event?.action) {
+            when (event.action) {
                 ACTION_DOWN -> cancelAutoDeactivate()
                 ACTION_UP -> scheduleAutoDeactivate()
             }
@@ -153,18 +154,16 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             !active && (brightnessControl.processTouch(event) || scaleControl.processTouch(event))
         }
 
+        contentView = root.requireViewByIdCompat(R.id.content_container)
+        contentView.setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
+
         settingsButton = root.requireViewByIdCompat(R.id.settings_button)
         settingsButton.setOnClickListener {
             startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
+
         infoView = root.requireViewByIdCompat(R.id.info_view)
         infoView.visibility = GONE
-
-        contentView = root.requireViewByIdCompat(R.id.content_container)
-        contentView.setOnClickListener {
-            animations.floatContentHome(contentView)
-            setActive(!active, true)
-        }
 
         fullscreenControl = FullscreenSupport(requireActivity().window).apply {
             enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
@@ -181,7 +180,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
             onPinchEnd = {
                 animations.hideInfo(infoView)
-                scale = currentScale
+                fitScale {
+                    scale = currentScale
+                }
             }
         }
 
@@ -393,6 +394,18 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun updateScale() {
         currentScale = scale
+    }
+
+    private fun fitScale(onEnd: () -> Unit = {}) {
+        val pr = (contentView.parent as View).getScaledRect()
+        val vr = contentView.getScaledRect()
+        if (pr.width() > vr.width() && pr.height() > vr.height()) {
+            onEnd()
+        } else {
+            Log.d(_tag, "Fitting content scale")
+
+            animations.fitToParent(contentView) { onEnd() }
+        }
     }
 
     private fun scheduleTimerTask() {
