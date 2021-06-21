@@ -1,6 +1,7 @@
 package com.bopr.piclock.util
 
 import android.content.Context
+import androidx.fragment.app.Fragment
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,13 +28,6 @@ fun Context.getResName(resId: Int): String {
     }
 }
 
-///**
-// * Returns resource array value.
-// */
-//fun Context.getResValue(arrayResId: Int, index: Int): String {
-//    return resources.getStringArray(arrayResId)[index]
-//}
-
 /**
  * Returns true if resource array contains value.
  */
@@ -52,3 +46,8 @@ fun <T> Context.ensureResExists(arrayResId: Int, value: T): T {
     }
 }
 
+fun Fragment.getStringArray(resId: Int): Array<out String> {
+    return resources.getStringArray(resId)
+}
+
+fun defaultDatetimeFormat(pattern: String) = SimpleDateFormat(pattern, Locale.getDefault())

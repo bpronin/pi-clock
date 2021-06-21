@@ -19,11 +19,8 @@ import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import com.bopr.piclock.Settings.Companion.SHARED_PREFERENCES_NAME
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
-import com.bopr.piclock.util.messageBox
-import com.bopr.piclock.util.passwordBox
-import com.bopr.piclock.util.sha512
+import com.bopr.piclock.util.*
 import com.bopr.piclock.util.ui.preference.CustomPreferenceFragment
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -53,16 +50,11 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     override fun onStart() {
         super.onStart()
-        //todo: here
-        updateAutoFullscreenPreferenceView()
-        updateClockFloatingPreferenceView()
-        updateClockLayoutPreferenceView()
-        updateDateFormatPreferenceView()
-        updateHourFormatPreferenceView()
-        updateMinBrightnessPreferenceView()
-        updateScalePreferenceView()
-        updateTickAlwaysPreferenceView()
-        updateTickSoundPreferenceView()
+
+        /* force update preference views at startup */
+        for (key in settings.all.keys) {
+            onSharedPreferenceChanged(settings, key)
+        }
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
@@ -84,7 +76,7 @@ class SettingsFragment : CustomPreferenceFragment(),
             val value = settings.getLong(key)
             summary = if (value > 0) {
                 val entry = entries[findIndexOfValue(value.toString())]
-                getString(R.string.float_clock_view, entry)
+                getString(R.string.clock_moves_along_screen, entry)
             } else {
                 getString(R.string.keep_clock_view)
             }
@@ -95,7 +87,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         requirePreference(PREF_ABOUT).apply {
             val info = ReleaseInfo.get(requireContext())
             summary =
-                resources.getString(R.string.about_summary, info.versionName, info.buildNumber)
+                getString(R.string.about_summary, info.versionName, info.buildNumber)
             onPreferenceClickListener = AboutPreferenceClickListener()
         }
     }
@@ -103,7 +95,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     private fun updateScalePreferenceView() {
         requirePreference(PREF_CONTENT_SCALE).apply {
             summary = fixSummaryPercents(
-                resources.getString(
+                getString(
                     R.string.scale_summary,
                     settings.getFloat(PREF_CONTENT_SCALE) * 100f
                 )
@@ -113,7 +105,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateTickAlwaysPreferenceView() {
         requirePreference(PREF_TICK_SOUND_ALWAYS).apply {
-            summary = resources.getString(
+            summary = getString(
                 if (settings.getBoolean(key)) {
                     R.string.play_always
                 } else {
@@ -125,17 +117,15 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateHourFormatPreferenceView() {
         requirePreference(PREF_24_HOURS_FORMAT).apply {
-            summary = SimpleDateFormat(
+            summary = defaultDatetimeFormat(
                 if (settings.getBoolean(key)) "HH:mm" else "h:mm a",
-                Locale.getDefault()
             ).format(Date())
         }
     }
 
     private fun updateDateFormatPreferenceView() {
-        val patterns = resources.getStringArray(R.array.date_format_values)
+        val patterns = getStringArray(R.array.date_format_values)
         val date = Date()
-        val locale = Locale.getDefault()
 
         val entryNames = arrayOfNulls<String>(patterns.size)
         for (i in entryNames.indices) {
@@ -146,7 +136,7 @@ class SettingsFragment : CustomPreferenceFragment(),
                 pattern == SYSTEM_DEFAULT ->
                     getString(R.string.default_date_format, DEFAULT_DATE_FORMAT.format(date))
                 else ->
-                    SimpleDateFormat(pattern, locale).format(date)
+                    defaultDatetimeFormat(pattern).format(date)
             }
         }
 

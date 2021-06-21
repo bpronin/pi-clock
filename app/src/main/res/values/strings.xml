@@ -29,7 +29,7 @@
     <string name="time_separator">Time separator</string>
     <string name="use_24_hours_format">24 hours format</string>
     <string name="user_interface">Interface</string>
-    <string name="float_clock_view">Clock moves along the screen every %s</string>
+    <string name="clock_moves_along_screen">Clock moves along the screen every %s</string>
     <string name="keep_clock_view">Clock keeps its position on the screen</string>
     <string name="floating_interval">Floating interval</string>
     <string name="min_brightness_info">Brightness %d%%</string>

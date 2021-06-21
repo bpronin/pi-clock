@@ -30,11 +30,11 @@ import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
+import com.bopr.piclock.util.defaultDatetimeFormat
 import com.bopr.piclock.util.getResId
 import com.bopr.piclock.util.requireViewByIdCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -69,7 +69,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var scaleControl: ScaleControl
     private lateinit var brightnessControl: BrightnessControl
 
-    private val locale = Locale.getDefault()
     private val handler = Handler(Looper.getMainLooper())
 
     private var active = false
@@ -122,9 +121,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        amPmFormat = SimpleDateFormat("a", locale)
-        minutesFormat = SimpleDateFormat("mm", locale)
-        secondsFormat = SimpleDateFormat("ss", locale)
+        amPmFormat = defaultDatetimeFormat("a")
+        minutesFormat = defaultDatetimeFormat("mm")
+        secondsFormat = defaultDatetimeFormat("ss")
         tickPlayer = TickPlayer(requireContext())
         animations = ClockFragmentAnimations()
 
@@ -341,10 +340,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun updateHoursView() {
         if (settings.getBoolean(PREF_24_HOURS_FORMAT)) {
-            hoursFormat = SimpleDateFormat("HH", locale)
+            hoursFormat = defaultDatetimeFormat("HH")
             amPmMarkerView.visibility = GONE
         } else {
-            hoursFormat = SimpleDateFormat("h", locale)
+            hoursFormat = defaultDatetimeFormat("h")
             amPmMarkerView.visibility = VISIBLE
         }
     }
@@ -365,7 +364,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             dateFormat = if (pattern == SYSTEM_DEFAULT) {
                 DEFAULT_DATE_FORMAT
             } else {
-                SimpleDateFormat(pattern, locale)
+                defaultDatetimeFormat(pattern)
             }
             dateView.visibility = VISIBLE
         } else {
