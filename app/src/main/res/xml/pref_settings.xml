@@ -53,10 +53,10 @@
             android:title="@string/fullscreen" />
 
         <com.bopr.piclock.util.ui.preference.LongListPreference
-            android:entries="@array/auto_fullscreen_delay_names"
-            android:entryValues="@array/auto_fullscreen_delay_values"
-            android:key="auto_fullscreen_delay"
-            android:title="@string/auto_fullscreen" />
+            android:entries="@array/deactivation_delay_names"
+            android:entryValues="@array/deactivation_delay_values"
+            android:key="deactivation_delay"
+            android:title="@string/deactivation" />
 
     </PreferenceCategory>
 

@@ -9,7 +9,7 @@ import androidx.preference.Preference.OnPreferenceClickListener
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ABOUT
-import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
+import com.bopr.piclock.Settings.Companion.PREF_AUTO_DEACTIVATION_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
@@ -67,7 +67,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
             PREF_24_HOURS_FORMAT -> updateHourFormatPreferenceView()
-            PREF_AUTO_INACTIVATE_DELAY -> updateAutoFullscreenPreferenceView()
+            PREF_AUTO_DEACTIVATION_DELAY -> updateAutoFullscreenPreferenceView()
             PREF_CLOCK_FLOAT_INTERVAL -> updateClockFloatingPreferenceView()
             PREF_CLOCK_LAYOUT -> updateClockLayoutPreferenceView()
             PREF_CLOCK_SCALE -> updateScalePreferenceView()
@@ -170,13 +170,13 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateAutoFullscreenPreferenceView() {
-        (requirePreference(PREF_AUTO_INACTIVATE_DELAY) as ListPreference).apply {
-            val value = settings.getLong(PREF_AUTO_INACTIVATE_DELAY)
+        (requirePreference(PREF_AUTO_DEACTIVATION_DELAY) as ListPreference).apply {
+            val value = settings.getLong(PREF_AUTO_DEACTIVATION_DELAY)
             summary = if (value > 0) {
                 val index = findIndexOfValue(value.toString())
-                getString(R.string.auto_fullscreen_summary, entries[index])
+                getString(R.string.deactivation_summary, entries[index])
             } else {
-                getString(R.string.auto_fullscreen_never_summary)
+                getString(R.string.deactivation_never_summary)
             }
         }
     }

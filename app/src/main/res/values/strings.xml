@@ -4,9 +4,9 @@
     <string name="about_version">Version</string>
     <string name="app_name">Pi Clock</string>
     <string name="appearance">Appearance</string>
-    <string name="auto_fullscreen">Auto inactivate</string>
-    <string name="auto_fullscreen_never_summary">Disabled. Switch active mode manually</string>
-    <string name="auto_fullscreen_summary">Switch to inactive mode after %s</string>
+    <string name="deactivation">Deactivation</string>
+    <string name="deactivation_never_summary">Disabled. Switch active mode manually</string>
+    <string name="deactivation_summary">Switch to inactive mode after %s</string>
     <string name="blink_time_separator">Blink time separator</string>
     <string name="clock_layout">Layout</string>
     <string name="date_format">Date format</string>
@@ -32,6 +32,8 @@
     <string name="float_clock_view">Clock moves along the screen every %s</string>
     <string name="keep_clock_view">Clock keeps its position on the screen</string>
     <string name="clock_floating">Floating interval</string>
+    <string name="min_brightness_info">Brightness %d%%</string>
+    <string name="scale_info">Scale %.0f%%</string>
 
     <string-array name="clock_layout_names">
         <item>Digital default</item>
@@ -48,7 +50,7 @@
         <item>Disabled</item>
     </string-array>
 
-    <string-array name="auto_fullscreen_delay_names">
+    <string-array name="deactivation_delay_names">
         <item>2 second</item>
         <item>5 seconds</item>
         <item>10 seconds</item>

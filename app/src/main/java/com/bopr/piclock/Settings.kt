@@ -33,12 +33,12 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             }
 
             putLongOptional(
-                PREF_AUTO_INACTIVATE_DELAY,
-                ensureResExists(R.array.auto_fullscreen_delay_values, 5000)
+                PREF_AUTO_DEACTIVATION_DELAY,
+                ensureResExists(R.array.deactivation_delay_values, 5000)
             ) {
                 isResExists(
-                    R.array.auto_fullscreen_delay_values,
-                    getLong(PREF_AUTO_INACTIVATE_DELAY)
+                    R.array.deactivation_delay_values,
+                    getLong(PREF_AUTO_DEACTIVATION_DELAY)
                 )
             }
 
@@ -90,7 +90,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_ABOUT = "about_app" /* hidden, marker */
 
         const val PREF_24_HOURS_FORMAT = "24_hours_format"
-        const val PREF_AUTO_INACTIVATE_DELAY = "auto_fullscreen_delay"
+        const val PREF_AUTO_DEACTIVATION_DELAY = "auto_deactivation_delay"
         const val PREF_CLOCK_FLOAT_INTERVAL = "clock_float_interval"
         const val PREF_CLOCK_LAYOUT = "clock_layout"
         const val PREF_CLOCK_SCALE = "clock_scale"

@@ -26,8 +26,12 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
         distanceX: Float,
         distanceY: Float
     ): Boolean {
-        delta += (distanceY / 10f).toInt()
-        onSlide(delta)
+        if (!scrolled) {
+            delta = onStartSlide()
+        } else {
+            delta += (distanceY / 10f).toInt()
+            onSlide(delta)
+        }
         scrolled = true
         return false
     }
@@ -40,10 +44,7 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
 
         /* this is to prevent of calling onClick if scrolled */
         when (event.action) {
-            ACTION_DOWN -> {
-                delta = onStartSlide()
-                scrolled = false
-            }
+            ACTION_DOWN -> scrolled = false
             ACTION_UP -> {
                 if (scrolled) onEndSlide()
                 return scrolled

@@ -33,7 +33,7 @@
         <item>view_digital_vertical_default</item>
     </string-array>
 
-    <string-array name="auto_fullscreen_delay_values" translatable="false">
+    <string-array name="deactivation_delay_values" translatable="false">
         <item>2000</item>
         <item>5000</item>
         <item>10000</item>

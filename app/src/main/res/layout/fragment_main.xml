@@ -10,9 +10,9 @@
 
     <FrameLayout
         android:id="@+id/content_container"
-        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
 
         <!--  dynamic content here -->
 
@@ -30,5 +30,19 @@
         app:maxImageSize="32dp"
         app:rippleColor="@color/white_overlay"
         app:srcCompat="@drawable/ic_baseline_menu" />
+
+    <TextView
+        android:id="@+id/info_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_margin_top"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin_top"
+        android:text="Brightness 30%"
+        android:fontFamily="@font/comfortaa"
+        android:textColor="@color/white_overlay"
+        tools:ignore="HardcodedText,RtlHardcoded" />
 
 </RelativeLayout>

@@ -4,8 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
@@ -17,69 +16,87 @@ internal class ClockFragmentAnimations {
 
     private val fabShowAnimator by lazy {
         AnimatorSet().apply {
-            duration = 1000
-            interpolator = AccelerateInterpolator()
             playTogether(
                 ObjectAnimator().apply {
-                    setProperty(View.ALPHA)
+                    setProperty(ALPHA)
                     setFloatValues(0f, 1f)
                 },
                 ObjectAnimator().apply {
-                    setProperty(View.ROTATION)
+                    setProperty(ROTATION)
                     setFloatValues(-90f, 0f)
                 }
             )
+            duration = 1000
+            interpolator = AccelerateInterpolator()
         }
     }
 
     private val fabHideAnimator by lazy {
         AnimatorSet().apply {
-            duration = 1000
-            interpolator = AccelerateInterpolator()
             playTogether(
                 ObjectAnimator().apply {
-                    setProperty(View.ALPHA)
+                    setProperty(ALPHA)
                     setFloatValues(1f, 0f)
                 },
                 ObjectAnimator().apply {
-                    setProperty(View.ROTATION)
+                    setProperty(ROTATION)
                     setFloatValues(0f, -90f)
                 }
             )
+            duration = 1000
+            interpolator = AccelerateInterpolator()
         }
     }
 
     private val fadeInContentAnimator by lazy {
         ObjectAnimator().apply {
+            setProperty(ALPHA)
             duration = 2000
             interpolator = AccelerateInterpolator()
-            setProperty(View.ALPHA)
         }
     }
 
     private val fadeOutContentAnimator by lazy {
         ObjectAnimator().apply {
+            setProperty(ALPHA)
             duration = 2000
             interpolator = AccelerateInterpolator()
-            setProperty(View.ALPHA)
+        }
+    }
+
+    private val showInfoAnimator by lazy {
+        ObjectAnimator().apply {
+            setProperty(ALPHA)
+            setFloatValues(0f, 1f)
+            duration = 500
+            interpolator = AccelerateInterpolator()
+        }
+    }
+
+    private val hideInfoAnimator by lazy {
+        ObjectAnimator().apply {
+            setProperty(ALPHA)
+            setFloatValues(1f, 0f)
+            duration = 500
+            interpolator = AccelerateInterpolator()
         }
     }
 
     private val timeSeparatorAnimator by lazy {
         ObjectAnimator().apply {
+            setProperty(ALPHA)
+            setFloatValues(0f, 1f)
             duration = 2000
             interpolator = CycleInterpolator(1f)
-            setProperty(View.ALPHA)
-            setFloatValues(0f, 1f)
         }
     }
 
     private val secondsSeparatorAnimator by lazy {
         ObjectAnimator().apply {
+            setProperty(ALPHA)
+            setFloatValues(0f, 1f)
             duration = 2000
             interpolator = CycleInterpolator(1f)
-            setProperty(View.ALPHA)
-            setFloatValues(0f, 1f)
         }
     }
 
@@ -101,6 +118,22 @@ internal class ClockFragmentAnimations {
 
     fun hideFab(view: View) {
         fabHideAnimator.apply {
+            reset(view)
+            doOnEnd { view.visibility = GONE }
+            start()
+        }
+    }
+
+    fun showInfo(view: View) {
+        view.visibility = VISIBLE
+        showInfoAnimator.apply {
+            reset(view)
+            start()
+        }
+    }
+
+    fun hideInfo(view: View) {
+        hideInfoAnimator.apply {
             reset(view)
             doOnEnd { view.visibility = GONE }
             start()
@@ -188,8 +221,8 @@ internal class ClockFragmentAnimations {
 
             val r = view.getScaledRect()
             playTogether(
-                ObjectAnimator.ofFloat(view, View.X, x - r.left),
-                ObjectAnimator.ofFloat(view, View.Y, y - r.top)
+                ObjectAnimator.ofFloat(view, X, x - r.left),
+                ObjectAnimator.ofFloat(view, Y, y - r.top)
             )
 
             start()

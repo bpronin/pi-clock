@@ -18,7 +18,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
+import com.bopr.piclock.Settings.Companion.PREF_AUTO_DEACTIVATION_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_SCALE
@@ -55,6 +55,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var timeSeparator: TextView
     private lateinit var secondsSeparator: TextView
     private lateinit var amPmMarkerView: TextView
+    private lateinit var infoView: TextView
 
     private lateinit var settings: Settings
     private lateinit var amPmFormat: DateFormat
@@ -69,12 +70,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var brightnessControl: BrightnessControl
 
     private val locale = Locale.getDefault()
-    private val autoInactivateTask = Runnable { onAutoInactivate() }
-    private val timerTask = Runnable { onTimer() }
     private val handler = Handler(Looper.getMainLooper())
 
     private var active = false
-    private var autoInactivating = false
+
+    private val timerTask = Runnable { onTimer() }
+
+    private var autoDeactivating = false
+    private val autoDeactivateTask = Runnable { onAutoDeactivate() }
 
     private val minBrightness = 10
     private val maxBrightness = 100
@@ -144,20 +147,24 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         root.setOnTouchListener { _, event ->
             when (event?.action) {
-                ACTION_DOWN -> cancelAutoInactivate()
-                ACTION_UP -> scheduleAutoInactivate()
+                ACTION_DOWN -> cancelAutoDeactivate()
+                ACTION_UP -> scheduleAutoDeactivate()
             }
-            (!active && brightnessControl.processTouch(event)) || scaleControl.processTouch(event)
+            //todo: allow change in any mode
+            !active && (brightnessControl.processTouch(event) || scaleControl.processTouch(event))
         }
 
         settingsButton = root.requireViewByIdCompat(R.id.settings_button)
         settingsButton.setOnClickListener {
             startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
+        infoView = root.requireViewByIdCompat(R.id.info_view)
+        infoView.visibility = GONE
 
         contentView = root.requireViewByIdCompat(R.id.content_container)
         contentView.setOnClickListener {
             animations.floatContentHome(contentView)
+            setActive(!active, true)
         }
 
         fullscreenControl = FullscreenSupport(requireActivity().window).apply {
@@ -166,24 +173,30 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         scaleControl = ScaleControl(requireContext()).apply {
             onPinchStart = {
+                animations.showInfo(infoView)
                 currentScale
             }
             onPinch = { factor ->
                 currentScale = max(minScale, min(factor, maxScale))
+                infoView.text = getString(R.string.scale_info, currentScale * 100f)
             }
             onPinchEnd = {
+                animations.hideInfo(infoView)
                 scale = currentScale
             }
         }
 
         brightnessControl = BrightnessControl(requireContext()).apply {
             onStartSlide = {
+                animations.showInfo(infoView)
                 currentBrightness
             }
             onSlide = { delta ->
                 currentBrightness = max(minBrightness, min(delta, maxBrightness))
+                infoView.text = getString(R.string.min_brightness_info, currentBrightness)
             }
             onEndSlide = {
+                animations.hideInfo(infoView)
                 brightness = currentBrightness
             }
         }
@@ -238,8 +251,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateTimeSeparatorView()
                 PREF_DATE_FORMAT ->
                     updateDateView()
-                PREF_AUTO_INACTIVATE_DELAY ->
-                    scheduleAutoInactivate()
+                PREF_AUTO_DEACTIVATION_DELAY ->
+                    scheduleAutoDeactivate()
                 PREF_TICK_SOUND ->
                     updateTickSound()
                 PREF_INACTIVE_BRIGHTNESS ->
@@ -253,11 +266,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun setActive(value: Boolean, animate: Boolean) {
-        cancelAutoInactivate()
+        cancelAutoDeactivate()
         active = value
         updateViewMode(animate) {
             updateBrightness()
-            scheduleAutoInactivate()
+            scheduleAutoDeactivate()
         }
 
         Log.d(_tag, "Active mode: $value")
@@ -405,34 +418,34 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         scheduleTimerTask()
     }
 
-    private fun scheduleAutoInactivate() {
-        if (active && !autoInactivating) {
-            cancelAutoInactivate()
-            val delay = settings.getLong(PREF_AUTO_INACTIVATE_DELAY)
+    private fun scheduleAutoDeactivate() {
+        if (active && !autoDeactivating) {
+            cancelAutoDeactivate()
+            val delay = settings.getLong(PREF_AUTO_DEACTIVATION_DELAY)
             if (delay > 0) {
-                autoInactivating = true
-                handler.postDelayed(autoInactivateTask, delay)
+                autoDeactivating = true
+                handler.postDelayed(autoDeactivateTask, delay)
 
-                Log.d(_tag, "Auto-inactivate scheduled")
+                Log.d(_tag, "Auto-deactivate scheduled")
             }
         }
     }
 
-    private fun cancelAutoInactivate() {
-        if (autoInactivating) {
-            autoInactivating = false
-            handler.removeCallbacks(autoInactivateTask)
+    private fun cancelAutoDeactivate() {
+        if (autoDeactivating) {
+            autoDeactivating = false
+            handler.removeCallbacks(autoDeactivateTask)
 
-            Log.d(_tag, "Auto-inactivation canceled")
+            Log.d(_tag, "Auto-deactivation canceled")
         }
     }
 
-    private fun onAutoInactivate() {
-        if (active && autoInactivating) {
-            autoInactivating = false
+    private fun onAutoDeactivate() {
+        if (active && autoDeactivating) {
+            autoDeactivating = false
             setActive(value = false, animate = true)
 
-            Log.d(_tag, "Auto-inactivation complete")
+            Log.d(_tag, "Auto-deactivation complete")
         }
     }
 
