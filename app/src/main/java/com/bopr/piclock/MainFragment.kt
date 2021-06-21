@@ -203,21 +203,22 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onDestroy() {
+        tickPlayer.stop()
         fullscreenControl.destroy()
         settings.unregisterOnSharedPreferenceChangeListener(this)
         super.onDestroy()
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         onTimer()
         scheduleFloatContent()
     }
 
-    override fun onPause() {
-        cancelFloatContent()
+    override fun onStop() {
         cancelTimerTask()
-        super.onPause()
+        cancelFloatContent()
+        super.onStop()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -240,7 +241,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_AUTO_INACTIVATE_DELAY ->
                     scheduleAutoInactivate()
                 PREF_TICK_SOUND ->
-                    tickPlayer.soundName = getString(PREF_TICK_SOUND)
+                    updateTickSound()
                 PREF_INACTIVE_BRIGHTNESS ->
                     updateBrightness()
                 PREF_CLOCK_SCALE ->
@@ -249,6 +250,17 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateFloatContentInterval()
             }
         }
+    }
+
+    private fun setActive(value: Boolean, animate: Boolean) {
+        cancelAutoInactivate()
+        active = value
+        updateViewMode(animate) {
+            updateBrightness()
+            scheduleAutoInactivate()
+        }
+
+        Log.d(_tag, "Active mode: $value")
     }
 
     private fun createContentView() {
@@ -277,18 +289,15 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateScale()
     }
 
-    private fun setActive(value: Boolean, animate: Boolean) {
-        cancelAutoInactivate()
-        active = value
-        updateControls(animate) {
-            updateBrightness()
-            scheduleAutoInactivate()
-        }
-
-        Log.d(_tag, "Active mode: $value")
+    private fun updateContentView(time: Date) {
+        hoursView.text = hoursFormat.format(time)
+        minutesView.text = minutesFormat.format(time)
+        secondsView.text = secondsFormat.format(time)
+        amPmMarkerView.text = amPmFormat.format(time)
+        dateView.text = dateFormat.format(time)
     }
 
-    private fun updateControls(animate: Boolean, onComplete: () -> Unit) {
+    private fun updateViewMode(animate: Boolean, onComplete: () -> Unit) {
         Log.d(_tag, "Updating controls. active: $active, animated: $animate")
 
         fullscreenControl.fullscreen = !active
@@ -375,15 +384,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun scheduleTimerTask() {
-        if (isResumed) {
-            handler.postDelayed(timerTask, 1000)
+        handler.postDelayed(timerTask, 1000)
 
-//            Log.d(_tag, "Timer scheduled")
-        }
+        Log.v(_tag, "Timer scheduled")
     }
 
     private fun cancelTimerTask() {
-        stopTickSound()
         handler.removeCallbacks(timerTask)
 
         Log.d(_tag, "Timer canceled")
@@ -391,22 +397,16 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun onTimer() {
         val time = Date()
-//        Log.d(_tag, "On timer: $time")
+        Log.v(_tag, "On timer: $time")
 
-        hoursView.text = hoursFormat.format(time)
-        minutesView.text = minutesFormat.format(time)
-        secondsView.text = secondsFormat.format(time)
-        amPmMarkerView.text = amPmFormat.format(time)
-        dateView.text = dateFormat.format(time)
-
+        updateContentView(time)
         blinkTimeSeparator(time)
         playTickSound()
-
         scheduleTimerTask()
     }
 
     private fun scheduleAutoInactivate() {
-        if (isResumed && active && !autoInactivating) {
+        if (active && !autoInactivating) {
             cancelAutoInactivate()
             val delay = settings.getLong(PREF_AUTO_INACTIVATE_DELAY)
             if (delay > 0) {
@@ -445,13 +445,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun scheduleFloatContent() {
-        if (isResumed) {
-            cancelFloatContent()
-            if (floatContentInterval > 0) {
-                handler.postDelayed(floatContentTask, floatContentInterval)
+        cancelFloatContent()  //todo: do we need it here?
+        if (floatContentInterval > 0) {
+            handler.postDelayed(floatContentTask, floatContentInterval)
 
-                Log.d(_tag, "Floating scheduled")
-            }
+            Log.d(_tag, "Floating scheduled")
         }
     }
 
@@ -483,12 +481,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun stopTickSound() {
-        tickPlayer.stop()
+    private fun updateTickSound() {
+        tickPlayer.soundName = settings.getString(PREF_TICK_SOUND)
     }
 
     private fun playTickSound() {
         if (tickAlways || active || tickVolumeFading) {
+            Log.v(_tag, "Playing. active; $active, fading: $tickVolumeFading")
+
             tickPlayer.play()
         }
     }
@@ -496,7 +496,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun fadeInTickSoundVolume() {
         if (!tickAlways) {
             tickVolumeFading = true
-            tickPlayer.fadeInVolume(3000) {
+            tickPlayer.fadeInVolume {
                 tickVolumeFading = false
             }
         }
@@ -505,9 +505,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun fadeOutTickSoundVolume() {
         if (!tickAlways) {
             tickVolumeFading = true
-            tickPlayer.fadeOutVolume(6000) {
+            tickPlayer.fadeOutVolume {
                 tickVolumeFading = false
-                tickPlayer.stop()
             }
         }
     }
