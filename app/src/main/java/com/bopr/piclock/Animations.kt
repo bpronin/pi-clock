@@ -191,7 +191,7 @@ internal class Animations {
         }
     }
 
-    fun fitToParent(view: View, onEnd: () -> Unit) {
+    fun fitScaleIntoParent(view: View, onEnd: () -> Unit) {
         val pr = (view.parent as View).getScaledRect()
         val scale = min(pr.width() / view.width, pr.height() / view.height)
 

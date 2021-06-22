@@ -30,10 +30,7 @@ import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
-import com.bopr.piclock.util.defaultDatetimeFormat
-import com.bopr.piclock.util.getResId
-import com.bopr.piclock.util.getScaledRect
-import com.bopr.piclock.util.requireViewByIdCompat
+import com.bopr.piclock.util.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
 import java.util.*
@@ -180,7 +177,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
             onPinchEnd = {
                 animations.hideInfo(infoView)
-                fitScale {
+                fitContentIntoScreen {
                     scale = currentScale
                 }
             }
@@ -396,15 +393,15 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         currentScale = scale
     }
 
-    private fun fitScale(onEnd: () -> Unit = {}) {
-        val pr = (contentView.parent as View).getScaledRect()
+    private fun fitContentIntoScreen(onEnd: () -> Unit = {}) {
+        val pr = contentView.getParentScaledRect()
         val vr = contentView.getScaledRect()
         if (pr.width() > vr.width() && pr.height() > vr.height()) {
             onEnd()
         } else {
             Log.d(_tag, "Fitting content scale")
 
-            animations.fitToParent(contentView) { onEnd() }
+            animations.fitScaleIntoParent(contentView) { onEnd() }
         }
     }
 

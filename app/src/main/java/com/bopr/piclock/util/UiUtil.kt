@@ -21,21 +21,25 @@ fun <T : View?> View.requireViewByIdCompat(@IdRes id: Int): T {
 }
 
 fun View.getScaledRect(): RectF {
-    val w = width * scaleX
-    val h = height * scaleY
-    return RectF().apply {
-        left = (width - w) / 2
-        right = left + w
-        top = (height - h) / 2
-        bottom = top + h
+    val sw = width * scaleX
+    val sh = height * scaleY
+    val dx = (sw - width) / 2
+    val dy = (sh - height) / 2
+
+    return RectF(0f, 0f, sw, sh).apply {
+        offset(dx, dy)
     }
+}
+
+fun View.getParentScaledRect(): RectF {
+    return (parent as View).getScaledRect()
 }
 
 fun Context.messageBox(text: String) {
     AlertDialog.Builder(this).apply {
         setTitle(R.string.app_name)
         setMessage(text)
-        setPositiveButton(android.R.string.ok, null);
+        setPositiveButton(android.R.string.ok, null)
     }.show()
 }
 
