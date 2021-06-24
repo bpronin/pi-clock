@@ -30,6 +30,7 @@
     <string name="use_24_hours_format">24 hours format</string>
     <string name="user_interface">Interface</string>
     <string name="clock_moves_along_screen">Clock moves along the screen every %s</string>
+    <string name="clock_always_moves_along_screen">Clock always moves along the screen</string>
     <string name="keep_clock_view">Clock keeps its position on the screen</string>
     <string name="floating_interval">Floating interval</string>
     <string name="min_brightness_info">Brightness %d%%</string>
@@ -68,6 +69,7 @@
     </string-array>
 
     <string-array name="content_float_interval_names">
+        <item>Always</item>
         <item>10 second</item>
         <item>1 minute</item>
         <item>15 minutes</item>

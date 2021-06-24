@@ -51,6 +51,7 @@
     </string-array>
 
     <string-array name="content_float_interval_values" translatable="false">
+        <item>0</item>
         <item>10000</item>
         <item>60000</item>
         <item>900000</item>

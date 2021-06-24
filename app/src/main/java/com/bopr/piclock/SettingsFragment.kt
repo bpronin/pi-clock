@@ -61,7 +61,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         when (key) {
             PREF_24_HOURS_FORMAT -> updateHourFormatPreferenceView()
             PREF_AUTO_DEACTIVATION_DELAY -> updateAutoFullscreenPreferenceView()
-            PREF_CONTENT_FLOAT_INTERVAL -> updateClockFloatingPreferenceView()
+            PREF_CONTENT_FLOAT_INTERVAL -> updateFloatIntervalPreferenceView()
             PREF_CONTENT_LAYOUT -> updateClockLayoutPreferenceView()
             PREF_CONTENT_SCALE -> updateScalePreferenceView()
             PREF_DATE_FORMAT -> updateDateFormatPreferenceView()
@@ -71,14 +71,16 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateClockFloatingPreferenceView() {
+    private fun updateFloatIntervalPreferenceView() {
         (requirePreference(PREF_CONTENT_FLOAT_INTERVAL) as ListPreference).apply {
             val value = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
-            summary = if (value > 0) {
-                val entry = entries[findIndexOfValue(value.toString())]
-                getString(R.string.clock_moves_along_screen, entry)
-            } else {
-                getString(R.string.keep_clock_view)
+            summary = when (value) {
+                0L -> getString(R.string.clock_always_moves_along_screen)
+                -1L -> getString(R.string.keep_clock_view)
+                else -> getString(
+                    R.string.clock_moves_along_screen,
+                    entries[findIndexOfValue(value.toString())]
+                )
             }
         }
     }

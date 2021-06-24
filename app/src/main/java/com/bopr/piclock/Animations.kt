@@ -213,7 +213,7 @@ internal class Animations {
         val w = pr.width() - vr.width()
         val h = pr.height() - vr.height()
 
-        floatTo(view, random().toFloat() * w, random().toFloat() * h, 15000, onEnd)
+        floatTo(view, random().toFloat() * w, random().toFloat() * h, LONG_FLOAT_DURATION, onEnd)
     }
 
     fun floatContentHome(view: View, onEnd: (Animator) -> Unit = {}) {
@@ -225,7 +225,7 @@ internal class Animations {
         val w = pr.width() / 2 - vr.width() / 2
         val h = pr.height() / 2 - vr.height() / 2
 
-        floatTo(view, w, h, 1000, onEnd)
+        floatTo(view, w, h, SHORT_FLOAT_DURATION, onEnd)
     }
 
     private fun floatTo(
@@ -251,5 +251,11 @@ internal class Animations {
         }
     }
 
+    companion object{
+
+        private const val LONG_FLOAT_DURATION = 1000L
+        private const val SHORT_FLOAT_DURATION = 1000L
+
+    }
 }
 
