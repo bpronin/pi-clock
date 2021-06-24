@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="?attr/clockBackgroundColor"
+    android:background="?attr/contentBackgroundColor"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -18,7 +18,7 @@
             android:fontFamily="@font/comfortaa"
             android:includeFontPadding="false"
             android:text="04"
-            android:textColor="?attr/timeTextColor"
+            android:textColor="?attr/contentTextColor"
             android:textSize="96sp"
             tools:ignore="HardcodedText" />
 
@@ -30,7 +30,7 @@
             android:fontFamily="@font/comfortaa"
             android:includeFontPadding="false"
             android:text=":"
-            android:textColor="?attr/timeTextColor"
+            android:textColor="?attr/contentTextColor"
             android:textSize="96sp"
             tools:ignore="HardcodedText" />
 
@@ -41,7 +41,7 @@
             android:fontFamily="@font/comfortaa"
             android:includeFontPadding="false"
             android:text="56"
-            android:textColor="?attr/timeTextColor"
+            android:textColor="?attr/contentTextColor"
             android:textSize="96sp"
             tools:ignore="HardcodedText" />
 
@@ -59,7 +59,7 @@
                 android:includeFontPadding="false"
                 android:gravity="top|center_horizontal"
                 android:text="AM"
-                android:textColor="?attr/timeTextColor"
+                android:textColor="?attr/contentTextColor"
                 android:textSize="34sp"
                 android:layout_marginTop="6sp"
                 tools:ignore="HardcodedText" />
@@ -82,7 +82,7 @@
                     android:textAlignment="center"
                     android:layout_marginBottom="6sp"
                     android:layout_marginRight="4sp"
-                    android:textColor="?attr/timeTextColor"
+                    android:textColor="?attr/contentTextColor"
                     android:textSize="48sp"
                     tools:ignore="HardcodedText" />
 
@@ -93,7 +93,7 @@
                     android:fontFamily="@font/comfortaa"
                     android:includeFontPadding="false"
                     android:text="44"
-                    android:textColor="?attr/timeTextColor"
+                    android:textColor="?attr/contentTextColor"
                     android:textSize="48sp"
                     tools:ignore="HardcodedText" />
             </LinearLayout>
@@ -110,7 +110,7 @@
         android:includeFontPadding="false"
         android:text="Wednesday, January 13 "
         android:textAlignment="center"
-        android:textColor="?attr/timeTextColor"
+        android:textColor="?attr/contentTextColor"
         android:textSize="18sp"
         tools:ignore="HardcodedText" />
 

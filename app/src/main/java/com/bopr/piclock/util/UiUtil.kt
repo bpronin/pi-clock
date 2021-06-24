@@ -16,7 +16,7 @@ import com.bopr.piclock.R
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 
-fun View.setOnLayouotCompleteListener(action: () -> Unit) {
+fun View.doOnLayoutComplete(action: () -> Unit) {
     viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
 
         /** At this point the layout is complete and the dimensions
@@ -33,28 +33,22 @@ fun <T : View?> View.requireViewByIdCompat(@IdRes id: Int): T {
         ?: throw IllegalArgumentException("ID does not reference a View inside this View")
 }
 
-fun View.getScaledRect(): RectF {
-    val w = width * scaleX
-    val h = height * scaleY
-    return RectF().apply {
-        left = (width - w) / 2
-        right = left + w
-        top = (height - h) / 2
-        bottom = top + h
-    }
-//    val sw = width * scaleX
-//    val sh = height * scaleY
-//    val dx = (sw - width) / 2
-//    val dy = (sh - height) / 2
-//
-//    val rectF = RectF(0f, 0f, sw, sh).apply {
-//        offset(dx, dy)
-//    }
-//    return rectF
+fun View.getRect(): RectF {
+    return RectF(x, y, x + width.toFloat(), y + height.toFloat())
 }
 
-fun View.getParentScaledRect(): RectF {
-    return (parent as View).getScaledRect()
+fun RectF.scale(factorX: Float, factorY: Float) {
+    if (factorX != 1f && factorY != 1f) {
+        inset(width() * (1 - factorX) / 2, height() * (1 - factorY) / 2)
+    }
+}
+
+fun View.getScaledRect(): RectF {
+    return getRect().apply { scale(scaleX, scaleY) }
+}
+
+fun View.getParentView(): View {
+    return (parent as View)
 }
 
 fun Context.messageBox(text: String) {

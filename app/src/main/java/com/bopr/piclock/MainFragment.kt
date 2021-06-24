@@ -70,7 +70,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private var isActive = false
+    private var isActive = true
 
     private val timerTask = Runnable { onTimer() }
 
@@ -129,6 +129,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         settings = Settings(requireContext()).apply {
             tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
         }
+        settings.registerOnSharedPreferenceChangeListener(this)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -147,17 +148,18 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 ACTION_UP -> scheduleAutoDeactivate()
             }
             //todo: allow change in any mode
-            !isActive && (brightnessControl.processTouch(event) || scaleControl.processTouch(event))
+            (!isActive && (brightnessControl.processTouch(event)) || scaleControl.processTouch(event))
         }
-//        root.setOnLayouotCompleteListener {
+//        root.setOnLayoutCompleteListener {
 //            startFloatContent()
 //        }
 
         contentView = root.requireViewByIdCompat(R.id.content_container)
-//        contentView.setOnClickListener {
+        contentView.setOnClickListener {
 //            animations.floatContentSomewhere(contentView)
-//        }
-        contentView.setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
+            animations.floatContentHome(contentView)
+        }
+//        contentView.setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
 
         settingsButton = root.requireViewByIdCompat(R.id.settings_button)
         settingsButton.setOnClickListener {
@@ -205,16 +207,23 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         createContentView()
 
-        setActive(savedState?.getBoolean("active") ?: false, false)
-
-        settings.registerOnSharedPreferenceChangeListener(this)
-
         return root
+    }
+
+    override fun onViewCreated(view: View, savedState: Bundle?) {
+        savedState?.apply {
+//            isActive = getBoolean("active")
+            setActive(active = getBoolean("active"), animate = false)
+        } ?: apply {
+            setActive(active = false, animate = false)
+        }
     }
 
     override fun onSaveInstanceState(savedState: Bundle) {
         super.onSaveInstanceState(savedState)
-        savedState.putBoolean("active", isActive)
+        savedState.apply {
+            putBoolean("active", isActive)
+        }
     }
 
     override fun onDestroy() {
@@ -231,6 +240,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onStop() {
+        cancelAutoDeactivate()
         stopTimer()
         stopFloatContent()
         super.onStop()
@@ -267,15 +277,27 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun setActive(value: Boolean, animate: Boolean) {
+    private fun onBeforeActivate() {
         cancelAutoDeactivate()
-        isActive = value
-        updateViewMode(animate) {
-            updateBrightness()
-            scheduleAutoDeactivate()
-        }
+        stopFloatContent()
+//        floatContentHome()
+    }
 
-        Log.d(_tag, "Active mode: $value")
+    private fun onActivate() {
+        if (isActive) {
+            scheduleAutoDeactivate()
+        } else {
+            startFloatContent()
+        }
+    }
+
+    private fun setActive(active: Boolean, animate: Boolean) {
+        onBeforeActivate()
+        isActive = active
+        updateViewMode(animate)
+        onActivate()
+
+        Log.d(_tag, "Active mode: $active")
     }
 
     private fun createContentView() {
@@ -283,9 +305,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         contentView.apply {
             removeAllViews()
-            val resName = settings.getString(PREF_CONTENT_LAYOUT)
-            val resId = requireContext().getResId("layout", resName)
-
+            val resId = requireContext().getResId("layout", settings.getString(PREF_CONTENT_LAYOUT))
             addView(layoutInflater.inflate(resId, this, false).apply {
                 hoursView = requireViewByIdCompat(R.id.hours_view)
                 minutesView = requireViewByIdCompat(R.id.minutes_view)
@@ -302,6 +322,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateDateView()
         updateTimeSeparatorView()
         updateScale()
+        updateContentView(Date())
     }
 
     private fun updateContentView(time: Date) {
@@ -312,7 +333,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         dateView.text = dateFormat.format(time)
     }
 
-    private fun updateViewMode(animate: Boolean, onComplete: () -> Unit) {
+    private fun updateViewMode(animate: Boolean) {
         Log.d(_tag, "Updating controls. active: $isActive, animated: $animate")
 
         fullscreenControl.fullscreen = !isActive
@@ -325,7 +346,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     contentView,
                     currentBrightness,
                     maxBrightness
-                ) { onComplete() }
+                )
             } else {
                 fadeOutTickSoundVolume()
                 animations.hideFab(settingsButton)
@@ -333,12 +354,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     contentView,
                     currentBrightness,
                     brightness
-                ) { onComplete() }
+                )
             }
         } else {
             settingsButton.visibility = if (isActive) VISIBLE else GONE
-            onComplete()
         }
+
+        updateBrightness()
     }
 
     private fun updateHoursView() {
@@ -399,7 +421,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun fitContentIntoScreen(onEnd: () -> Unit = {}) {
-        val pr = contentView.getParentScaledRect()
+        val pr = contentView.getParentView().getScaledRect()
         val vr = contentView.getScaledRect()
         if (pr.width() > vr.width() && pr.height() > vr.height()) {
             onEnd()
@@ -411,7 +433,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun startTimer() {
-        updateContentView(Date())
         scheduleTimerTask()
 
         Log.d(_tag, "Timer started")
@@ -465,7 +486,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun onAutoDeactivate() {
         if (isActive && isAutoDeactivating) {
             isAutoDeactivating = false
-            setActive(value = false, animate = true)
+            setActive(active = false, animate = true)
 
             Log.d(_tag, "Auto-deactivation complete")
         }
@@ -475,12 +496,19 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         if (floatContentInterval >= 0) {
             scheduleFloatContent()
         } else {
-            animations.floatContentHome(contentView)
+            stopFloatContent()
+            floatContentHome()
         }
     }
 
+    private fun floatContentHome() {
+        Log.d(_tag, "Floating home")
+
+        animations.floatContentHome(contentView)
+    }
+
     private fun startFloatContent() {
-        if (!isContentFloating) {
+        if (!isContentFloating && floatContentInterval >= 0L) {
             isContentFloating = true
             scheduleFloatContent()
 
@@ -499,10 +527,16 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun scheduleFloatContent() {
         if (isContentFloating) {
-            if (floatContentInterval == 0L) {
-                handler.post(floatContentTask)
-            } else {
-                handler.postDelayed(floatContentTask, floatContentInterval)
+            when {
+                floatContentInterval == 0L -> {
+                    handler.post(floatContentTask)
+                }
+                floatContentInterval > 0L -> {
+                    handler.postDelayed(floatContentTask, floatContentInterval)
+                }
+                else -> {
+                    Log.w(_tag, "Trying to set illegal floating delay: $floatContentInterval ms")
+                }
             }
 
             Log.d(_tag, "Floating task scheduled after: $floatContentInterval ms")

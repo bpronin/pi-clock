@@ -15,8 +15,9 @@
         <item name="colorOnSecondary">@color/white_overlay</item>
         <!--        <item name="colorSecondaryVariant">@color/color_accent_text</item>-->
 
-        <item name="clockBackgroundColor">@color/black</item>
-        <item name="timeTextColor">@color/white</item>
+        <item name="mainBackgroundColor">@color/black</item>
+        <item name="contentBackgroundColor">@color/black</item>
+        <item name="contentTextColor">@color/white</item>
     </style>
 
 </resources>

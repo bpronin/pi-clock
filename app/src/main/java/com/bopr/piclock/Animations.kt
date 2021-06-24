@@ -10,6 +10,9 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
 import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
+import com.bopr.piclock.util.getParentView
+import com.bopr.piclock.util.getRect
 import com.bopr.piclock.util.getScaledRect
 import java.lang.Math.random
 import kotlin.math.min
@@ -109,7 +112,11 @@ internal class Animations {
         }
     }
 
-    private var floatContentAnimator: Animator? = null
+    private val floatContentAnimator by lazy {
+        AnimatorSet().apply {
+            interpolator = AccelerateDecelerateInterpolator()
+        }
+    }
 
     private fun Animator.reset(view: View) = apply {
         cancel()
@@ -118,9 +125,9 @@ internal class Animations {
     }
 
     fun showFab(view: View) {
-        view.visibility = VISIBLE
         fabShowAnimator.apply {
             reset(view)
+            doOnStart { view.visibility = VISIBLE }
             start()
         }
     }
@@ -134,9 +141,9 @@ internal class Animations {
     }
 
     fun showInfo(view: View) {
-        view.visibility = VISIBLE
         showInfoAnimator.apply {
             reset(view)
+            doOnStart { view.visibility = VISIBLE }
             start()
         }
     }
@@ -192,7 +199,7 @@ internal class Animations {
     }
 
     fun fitScaleIntoParent(view: View, onEnd: () -> Unit) {
-        val pr = (view.parent as View).getScaledRect()
+        val pr = view.getParentView().getScaledRect()
         val scale = min(pr.width() / view.width, pr.height() / view.height)
 
         fitScaleAnimator.apply {
@@ -207,25 +214,33 @@ internal class Animations {
     }
 
     fun floatContentSomewhere(view: View, onEnd: (Animator) -> Unit = {}) {
-        val pr = (view.parent as View).getScaledRect()
+        val pr = view.getParentView().getScaledRect()
         val vr = view.getScaledRect()
+        val dw = pr.width() - vr.width()
+        val dh = pr.height() - vr.height()
+        val dx = view.x - vr.left
+        val dy = view.y - vr.top
 
-        val w = pr.width() - vr.width()
-        val h = pr.height() - vr.height()
-
-        floatTo(view, random().toFloat() * w, random().toFloat() * h, LONG_FLOAT_DURATION, onEnd)
+        floatTo(
+            view,
+            random().toFloat() * dw + dx,
+            random().toFloat() * dh + dy,
+            1500L,
+            onEnd
+        )
     }
 
     fun floatContentHome(view: View, onEnd: (Animator) -> Unit = {}) {
-        val parent = view.parent as View
+        val pr = view.getParentView().getRect()
+        val vr = view.getRect()
 
-        val pr = parent.getScaledRect()
-        val vr = view.getScaledRect()
-
-        val w = pr.width() / 2 - vr.width() / 2
-        val h = pr.height() / 2 - vr.height() / 2
-
-        floatTo(view, w, h, SHORT_FLOAT_DURATION, onEnd)
+        floatTo(
+            view,
+            (pr.width() - vr.width()) / 2,
+            (pr.height() - vr.height()) / 2,
+            1000L,
+            onEnd
+        )
     }
 
     private fun floatTo(
@@ -235,27 +250,18 @@ internal class Animations {
         floatDuration: Long,
         onEnd: (Animator) -> Unit = {}
     ) {
-        floatContentAnimator?.cancel()
-        floatContentAnimator = AnimatorSet().apply {
+        floatContentAnimator.apply {
+            reset(view)
+            playTogether(
+                ObjectAnimator.ofFloat(view, X, view.x, x),
+                ObjectAnimator.ofFloat(view, Y, view.y, y)
+            )
             duration = floatDuration
             interpolator = AccelerateDecelerateInterpolator()
             doOnEnd(onEnd)
-
-            val r = view.getScaledRect()
-            playTogether(
-                ObjectAnimator.ofFloat(view, X, x - r.left),
-                ObjectAnimator.ofFloat(view, Y, y - r.top)
-            )
-
             start()
         }
     }
 
-    companion object{
-
-        private const val LONG_FLOAT_DURATION = 1000L
-        private const val SHORT_FLOAT_DURATION = 1000L
-
-    }
 }
 

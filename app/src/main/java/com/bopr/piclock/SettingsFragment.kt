@@ -35,7 +35,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
-
+        //todo: restore scroll position
         updateAboutPreferenceView()
     }
 

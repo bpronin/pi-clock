@@ -19,6 +19,7 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
     private val detector = GestureDetectorCompat(context, this)
     private var scrolled = false
     private var delta = 0
+    private val factor = 10f // todo: make it depends from vertical screen size
 
     override fun onScroll(
         e1: MotionEvent?,
@@ -29,7 +30,7 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
         if (!scrolled) {
             delta = onStartSlide()
         } else {
-            delta += (distanceY / 10f).toInt()
+            delta += (distanceY / factor).toInt()
             onSlide(delta)
         }
         scrolled = true
