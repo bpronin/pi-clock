@@ -156,10 +156,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
 
         contentView = root.requireViewByIdCompat(R.id.content_container)
-        contentView.setOnClickListener {
-            animations.floatContentSomewhere(contentView)
-        }
-//        contentView.setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
+        contentView.setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
 
         settingsButton = root.requireViewByIdCompat(R.id.settings_button)
         settingsButton.setOnClickListener {
