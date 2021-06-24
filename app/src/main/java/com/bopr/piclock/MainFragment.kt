@@ -144,8 +144,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
         root.setOnTouchListener { _, event ->
             when (event.action) {
-                ACTION_DOWN -> cancelAutoDeactivate()
-                ACTION_UP -> scheduleAutoDeactivate()
+                ACTION_DOWN -> stopAutoDeactivate()
+                ACTION_UP -> startAutoDeactivate()
             }
             //todo: allow change in any mode
             (!isActive && (brightnessControl.processTouch(event)) || scaleControl.processTouch(event))
@@ -233,17 +233,18 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         super.onDestroy()
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         startTimer()
         startFloatContent()
+        startAutoDeactivate()
     }
 
-    override fun onStop() {
-        cancelAutoDeactivate()
+    override fun onPause() {
+        stopAutoDeactivate()
         stopTimer()
         stopFloatContent()
-        super.onStop()
+        super.onPause()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -264,7 +265,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_DATE_FORMAT ->
                     updateDateView()
                 PREF_AUTO_DEACTIVATION_DELAY ->
-                    scheduleAutoDeactivate()
+                    startAutoDeactivate()
                 PREF_TICK_SOUND ->
                     updateTickSound()
                 PREF_INACTIVE_BRIGHTNESS ->
@@ -278,17 +279,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun onBeforeActivate() {
-        cancelAutoDeactivate()
+        stopAutoDeactivate()
         stopFloatContent()
 //        floatContentHome()
     }
 
     private fun onActivate() {
-        if (isActive) {
-            scheduleAutoDeactivate()
-        } else {
-            startFloatContent()
-        }
+        startAutoDeactivate()
+        startFloatContent()
     }
 
     private fun setActive(active: Boolean, animate: Boolean) {
@@ -461,9 +459,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         scheduleTimerTask()
     }
 
-    private fun scheduleAutoDeactivate() {
+    private fun startAutoDeactivate() {
         if (isActive && !isAutoDeactivating) {
-            cancelAutoDeactivate()
+            stopAutoDeactivate()
             val delay = settings.getLong(PREF_AUTO_DEACTIVATION_DELAY)
             if (delay > 0) {
                 isAutoDeactivating = true
@@ -474,7 +472,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun cancelAutoDeactivate() {
+    private fun stopAutoDeactivate() {
         if (isAutoDeactivating) {
             isAutoDeactivating = false
             handler.removeCallbacks(autoDeactivateTask)
@@ -508,7 +506,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun startFloatContent() {
-        if (!isContentFloating && floatContentInterval >= 0L) {
+        if (!isActive && !isContentFloating && floatContentInterval >= 0L) {
             isContentFloating = true
             scheduleFloatContent()
 
