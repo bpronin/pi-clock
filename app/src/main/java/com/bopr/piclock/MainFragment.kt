@@ -41,6 +41,8 @@ import kotlin.math.min
 class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     //todo: separate date view into 'date' and 'day name'
+    //todo: FAB in right horizontal screen position hide by navigation bar
+    //todo: option to tick during float animation
 
     /** Logger tag. */
     private val _tag = "ClockFragment"
@@ -118,6 +120,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         get() = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.w(_tag, "Creating fragment")
+
         super.onCreate(savedInstanceState)
 
         amPmFormat = defaultDatetimeFormat("a")
@@ -150,14 +154,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             //todo: allow change in any mode
             (!isActive && (brightnessControl.processTouch(event)) || scaleControl.processTouch(event))
         }
-//        root.setOnLayoutCompleteListener {
-//            startFloatContent()
-//        }
 
         contentView = root.requireViewByIdCompat(R.id.content_container)
         contentView.setOnClickListener {
-//            animations.floatContentSomewhere(contentView)
-            animations.floatContentHome(contentView)
+            animations.floatContentSomewhere(contentView)
         }
 //        contentView.setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
 
@@ -215,7 +215,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 //            isActive = getBoolean("active")
             setActive(active = getBoolean("active"), animate = false)
         } ?: apply {
-            setActive(active = false, animate = false)
+            view.doOnLayoutComplete {
+                setActive(active = false, animate = true)
+            }
         }
     }
 
@@ -281,7 +283,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun onBeforeActivate() {
         stopAutoDeactivate()
         stopFloatContent()
-//        floatContentHome()
+        floatContentHome()
     }
 
     private fun onActivate() {
@@ -445,13 +447,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun scheduleTimerTask() {
         handler.postDelayed(timerTask, 1000)
 
-        Log.v(_tag, "Timer task scheduled")
+//        Log.v(_tag, "Timer task scheduled")
     }
 
     private fun onTimer() {
         val time = Date()
 
-        Log.v(_tag, "On timer: $time")
+//        Log.v(_tag, "On timer: $time")
 
         updateContentView(time)
         blinkTimeSeparator(time)

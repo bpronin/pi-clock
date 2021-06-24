@@ -96,6 +96,8 @@ internal class TickPlayer(private val context: Context) {
 
                 start()
             }
+        } else {
+            onEnd()
         }
     }
 
