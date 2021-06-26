@@ -2,6 +2,19 @@
 <resources>
     <string name="debug_sha" translatable="false">637a049c399e085c699e1938d09e2ccfdf08071a66f9ef848edb06fbb751ad02da700f91cd0a8113820a32e98ff04dbb0ec5526c41385548081637392bb37ffd</string>
 
+    <string-array name="time_format_values" translatable="false">
+        <item>HH:mm</item>
+        <item>H:m</item>
+        <item>hh:mm</item>
+        <item>h:m</item>
+    </string-array>
+
+    <string-array name="seconds_format_values" translatable="false">
+        <item>ss</item>
+        <item>s</item>
+        <item/>
+    </string-array>
+
     <string-array name="date_format_values" translatable="false">
         <item>system_default</item>
         <item>EEEE, MMMM dd</item>

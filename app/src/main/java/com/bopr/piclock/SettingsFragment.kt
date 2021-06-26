@@ -15,6 +15,7 @@ import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
+import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import com.bopr.piclock.Settings.Companion.SHARED_PREFERENCES_NAME
@@ -64,6 +65,7 @@ class SettingsFragment : CustomPreferenceFragment(),
             PREF_CONTENT_FLOAT_INTERVAL -> updateFloatIntervalPreferenceView()
             PREF_CONTENT_LAYOUT -> updateClockLayoutPreferenceView()
             PREF_CONTENT_SCALE -> updateScalePreferenceView()
+            PREF_SECONDS_FORMAT -> updateSecondsFormatPreferenceView()
             PREF_DATE_FORMAT -> updateDateFormatPreferenceView()
             PREF_INACTIVE_BRIGHTNESS -> updateMinBrightnessPreferenceView()
             PREF_TICK_SOUND -> updateTickSoundPreferenceView()
@@ -131,7 +133,7 @@ class SettingsFragment : CustomPreferenceFragment(),
             val pattern = patterns[i]
             entryNames[i] = when {
                 pattern.isEmpty() ->
-                    getString(R.string.do_not_show_date)
+                    getString(R.string.do_not_show)
                 pattern == SYSTEM_DEFAULT ->
                     getString(R.string.default_date_format, DEFAULT_DATE_FORMAT.format(date))
                 else ->
@@ -142,6 +144,13 @@ class SettingsFragment : CustomPreferenceFragment(),
         (requirePreference(PREF_DATE_FORMAT) as ListPreference).apply {
             entries = entryNames
             summary = entryNames[findIndexOfValue(settings.getString(PREF_DATE_FORMAT))]
+        }
+    }
+
+    private fun updateSecondsFormatPreferenceView() {
+        (requirePreference(PREF_SECONDS_FORMAT) as ListPreference).apply {
+            val value = settings.getString(PREF_SECONDS_FORMAT)
+            summary = entries[findIndexOfValue(value)]
         }
     }
 

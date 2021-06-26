@@ -16,11 +16,20 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
             putBooleanOptional(PREF_TIME_SEPARATOR_BLINKING, true)
             putBooleanOptional(PREF_24_HOURS_FORMAT, is24HourLocale())
-            putBooleanOptional(PREF_SECONDS_VISIBLE, true)
             putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
+            putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
             putBooleanOptional(PREF_TICK_SOUND_ALWAYS, false)
             putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)
             putFloatOptional(PREF_CONTENT_SCALE, 1f)
+
+            putStringOptional(PREF_SECONDS_FORMAT,
+                ensureResExists(R.array.seconds_format_values, "ss")
+            ) {
+                isResExists(
+                    R.array.seconds_format_values,
+                    getString(PREF_SECONDS_FORMAT)
+                )
+            }
 
             putStringOptional(
                 PREF_DATE_FORMAT,
@@ -96,10 +105,11 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_DATE_FORMAT = "date_format"
         const val PREF_FULLSCREEN_ENABLED = "fullscreen_enabled"
         const val PREF_INACTIVE_BRIGHTNESS = "min_brightness"
-        const val PREF_SECONDS_VISIBLE = "seconds_visible"
+        const val PREF_SECONDS_FORMAT = "seconds_format"
         const val PREF_TICK_SOUND = "tick_sound"
         const val PREF_TICK_SOUND_ALWAYS = "tick_sound_always"
         const val PREF_TIME_SEPARATOR_BLINKING = "time_separator_blinking"
+        const val PREF_TIME_SEPARATORS_VISIBLE = "time_separators_visible"
     }
 
 }

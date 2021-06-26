@@ -26,9 +26,10 @@ import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
-import com.bopr.piclock.Settings.Companion.PREF_SECONDS_VISIBLE
+import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
+import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.*
@@ -67,17 +68,17 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var infoView: TextView
 
     private lateinit var settings: Settings
-    private lateinit var amPmFormat: DateFormat
+    private lateinit var hoursFormat: DateFormat
     private lateinit var minutesFormat: DateFormat
     private lateinit var secondsFormat: DateFormat
-    private lateinit var hoursFormat: DateFormat
     private lateinit var dateFormat: DateFormat
     private lateinit var animations: Animations
-
     private lateinit var fullscreenControl: FullscreenSupport
+
     private lateinit var scaleControl: ScaleControl
     private lateinit var brightnessControl: BrightnessControl
 
+    private val amPmFormat = defaultDatetimeFormat("a")
     private val handler = Handler(Looper.getMainLooper())
 
     private var active = true
@@ -161,9 +162,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         super.onCreate(savedInstanceState)
 
-        amPmFormat = defaultDatetimeFormat("a")
-        minutesFormat = defaultDatetimeFormat("mm")
-        secondsFormat = defaultDatetimeFormat("ss")
         tickPlayer = TickPlayer(requireContext())
         animations = Animations()
 
@@ -196,7 +194,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 brightnessControl.processTouch(event) || scaleControl.processTouch(event)
             }
             setOnApplyWindowInsetsListener { _, insets ->
-                fixViewPosition(insets)
+                fixControlsPosition(insets)
                 onApplyWindowInsets(insets)
             }
         }
@@ -292,10 +290,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     createContentView()
                 PREF_24_HOURS_FORMAT ->
                     updateHoursView()
-                PREF_SECONDS_VISIBLE ->
+                PREF_SECONDS_FORMAT ->
                     updateSecondsView()
+                PREF_TIME_SEPARATORS_VISIBLE ->
+                    updateSeparatorViews()
                 PREF_TIME_SEPARATOR_BLINKING ->
-                    updateTimeSeparatorView()
+                    updateSeparatorViews()
                 PREF_DATE_FORMAT ->
                     updateDateView()
                 PREF_AUTO_DEACTIVATION_DELAY ->
@@ -364,9 +364,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
 
         updateHoursView()
+        updateMinutesView()
         updateSecondsView()
+        updateSeparatorViews()
         updateDateView()
-        updateTimeSeparatorView()
         updateScale()
         updateContentData(Date())
     }
@@ -375,10 +376,16 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         animations.apply {
             exchangeChildrenText(hoursView, hoursFormat.format(time))
             exchangeChildrenText(minutesView, minutesFormat.format(time))
-            exchangeChildrenText(secondsView, secondsFormat.format(time))
-            exchangeChildrenText(dateView, dateFormat.format(time))
+            if (secondsView.visibility == VISIBLE) {
+                exchangeChildrenText(secondsView, secondsFormat.format(time))
+            }
+            if (dateView.visibility == VISIBLE) {
+                exchangeChildrenText(dateView, dateFormat.format(time))
+            }
+            if (amPmMarkerView.visibility == VISIBLE) {
+                amPmMarkerView.text = amPmFormat.format(time)
+            }
         }
-        amPmMarkerView.text = amPmFormat.format(time)
     }
 
     private fun updateViewMode(animate: Boolean) {
@@ -421,13 +428,17 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
+    private fun updateMinutesView() {
+        minutesFormat = defaultDatetimeFormat("mm")
+    }
+
     private fun updateSecondsView() {
-        if (settings.getBoolean(PREF_SECONDS_VISIBLE)) {
+        val pattern = settings.getString(PREF_SECONDS_FORMAT)
+        if (pattern.isNotEmpty()) {
             secondsView.visibility = VISIBLE
-            secondsSeparator.visibility = VISIBLE
+            secondsFormat = defaultDatetimeFormat(pattern)
         } else {
             secondsView.visibility = GONE
-            secondsSeparator.visibility = GONE
         }
     }
 
@@ -447,18 +458,19 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun updateTimeSeparatorView() {
+    private fun updateSeparatorViews() {
+        if (settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE)) {
+            timeSeparator.visibility = VISIBLE
+            secondsSeparator.visibility =
+                (if (settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()) VISIBLE else INVISIBLE)
+        } else {
+            timeSeparator.visibility = INVISIBLE
+            secondsSeparator.visibility = INVISIBLE
+        }
+
         if (!settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
             timeSeparator.alpha = 1f
             secondsSeparator.alpha = 1f
-
-            timeSeparator.visibility = VISIBLE
-
-            if (settings.getBoolean(PREF_SECONDS_VISIBLE)) {
-                secondsSeparator.visibility = VISIBLE
-            } else {
-                secondsSeparator.visibility = INVISIBLE
-            }
         }
     }
 
@@ -571,7 +583,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         if (settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
             if (isOddSecond(time)) {
                 animations.blinkTimeSeparator(timeSeparator)
-                if (settings.getBoolean(PREF_SECONDS_VISIBLE)) {
+                if (settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()) {
                     animations.blinkSecondsSeparator(secondsSeparator)
                 }
             }
@@ -610,7 +622,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun fixViewPosition(insets: WindowInsets) {
+    private fun fixControlsPosition(insets: WindowInsets) {
         val systemInsets = getSystemInsetsCompat(insets)
         Log.d(_tag, "fixViewPosition: $systemInsets")
         settingsButton.apply {

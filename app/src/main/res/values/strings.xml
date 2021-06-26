@@ -3,15 +3,15 @@
     <string name="about_summary">%s-%s</string>
     <string name="about_version">Version</string>
     <string name="app_name">Pi Clock</string>
-    <string name="appearance">Appearance</string>
+    <string name="formats">Formats</string>
     <string name="deactivation">Deactivation</string>
     <string name="deactivation_never_summary">Disabled. Switch active mode manually</string>
     <string name="deactivation_summary">Switch to inactive mode after %s</string>
     <string name="blink_time_separator">Blink time separator</string>
     <string name="layout">Layout</string>
-    <string name="date_format">Date format</string>
+    <string name="date_format">Date</string>
     <string name="default_date_format">%s (system)</string>
-    <string name="do_not_show_date">Do not show date</string>
+    <string name="do_not_show">Do not show</string>
     <string name="fullscreen">Fullscreen</string>
     <string name="min_brightness">Brightness</string>
     <string name="min_brightness_summary">%d%%</string>
@@ -22,7 +22,6 @@
     <string name="seconds_separator">Seconds separator</string>
     <string name="settings">Settings</string>
     <string name="settings_button">Settings button</string>
-    <string name="show_seconds">Show seconds</string>
     <string name="sound">Sound</string>
     <string name="tick_sound">Tick sound</string>
     <string name="tick_sound_always">Tick always</string>
@@ -35,6 +34,8 @@
     <string name="floating_interval">Floating interval</string>
     <string name="min_brightness_info">Brightness %d%%</string>
     <string name="scale_info">Scale %.0f%%</string>
+    <string name="time_separators_visible">Show time separators</string>
+    <string name="seconds_format">Seconds</string>
 
     <string-array name="content_layout_names">
         <item>Digital default</item>
@@ -74,6 +75,19 @@
         <item>1 minute</item>
         <item>15 minutes</item>
         <item>Never</item>
+    </string-array>
+
+    <string-array name="time_format_names">
+        <item>24-hour with trailing zeroes (06:07)</item>
+        <item>24-hour without trailing zeroes (6:7)</item>
+        <item>12-hour with trailing zeroes (06:07am)</item>
+        <item>12-hour without trailing zeroes (6:7am)</item>
+    </string-array>
+
+    <string-array name="seconds_format_names">
+        <item>With trailing zeroes (05:05:05)</item>
+        <item>Without trailing zeroes (05:05:5)</item>
+        <item>Do not show</item>
     </string-array>
 
 </resources>
