@@ -48,6 +48,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     //todo: option to make custom floating trajectory
     //todo: smooth digits transition
     //todo: float animation duration should depend on distance
+    //todo: fit size when rotated
 
     /** Logger tag. */
     private val _tag = "ClockFragment"
@@ -190,12 +191,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     ACTION_UP -> startAutoDeactivate()
                 }
                 //todo: allow change in any mode
-                (!active && (brightnessControl.processTouch(event)) || scaleControl.processTouch(
-                    event
-                ))
+                brightnessControl.processTouch(event) || scaleControl.processTouch(event)
             }
             setOnApplyWindowInsetsListener { _, insets ->
-                fixFabPosition(insets)
+                fixViewPosition(insets)
                 onApplyWindowInsets(insets)
             }
         }
@@ -603,11 +602,16 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun fixFabPosition(insets: WindowInsets) {
+    private fun fixViewPosition(insets: WindowInsets) {
+        val systemInsets = getSystemInsetsCompat(insets)
+        Log.d(_tag, "fixViewPosition: $systemInsets")
         settingsButton.apply {
-            val systemInsets = getSystemInsetsCompat(insets)
             if (x < systemInsets.left) x += systemInsets.left
             if (y < systemInsets.top) y += systemInsets.top
+        }
+        infoView.apply {
+            if (x < systemInsets.left) x += systemInsets.left
+            if (y > systemInsets.bottom - height) y -= systemInsets.bottom - height
         }
     }
 
