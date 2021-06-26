@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -43,8 +42,12 @@ import kotlin.math.min
 class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     //todo: separate date view into 'date' and 'day name'
-    //todo: FAB in right horizontal screen position hide by navigation bar
     //todo: option to tick during float animation
+    //todo: option to set floating speed
+    //todo: option to select floating trajectory
+    //todo: option to make custom floating trajectory
+    //todo: smooth digits transition
+    //todo: float animation duration should depend on distance
 
     /** Logger tag. */
     private val _tag = "ClockFragment"
@@ -77,6 +80,21 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private var active = true
 
     private val timerTask = Runnable { onTimer() }
+    private var timerEnabled = false
+        set(value) {
+            if (field != value) {
+                field = value
+                if (field) {
+                    scheduleTimerTask()
+
+                    Log.d(_tag, "Timer started")
+                } else {
+                    handler.removeCallbacks(timerTask)
+
+                    Log.d(_tag, "Timer stopped")
+                }
+            }
+        }
 
     private var isAutoDeactivating = false
     private val autoDeactivateTask = Runnable { onAutoDeactivate() }
@@ -116,6 +134,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         get() = settings.getBoolean(PREF_TICK_SOUND_ALWAYS)
     private var isTickVolumeFading = false
 
+    private val floatContentTask = Runnable { onFloatContent() }
+    private val floatContentInterval
+        get() = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
     private var floatContentEnabled = false
         set(value) {
             if (field != value) {
@@ -131,9 +152,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 }
             }
         }
-    private val floatContentTask = Runnable { onFloatContent() }
-    private val floatContentInterval
-        get() = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.w(_tag, "Creating fragment")
@@ -159,23 +177,27 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         savedState: Bundle?
     ): View {
         val root = inflater.inflate(R.layout.fragment_main, container, false) as ViewGroup
-        root.doOnLayoutComplete {
-            doOnInitialLayoutComplete(savedState)
-        }
-        root.setOnClickListener {
-            setActive(!active, true)
-        }
-        root.setOnTouchListener { _, event ->
-            when (event.action) {
-                ACTION_DOWN -> stopAutoDeactivate()
-                ACTION_UP -> startAutoDeactivate()
+        root.apply {
+            doOnLayoutComplete {
+                doOnInitialLayoutComplete(savedState)
             }
-            //todo: allow change in any mode
-            (!active && (brightnessControl.processTouch(event)) || scaleControl.processTouch(event))
-        }
-        root.setOnApplyWindowInsetsListener { _, insets ->
-            fixFabPosition(insets)
-            root.onApplyWindowInsets(insets)
+            setOnClickListener {
+                setActive(!active, true)
+            }
+            setOnTouchListener { _, event ->
+                when (event.action) {
+                    ACTION_DOWN -> stopAutoDeactivate()
+                    ACTION_UP -> startAutoDeactivate()
+                }
+                //todo: allow change in any mode
+                (!active && (brightnessControl.processTouch(event)) || scaleControl.processTouch(
+                    event
+                ))
+            }
+            setOnApplyWindowInsetsListener { _, insets ->
+                fixFabPosition(insets)
+                onApplyWindowInsets(insets)
+            }
         }
 
         contentView = root.requireViewByIdCompat(R.id.content_container)
@@ -246,14 +268,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     override fun onResume() {
         super.onResume()
-        startTimer()
+        timerEnabled = true
         floatContentEnabled = true
         startAutoDeactivate()
     }
 
     override fun onPause() {
         stopAutoDeactivate()
-        stopTimer()
+        timerEnabled = false
         floatContentEnabled = false
         super.onPause()
     }
@@ -455,18 +477,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun startTimer() {
-        scheduleTimerTask()
-
-        Log.d(_tag, "Timer started")
-    }
-
-    private fun stopTimer() {
-        handler.removeCallbacks(timerTask)
-
-        Log.d(_tag, "Timer stopped")
-    }
-
     private fun scheduleTimerTask() {
         handler.postDelayed(timerTask, 1000)
 
@@ -594,14 +604,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun fixFabPosition(insets: WindowInsets) {
-        val left = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            insets.getInsets(WindowInsets.Type.navigationBars()).left
-        } else {
-            @Suppress("DEPRECATION")
-            insets.systemWindowInsetLeft
-        }
-        if (settingsButton.x < left) {
-            settingsButton.x += left
+        settingsButton.apply {
+            val systemInsets = getSystemInsetsCompat(insets)
+            if (x < systemInsets.left) x += systemInsets.left
+            if (y < systemInsets.top) y += systemInsets.top
         }
     }
 

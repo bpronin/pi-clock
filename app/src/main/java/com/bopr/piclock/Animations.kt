@@ -69,20 +69,9 @@ internal class Animations {
         }
     }
 
-    private val showInfoAnimator by lazy {
+    private val infoAnimator by lazy {
         ObjectAnimator().apply {
             setProperty(ALPHA)
-            setFloatValues(0f, 1f)
-            duration = 500
-            interpolator = AccelerateInterpolator()
-        }
-    }
-
-    private val hideInfoAnimator by lazy {
-        ObjectAnimator().apply {
-            setProperty(ALPHA)
-            setFloatValues(1f, 0f)
-            duration = 500
             interpolator = AccelerateInterpolator()
         }
     }
@@ -141,16 +130,20 @@ internal class Animations {
     }
 
     fun showInfo(view: View) {
-        showInfoAnimator.apply {
+        infoAnimator.apply {
             reset(view)
+            setFloatValues(0f, 1f)
+            duration = 500
             doOnStart { view.visibility = VISIBLE }
             start()
         }
     }
 
     fun hideInfo(view: View) {
-        hideInfoAnimator.apply {
+        infoAnimator.apply {
             reset(view)
+            setFloatValues(1f, 0f)
+            duration = 1000
             doOnEnd { view.visibility = GONE }
             start()
         }
@@ -225,7 +218,7 @@ internal class Animations {
             view,
             random().toFloat() * dw + dx,
             random().toFloat() * dh + dy,
-            1500L,
+            10000L,
             onEnd
         )
     }

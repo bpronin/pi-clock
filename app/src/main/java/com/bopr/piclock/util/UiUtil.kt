@@ -2,10 +2,13 @@ package com.bopr.piclock.util
 
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Rect
 import android.graphics.RectF
+import android.os.Build
 import android.text.InputType
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.view.WindowInsets
 import android.widget.EditText
 import androidx.annotation.IdRes
 import com.bopr.piclock.R
@@ -31,6 +34,26 @@ fun View.doOnLayoutComplete(action: () -> Unit) {
 fun <T : View?> View.requireViewByIdCompat(@IdRes id: Int): T {
     return findViewById(id)
         ?: throw IllegalArgumentException("ID does not reference a View inside this View")
+}
+
+@Suppress("DEPRECATION")
+fun getSystemInsetsCompat(insets: WindowInsets): Rect {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        val sbInsets = insets.getInsets(WindowInsets.Type.systemBars())
+        return Rect(
+            sbInsets.left,
+            sbInsets.top,
+            sbInsets.right,
+            sbInsets.bottom
+        )
+    } else {
+        return Rect(
+            insets.systemWindowInsetLeft,
+            insets.systemWindowInsetTop,
+            insets.systemWindowInsetRight,
+            insets.systemWindowInsetBottom
+        )
+    }
 }
 
 fun View.getRect(): RectF {

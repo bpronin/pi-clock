@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="fab_margin_top">28sp</dimen>
-    <dimen name="fab_margin_bottom">16sp</dimen>
-    <dimen name="fab_margin_left">16sp</dimen>
-    <dimen name="fab_margin_right">16sp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>
