@@ -47,11 +47,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     //todo: option to set floating speed
     //todo: option to select floating trajectory
     //todo: option to make custom floating trajectory
-    //todo: smooth digits transition
     //todo: float animation duration should depend on distance
-    //todo: fit size when rotated
-    //todo: option to hide separators
-    //todo: option for trailing zeroes
 
     /** Logger tag. */
     private val _tag = "ClockFragment"
@@ -290,8 +286,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     createContentView()
                 PREF_TIME_FORMAT ->
                     updateHoursMinutesViews()
-                PREF_SECONDS_FORMAT ->
+                PREF_SECONDS_FORMAT -> {
                     updateSecondsView()
+                    updateSeparatorViews()
+                }
                 PREF_TIME_SEPARATORS_VISIBLE ->
                     updateSeparatorViews()
                 PREF_TIME_SEPARATOR_BLINKING ->
@@ -317,12 +315,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
      */
     private fun doOnInitialLayoutComplete(savedState: Bundle?) {
         savedState?.apply {
+            fitContentIntoScreen()
             setActive(active = getBoolean("active"), animate = false)
         } ?: apply {
             setActive(active = false, animate = true)
         }
     }
-
 
     private fun onBeforeActivate() {
         stopAutoDeactivate()
@@ -340,7 +338,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun setActive(active: Boolean, animate: Boolean) {
         onBeforeActivate()
         this.active = active
-        updateViewMode(animate)
+        updateRootView(animate)
         onActivate()
 
         Log.d(_tag, "Active mode: $active")
@@ -373,13 +371,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun updateContentData(time: Date) {
         animations.apply {
-            exchangeChildrenText(hoursView, hoursFormat.format(time))
-            exchangeChildrenText(minutesView, minutesFormat.format(time))
+            changeText(hoursView, hoursFormat.format(time))
+            changeText(minutesView, minutesFormat.format(time))
             if (secondsView.visibility == VISIBLE) {
-                exchangeChildrenText(secondsView, secondsFormat.format(time))
+                changeText(secondsView, secondsFormat.format(time))
             }
             if (dateView.visibility == VISIBLE) {
-                exchangeChildrenText(dateView, dateFormat.format(time))
+                changeText(dateView, dateFormat.format(time))
             }
             if (amPmMarkerView.visibility == VISIBLE) {
                 amPmMarkerView.text = amPmFormat.format(time)
@@ -387,7 +385,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun updateViewMode(animate: Boolean) {
+    private fun updateRootView(animate: Boolean) {
         Log.d(_tag, "Updating controls. active: $active, animated: $animate")
 
         fullscreenControl.fullscreen = !active
@@ -425,6 +423,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         hoursFormat = defaultDatetimeFormat(hoursPattern)
         minutesFormat = defaultDatetimeFormat(minutesPattern)
         amPmMarkerView.visibility = if (hoursPattern.startsWith("h")) GONE else VISIBLE
+
+        fitContentIntoScreen()
     }
 
     private fun updateSecondsView() {
@@ -435,6 +435,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         } else {
             secondsView.visibility = GONE
         }
+
+        fitContentIntoScreen()
     }
 
     private fun updateDateView() {
@@ -451,6 +453,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         } else {
             dateView.visibility = VISIBLE
         }
+
+        fitContentIntoScreen()
     }
 
     private fun updateSeparatorViews() {
@@ -475,18 +479,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun updateScale() {
         currentScale = scale
-    }
-
-    private fun fitContentIntoScreen(onEnd: () -> Unit = {}) {
-        val pr = contentView.getParentView().getScaledRect()
-        val vr = contentView.getScaledRect()
-        if (pr.width() > vr.width() && pr.height() > vr.height()) {
-            onEnd()
-        } else {
-            Log.d(_tag, "Fitting content scale")
-
-            animations.fitScaleIntoParent(contentView) { onEnd() }
-        }
     }
 
     private fun scheduleTimerTask() {
@@ -576,7 +568,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun blinkTimeSeparator(time: Date) {
         if (settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
-            if (isOddSecond(time)) {
+            if (time.time / 1000 % 2 != 0L) {
                 animations.blinkTimeSeparator(timeSeparator)
                 if (settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()) {
                     animations.blinkSecondsSeparator(secondsSeparator)
@@ -584,8 +576,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
         }
     }
-
-    private fun isOddSecond(time: Date) = time.time / 1000 % 2 != 0L
 
     private fun updateTickSound() {
         tickPlayer.soundName = settings.getString(PREF_TICK_SOUND)
@@ -617,9 +607,21 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
+    private fun fitContentIntoScreen(onEnd: () -> Unit = {}) {
+        val pr = contentView.getParentView().getScaledRect()
+        val vr = contentView.getScaledRect()
+        if (pr.width() >= vr.width() && pr.height() >= vr.height()) {
+            onEnd()
+        } else {
+            Log.d(_tag, "Fitting content scale")
+
+            animations.fitScaleIntoParent(contentView) { onEnd() }
+        }
+    }
+
     private fun fixControlsPosition(insets: WindowInsets) {
         val systemInsets = getSystemInsetsCompat(insets)
-        Log.d(_tag, "fixViewPosition: $systemInsets")
+
         settingsButton.apply {
             if (x < systemInsets.left) x += systemInsets.left
             if (y < systemInsets.top) y += systemInsets.top

@@ -100,7 +100,7 @@ internal class Animations {
 
     private val fitScaleAnimator by lazy {
         AnimatorSet().apply {
-            duration = 500
+            duration = 700
             interpolator = DecelerateInterpolator()
         }
     }
@@ -337,7 +337,7 @@ internal class Animations {
 //        }
 //    }
 
-    fun exchangeChildrenText(container: ViewGroup, text: String) {
+    fun changeText(container: ViewGroup, text: String) {
         val v1 = container[1] as TextView
         val v0 = container[0] as TextView
 
