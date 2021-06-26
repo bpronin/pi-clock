@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,6 +15,7 @@ import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.*
+import android.view.WindowInsets
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
@@ -72,7 +74,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private var isActive = true
+    private var active = true
 
     private val timerTask = Runnable { onTimer() }
 
@@ -114,7 +116,21 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         get() = settings.getBoolean(PREF_TICK_SOUND_ALWAYS)
     private var isTickVolumeFading = false
 
-    private var isContentFloating = false
+    private var floatContentEnabled = false
+        set(value) {
+            if (field != value) {
+                field = value
+                if (field) {
+                    Log.d(_tag, "Floating enabled")
+
+                    scheduleFloatContent()
+                } else {
+                    Log.d(_tag, "Floating disabled")
+
+                    handler.removeCallbacks(floatContentTask)
+                }
+            }
+        }
     private val floatContentTask = Runnable { onFloatContent() }
     private val floatContentInterval
         get() = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
@@ -143,8 +159,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         savedState: Bundle?
     ): View {
         val root = inflater.inflate(R.layout.fragment_main, container, false) as ViewGroup
+        root.doOnLayoutComplete {
+            doOnInitialLayoutComplete(savedState)
+        }
         root.setOnClickListener {
-            setActive(!isActive, true)
+            setActive(!active, true)
         }
         root.setOnTouchListener { _, event ->
             when (event.action) {
@@ -152,7 +171,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 ACTION_UP -> startAutoDeactivate()
             }
             //todo: allow change in any mode
-            (!isActive && (brightnessControl.processTouch(event)) || scaleControl.processTouch(event))
+            (!active && (brightnessControl.processTouch(event)) || scaleControl.processTouch(event))
+        }
+        root.setOnApplyWindowInsetsListener { _, insets ->
+            fixFabPosition(insets)
+            root.onApplyWindowInsets(insets)
         }
 
         contentView = root.requireViewByIdCompat(R.id.content_container)
@@ -207,21 +230,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         return root
     }
 
-    override fun onViewCreated(view: View, savedState: Bundle?) {
-        savedState?.apply {
-//            isActive = getBoolean("active")
-            setActive(active = getBoolean("active"), animate = false)
-        } ?: apply {
-            view.doOnLayoutComplete {
-                setActive(active = false, animate = true)
-            }
-        }
-    }
-
     override fun onSaveInstanceState(savedState: Bundle) {
         super.onSaveInstanceState(savedState)
         savedState.apply {
-            putBoolean("active", isActive)
+            putBoolean("active", active)
         }
     }
 
@@ -235,14 +247,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onResume() {
         super.onResume()
         startTimer()
-        startFloatContent()
+        floatContentEnabled = true
         startAutoDeactivate()
     }
 
     override fun onPause() {
         stopAutoDeactivate()
         stopTimer()
-        stopFloatContent()
+        floatContentEnabled = false
         super.onPause()
     }
 
@@ -277,20 +289,34 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
+    /**
+     * Occurs when all views are properly resized according to layout.
+     */
+    private fun doOnInitialLayoutComplete(savedState: Bundle?) {
+        savedState?.apply {
+            setActive(active = getBoolean("active"), animate = false)
+        } ?: apply {
+            setActive(active = false, animate = true)
+        }
+    }
+
+
     private fun onBeforeActivate() {
         stopAutoDeactivate()
-        stopFloatContent()
-        floatContentHome()
+        floatContentEnabled = false
+        if (!active) {
+            floatContentHome()
+        }
     }
 
     private fun onActivate() {
         startAutoDeactivate()
-        startFloatContent()
+        floatContentEnabled = true
     }
 
     private fun setActive(active: Boolean, animate: Boolean) {
         onBeforeActivate()
-        isActive = active
+        this.active = active
         updateViewMode(animate)
         onActivate()
 
@@ -331,12 +357,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun updateViewMode(animate: Boolean) {
-        Log.d(_tag, "Updating controls. active: $isActive, animated: $animate")
+        Log.d(_tag, "Updating controls. active: $active, animated: $animate")
 
-        fullscreenControl.fullscreen = !isActive
+        fullscreenControl.fullscreen = !active
 
         if (animate) {
-            if (isActive) {
+            if (active) {
                 fadeInTickSoundVolume()
                 animations.showFab(settingsButton)
                 animations.fadeInContent(
@@ -354,7 +380,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 )
             }
         } else {
-            settingsButton.visibility = if (isActive) VISIBLE else GONE
+            settingsButton.visibility = if (active) VISIBLE else GONE
         }
 
         updateBrightness()
@@ -410,7 +436,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun updateBrightness() {
-        currentBrightness = if (isActive) maxBrightness else brightness
+        currentBrightness = if (active) maxBrightness else brightness
     }
 
     private fun updateScale() {
@@ -459,7 +485,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun startAutoDeactivate() {
-        if (isActive && !isAutoDeactivating) {
+        if (active && !isAutoDeactivating) {
             stopAutoDeactivate()
             val delay = settings.getLong(PREF_AUTO_DEACTIVATION_DELAY)
             if (delay > 0) {
@@ -481,7 +507,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun onAutoDeactivate() {
-        if (isActive && isAutoDeactivating) {
+        if (active && isAutoDeactivating) {
             isAutoDeactivating = false
             setActive(active = false, animate = true)
 
@@ -490,10 +516,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun updateFloatContentInterval() {
-        if (floatContentInterval >= 0) {
-            scheduleFloatContent()
-        } else {
-            stopFloatContent()
+        floatContentEnabled = floatContentInterval >= 0
+        if (!floatContentEnabled) {
             floatContentHome()
         }
     }
@@ -504,39 +528,17 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         animations.floatContentHome(contentView)
     }
 
-    private fun startFloatContent() {
-        if (!isActive && !isContentFloating && floatContentInterval >= 0L) {
-            isContentFloating = true
-            scheduleFloatContent()
-
-            Log.d(_tag, "Floating started")
-        }
-    }
-
-    private fun stopFloatContent() {
-        if (isContentFloating) {
-            isContentFloating = false
-            handler.removeCallbacks(floatContentTask)
-
-            Log.d(_tag, "Floating stopped")
-        }
-    }
-
     private fun scheduleFloatContent() {
-        if (isContentFloating) {
-            when {
-                floatContentInterval == 0L -> {
-                    handler.post(floatContentTask)
-                }
-                floatContentInterval > 0L -> {
-                    handler.postDelayed(floatContentTask, floatContentInterval)
-                }
-                else -> {
-                    Log.w(_tag, "Trying to set illegal floating delay: $floatContentInterval ms")
-                }
-            }
+        if (!active && floatContentEnabled && floatContentInterval >= 0L) {
+            if (floatContentInterval == 0L) {
+                handler.post(floatContentTask)
 
-            Log.d(_tag, "Floating task scheduled after: $floatContentInterval ms")
+                Log.d(_tag, "Floating task posted")
+            } else if (floatContentInterval > 0L) {
+                handler.postDelayed(floatContentTask, floatContentInterval)
+
+                Log.d(_tag, "Floating task scheduled after: $floatContentInterval ms")
+            }
         }
     }
 
@@ -566,8 +568,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun playTickSound() {
-        if (isTickAlways || isActive || isTickVolumeFading) {
-            Log.v(_tag, "Playing. active; $isActive, fading: $isTickVolumeFading")
+        if (isTickAlways || active || isTickVolumeFading) {
+            Log.v(_tag, "Playing. active; $active, fading: $isTickVolumeFading")
 
             tickPlayer.play()
         }
@@ -588,6 +590,18 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             tickPlayer.fadeOutVolume {
                 isTickVolumeFading = false
             }
+        }
+    }
+
+    private fun fixFabPosition(insets: WindowInsets) {
+        val left = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            insets.getInsets(WindowInsets.Type.navigationBars()).left
+        } else {
+            @Suppress("DEPRECATION")
+            insets.systemWindowInsetLeft
+        }
+        if (settingsButton.x < left) {
+            settingsButton.x += left
         }
     }
 
