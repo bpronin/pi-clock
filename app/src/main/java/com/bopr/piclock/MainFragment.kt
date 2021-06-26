@@ -55,10 +55,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private lateinit var contentView: ViewGroup
     private lateinit var settingsButton: FloatingActionButton
-    private lateinit var hoursView: TextView
-    private lateinit var minutesView: TextView
-    private lateinit var secondsView: TextView
-    private lateinit var dateView: TextView
+    private lateinit var hoursView: ViewGroup
+    private lateinit var minutesView: ViewGroup
+    private lateinit var secondsView: ViewGroup
+    private lateinit var dateView: ViewGroup
     private lateinit var timeSeparator: TextView
     private lateinit var secondsSeparator: TextView
     private lateinit var amPmMarkerView: TextView
@@ -366,15 +366,17 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateDateView()
         updateTimeSeparatorView()
         updateScale()
-        updateContentView(Date())
+        updateContentData(Date())
     }
 
-    private fun updateContentView(time: Date) {
-        hoursView.text = hoursFormat.format(time)
-        minutesView.text = minutesFormat.format(time)
-        secondsView.text = secondsFormat.format(time)
+    private fun updateContentData(time: Date) {
+        animations.apply {
+            exchangeChildrenText(hoursView, hoursFormat.format(time))
+            exchangeChildrenText(minutesView, minutesFormat.format(time))
+            exchangeChildrenText(secondsView, secondsFormat.format(time))
+            exchangeChildrenText(dateView, dateFormat.format(time))
+        }
         amPmMarkerView.text = amPmFormat.format(time)
-        dateView.text = dateFormat.format(time)
     }
 
     private fun updateViewMode(animate: Boolean) {
@@ -487,7 +489,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
 //        Log.v(_tag, "On timer: $time")
 
-        updateContentView(time)
+        updateContentData(time)
         blinkTimeSeparator(time)
         playTickSound()
         scheduleTimerTask()
@@ -563,7 +565,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun blinkTimeSeparator(time: Date) {
         if (settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
-            if (time.time / 1000 % 2 != 0L) { /* odd seconds only */
+            if (isOddSecond(time)) {
                 animations.blinkTimeSeparator(timeSeparator)
                 if (settings.getBoolean(PREF_SECONDS_VISIBLE)) {
                     animations.blinkSecondsSeparator(secondsSeparator)
@@ -571,6 +573,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
         }
     }
+
+    private fun isOddSecond(time: Date) = time.time / 1000 % 2 != 0L
 
     private fun updateTickSound() {
         tickPlayer.soundName = settings.getString(PREF_TICK_SOUND)

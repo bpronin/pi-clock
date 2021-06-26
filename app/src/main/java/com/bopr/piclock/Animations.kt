@@ -5,17 +5,21 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.view.View
 import android.view.View.*
+import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.widget.TextView
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
+import androidx.core.view.get
 import com.bopr.piclock.util.getParentView
 import com.bopr.piclock.util.getRect
 import com.bopr.piclock.util.getScaledRect
 import java.lang.Math.random
 import kotlin.math.min
+
 
 internal class Animations {
 
@@ -106,6 +110,7 @@ internal class Animations {
             interpolator = AccelerateDecelerateInterpolator()
         }
     }
+
 
     private fun Animator.reset(view: View) = apply {
         cancel()
@@ -253,6 +258,111 @@ internal class Animations {
             interpolator = AccelerateDecelerateInterpolator()
             doOnEnd(onEnd)
             start()
+        }
+    }
+
+//    private fun createVerticalSlideExchangeAnimator(front: TextView, back: TextView): Animator {
+//        return AnimatorSet().apply {
+//            playTogether(
+//                ObjectAnimator.ofFloat(front, TRANSLATION_Y, -front.height.toFloat(), 0f),
+//                ObjectAnimator.ofFloat(back, TRANSLATION_Y, 0f, back.height.toFloat())
+//            )
+//            duration = 700
+//            interpolator = AccelerateDecelerateInterpolator()
+//            doOnStart {
+//                back.visibility = VISIBLE
+//                front.visibility = VISIBLE
+//            }
+//            doOnEnd {
+//                back.visibility = GONE
+//            }
+//        }
+//    }
+
+//    private fun createFadeExchangeAnimator(front: TextView, back: TextView): Animator {
+//        return AnimatorSet().apply {
+//            playTogether(
+//                ObjectAnimator.ofFloat(front, ALPHA, 1f, 0f),
+//                ObjectAnimator.ofFloat(back, ALPHA, 0f, 0f)
+//            )
+//            duration = 700
+//            interpolator = AccelerateDecelerateInterpolator()
+//            doOnStart {
+//                back.visibility = VISIBLE
+//                front.visibility = VISIBLE
+//            }
+//            doOnEnd {
+//                back.visibility = GONE
+//            }
+//        }
+//    }
+
+/*
+    private fun createHorizontalSlideExchangeAnimator(front: TextView, back: TextView): Animator {
+        return AnimatorSet().apply {
+            playTogether(
+                ObjectAnimator.ofFloat(front, TRANSLATION_X, -front.width.toFloat(), 0f),
+                ObjectAnimator.ofFloat(back, TRANSLATION_X, 0f, back.width.toFloat())
+            )
+            duration = 700
+            interpolator = AccelerateDecelerateInterpolator()
+            doOnStart {
+                back.visibility = VISIBLE
+                front.visibility = VISIBLE
+            }
+            doOnEnd {
+                back.visibility = GONE
+            }
+        }
+    }
+*/
+
+//    fun exchangeChildrenText(container: ViewGroup, text: String) {
+//        val v1 = container[1] as TextView
+//        val v0 = container[0] as TextView
+//
+//        val front: TextView
+//        val back: TextView
+//        if (v0.visibility == VISIBLE) {
+//            front = v1
+//            back = v0
+//        } else {
+//            front = v0
+//            back = v1
+//        }
+//
+//        if (back.text != text) {
+//            front.text = text
+//            createVerticalSlideExchangeAnimator(front, back).start()
+//        }
+//    }
+
+    fun exchangeChildrenText(container: ViewGroup, text: String) {
+        val v1 = container[1] as TextView
+        val v0 = container[0] as TextView
+
+        val front: TextView
+        val back: TextView
+
+        if (v0.visibility == VISIBLE) {
+            front = v1
+            back = v0
+        } else {
+            front = v0
+            back = v1
+        }
+
+        container.layoutTransition.apply {
+//            disableTransitionType(LayoutTransition.APPEARING)
+            setDuration(500)
+//            setAnimator(LayoutTransition.APPEARING,  ObjectAnimator.ofFloat(null, TRANSLATION_Y, -front.height.toFloat(), 0f))
+//            setAnimator(LayoutTransition.DISAPPEARING, ObjectAnimator.ofFloat(null, TRANSLATION_Y, 0f, back.height.toFloat()))
+        }
+
+        if (back.text != text) {
+            front.text = text
+            front.visibility = VISIBLE
+            back.visibility = GONE
         }
     }
 

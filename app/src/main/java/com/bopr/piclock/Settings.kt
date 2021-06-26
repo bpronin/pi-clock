@@ -19,7 +19,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             putBooleanOptional(PREF_SECONDS_VISIBLE, true)
             putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
             putBooleanOptional(PREF_TICK_SOUND_ALWAYS, false)
-            putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 15 * 60 * 1000)
+            putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)
             putFloatOptional(PREF_CONTENT_SCALE, 1f)
 
             putStringOptional(

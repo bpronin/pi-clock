@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="?attr/contentBackgroundColor"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="?attr/contentBackgroundColor"
+    android:animateLayoutChanges="true"
     android:orientation="vertical">
 
     <LinearLayout
@@ -11,16 +12,36 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TextView
+        <FrameLayout
             android:id="@+id/hours_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/gruppo"
-            android:includeFontPadding="false"
-            android:text="00"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="96sp"
-            tools:ignore="HardcodedText" />
+            android:animateLayoutChanges="true">
+
+            <TextView
+                android:id="@+id/hours_view_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/gruppo"
+                android:includeFontPadding="false"
+                android:text="00"
+                android:textColor="?attr/contentTextColor"
+                android:textSize="96sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/hours_view_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/gruppo"
+                android:includeFontPadding="false"
+                android:text="00"
+                android:textColor="?attr/contentTextColor"
+                android:textSize="96sp"
+                android:visibility="gone"
+                tools:ignore="HardcodedText" />
+
+        </FrameLayout>
 
         <TextView
             android:id="@+id/time_separator"
@@ -34,16 +55,35 @@
             android:textSize="96sp"
             tools:ignore="HardcodedText" />
 
-        <TextView
+        <FrameLayout
             android:id="@+id/minutes_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/gruppo"
-            android:includeFontPadding="false"
-            android:text="00"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="96sp"
-            tools:ignore="HardcodedText" />
+            android:animateLayoutChanges="true">
+
+            <TextView
+                android:id="@+id/minutes_view_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/gruppo"
+                android:includeFontPadding="false"
+                android:text="00"
+                android:textColor="?attr/contentTextColor"
+                android:textSize="96sp"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/minutes_view_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/gruppo"
+                android:includeFontPadding="false"
+                android:text="00"
+                android:textColor="?attr/contentTextColor"
+                android:textSize="96sp"
+                android:visibility="gone"
+                tools:ignore="HardcodedText" />
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -56,19 +96,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="14sp"
                 android:fontFamily="@font/gruppo"
+                android:gravity="top|center_horizontal"
                 android:includeFontPadding="false"
                 android:text="AM"
                 android:textColor="?attr/contentTextColor"
-                android:gravity="top|center_horizontal"
                 android:textSize="34sp"
                 tools:ignore="HardcodedText" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="bottom"
                 android:layout_marginTop="-7sp"
                 android:layout_marginBottom="8sp"
+                android:gravity="bottom"
                 android:orientation="horizontal">
 
                 <TextView
@@ -76,41 +116,82 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="-4sp"
+                    android:layout_marginBottom="4sp"
                     android:fontFamily="@font/gruppo"
                     android:includeFontPadding="false"
                     android:text=":"
                     android:textAlignment="center"
                     android:textColor="?attr/contentTextColor"
                     android:textSize="48sp"
-                    android:layout_marginBottom="4sp"
                     tools:ignore="HardcodedText" />
 
-                <TextView
+                <FrameLayout
                     android:id="@+id/seconds_view"
-                    android:layout_width="58sp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/gruppo"
-                    android:includeFontPadding="false"
-                    android:text="00"
-                    android:textColor="?attr/contentTextColor"
-                    android:textSize="48sp"
-                    tools:ignore="HardcodedText" />
+                    android:animateLayoutChanges="true">
+
+                    <TextView
+                        android:id="@+id/seconds_view_1"
+                        android:layout_width="58sp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/gruppo"
+                        android:includeFontPadding="false"
+                        android:text="01"
+                        android:textColor="?attr/contentTextColor"
+                        android:textSize="48sp"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:id="@+id/seconds_view_2"
+                        android:layout_width="58sp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/gruppo"
+                        android:includeFontPadding="false"
+                        android:text="02"
+                        android:textColor="?attr/contentTextColor"
+                        android:textSize="48sp"
+                        android:visibility="gone"
+                        tools:ignore="HardcodedText" />
+
+                </FrameLayout>
+
             </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <TextView
+    <FrameLayout
         android:id="@+id/date_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/comfortaa"
-        android:includeFontPadding="false"
-        android:text="Someday, Month 00 "
-        android:textAlignment="center"
-        android:textColor="?attr/contentTextColor"
-        android:textSize="18sp"
-        tools:ignore="HardcodedText" />
+        android:animateLayoutChanges="true">
+
+        <TextView
+            android:id="@+id/date_view_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/comfortaa"
+            android:includeFontPadding="false"
+            android:text="Someday, Month 00 "
+            android:textAlignment="center"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="18sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/date_view_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/comfortaa"
+            android:includeFontPadding="false"
+            android:text="Someday, Month 00 "
+            android:textAlignment="center"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="18sp"
+            android:visibility="gone"
+            tools:ignore="HardcodedText" />
+    </FrameLayout>
 
 </LinearLayout>

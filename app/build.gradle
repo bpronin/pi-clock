@@ -14,8 +14,8 @@ android {
     buildToolsVersion '30.0.3'
 
     defaultConfig {
-        versionCode 7
-        versionName '1.0.5'
+        versionCode 8
+        versionName '1.1.0'
         targetSdkVersion 30
         minSdkVersion 21
         applicationId 'com.bopr.piclock'
