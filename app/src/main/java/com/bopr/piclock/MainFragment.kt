@@ -48,6 +48,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     //todo: option to select floating trajectory
     //todo: option to make custom floating trajectory
     //todo: float animation duration should depend on distance
+    //todo: если потрясти часы начинают болтаться внутри отскакивая от стенок
 
     /** Logger tag. */
     private val _tag = "ClockFragment"
