@@ -49,6 +49,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     //todo: smooth digits transition
     //todo: float animation duration should depend on distance
     //todo: fit size when rotated
+    //todo: option to hide separators
+    //todo: option for trailing zeroes
 
     /** Logger tag. */
     private val _tag = "ClockFragment"
@@ -431,15 +433,17 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun updateDateView() {
         val pattern = settings.getString(PREF_DATE_FORMAT)
-        if (pattern.isNotEmpty()) {
-            dateFormat = if (pattern == SYSTEM_DEFAULT) {
-                DEFAULT_DATE_FORMAT
-            } else {
-                defaultDatetimeFormat(pattern)
-            }
-            dateView.visibility = VISIBLE
+
+        dateFormat = if (pattern == SYSTEM_DEFAULT) {
+            DEFAULT_DATE_FORMAT
         } else {
+            defaultDatetimeFormat(pattern)
+        }
+
+        if (pattern.isEmpty()) {
             dateView.visibility = GONE
+        } else {
+            dateView.visibility = VISIBLE
         }
     }
 
