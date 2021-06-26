@@ -9,9 +9,11 @@
             android:key="content_layout"
             android:title="@string/layout" />
 
-        <SwitchPreference
-            android:key="24_hours_format"
-            android:title="@string/use_24_hours_format" />
+        <ListPreference
+            android:entries="@array/time_format_names"
+            android:entryValues="@array/time_format_values"
+            android:key="time_format"
+            android:title="@string/hours_minutes_format" />
 
         <ListPreference
             android:entries="@array/seconds_format_names"

@@ -26,7 +26,6 @@
     <string name="tick_sound">Tick sound</string>
     <string name="tick_sound_always">Tick always</string>
     <string name="time_separator">Time separator</string>
-    <string name="use_24_hours_format">24 hours format</string>
     <string name="user_interface">Interface</string>
     <string name="clock_moves_along_screen">Clock moves along the screen every %s</string>
     <string name="clock_always_moves_along_screen">Clock always moves along the screen</string>
@@ -36,6 +35,7 @@
     <string name="scale_info">Scale %.0f%%</string>
     <string name="time_separators_visible">Show time separators</string>
     <string name="seconds_format">Seconds</string>
+    <string name="hours_minutes_format">Hours and minutes</string>
 
     <string-array name="content_layout_names">
         <item>Digital default</item>
@@ -78,15 +78,15 @@
     </string-array>
 
     <string-array name="time_format_names">
-        <item>24-hour with trailing zeroes (06:07)</item>
-        <item>24-hour without trailing zeroes (6:7)</item>
-        <item>12-hour with trailing zeroes (06:07am)</item>
-        <item>12-hour without trailing zeroes (6:7am)</item>
+        <item>24-hour trailing zeroes</item>
+        <item>24-hour no trailing zeroes</item>
+        <item>12-hour trailing zeroes</item>
+        <item>12-hour no trailing zeroes</item>
     </string-array>
 
     <string-array name="seconds_format_names">
-        <item>With trailing zeroes (05:05:05)</item>
-        <item>Without trailing zeroes (05:05:5)</item>
+        <item>Trailing zeroes</item>
+        <item>No trailing zeroes</item>
         <item>Do not show</item>
     </string-array>
 

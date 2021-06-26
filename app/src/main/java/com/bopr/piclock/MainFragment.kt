@@ -18,7 +18,6 @@ import android.view.WindowInsets
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_DEACTIVATION_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
@@ -29,6 +28,7 @@ import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
+import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
@@ -288,8 +288,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     fullscreenControl.enabled = getBoolean(PREF_FULLSCREEN_ENABLED)
                 PREF_CONTENT_LAYOUT ->
                     createContentView()
-                PREF_24_HOURS_FORMAT ->
-                    updateHoursView()
+                PREF_TIME_FORMAT ->
+                    updateHoursMinutesViews()
                 PREF_SECONDS_FORMAT ->
                     updateSecondsView()
                 PREF_TIME_SEPARATORS_VISIBLE ->
@@ -363,8 +363,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             })
         }
 
-        updateHoursView()
-        updateMinutesView()
+        updateHoursMinutesViews()
         updateSecondsView()
         updateSeparatorViews()
         updateDateView()
@@ -418,18 +417,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateBrightness()
     }
 
-    private fun updateHoursView() {
-        if (settings.getBoolean(PREF_24_HOURS_FORMAT)) {
-            hoursFormat = defaultDatetimeFormat("HH")
-            amPmMarkerView.visibility = GONE
-        } else {
-            hoursFormat = defaultDatetimeFormat("h")
-            amPmMarkerView.visibility = VISIBLE
-        }
-    }
+    private fun updateHoursMinutesViews() {
+        val patterns = settings.getString(PREF_TIME_FORMAT).split(":")
+        val hoursPattern = patterns[0]
+        val minutesPattern = patterns[1]
 
-    private fun updateMinutesView() {
-        minutesFormat = defaultDatetimeFormat("mm")
+        hoursFormat = defaultDatetimeFormat(hoursPattern)
+        minutesFormat = defaultDatetimeFormat(minutesPattern)
+        amPmMarkerView.visibility = if (hoursPattern.startsWith("h")) GONE else VISIBLE
     }
 
     private fun updateSecondsView() {

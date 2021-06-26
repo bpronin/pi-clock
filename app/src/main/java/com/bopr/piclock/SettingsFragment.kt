@@ -7,7 +7,6 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_24_HOURS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ABOUT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_DEACTIVATION_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
@@ -18,6 +17,7 @@ import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
+import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
 import com.bopr.piclock.Settings.Companion.SHARED_PREFERENCES_NAME
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.*
@@ -60,7 +60,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            PREF_24_HOURS_FORMAT -> updateHourFormatPreferenceView()
+            PREF_TIME_FORMAT -> updateTimeFormatPreferenceView()
             PREF_AUTO_DEACTIVATION_DELAY -> updateAutoFullscreenPreferenceView()
             PREF_CONTENT_FLOAT_INTERVAL -> updateFloatIntervalPreferenceView()
             PREF_CONTENT_LAYOUT -> updateClockLayoutPreferenceView()
@@ -116,14 +116,6 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateHourFormatPreferenceView() {
-        requirePreference(PREF_24_HOURS_FORMAT).apply {
-            summary = defaultDatetimeFormat(
-                if (settings.getBoolean(PREF_24_HOURS_FORMAT)) "HH:mm" else "h:mm a",
-            ).format(Date())
-        }
-    }
-
     private fun updateDateFormatPreferenceView() {
         val patterns = getStringArray(R.array.date_format_values)
         val date = Date()
@@ -144,6 +136,13 @@ class SettingsFragment : CustomPreferenceFragment(),
         (requirePreference(PREF_DATE_FORMAT) as ListPreference).apply {
             entries = entryNames
             summary = entryNames[findIndexOfValue(settings.getString(PREF_DATE_FORMAT))]
+        }
+    }
+
+    private fun updateTimeFormatPreferenceView() {
+        (requirePreference(PREF_TIME_FORMAT) as ListPreference).apply {
+            val value = settings.getString(PREF_TIME_FORMAT)
+            summary = entries[findIndexOfValue(value)]
         }
     }
 

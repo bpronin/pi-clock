@@ -15,14 +15,24 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         context.apply {
             putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
             putBooleanOptional(PREF_TIME_SEPARATOR_BLINKING, true)
-            putBooleanOptional(PREF_24_HOURS_FORMAT, is24HourLocale())
             putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
             putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
             putBooleanOptional(PREF_TICK_SOUND_ALWAYS, false)
             putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)
             putFloatOptional(PREF_CONTENT_SCALE, 1f)
 
-            putStringOptional(PREF_SECONDS_FORMAT,
+            putStringOptional(
+                PREF_TIME_FORMAT,
+                ensureResExists(R.array.time_format_values, if (is24HourLocale()) "HH:mm" else "h:mm")
+            ) {
+                isResExists(
+                    R.array.time_format_values,
+                    getString(PREF_TIME_FORMAT)
+                )
+            }
+
+            putStringOptional(
+                PREF_SECONDS_FORMAT,
                 ensureResExists(R.array.seconds_format_values, "ss")
             ) {
                 isResExists(
@@ -97,7 +107,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
         const val PREF_ABOUT = "about_app" /* hidden, marker */
 
-        const val PREF_24_HOURS_FORMAT = "24_hours_format"
+        const val PREF_TIME_FORMAT = "time_format"
         const val PREF_AUTO_DEACTIVATION_DELAY = "auto_deactivation_delay"
         const val PREF_CONTENT_FLOAT_INTERVAL = "content_float_interval"
         const val PREF_CONTENT_LAYOUT = "content_layout"
