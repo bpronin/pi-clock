@@ -80,22 +80,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private var active = true
 
-    private val timerTask = Runnable { onTimer() }
-    private var timerEnabled = false
-        set(value) {
-            if (field != value) {
-                field = value
-                if (field) {
-                    scheduleTimerTask()
-
-                    Log.d(_tag, "Timer started")
-                } else {
-                    handler.removeCallbacks(timerTask)
-
-                    Log.d(_tag, "Timer stopped")
-                }
-            }
-        }
+    private val timer = LooperTimer(1000, this::onTimer)
 
     private var isAutoDeactivating = false
     private val autoDeactivateTask = Runnable { onAutoDeactivate() }
@@ -264,14 +249,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     override fun onResume() {
         super.onResume()
-        timerEnabled = true
+        timer.enabled = true
         floatContentEnabled = true
         startAutoDeactivate()
     }
 
     override fun onPause() {
         stopAutoDeactivate()
-        timerEnabled = false
+        timer.enabled = false
         floatContentEnabled = false
         super.onPause()
     }
@@ -482,12 +467,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         currentScale = scale
     }
 
-    private fun scheduleTimerTask() {
-        handler.postDelayed(timerTask, 1000)
-
-//        Log.v(_tag, "Timer task scheduled")
-    }
-
     private fun onTimer() {
         val time = Date()
 
@@ -496,7 +475,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateContentData(time)
         blinkTimeSeparator(time)
         playTickSound()
-        scheduleTimerTask()
     }
 
     private fun startAutoDeactivate() {
