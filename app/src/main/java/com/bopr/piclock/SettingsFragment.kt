@@ -28,7 +28,7 @@ import java.util.*
 class SettingsFragment : CustomPreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    lateinit var settings: Settings
+    private lateinit var settings: Settings
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +36,9 @@ class SettingsFragment : CustomPreferenceFragment(),
 
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
-        //todo: restore scroll position
         updateAboutPreferenceView()
+
+        //todo: restore scroll position
     }
 
     override fun onDestroy() {
@@ -51,7 +52,6 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     override fun onStart() {
         super.onStart()
-
         /* force update preference views at startup */
         for (key in settings.all.keys) {
             onSharedPreferenceChanged(settings, key)
@@ -60,16 +60,16 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            PREF_TIME_FORMAT -> updateTimeFormatPreferenceView()
             PREF_AUTO_DEACTIVATION_DELAY -> updateAutoFullscreenPreferenceView()
             PREF_CONTENT_FLOAT_INTERVAL -> updateFloatIntervalPreferenceView()
             PREF_CONTENT_LAYOUT -> updateClockLayoutPreferenceView()
             PREF_CONTENT_SCALE -> updateScalePreferenceView()
-            PREF_SECONDS_FORMAT -> updateSecondsFormatPreferenceView()
             PREF_DATE_FORMAT -> updateDateFormatPreferenceView()
             PREF_INACTIVE_BRIGHTNESS -> updateMinBrightnessPreferenceView()
+            PREF_SECONDS_FORMAT -> updateSecondsFormatPreferenceView()
             PREF_TICK_SOUND -> updateTickSoundPreferenceView()
             PREF_TICK_SOUND_ALWAYS -> updateTickAlwaysPreferenceView()
+            PREF_TIME_FORMAT -> updateTimeFormatPreferenceView()
         }
     }
 
@@ -142,14 +142,18 @@ class SettingsFragment : CustomPreferenceFragment(),
     private fun updateTimeFormatPreferenceView() {
         (requirePreference(PREF_TIME_FORMAT) as ListPreference).apply {
             val value = settings.getString(PREF_TIME_FORMAT)
-            summary = entries[findIndexOfValue(value)]
+            val ix = findIndexOfValue(value)
+            val hint = getStringArray(R.array.time_format_hints)[ix]
+            summary = "${entries[ix]}$hint"
         }
     }
 
     private fun updateSecondsFormatPreferenceView() {
         (requirePreference(PREF_SECONDS_FORMAT) as ListPreference).apply {
             val value = settings.getString(PREF_SECONDS_FORMAT)
-            summary = entries[findIndexOfValue(value)]
+            val ix = findIndexOfValue(value)
+            val hint = getStringArray(R.array.seconds_format_hints)[ix]
+            summary = "${entries[ix]}$hint"
         }
     }
 

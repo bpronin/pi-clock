@@ -86,10 +86,23 @@
         <item>12-hour no trailing zeroes</item>
     </string-array>
 
+    <string-array name="time_format_hints">
+        <item> (07:07)</item>
+        <item> (7:07)</item>
+        <item> (07:07 AM)</item>
+        <item> (7:07 AM)</item>
+    </string-array>
+
     <string-array name="seconds_format_names">
         <item>Trailing zeroes</item>
         <item>No trailing zeroes</item>
         <item>Do not show</item>
+    </string-array>
+
+    <string-array name="seconds_format_hints">
+        <item> (00:07)</item>
+        <item> (00:7)</item>
+        <item />
     </string-array>
 
 </resources>

@@ -11,7 +11,7 @@ class LooperTimer(
     private val onEnd: () -> Unit = {}
 ) {
 
-    private val _tag = "UiTimer"
+    private val _tag = "LooperTimer"
 
     private val handler = Handler(Looper.getMainLooper())
     private val task = Runnable(this::executeTask)
