@@ -76,9 +76,11 @@
             android:key="tick_sound"
             android:title="@string/tick_sound" />
 
-        <SwitchPreference
-            android:key="tick_sound_always"
-            android:title="@string/tick_sound_always" />
+        <MultiSelectListPreference
+            android:key="tick_sound_mode"
+            android:title="@string/tick_sound_mode"
+            android:entries="@array/tick_sound_mode_names"
+            android:entryValues="@array/tick_sound_mode_values"/>
 
     </PreferenceCategory>
 

@@ -121,9 +121,9 @@
                     android:text=":"
                     android:textAlignment="center"
                     android:layout_marginBottom="6sp"
-                    android:layout_marginRight="4sp"
+                    android:layout_marginEnd="4sp"
                     android:textColor="?attr/contentTextColor"
-                    android:textSize="48sp"
+                    android:textSize="42sp"
                     tools:ignore="HardcodedText" />
 
                 <FrameLayout
@@ -140,7 +140,7 @@
                         android:includeFontPadding="false"
                         android:text="01"
                         android:textColor="?attr/contentTextColor"
-                        android:textSize="48sp"
+                        android:textSize="42sp"
                         tools:ignore="HardcodedText" />
 
                     <TextView
@@ -151,7 +151,7 @@
                         android:includeFontPadding="false"
                         android:text="02"
                         android:textColor="?attr/contentTextColor"
-                        android:textSize="48sp"
+                        android:textSize="42sp"
                         android:visibility="gone"
                         tools:ignore="HardcodedText" />
 
@@ -173,7 +173,7 @@
             android:id="@+id/date_view_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/comfortaa"
+            android:fontFamily="@font/montserrat"
             android:includeFontPadding="false"
             android:text="Someday, Month 00 "
             android:textAlignment="center"
@@ -185,7 +185,7 @@
             android:id="@+id/date_view_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/comfortaa"
+            android:fontFamily="@font/montserrat"
             android:includeFontPadding="false"
             android:text="Someday, Month 00 "
             android:textAlignment="center"

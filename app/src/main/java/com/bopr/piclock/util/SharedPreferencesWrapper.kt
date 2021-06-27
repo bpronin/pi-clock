@@ -120,7 +120,7 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         }
 
         fun putStringList(key: String, value: Collection<String>?): EditorWrapper {
-            putString(key, value?.let { commaJoin(value) })
+            putString(key, value?.let { value.commaJoin() })
             return this
         }
 

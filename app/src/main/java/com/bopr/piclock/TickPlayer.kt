@@ -6,12 +6,15 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.util.Log
 import android.view.animation.LinearInterpolator
-import androidx.core.animation.doOnCancel
 import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
 import com.bopr.piclock.util.getResId
 
 @SuppressLint("ObjectAnimatorBinding")
 internal class TickPlayer(private val context: Context) {
+
+    var changingVolume: Boolean = false
+        private set
 
     /** Logger tag. */
     private val _tag = "TickPlayer"
@@ -41,11 +44,18 @@ internal class TickPlayer(private val context: Context) {
             val resId = context.getResId("raw", this)
             if (resId != 0) {
                 player = MediaPlayer.create(context, resId)
+                resetVolume()
                 prepared = true
 
                 Log.d(_tag, "Prepared")
             }
         }
+    }
+
+    private fun resetVolume() {
+        player.setVolume(1f, 1f)
+
+        Log.d(_tag, "Volume reset to max")
     }
 
     fun play() {
@@ -74,30 +84,28 @@ internal class TickPlayer(private val context: Context) {
         }
     }
 
-    fun fadeInVolume(onEnd: () -> Unit) {
-        fadeVolume(0f, 1f, 3000, onEnd)
-    }
-
-    fun fadeOutVolume(onEnd: () -> Unit) {
-        fadeVolume(1f, 0f, 5000, onEnd)
-    }
-
-    private fun fadeVolume(from: Float, to: Float, fadeDuration: Long, onEnd: () -> Unit) {
+    fun fadeVolume(changeDuration: Long, vararg volumeValues: Float) {
         if (prepared) {
             volumeAnimator.run {
-                cancel()
+                if (isRunning) end()
                 removeAllListeners()
 
                 target = player  /* player changes instance in prepare() ! */
-                duration = fadeDuration
-                setFloatValues(from, to)
-                doOnEnd { onEnd() }
-                doOnCancel { onEnd() }
+                duration = changeDuration
+                setFloatValues(*volumeValues)
+                doOnStart {
+                    Log.d(_tag, "Start changing volume $volumeValues")
+
+                    changingVolume = true
+                }
+                doOnEnd {
+                    Log.d(_tag, "End changing volume")
+
+                    changingVolume = false
+                }
 
                 start()
             }
-        } else {
-            onEnd()
         }
     }
 

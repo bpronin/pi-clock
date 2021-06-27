@@ -35,6 +35,16 @@ fun <T> Context.isResExists(arrayResId: Int, value: T): Boolean {
     return resources.getStringArray(arrayResId).contains(value.toString())
 }
 
+fun <V, C : Collection<V>> Context.isAllResExists(arrayResId: Int, values: C): Boolean {
+    val array = resources.getStringArray(arrayResId)
+    for (value in values) {
+        if (!array.contains(value.toString())) {
+            return false
+        }
+    }
+    return true
+}
+
 /**
  * Throws an exception if resource array does not contain value.
  */
@@ -43,6 +53,14 @@ fun <T> Context.ensureResExists(arrayResId: Int, value: T): T {
         throw Error("Resource array: ${getResName(arrayResId)} does not contain value: $value")
     } else {
         return value
+    }
+}
+
+fun <V, C : Collection<V>> Context.ensureAllResExists(arrayResId: Int, values: C): C {
+    if (!isAllResExists(arrayResId, values)) {
+        throw Error("Resource array: ${getResName(arrayResId)} does not contain values: $values")
+    } else {
+        return values
     }
 }
 

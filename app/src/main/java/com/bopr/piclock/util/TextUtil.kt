@@ -4,8 +4,8 @@ import java.security.MessageDigest
 
 private val COMMA_ESCAPED = Regex("(?<!/),")  /* matches commas not preceded by slash symbol */
 
-fun commaJoin(values: Collection<*>): String {
-    return values.joinToString(",") {
+fun Collection<*>.commaJoin(): String {
+    return joinToString(",") {
         it.toString().replace(",", "/,")
     }
 }

@@ -17,6 +17,7 @@ import android.view.ViewGroup.*
 import android.view.WindowInsets
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.bopr.piclock.Animations.Companion.FLOAT_CONTENT_DURATION
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_DEACTIVATION_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
@@ -27,11 +28,14 @@ import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
-import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
+import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_MODE
 import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
+import com.bopr.piclock.Settings.Companion.TICK_ACTIVE
+import com.bopr.piclock.Settings.Companion.TICK_FLOATING
+import com.bopr.piclock.Settings.Companion.TICK_INACTIVE
 import com.bopr.piclock.util.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
@@ -61,25 +65,24 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var minutesFormat: DateFormat
     private lateinit var secondsFormat: DateFormat
     private lateinit var dateFormat: DateFormat
-    private lateinit var animations: Animations
     private lateinit var fullscreenControl: FullscreenSupport
 
     private lateinit var scaleControl: ScaleControl
     private lateinit var brightnessControl: BrightnessControl
 
-    private val amPmFormat = defaultDatetimeFormat("a")
+    private val animations = Animations()
     private val handler = Handler(Looper.getMainLooper())
+    private val timer = HandlerTimer(handler, 1000, this::onTimer)
+    private val amPmFormat = defaultDatetimeFormat("a")
 
     private var active = true
 
-    private val timer = LooperTimer(1000, this::onTimer)
-
-    private var isAutoDeactivating = false
+    private var autoDeactivating = false
     private val autoDeactivateTask = Runnable { onAutoDeactivate() }
 
     private val minBrightness = 10
-    private val maxBrightness = 100
-    private var brightness: Int
+    private val activeBrightness = 100
+    private var inactiveBrightness: Int
         get() = settings.getInt(PREF_INACTIVE_BRIGHTNESS)
         set(value) {
             settings.update { putInt(PREF_INACTIVE_BRIGHTNESS, value) }
@@ -108,13 +111,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
 
     private lateinit var tickPlayer: TickPlayer
-    private val isTickAlways
-        get() = settings.getBoolean(PREF_TICK_SOUND_ALWAYS)
-    private var isTickVolumeFading = false
+    private val tickMode get() = settings.getStringSet(PREF_TICK_SOUND_MODE)
 
     private val floatContentTask = Runnable { onFloatContent() }
-    private val floatContentInterval
-        get() = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
     private var floatContentEnabled = false
         set(value) {
             if (field != value) {
@@ -130,19 +129,19 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 }
             }
         }
+    private var floating = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.w(_tag, "Creating fragment")
 
         super.onCreate(savedInstanceState)
 
-        tickPlayer = TickPlayer(requireContext())
-        animations = Animations()
-
-        settings = Settings(requireContext()).apply {
-            tickPlayer.soundName = getString(PREF_TICK_SOUND, null)
-        }
+        settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
+
+        tickPlayer = TickPlayer(requireContext()).apply {
+            soundName = settings.getString(PREF_TICK_SOUND)
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -211,12 +210,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 currentBrightness
             }
             onSlide = { delta ->
-                currentBrightness = max(minBrightness, min(delta, maxBrightness))
+                currentBrightness = max(minBrightness, min(delta, activeBrightness))
                 infoView.text = getString(R.string.min_brightness_info, currentBrightness)
             }
             onEndSlide = {
                 animations.hideInfo(infoView)
-                brightness = currentBrightness
+                inactiveBrightness = currentBrightness
             }
         }
 
@@ -369,21 +368,33 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         fullscreenControl.fullscreen = !active
 
         if (animate) {
+            val wantFadeTickVolume = !tickMode.containsAll(setOf(TICK_ACTIVE, TICK_INACTIVE))
+
             if (active) {
-                fadeInTickSoundVolume()
+                if (wantFadeTickVolume) {
+                    when {
+                        tickMode.contains(TICK_ACTIVE) -> tickPlayer.fadeVolume(4000, 0f, 1f)
+                        tickMode.contains(TICK_INACTIVE) -> tickPlayer.fadeVolume(4000, 1f, 0f)
+                    }
+                }
                 animations.showFab(settingsButton)
-                animations.fadeInContent(
+                animations.fadeBrightness(
                     contentView,
                     currentBrightness,
-                    maxBrightness
+                    activeBrightness
                 )
             } else {
-                fadeOutTickSoundVolume()
+                if (wantFadeTickVolume) {
+                    when {
+                        tickMode.contains(TICK_ACTIVE) -> tickPlayer.fadeVolume(4000, 1f, 0f)
+                        tickMode.contains(TICK_INACTIVE) -> tickPlayer.fadeVolume(4000, 0f, 1f)
+                    }
+                }
                 animations.hideFab(settingsButton)
-                animations.fadeOutContent(
+                animations.fadeBrightness(
                     contentView,
                     currentBrightness,
-                    brightness
+                    inactiveBrightness
                 )
             }
         } else {
@@ -452,7 +463,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun updateBrightness() {
-        currentBrightness = if (active) maxBrightness else brightness
+        currentBrightness = if (active) activeBrightness else inactiveBrightness
     }
 
     private fun updateScale() {
@@ -470,11 +481,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun startAutoDeactivate() {
-        if (active && !isAutoDeactivating) {
+        if (active && !autoDeactivating) {
             stopAutoDeactivate()
             val delay = settings.getLong(PREF_AUTO_DEACTIVATION_DELAY)
             if (delay > 0) {
-                isAutoDeactivating = true
+                autoDeactivating = true
                 handler.postDelayed(autoDeactivateTask, delay)
 
                 Log.d(_tag, "Auto-deactivate task scheduled at: $delay ms")
@@ -483,8 +494,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun stopAutoDeactivate() {
-        if (isAutoDeactivating) {
-            isAutoDeactivating = false
+        if (autoDeactivating) {
+            autoDeactivating = false
             handler.removeCallbacks(autoDeactivateTask)
 
             Log.d(_tag, "Auto-deactivation canceled")
@@ -492,8 +503,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun onAutoDeactivate() {
-        if (active && isAutoDeactivating) {
-            isAutoDeactivating = false
+        if (active && autoDeactivating) {
+            autoDeactivating = false
             setActive(active = false, animate = true)
 
             Log.d(_tag, "Auto-deactivation complete")
@@ -501,7 +512,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun updateFloatContentInterval() {
-        floatContentEnabled = floatContentInterval >= 0
+        floatContentEnabled = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL) >= 0
         if (!floatContentEnabled) {
             floatContentHome()
         }
@@ -514,15 +525,16 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun scheduleFloatContent() {
-        if (!active && floatContentEnabled && floatContentInterval >= 0L) {
-            if (floatContentInterval == 0L) {
+        val interval = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
+        if (!active && floatContentEnabled && interval >= 0) {
+            if (interval == 0L) {
                 handler.post(floatContentTask)
 
                 Log.d(_tag, "Floating task posted")
-            } else if (floatContentInterval > 0L) {
-                handler.postDelayed(floatContentTask, floatContentInterval)
+            } else if (interval > 0) {
+                handler.postDelayed(floatContentTask, interval)
 
-                Log.d(_tag, "Floating task scheduled after: $floatContentInterval ms")
+                Log.d(_tag, "Floating task scheduled after: $interval ms")
             }
         }
     }
@@ -530,9 +542,16 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun onFloatContent() {
         Log.d(_tag, "Start floating animation")
 
+        floating = true
+
+        if (tickMode.contains(TICK_FLOATING)) {
+            tickPlayer.fadeVolume(FLOAT_CONTENT_DURATION, 0f, 1f, 0f)
+        }
+
         animations.floatContentSomewhere(contentView) {
             Log.d(_tag, "End floating animation")
 
+            floating = false
             scheduleFloatContent()
         }
     }
@@ -553,28 +572,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun playTickSound() {
-        if (isTickAlways || active || isTickVolumeFading) {
-            Log.v(_tag, "Playing. active; $active, fading: $isTickVolumeFading")
-
+        if ((tickMode.contains(TICK_ACTIVE) && active)
+            || (tickMode.contains(TICK_INACTIVE) && !active)
+            || (tickMode.contains(TICK_FLOATING) && floating)
+            || tickPlayer.changingVolume
+        ) {
             tickPlayer.play()
-        }
-    }
-
-    private fun fadeInTickSoundVolume() {
-        if (!isTickAlways) {
-            isTickVolumeFading = true
-            tickPlayer.fadeInVolume {
-                isTickVolumeFading = false
-            }
-        }
-    }
-
-    private fun fadeOutTickSoundVolume() {
-        if (!isTickAlways) {
-            isTickVolumeFading = true
-            tickPlayer.fadeOutVolume {
-                isTickVolumeFading = false
-            }
         }
     }
 

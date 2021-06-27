@@ -57,15 +57,7 @@ internal class Animations {
         }
     }
 
-    private val fadeInContentAnimator by lazy {
-        ObjectAnimator().apply {
-            setProperty(ALPHA)
-            duration = 2000
-            interpolator = AccelerateInterpolator()
-        }
-    }
-
-    private val fadeOutContentAnimator by lazy {
+    private val brightnessAnimator by lazy {
         ObjectAnimator().apply {
             setProperty(ALPHA)
             duration = 2000
@@ -113,7 +105,9 @@ internal class Animations {
 
 
     private fun Animator.reset(view: View) = apply {
-        cancel()
+        if (isRunning) {
+            end()
+        }
         removeAllListeners() /*important. doOnStart(), doOnEnd() add! the listeners */
         setTarget(view)
     }
@@ -154,27 +148,13 @@ internal class Animations {
         }
     }
 
-    fun fadeInContent(
+    fun fadeBrightness(
         view: View,
         fromBrightness: Int,
         toBrightness: Int,
         onEnd: () -> Unit = {}
     ) {
-        fadeInContentAnimator.apply {
-            reset(view)
-            setFloatValues(fromBrightness / 100f, toBrightness / 100f)
-            doOnEnd { onEnd() }
-            start()
-        }
-    }
-
-    fun fadeOutContent(
-        view: View,
-        fromBrightness: Int,
-        toBrightness: Int,
-        onEnd: () -> Unit = {}
-    ) {
-        fadeOutContentAnimator.apply {
+        brightnessAnimator.apply {
             reset(view)
             setFloatValues(fromBrightness / 100f, toBrightness / 100f)
             doOnEnd { onEnd() }
@@ -223,7 +203,7 @@ internal class Animations {
             view,
             random().toFloat() * dw + dx,
             random().toFloat() * dh + dy,
-            10000L,
+            FLOAT_CONTENT_DURATION,
             onEnd
         )
     }
@@ -364,6 +344,11 @@ internal class Animations {
             front.visibility = VISIBLE
             back.visibility = GONE
         }
+    }
+
+    companion object {
+
+        const val FLOAT_CONTENT_DURATION = 10000L
     }
 
 }

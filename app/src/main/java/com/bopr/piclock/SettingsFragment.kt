@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.preference.ListPreference
+import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
@@ -16,7 +17,7 @@ import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
-import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
+import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_MODE
 import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
@@ -70,7 +71,7 @@ class SettingsFragment : CustomPreferenceFragment(),
             PREF_INACTIVE_BRIGHTNESS -> updateMinBrightnessPreferenceView()
             PREF_SECONDS_FORMAT -> updateSecondsFormatPreferenceView()
             PREF_TICK_SOUND -> updateTickSoundPreferenceView()
-            PREF_TICK_SOUND_ALWAYS -> updateTickAlwaysPreferenceView()
+            PREF_TICK_SOUND_MODE -> updateTickModePreferenceView()
             PREF_TIME_FORMAT -> updateTimeFormatPreferenceView()
             PREF_TIME_SEPARATORS_VISIBLE -> updateSeparatorsPreferenceViews()
         }
@@ -112,15 +113,16 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateTickAlwaysPreferenceView() {
-        requirePreference(PREF_TICK_SOUND_ALWAYS).apply {
-            summary = getString(
-                if (settings.getBoolean(PREF_TICK_SOUND_ALWAYS)) {
-                    R.string.play_always
-                } else {
-                    R.string.play_only_when_tapped
-                }
-            )
+    private fun updateTickModePreferenceView() {
+        (requirePreference(PREF_TICK_SOUND_MODE) as MultiSelectListPreference).apply {
+            val titles = mutableListOf<String>()
+            for (item in settings.getStringSet(PREF_TICK_SOUND_MODE)) {
+                titles.add(entries[entryValues.indexOf(item)].toString())
+            }
+            summary = if (titles.isNotEmpty())
+                titles.sorted().joinToString(", ")
+            else
+                getString(R.string.never_tick)
         }
     }
 

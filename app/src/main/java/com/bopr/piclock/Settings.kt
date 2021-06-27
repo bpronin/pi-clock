@@ -17,13 +17,25 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             putBooleanOptional(PREF_TIME_SEPARATORS_BLINKING, true)
             putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
             putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
-            putBooleanOptional(PREF_TICK_SOUND_ALWAYS, false)
             putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)
             putFloatOptional(PREF_CONTENT_SCALE, 1f)
 
+            putStringSetOptional(
+                PREF_TICK_SOUND_MODE,
+                ensureAllResExists(R.array.tick_sound_mode_values, setOf(TICK_ACTIVE))
+            ) {
+                isAllResExists(
+                    R.array.tick_sound_mode_values,
+                    getStringSet(PREF_TICK_SOUND_MODE)
+                )
+            }
+
             putStringOptional(
                 PREF_TIME_FORMAT,
-                ensureResExists(R.array.time_format_values, if (is24HourLocale()) "HH:mm" else "h:mm")
+                ensureResExists(
+                    R.array.time_format_values,
+                    if (is24HourLocale()) "HH:mm" else "h:mm"
+                )
             ) {
                 isResExists(
                     R.array.time_format_values,
@@ -102,6 +114,10 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
         const val SYSTEM_DEFAULT = "system_default"
 
+        const val TICK_ACTIVE = "active"
+        const val TICK_INACTIVE = "inactive"
+        const val TICK_FLOATING = "floating"
+
         val DEFAULT_DATE_FORMAT: DateFormat = DateFormat.getDateInstance(FULL)
 
         const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
@@ -117,7 +133,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_INACTIVE_BRIGHTNESS = "min_brightness"
         const val PREF_SECONDS_FORMAT = "seconds_format"
         const val PREF_TICK_SOUND = "tick_sound"
-        const val PREF_TICK_SOUND_ALWAYS = "tick_sound_always"
+        const val PREF_TICK_SOUND_MODE = "tick_sound_mode"
         const val PREF_TIME_SEPARATORS_BLINKING = "time_separators_blinking"
         const val PREF_TIME_SEPARATORS_VISIBLE = "time_separators_visible"
     }

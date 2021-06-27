@@ -1,10 +1,10 @@
 package com.bopr.piclock.util
 
 import android.os.Handler
-import android.os.Looper
 import android.util.Log
 
-class LooperTimer(
+class HandlerTimer(
+    private val handler: Handler,
     private val interval: Long,
     private val onTimer: () -> Unit,
     private val onStart: () -> Unit = {},
@@ -13,7 +13,6 @@ class LooperTimer(
 
     private val _tag = "LooperTimer"
 
-    private val handler = Handler(Looper.getMainLooper())
     private val task = Runnable(this::executeTask)
 
     var enabled = false
