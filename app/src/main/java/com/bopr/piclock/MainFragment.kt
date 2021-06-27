@@ -29,8 +29,8 @@ import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
-import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATOR_BLINKING
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -41,14 +41,6 @@ import kotlin.math.min
 
 
 class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
-
-    //todo: separate date view into 'date' and 'day name'
-    //todo: option to tick during float animation
-    //todo: option to set floating speed
-    //todo: option to select floating trajectory
-    //todo: option to make custom floating trajectory
-    //todo: float animation duration should depend on distance
-    //todo: если потрясти часы начинают болтаться внутри отскакивая от стенок
 
     /** Logger tag. */
     private val _tag = "ClockFragment"
@@ -278,7 +270,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 }
                 PREF_TIME_SEPARATORS_VISIBLE ->
                     updateSeparatorViews()
-                PREF_TIME_SEPARATOR_BLINKING ->
+                PREF_TIME_SEPARATORS_BLINKING ->
                     updateSeparatorViews()
                 PREF_DATE_FORMAT ->
                     updateDateView()
@@ -448,14 +440,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             timeSeparator.visibility = VISIBLE
             secondsSeparator.visibility =
                 (if (settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()) VISIBLE else INVISIBLE)
+
+            if (!settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING)) {
+                timeSeparator.alpha = 1f
+                secondsSeparator.alpha = 1f
+            }
         } else {
             timeSeparator.visibility = INVISIBLE
             secondsSeparator.visibility = INVISIBLE
-        }
-
-        if (!settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
-            timeSeparator.alpha = 1f
-            secondsSeparator.alpha = 1f
         }
     }
 
@@ -546,7 +538,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun blinkTimeSeparator(time: Date) {
-        if (settings.getBoolean(PREF_TIME_SEPARATOR_BLINKING)) {
+        if (settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING)) {
             if (time.time / 1000 % 2 != 0L) {
                 animations.blinkTimeSeparator(timeSeparator)
                 if (settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()) {

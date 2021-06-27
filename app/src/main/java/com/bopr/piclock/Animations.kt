@@ -236,7 +236,7 @@ internal class Animations {
             view,
             (pr.width() - vr.width()) / 2,
             (pr.height() - vr.height()) / 2,
-            1000L,
+            2000L,
             onEnd
         )
     }

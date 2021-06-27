@@ -33,7 +33,7 @@
     <string name="floating_interval">Floating interval</string>
     <string name="min_brightness_info">Brightness %d%%</string>
     <string name="scale_info">Scale %.0f%%</string>
-    <string name="time_separators_visible">Show time separators</string>
+    <string name="show_time_separators">Show time separators</string>
     <string name="seconds_format">Seconds</string>
     <string name="hours_minutes_format">Hours and minutes</string>
 

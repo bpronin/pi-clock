@@ -43,12 +43,12 @@
             android:title="@string/min_brightness" />
 
         <SwitchPreference
-            android:key="time_separator_blinking"
-            android:title="@string/blink_time_separator" />
+            android:key="time_separators_visible"
+            android:title="@string/show_time_separators" />
 
         <SwitchPreference
-            android:key="time_separator_visible"
-            android:title="@string/time_separators_visible" />
+            android:key="time_separators_blinking"
+            android:title="@string/blink_time_separator" />
 
         <com.bopr.piclock.util.ui.preference.LongListPreference
             android:entries="@array/content_float_interval_names"

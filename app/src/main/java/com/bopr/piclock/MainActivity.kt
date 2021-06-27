@@ -12,6 +12,16 @@ import com.bopr.piclock.util.ui.BaseActivity
  */
 class MainActivity : BaseActivity(MainFragment::class.java) {
 
+    //todo: separate date view into 'date' and 'day name'
+    //todo: option to tick during float animation
+    //todo: option to set floating speed
+    //todo: option to select floating trajectory
+    //todo: option to make custom floating trajectory
+    //todo: float animation duration should depend on distance
+    //todo: если потрясти часы начинают болтаться внутри отскакивая от стенок и тикать
+    //todo: brightness controlled by external light
+    //todo: start on power plug in
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Settings(this).validate()

@@ -18,6 +18,8 @@ import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_ALWAYS
 import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
+import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SHARED_PREFERENCES_NAME
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.*
@@ -70,7 +72,13 @@ class SettingsFragment : CustomPreferenceFragment(),
             PREF_TICK_SOUND -> updateTickSoundPreferenceView()
             PREF_TICK_SOUND_ALWAYS -> updateTickAlwaysPreferenceView()
             PREF_TIME_FORMAT -> updateTimeFormatPreferenceView()
+            PREF_TIME_SEPARATORS_VISIBLE -> updateSeparatorsPreferenceViews()
         }
+    }
+
+    private fun updateSeparatorsPreferenceViews() {
+        requirePreference(PREF_TIME_SEPARATORS_BLINKING).isEnabled =
+            settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE)
     }
 
     private fun updateFloatIntervalPreferenceView() {
@@ -144,7 +152,7 @@ class SettingsFragment : CustomPreferenceFragment(),
             val value = settings.getString(PREF_TIME_FORMAT)
             val ix = findIndexOfValue(value)
             val hint = getStringArray(R.array.time_format_hints)[ix]
-            summary = "${entries[ix]}$hint"
+            summary = "${entries[ix]} $hint"
         }
     }
 
@@ -153,7 +161,7 @@ class SettingsFragment : CustomPreferenceFragment(),
             val value = settings.getString(PREF_SECONDS_FORMAT)
             val ix = findIndexOfValue(value)
             val hint = getStringArray(R.array.seconds_format_hints)[ix]
-            summary = "${entries[ix]}$hint"
+            summary = "${entries[ix]} $hint"
         }
     }
 
