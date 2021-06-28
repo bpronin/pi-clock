@@ -282,24 +282,39 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun onBeforeActivate() {
+    private fun beforeActivate() {
         stopAutoDeactivate()
         floatContentEnabled = false
         if (!active) {
             floatContentHome()
         }
+/*      todo: floating
+        if (!active) {
+            floatContentEnabled = false
+            floatContentHome()
+        } else {
+            stopAutoDeactivate()
+        }
+*/
     }
 
-    private fun onActivate() {
+    private fun afterActivate() {
         startAutoDeactivate()
         floatContentEnabled = true
+/*      todo: floating
+        if (!active) {
+            floatContentEnabled = true
+        } else {
+            startAutoDeactivate()
+        }
+*/
     }
 
     private fun setActive(active: Boolean, animate: Boolean) {
-        onBeforeActivate()
+        beforeActivate()
         this.active = active
         updateRootView(animate)
-        onActivate()
+        afterActivate()
 
         Log.d(_tag, "Active mode: $active")
     }
@@ -516,6 +531,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun scheduleFloatContent() {
+        Log.d(_tag, "Scheduling floating")
+
         val interval = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
         if (!active && floatContentEnabled && interval >= 0) {
             if (interval == 0L) {
