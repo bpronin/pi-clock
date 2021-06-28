@@ -41,7 +41,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
 import java.util.*
 
-
+/**
+ * Main application fragment.
+ */
 class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     /** Logger tag. */
@@ -363,7 +365,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 animations.fadeBrightness(
                     contentView,
                     currentBrightness,
-                    brightnessControl.maxBrightness
+                    BrightnessControl.MAX_BRIGHTNESS
                 )
             } else {
                 if (wantFadeTickVolume) {
@@ -450,7 +452,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun updateBrightness() {
         currentBrightness = if (active)
-            brightnessControl.maxBrightness
+            BrightnessControl.MAX_BRIGHTNESS
         else
             inactiveBrightness
     }

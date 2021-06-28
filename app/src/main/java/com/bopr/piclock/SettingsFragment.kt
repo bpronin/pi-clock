@@ -7,6 +7,7 @@ import androidx.preference.ListPreference
 import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ABOUT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_DEACTIVATION_DELAY
@@ -21,13 +22,16 @@ import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_MODE
 import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
+import com.bopr.piclock.Settings.Companion.PREF_TOP_SETTING
 import com.bopr.piclock.Settings.Companion.SHARED_PREFERENCES_NAME
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.*
 import com.bopr.piclock.util.ui.preference.CustomPreferenceFragment
 import java.util.*
 
-
+/**
+ * Application settings fragment.
+ */
 class SettingsFragment : CustomPreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -39,9 +43,8 @@ class SettingsFragment : CustomPreferenceFragment(),
 
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
-        updateAboutPreferenceView()
 
-        //todo: restore scroll position
+        updateAboutPreferenceView()
     }
 
     override fun onDestroy() {
@@ -55,10 +58,23 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     override fun onStart() {
         super.onStart()
+
         /* force update preference views at startup */
         for (key in settings.all.keys) {
             onSharedPreferenceChanged(settings, key)
         }
+
+        /* restore last scroll position */
+        listView.scrollToPosition(settings.getInt(PREF_TOP_SETTING, 0))
+    }
+
+    override fun onStop() {
+        /* save last scroll position */
+        (listView.layoutManager as LinearLayoutManager).apply {
+            settings.update { putInt(PREF_TOP_SETTING, findFirstCompletelyVisibleItemPosition()) }
+        }
+
+        super.onStop()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {

@@ -11,7 +11,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 ) {
 
     fun validate() = update {
-        /* do not clear settings here  */
+        /* NOTE: clearing settings here will have no effect */
         context.apply {
             putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
             putBooleanOptional(PREF_TIME_SEPARATORS_BLINKING, true)
@@ -24,10 +24,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
                 PREF_TICK_SOUND_MODE,
                 ensureAllResExists(R.array.tick_sound_mode_values, setOf(TICK_ACTIVE))
             ) {
-                isAllResExists(
-                    R.array.tick_sound_mode_values,
-                    getStringSet(PREF_TICK_SOUND_MODE)
-                )
+                isAllResExists(R.array.tick_sound_mode_values, getStringSet(PREF_TICK_SOUND_MODE))
             }
 
             putStringOptional(
@@ -37,30 +34,21 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
                     if (is24HourLocale()) "HH:mm" else "h:mm"
                 )
             ) {
-                isResExists(
-                    R.array.time_format_values,
-                    getString(PREF_TIME_FORMAT)
-                )
+                isResExists(R.array.time_format_values, getString(PREF_TIME_FORMAT))
             }
 
             putStringOptional(
                 PREF_SECONDS_FORMAT,
                 ensureResExists(R.array.seconds_format_values, "ss")
             ) {
-                isResExists(
-                    R.array.seconds_format_values,
-                    getString(PREF_SECONDS_FORMAT)
-                )
+                isResExists(R.array.seconds_format_values, getString(PREF_SECONDS_FORMAT))
             }
 
             putStringOptional(
                 PREF_DATE_FORMAT,
                 ensureResExists(R.array.date_format_values, SYSTEM_DEFAULT)
             ) {
-                isResExists(
-                    R.array.date_format_values,
-                    getString(PREF_DATE_FORMAT)
-                )
+                isResExists(R.array.date_format_values, getString(PREF_DATE_FORMAT))
             }
 
             putLongOptional(
@@ -86,23 +74,14 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
                     getResName(R.layout.view_digital_default)
                 )
             ) {
-                isResExists(
-                    R.array.content_layout_values,
-                    getString(PREF_CONTENT_LAYOUT)
-                )
+                isResExists(R.array.content_layout_values, getString(PREF_CONTENT_LAYOUT))
             }
 
             putStringOptional(
                 PREF_TICK_SOUND,
-                ensureResExists(
-                    R.array.tick_sound_values,
-                    getResName(R.raw.alarm_clock)
-                )
+                ensureResExists(R.array.tick_sound_values, getResName(R.raw.alarm_clock))
             ) {
-                isResExists(
-                    R.array.tick_sound_values,
-                    getString(PREF_TICK_SOUND)
-                )
+                isResExists(R.array.tick_sound_values, getString(PREF_TICK_SOUND))
             }
         }
     }
@@ -110,18 +89,18 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
     companion object {
 
         private const val SETTINGS_VERSION = 1
+
         const val SHARED_PREFERENCES_NAME = "com.bopr.piclock_preferences"
-
         const val SYSTEM_DEFAULT = "system_default"
-
         const val TICK_ACTIVE = "active"
         const val TICK_INACTIVE = "inactive"
         const val TICK_FLOATING = "floating"
 
         val DEFAULT_DATE_FORMAT: DateFormat = DateFormat.getDateInstance(FULL)
 
-        const val PREF_SETTINGS_VERSION = "settings_version" /* hidden */
-        const val PREF_ABOUT = "about_app" /* hidden, marker */
+        const val PREF_SETTINGS_VERSION = "settings_version" /* internal */
+        const val PREF_TOP_SETTING = "top_setting" /* internal */
+        const val PREF_ABOUT = "about_app" /* internal, marker */
 
         const val PREF_TIME_FORMAT = "time_format"
         const val PREF_AUTO_DEACTIVATION_DELAY = "auto_deactivation_delay"

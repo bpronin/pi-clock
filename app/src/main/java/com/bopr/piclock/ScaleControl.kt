@@ -19,8 +19,7 @@ internal class ScaleControl(context: Context) : ScaleGestureDetector.OnScaleGest
     lateinit var onPinchEnd: () -> Unit
 
     private val detector = ScaleGestureDetector(context, this)
-    private val minFactor = context.getStringArray(R.array.scale_values).first().toFloat()
-    private val maxFactor = 100f
+    private val minScaleFactor = context.getStringArray(R.array.scale_values).first().toFloat()
     private var factor = 0f
     private var pinched = false
 
@@ -32,7 +31,7 @@ internal class ScaleControl(context: Context) : ScaleGestureDetector.OnScaleGest
 
     override fun onScale(detector: ScaleGestureDetector): Boolean {
         factor *= detector.scaleFactor
-        factor = max(minFactor, min(factor, maxFactor))
+        factor = max(minScaleFactor, min(factor, MAX_SCALE_FACTOR))
         onPinch(factor)
         return true
     }
@@ -56,6 +55,11 @@ internal class ScaleControl(context: Context) : ScaleGestureDetector.OnScaleGest
         }
 
         return false
+    }
+
+    companion object {
+
+        private const val MAX_SCALE_FACTOR = 100f
     }
 
 }

@@ -17,9 +17,7 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
     lateinit var onStartSlide: () -> Int
     lateinit var onSlide: (value: Int) -> Unit
     lateinit var onEndSlide: () -> Unit
-    val maxBrightness = 100
 
-    private val minBrightness = 10
     private var brightness = 0
     private val detector = GestureDetectorCompat(context, this)
     private var scrolled = false
@@ -35,7 +33,7 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
             brightness = onStartSlide()
         } else {
             brightness += (distanceY / scaleFactor).toInt()
-            brightness = min(maxBrightness, max(brightness, minBrightness))
+            brightness = min(MAX_BRIGHTNESS, max(brightness, MIN_BRIGHTNESS))
             onSlide(brightness)
         }
         scrolled = true
@@ -58,6 +56,12 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
         }
 
         return false
+    }
+
+    companion object {
+
+        private const val MIN_BRIGHTNESS = 10
+        const val MAX_BRIGHTNESS = 100
     }
 
 }
