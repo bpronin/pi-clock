@@ -40,7 +40,6 @@ import com.bopr.piclock.util.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
 import java.util.*
-import kotlin.math.min
 
 
 class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
@@ -68,7 +67,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var minutesFormat: DateFormat
     private lateinit var secondsFormat: DateFormat
     private lateinit var dateFormat: DateFormat
-    private lateinit var fullscreenControl: FullscreenSupport
+    private lateinit var fullscreenControl: FullscreenControl
 
     private var active = true
 
@@ -76,7 +75,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val autoDeactivateTask = Runnable { onAutoDeactivate() }
 
     private lateinit var brightnessControl: BrightnessControl
-    private val activeBrightness = 100
     private var inactiveBrightness: Int by IntSettingsPropertyDelegate(PREF_INACTIVE_BRIGHTNESS) { settings }
     private var currentBrightness: Int
         get() = (contentView.alpha * 100).toInt()
@@ -168,9 +166,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         infoView = root.requireViewByIdCompat(R.id.info_view)
         infoView.visibility = GONE
 
-        fullscreenControl = FullscreenSupport(requireActivity().window).apply {
-            enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
-        }
+        fullscreenControl = FullscreenControl(requireActivity().window)
 
         scaleControl = ScaleControl(requireContext()).apply {
             onPinchStart = {
@@ -195,7 +191,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 currentBrightness
             }
             onSlide = { value ->
-                currentBrightness = min(value, activeBrightness)
+                currentBrightness = value
                 infoView.text = getString(R.string.min_brightness_info, currentBrightness)
             }
             onEndSlide = {
@@ -243,7 +239,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         settings.apply {
             when (key) {
                 PREF_FULLSCREEN_ENABLED ->
-                    fullscreenControl.enabled = getBoolean(PREF_FULLSCREEN_ENABLED)
+                    updateFullscreenControl()
                 PREF_CONTENT_LAYOUT ->
                     createContentView()
                 PREF_TIME_FORMAT ->
@@ -323,6 +319,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             })
         }
 
+        updateFullscreenControl()
         updateHoursMinutesViews()
         updateSecondsView()
         updateSeparatorViews()
@@ -366,7 +363,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 animations.fadeBrightness(
                     contentView,
                     currentBrightness,
-                    activeBrightness
+                    brightnessControl.maxBrightness
                 )
             } else {
                 if (wantFadeTickVolume) {
@@ -387,6 +384,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
 
         updateBrightness()
+    }
+
+    private fun updateFullscreenControl() {
+        fullscreenControl.enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
     }
 
     private fun updateHoursMinutesViews() {
@@ -448,7 +449,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun updateBrightness() {
-        currentBrightness = if (active) activeBrightness else inactiveBrightness
+        currentBrightness = if (active)
+            brightnessControl.maxBrightness
+        else
+            inactiveBrightness
     }
 
     private fun updateScale() {

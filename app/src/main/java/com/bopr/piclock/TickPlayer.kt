@@ -10,7 +10,7 @@ import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.bopr.piclock.util.getResId
 
-@SuppressLint("ObjectAnimatorBinding")
+@SuppressLint("ObjectAnimatorBinding")  // todo: get rid of this suppression
 internal class TickPlayer(private val context: Context) {
 
     var changingVolume: Boolean = false
@@ -22,6 +22,22 @@ internal class TickPlayer(private val context: Context) {
     private lateinit var player: MediaPlayer
 
     private val volumeAnimator: ObjectAnimator by lazy {
+/*      todo: implement volume
+        val volumeProperty: Property<MediaPlayer, Float> = object: Property<MediaPlayer, Float>(Float::class.java, "volume") {
+
+            private var volume = 0f
+
+            override fun get(player: MediaPlayer): Float {
+                return volume
+//               return player.createVolumeShaper()getVolume()
+            }
+
+            override fun set(player: MediaPlayer, value: Float) {
+                volume = value
+                player.setVolume(volume, volume)
+            }
+        }
+*/
         ObjectAnimator.ofFloat(player, "volume", 0f).apply {
             interpolator = LinearInterpolator()
         }

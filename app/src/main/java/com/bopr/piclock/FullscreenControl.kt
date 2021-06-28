@@ -9,7 +9,7 @@ import android.view.Window
 import android.view.WindowInsets.Type.systemBars
 import android.view.WindowInsetsController.BEHAVIOR_SHOW_BARS_BY_SWIPE
 
-class FullscreenSupport(private val window: Window) {
+internal class FullscreenControl(private val window: Window) {
 
     /** Logger tag. */
     private val _tag = "FullscreenSupport"

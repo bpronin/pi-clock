@@ -7,6 +7,7 @@ import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import androidx.core.view.GestureDetectorCompat
 import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Convenience class to control brightness by slide gesture.
@@ -16,9 +17,10 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
     lateinit var onStartSlide: () -> Int
     lateinit var onSlide: (value: Int) -> Unit
     lateinit var onEndSlide: () -> Unit
+    val maxBrightness = 100
 
-    private val minValue = 10
-    private var value = 0
+    private val minBrightness = 10
+    private var brightness = 0
     private val detector = GestureDetectorCompat(context, this)
     private var scrolled = false
     private val scaleFactor = 10f // todo: make it depends on vertical screen size
@@ -30,11 +32,11 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
         distanceY: Float
     ): Boolean {
         if (!scrolled) {
-            value = onStartSlide()
+            brightness = onStartSlide()
         } else {
-            value += (distanceY / scaleFactor).toInt()
-            value = max(value, minValue)
-            onSlide(value)
+            brightness += (distanceY / scaleFactor).toInt()
+            brightness = min(maxBrightness, max(brightness, minBrightness))
+            onSlide(brightness)
         }
         scrolled = true
         return false

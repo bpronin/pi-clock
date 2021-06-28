@@ -22,6 +22,7 @@ class MainActivity : BaseActivity(MainFragment::class.java) {
     //todo: start on power plug in
     //todo: fast changing battery indicator
     //todo: sound and vibration feedback when scaling and changing brightness
+    //todo: buttons for fast timers (5, 10 , 15.. min) on main screen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -190,7 +190,7 @@ internal class Animations {
         }
     }
 
-    fun floatContentSomewhere(view: View, onEnd: (Animator) -> Unit = {}) {
+    fun floatContentSomewhere(view: View, onEnd: () -> Unit = {}) {
         val pr = view.getParentView().getScaledRect()
         val vr = view.getScaledRect()
         val dw = pr.width() - vr.width()
@@ -207,7 +207,7 @@ internal class Animations {
         )
     }
 
-    fun floatContentHome(view: View, onEnd: (Animator) -> Unit = {}) {
+    fun floatContentHome(view: View, onEnd: () -> Unit = {}) {
         val pr = view.getParentView().getRect()
         val vr = view.getRect()
 
@@ -225,7 +225,7 @@ internal class Animations {
         x: Float,
         y: Float,
         floatDuration: Long,
-        onEnd: (Animator) -> Unit = {}
+        onEnd: () -> Unit = {}
     ) {
         floatContentAnimator.apply {
             reset(view)
@@ -235,8 +235,8 @@ internal class Animations {
             )
             duration = floatDuration
             interpolator = AccelerateDecelerateInterpolator()
-            doOnEnd(onEnd)
-            doOnCancel(onEnd)
+            doOnEnd { onEnd() }
+            doOnCancel { onEnd() }
             start()
         }
     }
