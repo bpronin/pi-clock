@@ -40,7 +40,6 @@ import com.bopr.piclock.util.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
 import java.util.*
-import kotlin.math.max
 import kotlin.math.min
 
 
@@ -83,23 +82,16 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val activeBrightness = 100
     private var inactiveBrightness: Int
         get() = settings.getInt(PREF_INACTIVE_BRIGHTNESS)
-        set(value) {
-            settings.update { putInt(PREF_INACTIVE_BRIGHTNESS, value) }
-        }
+        set(value) = settings.update { putInt(PREF_INACTIVE_BRIGHTNESS, value) }
     private var currentBrightness: Int
         get() = (contentView.alpha * 100).toInt()
         set(value) {
             contentView.alpha = value / 100f
         }
 
-    private val minScale
-        get() = resources.getStringArray(R.array.scale_values).first().toFloat()
-    private val maxScale = 100f
     private var scale: Float
         get() = settings.getFloat(PREF_CONTENT_SCALE)
-        set(value) {
-            settings.update { putFloat(PREF_CONTENT_SCALE, value) }
-        }
+        set(value) = settings.update { putFloat(PREF_CONTENT_SCALE, value) }
     private var currentScale: Float
         get() = contentView.scaleX
         set(value) {
@@ -192,7 +184,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 currentScale
             }
             onPinch = { factor ->
-                currentScale = max(minScale, min(factor, maxScale))
+                currentScale = factor
                 infoView.text = getString(R.string.scale_info, currentScale * 100f)
             }
             onPinchEnd = {

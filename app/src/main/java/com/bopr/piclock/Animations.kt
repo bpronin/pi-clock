@@ -11,6 +11,7 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.TextView
+import androidx.core.animation.doOnCancel
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.view.get
@@ -105,9 +106,7 @@ internal class Animations {
 
 
     private fun Animator.reset(view: View) = apply {
-        if (isRunning) {
-            end()
-        }
+        cancel()
         removeAllListeners() /*important. doOnStart(), doOnEnd() add! the listeners */
         setTarget(view)
     }
@@ -237,6 +236,7 @@ internal class Animations {
             duration = floatDuration
             interpolator = AccelerateDecelerateInterpolator()
             doOnEnd(onEnd)
+            doOnCancel(onEnd)
             start()
         }
     }

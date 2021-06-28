@@ -21,6 +21,7 @@ class MainActivity : BaseActivity(MainFragment::class.java) {
     //todo: brightness controlled by external light
     //todo: start on power plug in
     //todo: fast changing battery indicator
+    //todo: sound and vibration feedback when scaling and changing brightness
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -64,6 +64,10 @@ fun <V, C : Collection<V>> Context.ensureAllResExists(arrayResId: Int, values: C
     }
 }
 
+fun Context.getStringArray(resId: Int): Array<out String> {
+    return resources.getStringArray(resId)
+}
+
 fun Fragment.getStringArray(resId: Int): Array<out String> {
     return resources.getStringArray(resId)
 }
