@@ -80,7 +80,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private var autoDeactivating = false
     private val autoDeactivateTask = Runnable { onAutoDeactivate() }
 
-    private val minBrightness = 10
     private val activeBrightness = 100
     private var inactiveBrightness: Int
         get() = settings.getInt(PREF_INACTIVE_BRIGHTNESS)
@@ -209,8 +208,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 animations.showInfo(infoView)
                 currentBrightness
             }
-            onSlide = { delta ->
-                currentBrightness = max(minBrightness, min(delta, activeBrightness))
+            onSlide = { value ->
+                currentBrightness = min(value, activeBrightness)
                 infoView.text = getString(R.string.min_brightness_info, currentBrightness)
             }
             onEndSlide = {
