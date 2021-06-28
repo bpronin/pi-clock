@@ -48,6 +48,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     /** Logger tag. */
     private val _tag = "ClockFragment"
 
+    private val animations = Animations()
+    private val handler = Handler(Looper.getMainLooper())
+    private val timer = HandlerTimer(handler, 1000, this::onTimer)
+    private val amPmFormat = defaultDatetimeFormat("a")
+
     private lateinit var contentView: ViewGroup
     private lateinit var settingsButton: FloatingActionButton
     private lateinit var hoursView: ViewGroup
@@ -58,7 +63,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var secondsSeparator: TextView
     private lateinit var amPmMarkerView: TextView
     private lateinit var infoView: TextView
-
     private lateinit var settings: Settings
     private lateinit var hoursFormat: DateFormat
     private lateinit var minutesFormat: DateFormat
@@ -66,32 +70,22 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var dateFormat: DateFormat
     private lateinit var fullscreenControl: FullscreenSupport
 
-    private lateinit var scaleControl: ScaleControl
-    private lateinit var brightnessControl: BrightnessControl
-
-    private val animations = Animations()
-    private val handler = Handler(Looper.getMainLooper())
-    private val timer = HandlerTimer(handler, 1000, this::onTimer)
-    private val amPmFormat = defaultDatetimeFormat("a")
-
     private var active = true
 
     private var autoDeactivating = false
     private val autoDeactivateTask = Runnable { onAutoDeactivate() }
 
+    private lateinit var brightnessControl: BrightnessControl
     private val activeBrightness = 100
-    private var inactiveBrightness: Int
-        get() = settings.getInt(PREF_INACTIVE_BRIGHTNESS)
-        set(value) = settings.update { putInt(PREF_INACTIVE_BRIGHTNESS, value) }
+    private var inactiveBrightness: Int by IntSettingsPropertyDelegate(PREF_INACTIVE_BRIGHTNESS) { settings }
     private var currentBrightness: Int
         get() = (contentView.alpha * 100).toInt()
         set(value) {
             contentView.alpha = value / 100f
         }
 
-    private var scale: Float
-        get() = settings.getFloat(PREF_CONTENT_SCALE)
-        set(value) = settings.update { putFloat(PREF_CONTENT_SCALE, value) }
+    private lateinit var scaleControl: ScaleControl
+    private var scale: Float by FloatSettingsPropertyDelegate(PREF_CONTENT_SCALE) { settings }
     private var currentScale: Float
         get() = contentView.scaleX
         set(value) {
