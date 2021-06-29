@@ -20,40 +20,18 @@
         android:textSize="34sp"
         tools:ignore="HardcodedText" />
 
-    <FrameLayout
+    <com.bopr.piclock.AnimatedTextView
         android:id="@+id/hours_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:animateLayoutChanges="true">
-
-        <TextView
-            android:id="@+id/hours_view_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/gruppo"
-            android:includeFontPadding="false"
-            android:text="21"
-            android:textAlignment="center"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="96sp"
-            tools:ignore="HardcodedText" />
-
-        <TextView
-            android:id="@+id/hours_view_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/gruppo"
-            android:includeFontPadding="false"
-            android:text="21"
-            android:textAlignment="center"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="96sp"
-            android:visibility="gone"
-            tools:ignore="HardcodedText" />
-    </FrameLayout>
+        android:fontFamily="@font/gruppo"
+        android:includeFontPadding="false"
+        android:text="21"
+        android:textAlignment="center"
+        android:textColor="?attr/contentTextColor"
+        android:textSize="96sp"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/time_separator"
@@ -68,40 +46,18 @@
         android:textSize="96sp"
         tools:ignore="HardcodedText" />
 
-    <FrameLayout
+    <com.bopr.piclock.AnimatedTextView
         android:id="@+id/minutes_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:animateLayoutChanges="true">
-
-        <TextView
-            android:id="@+id/minutes_view_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/gruppo"
-            android:includeFontPadding="false"
-            android:text="56"
-            android:textAlignment="center"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="96sp"
-            tools:ignore="HardcodedText" />
-
-        <TextView
-            android:id="@+id/minutes_view_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/gruppo"
-            android:includeFontPadding="false"
-            android:text="56"
-            android:textAlignment="center"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="96sp"
-            android:visibility="gone"
-            tools:ignore="HardcodedText" />
-    </FrameLayout>
+        android:fontFamily="@font/gruppo"
+        android:includeFontPadding="false"
+        android:text="56"
+        android:textAlignment="center"
+        android:textColor="?attr/contentTextColor"
+        android:textSize="96sp"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/seconds_separator"
@@ -117,69 +73,29 @@
         android:textSize="48sp"
         tools:ignore="HardcodedText" />
 
-    <FrameLayout
+    <com.bopr.piclock.AnimatedTextView
         android:id="@+id/seconds_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:animateLayoutChanges="true">
+        android:layout_height="match_parent"
+        android:fontFamily="@font/gruppo"
+        android:includeFontPadding="false"
+        android:text="04"
+        android:textAlignment="center"
+        android:textColor="?attr/contentTextColor"
+        android:textSize="48sp"
+        tools:ignore="HardcodedText" />
 
-        <TextView
-            android:id="@+id/seconds_view_1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="@font/gruppo"
-            android:includeFontPadding="false"
-            android:text="04"
-            android:textAlignment="center"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="48sp"
-            tools:ignore="HardcodedText" />
-
-        <TextView
-            android:id="@+id/seconds_view_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/gruppo"
-            android:includeFontPadding="false"
-            android:text="04"
-            android:textAlignment="center"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="48sp"
-            android:visibility="gone"
-            tools:ignore="HardcodedText" />
-    </FrameLayout>
-
-    <FrameLayout
+    <com.bopr.piclock.AnimatedTextView
         android:id="@+id/date_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="8sp"
-        android:animateLayoutChanges="true">
-
-        <TextView
-            android:id="@+id/date_view_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/comfortaa"
-            android:includeFontPadding="false"
-            android:text="January 13"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="18sp"
-            tools:ignore="HardcodedText" />
-
-        <TextView
-            android:id="@+id/date_view_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/comfortaa"
-            android:includeFontPadding="false"
-            android:text="January 13"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="18sp"
-            android:visibility="gone"
-            tools:ignore="HardcodedText" />
-    </FrameLayout>
+        android:fontFamily="@font/comfortaa"
+        android:includeFontPadding="false"
+        android:text="Wednesday\nJanuary 13"
+        android:textColor="?attr/contentTextColor"
+        android:textSize="18sp"
+        tools:ignore="HardcodedText" />
 
 </LinearLayout>

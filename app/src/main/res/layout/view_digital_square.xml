@@ -12,44 +12,24 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <FrameLayout
+        <com.bopr.piclock.AnimatedTextView
             android:id="@+id/hours_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="true">
-
-            <TextView
-                android:id="@+id/hours_view_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/orbitron"
-                android:includeFontPadding="false"
-                android:text="00"
-                android:textColor="?attr/contentTextColor"
-                android:textSize="80sp"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:id="@+id/hours_view_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/orbitron"
-                android:includeFontPadding="false"
-                android:text="00"
-                android:textColor="?attr/contentTextColor"
-                android:textSize="80sp"
-                android:visibility="gone"
-                tools:ignore="HardcodedText" />
-
-        </FrameLayout>
+            android:fontFamily="@font/orbitron"
+            android:includeFontPadding="false"
+            android:text="00"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="80sp"
+            tools:ignore="HardcodedText" />
 
         <TextView
             android:id="@+id/time_separator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4sp"
-            android:layout_marginEnd="4sp"
             android:layout_marginTop="6sp"
+            android:layout_marginEnd="4sp"
             android:fontFamily="@font/orbitron"
             android:includeFontPadding="false"
             android:text=":"
@@ -57,35 +37,16 @@
             android:textSize="64sp"
             tools:ignore="HardcodedText" />
 
-        <FrameLayout
+        <com.bopr.piclock.AnimatedTextView
             android:id="@+id/minutes_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:animateLayoutChanges="true">
-
-            <TextView
-                android:id="@+id/minutes_view_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/orbitron"
-                android:includeFontPadding="false"
-                android:text="00"
-                android:textColor="?attr/contentTextColor"
-                android:textSize="80sp"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:id="@+id/minutes_view_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/orbitron"
-                android:includeFontPadding="false"
-                android:text="00"
-                android:textColor="?attr/contentTextColor"
-                android:textSize="80sp"
-                android:visibility="gone"
-                tools:ignore="HardcodedText" />
-        </FrameLayout>
+            android:fontFamily="@font/orbitron"
+            android:includeFontPadding="false"
+            android:text="00"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="80sp"
+            tools:ignore="HardcodedText" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -116,9 +77,9 @@
                     android:id="@+id/seconds_separator"
                     android:layout_width="22sp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="3sp"
                     android:layout_marginStart="-4sp"
                     android:layout_marginEnd="-4sp"
+                    android:layout_marginBottom="3sp"
                     android:fontFamily="@font/orbitron"
                     android:includeFontPadding="false"
                     android:text=":"
@@ -127,36 +88,16 @@
                     android:textSize="20sp"
                     tools:ignore="HardcodedText" />
 
-                <FrameLayout
+                <com.bopr.piclock.AnimatedTextView
                     android:id="@+id/seconds_view"
-                    android:layout_width="wrap_content"
+                    android:layout_width="58sp"
                     android:layout_height="wrap_content"
-                    android:animateLayoutChanges="true">
-
-                    <TextView
-                        android:id="@+id/seconds_view_1"
-                        android:layout_width="58sp"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/orbitron"
-                        android:includeFontPadding="false"
-                        android:text="01"
-                        android:textColor="?attr/contentTextColor"
-                        android:textSize="28sp"
-                        tools:ignore="HardcodedText" />
-
-                    <TextView
-                        android:id="@+id/seconds_view_2"
-                        android:layout_width="58sp"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/orbitron"
-                        android:includeFontPadding="false"
-                        android:text="02"
-                        android:textColor="?attr/contentTextColor"
-                        android:textSize="28sp"
-                        android:visibility="gone"
-                        tools:ignore="HardcodedText" />
-
-                </FrameLayout>
+                    android:fontFamily="@font/orbitron"
+                    android:includeFontPadding="false"
+                    android:text="01"
+                    android:textColor="?attr/contentTextColor"
+                    android:textSize="28sp"
+                    tools:ignore="HardcodedText" />
 
             </LinearLayout>
 
@@ -164,36 +105,16 @@
 
     </LinearLayout>
 
-    <FrameLayout
+    <com.bopr.piclock.AnimatedTextView
         android:id="@+id/date_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:animateLayoutChanges="true">
-
-        <TextView
-            android:id="@+id/date_view_1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat"
-            android:includeFontPadding="false"
-            android:text="Someday, Month 00 "
-            android:textAlignment="center"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="18sp"
-            tools:ignore="HardcodedText" />
-
-        <TextView
-            android:id="@+id/date_view_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat"
-            android:includeFontPadding="false"
-            android:text="Someday, Month 00 "
-            android:textAlignment="center"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="18sp"
-            android:visibility="gone"
-            tools:ignore="HardcodedText" />
-    </FrameLayout>
+        android:fontFamily="@font/montserrat"
+        android:includeFontPadding="false"
+        android:text="Someday, Month 00 "
+        android:textAlignment="center"
+        android:textColor="?attr/contentTextColor"
+        android:textSize="18sp"
+        tools:ignore="HardcodedText" />
 
 </LinearLayout>
