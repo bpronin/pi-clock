@@ -5,16 +5,13 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.view.View
 import android.view.View.*
-import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
 import android.view.animation.DecelerateInterpolator
-import android.widget.TextView
 import androidx.core.animation.doOnCancel
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
-import androidx.core.view.get
 import com.bopr.piclock.util.getParentView
 import com.bopr.piclock.util.getRect
 import com.bopr.piclock.util.getScaledRect
@@ -317,33 +314,8 @@ internal class Animations {
 //        }
 //    }
 
-    fun changeText(container: ViewGroup, text: String) {
-        val v1 = container[1] as TextView
-        val v0 = container[0] as TextView
-
-        val front: TextView
-        val back: TextView
-
-        if (v0.visibility == VISIBLE) {
-            front = v1
-            back = v0
-        } else {
-            front = v0
-            back = v1
-        }
-
-        container.layoutTransition.apply {
-//            disableTransitionType(LayoutTransition.APPEARING)
-            setDuration(500)
-//            setAnimator(LayoutTransition.APPEARING,  ObjectAnimator.ofFloat(null, TRANSLATION_Y, -front.height.toFloat(), 0f))
-//            setAnimator(LayoutTransition.DISAPPEARING, ObjectAnimator.ofFloat(null, TRANSLATION_Y, 0f, back.height.toFloat()))
-        }
-
-        if (back.text != text) {
-            front.text = text
-            front.visibility = VISIBLE
-            back.visibility = GONE
-        }
+    fun changeText(view: AnimatedTextView, text: String) {
+        view.setText(text)
     }
 
     companion object {

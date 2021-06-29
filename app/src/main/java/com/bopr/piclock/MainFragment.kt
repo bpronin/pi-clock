@@ -56,10 +56,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private lateinit var contentView: ViewGroup
     private lateinit var settingsButton: FloatingActionButton
-    private lateinit var hoursView: ViewGroup
-    private lateinit var minutesView: ViewGroup
-    private lateinit var secondsView: ViewGroup
-    private lateinit var dateView: ViewGroup
+    private lateinit var hoursView: AnimatedTextView
+    private lateinit var minutesView: AnimatedTextView
+    private lateinit var secondsView: AnimatedTextView
+    private lateinit var dateView: AnimatedTextView
     private lateinit var timeSeparator: TextView
     private lateinit var secondsSeparator: TextView
     private lateinit var amPmMarkerView: TextView
@@ -94,6 +94,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 scaleY = value
             }
         }
+    private var scaling: Boolean = false
 
     private lateinit var tickPlayer: TickPlayer
     private val tickMode get() = settings.getStringSet(PREF_TICK_SOUND_MODE)
@@ -172,6 +173,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         scaleControl = ScaleControl(requireContext()).apply {
             onPinchStart = {
+                scaling = true
                 animations.showInfo(infoView)
                 currentScale
             }
@@ -181,6 +183,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
             onPinchEnd = {
                 animations.hideInfo(infoView)
+                scaling = false
                 fitContentIntoScreen {
                     scale = currentScale
                 }
@@ -359,6 +362,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 amPmMarkerView.text = amPmFormat.format(time)
             }
         }
+
+        fitContentIntoScreen ()
     }
 
     private fun updateRootView(animate: Boolean) {
@@ -590,14 +595,20 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun fitContentIntoScreen(onEnd: () -> Unit = {}) {
-        val pr = contentView.getParentView().getScaledRect()
-        val vr = contentView.getScaledRect()
-        if (pr.width() >= vr.width() && pr.height() >= vr.height()) {
-            onEnd()
-        } else {
-            Log.d(_tag, "Fitting content scale")
+        if (!scaling) {
+            val pr = contentView.getParentView().getScaledRect()
+            val vr = contentView.getScaledRect()
+            if (pr.width() >= vr.width() && pr.height() >= vr.height()) {
+                onEnd()
+            } else {
+                Log.d(_tag, "Fitting content scale")
 
-            animations.fitScaleIntoParent(contentView) { onEnd() }
+                scaling = true
+                animations.fitScaleIntoParent(contentView) {
+                    scaling = false
+                    onEnd()
+                }
+            }
         }
     }
 
