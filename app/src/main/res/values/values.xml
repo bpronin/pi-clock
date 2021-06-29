@@ -6,6 +6,7 @@
         <item>view_digital_round</item>
         <item>view_digital_square</item>
         <item>view_digital_curly</item>
+        <item>view_digital_thick</item>
         <item>view_digital_vertical_default</item>
     </string-array>
 

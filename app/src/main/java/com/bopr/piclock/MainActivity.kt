@@ -23,6 +23,7 @@ class MainActivity : BaseActivity(MainFragment::class.java) {
     //todo: fast changing battery indicator
     //todo: sound and vibration feedback when scaling and changing brightness
     //todo: buttons for fast timers (5, 10 , 15.. min) on main screen
+    //todo: option to automatially switch to vertical layout on rotation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

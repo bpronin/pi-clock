@@ -414,7 +414,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         hoursFormat = defaultDatetimeFormat(hoursPattern)
         minutesFormat = defaultDatetimeFormat(minutesPattern)
-        amPmMarkerView.visibility = if (hoursPattern.startsWith("h")) GONE else VISIBLE
+        amPmMarkerView.visibility = if (hoursPattern.startsWith("h")) VISIBLE else GONE
 
         fitContentIntoScreen()
     }
