@@ -16,3 +16,17 @@ val RELATIVE_TRANSLATION_Y by lazy {
         }
     }
 }
+
+val RELATIVE_TRANSLATION_X by lazy {
+
+    object : Property<View, Float>(Float::class.java, "relative_translationX") {
+
+        override fun get(view: View?): Float? {
+            return view?.run { translationX / width } ?: run { null }
+        }
+
+        override fun set(view: View?, value: Float?) {
+            view?.apply { translationX = (value ?: 0f) * width }
+        }
+    }
+}

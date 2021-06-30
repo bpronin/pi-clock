@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.View.*
 import android.view.Window
 import android.view.WindowInsets.Type.systemBars
-import android.view.WindowInsetsController.BEHAVIOR_SHOW_BARS_BY_SWIPE
+import android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
 internal class FullscreenControl(private val window: Window) {
 
@@ -59,7 +59,7 @@ internal class FullscreenControl(private val window: Window) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.apply {
                 setDecorFitsSystemWindows(false)
-                insetsController?.systemBarsBehavior = BEHAVIOR_SHOW_BARS_BY_SWIPE
+                insetsController?.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
         }
     }

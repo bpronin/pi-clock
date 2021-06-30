@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -12,35 +12,34 @@
         android:id="@+id/content_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+        android:layout_gravity="center">
 
         <!--  dynamic content here -->
 
     </FrameLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/settings_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/fab_margin"
-        android:layout_marginTop="@dimen/fab_margin"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:contentDescription="@string/settings_button"
-        android:tint="?attr/contentTextColor"
-        app:maxImageSize="32dp"
-        app:rippleColor="?attr/colorOnSecondary"
-        app:srcCompat="@drawable/ic_baseline_menu" />
-
     <TextView
         android:id="@+id/info_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_gravity="top|start"
         android:layout_margin="@dimen/fab_margin"
         android:fontFamily="@font/comfortaa"
         android:text="Brightness 30%"
         android:textColor="?attr/contentTextColor"
         tools:ignore="HardcodedText,RtlHardcoded" />
 
-</RelativeLayout>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/settings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:contentDescription="@string/settings_button"
+        android:tint="?attr/contentTextColor"
+        android:backgroundTint="?attr/colorPrimaryDark"
+        app:maxImageSize="34dp"
+        app:rippleColor="?attr/colorOnSecondary"
+        app:srcCompat="@drawable/ic_outline_settings" />
+
+</FrameLayout>

@@ -42,7 +42,7 @@ fun ViewGroup.forEachDeep(action: (view: View) -> Unit) {
     }
 }
 
-fun <T : View?> View.requireViewByIdCompat(@IdRes id: Int): T {
+fun <T : View?> View.viewById(@IdRes id: Int): T {
     return findViewById(id)
         ?: throw IllegalArgumentException("ID does not reference a View inside this View")
 }

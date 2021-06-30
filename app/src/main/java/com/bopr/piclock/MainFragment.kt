@@ -14,9 +14,11 @@ import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.*
-import android.view.WindowInsets
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.doOnLayout
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.Animations.Companion.FLOAT_CONTENT_DURATION
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
@@ -48,8 +50,7 @@ import java.util.*
  */
 class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
-    /** Logger tag. */
-    private val _tag = "ClockFragment"
+    private val _tag = "MainFragment"
 
     private val animations = Animations()
     private val handler = Handler(Looper.getMainLooper())
@@ -139,39 +140,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         container: ViewGroup?,
         savedState: Bundle?
     ): View {
-        val root = inflater.inflate(R.layout.fragment_main, container, false) as ViewGroup
-        root.apply {
-            doOnLayout {
-                doOnInitialLayoutComplete(savedState)
-            }
-            setOnClickListener {
-                setActive(!active, true)
-            }
-            setOnTouchListener { _, event ->
-                when (event.action) {
-                    ACTION_DOWN -> stopAutoDeactivate()
-                    ACTION_UP -> startAutoDeactivate()
-                }
-                //todo: allow change in any mode
-                brightnessControl.processTouch(event) || scaleControl.processTouch(event)
-            }
-            setOnApplyWindowInsetsListener { _, insets ->
-                fixControlsPosition(insets)
-                onApplyWindowInsets(insets)
-            }
-        }
-
-        contentView = root.requireViewByIdCompat(R.id.content_container)
-        contentView.setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
-
-        settingsButton = root.requireViewByIdCompat(R.id.settings_button)
-        settingsButton.setOnClickListener {
-            startActivity(Intent(requireContext(), SettingsActivity::class.java))
-        }
-
-        infoView = root.requireViewByIdCompat(R.id.info_view)
-        infoView.visibility = GONE
-
         fullscreenControl = FullscreenControl(requireActivity().window)
 
         scaleControl = ScaleControl(requireContext()).apply {
@@ -205,6 +173,57 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             onEndSlide = {
                 animations.hideInfo(infoView)
                 inactiveBrightness = currentBrightness
+            }
+        }
+
+        val root = inflater.inflate(R.layout.fragment_main, container, false).apply {
+            doOnLayout {
+                doOnInitialLayoutComplete(savedState)
+            }
+
+            setOnClickListener {
+                setActive(!active, true)
+            }
+
+            setOnTouchListener { _, event ->
+                when (event.action) {
+                    ACTION_DOWN -> stopAutoDeactivate()
+                    ACTION_UP -> startAutoDeactivate()
+                }
+                //todo: allow change in any mode
+                brightnessControl.processTouch(event) || scaleControl.processTouch(event)
+            }
+
+            settingsButton = viewById<FloatingActionButton>(R.id.settings_button).apply {
+                setOnClickListener {
+                    showPreferencesView()
+                }
+                ViewCompat.setOnApplyWindowInsetsListener(this) { view, windowInsets ->
+                    val insets = windowInsets.getInsets(Type.systemBars())
+                    val margin = resources.getDimension(R.dimen.fab_margin).toInt()
+                    view.updateLayoutParams<MarginLayoutParams> {
+                        rightMargin = margin + insets.right
+                        bottomMargin = margin + insets.bottom
+                    }
+                    windowInsets
+                }
+            }
+
+            infoView = viewById<TextView>(R.id.info_view).apply {
+                visibility = GONE
+                ViewCompat.setOnApplyWindowInsetsListener(this) { view, windowInsets ->
+                    val insets = windowInsets.getInsets(Type.systemBars())
+                    val margin = resources.getDimension(R.dimen.fab_margin).toInt()
+                    view.updateLayoutParams<MarginLayoutParams> {
+                        leftMargin = margin + insets.left
+                        topMargin = margin + insets.top
+                    }
+                    windowInsets
+                }
+            }
+
+            contentView = viewById<ViewGroup>(R.id.content_container).apply {
+                setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
             }
         }
 
@@ -343,13 +362,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             removeAllViews()
             val resId = getResId("layout", settings.getString(PREF_CONTENT_LAYOUT))
             addView(layoutInflater.inflate(resId, this, false).apply {
-                hoursView = requireViewByIdCompat(R.id.hours_view)
-                minutesView = requireViewByIdCompat(R.id.minutes_view)
-                secondsView = requireViewByIdCompat(R.id.seconds_view)
-                amPmMarkerView = requireViewByIdCompat(R.id.am_pm_marker_view)
-                dateView = requireViewByIdCompat(R.id.date_view)
-                timeSeparator = requireViewByIdCompat(R.id.time_separator)
-                secondsSeparator = requireViewByIdCompat(R.id.seconds_separator)
+                hoursView = viewById(R.id.hours_view)
+                minutesView = viewById(R.id.minutes_view)
+                secondsView = viewById(R.id.seconds_view)
+                amPmMarkerView = viewById(R.id.am_pm_marker_view)
+                dateView = viewById(R.id.date_view)
+                timeSeparator = viewById(R.id.time_separator)
+                secondsSeparator = viewById(R.id.seconds_separator)
             })
         }
 
@@ -359,11 +378,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateSeparatorViews()
         updateDateView()
         updateScale()
-        updateContentData()
+        updateContentViewData()
         updateDigitsAnimation() /* must be after updateContentData */
     }
 
-    private fun updateContentData() {
+    private fun updateContentViewData() {
         hoursView.setTextAnimated(hoursFormat.format(currentTime))
         minutesView.setTextAnimated(minutesFormat.format(currentTime))
         if (secondsView.visibility == VISIBLE) {
@@ -500,7 +519,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
 //        Log.v(_tag, "On timer: $time")
 
-        updateContentData()
+        updateContentViewData()
         blinkTimeSeparator()
         playTickSound()
     }
@@ -626,17 +645,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun fixControlsPosition(insets: WindowInsets) {
-        val systemInsets = getSystemInsetsCompat(insets)
-
-        settingsButton.apply {
-            if (x < systemInsets.left) x += systemInsets.left
-            if (y < systemInsets.top) y += systemInsets.top
-        }
-        infoView.apply {
-            if (x < systemInsets.left) x += systemInsets.left
-            if (y > systemInsets.bottom - height) y -= systemInsets.bottom - height
-        }
+    private fun showPreferencesView() {
+//        settingsView.apply {
+//            visibility = if (visibility == VISIBLE) GONE else VISIBLE
+//        }
+        startActivity(Intent(requireContext(), SettingsActivity::class.java))
     }
 
 }

@@ -80,9 +80,10 @@
     </string-array>
 
     <string-array name="digits_animation_values" translatable="false">
-        <item>text_slide_linear</item>
-        <item>text_slide_accelerate</item>
-        <item>text_slide_bounce</item>
+        <item>text_slide_vertical_linear</item>
+        <item>text_slide_vertical_accelerate</item>
+        <item>text_slide_vertical_bounce</item>
+        <item>text_slide_horizontal_bounce</item>
         <item>text_fade_linear</item>
         <item/>
     </string-array>

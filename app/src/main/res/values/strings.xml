@@ -120,6 +120,7 @@
         <item>Slide vertical (linear)</item>
         <item>Slide vertical (accelerate)</item>
         <item>Slide vertical (bounce)</item>
+        <item>Slide horizontal (bounce)</item>
         <item>Fade through</item>
         <item>Disabled</item>
     </string-array>

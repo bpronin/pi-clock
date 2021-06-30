@@ -12,6 +12,7 @@ import androidx.annotation.StyleRes
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
+import com.bopr.piclock.util.RELATIVE_TRANSLATION_X
 import com.bopr.piclock.util.RELATIVE_TRANSLATION_Y
 
 /**
@@ -85,7 +86,10 @@ class AnimatedTextView : FrameLayout {
                 extendProperties()
             }
             doOnStart { shadowView.visibility = VISIBLE }
-            doOnEnd { shadowView.visibility = GONE }
+            doOnEnd {
+                shadowView.visibility = GONE
+                requestLayout()
+            }
         }
     }
 
@@ -103,8 +107,9 @@ class AnimatedTextView : FrameLayout {
 
     private fun Animator.extendProperties() {
         if (this is ObjectAnimator) {
-            if (propertyName == RELATIVE_TRANSLATION_Y.name) {
-                setProperty(RELATIVE_TRANSLATION_Y)
+            when (propertyName) {
+                RELATIVE_TRANSLATION_Y.name -> setProperty(RELATIVE_TRANSLATION_Y)
+                RELATIVE_TRANSLATION_X.name -> setProperty(RELATIVE_TRANSLATION_X)
             }
         }
     }
