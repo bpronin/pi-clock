@@ -85,6 +85,8 @@
         <item>text_slide_vertical_bounce</item>
         <item>text_slide_horizontal_bounce</item>
         <item>text_fade_linear</item>
+        <item>text_scale_grow</item>
+        <item>text_scale_shrink</item>
         <item/>
     </string-array>
 
