@@ -1,8 +1,11 @@
 package com.bopr.piclock
 
+import android.animation.Animator
 import android.animation.AnimatorInflater.loadAnimator
 import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.annotation.AttrRes
@@ -10,6 +13,7 @@ import androidx.annotation.StyleRes
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
+import com.bopr.piclock.util.RelativeTranslationYProperty
 
 /**
  * Text view with animated transitions when changing text.
@@ -48,6 +52,8 @@ class AnimatedTextView : FrameLayout {
             alpha = 1f
             scaleX = 1f
             scaleY = 1f
+            scrollX = 0
+            scrollY = 0
             translationY = 0f
             translationX = 0f
             visibility = VISIBLE
@@ -56,31 +62,35 @@ class AnimatedTextView : FrameLayout {
             alpha = 1f
             scaleX = 1f
             scaleY = 1f
+            scrollX = 0
+            scrollY = 0
             translationY = 0f
             translationX = 0f
             visibility = GONE
         }
 
-//        view.setBackgroundColor(Color.RED)
-//        shadowView.setBackgroundColor(Color.BLUE)
+        view.setBackgroundColor(Color.RED)
+        shadowView.setBackgroundColor(Color.BLUE)
     }
 
     fun setTextAnimator(animator: AnimatorSet?) {
-        if (animator?.childAnimations?.size != 2)
-            throw IllegalArgumentException("Invalid animation set")
+        animator?.apply {
+            if (childAnimations.size != 2) throw IllegalArgumentException("Invalid animation set")
+        }
 
         resetViews()
 
-        textAnimator = animator.apply {
-            childAnimations[0].setTarget(view)
-            childAnimations[1].setTarget(shadowView)
-            doOnStart {
-                shadowView.visibility = VISIBLE
+        textAnimator = animator?.apply {
+            childAnimations[0].apply {
+                setTarget(view)
+                extendProperties()
             }
-            doOnEnd {
-                shadowView.text = view.text
-                shadowView.visibility = GONE
+            childAnimations[1].apply {
+                setTarget(shadowView)
+                extendProperties()
             }
+            doOnStart { shadowView.visibility = VISIBLE }
+            doOnEnd { shadowView.visibility = GONE }
         }
     }
 
@@ -90,8 +100,17 @@ class AnimatedTextView : FrameLayout {
 
     fun setTextAnimated(text: CharSequence) {
         if (view.text != text) {
+            shadowView.text = view.text
             view.text = text
             textAnimator?.start()
+        }
+    }
+
+    private fun Animator.extendProperties() {
+        if (this is ObjectAnimator) {
+            if (propertyName == RelativeTranslationYProperty.NAME) {
+                setProperty(RelativeTranslationYProperty())
+            }
         }
     }
 

@@ -55,6 +55,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val handler = Handler(Looper.getMainLooper())
     private val timer = HandlerTimer(handler, 1000, this::onTimer)
     private val amPmFormat = defaultDatetimeFormat("a")
+    private var currentTime = Date()
 
     private lateinit var contentView: ViewGroup
     private lateinit var settingsButton: FloatingActionButton
@@ -358,21 +359,21 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateSeparatorViews()
         updateDateView()
         updateScale()
-        updateContentData(Date())
+        updateContentData()
         updateDigitsAnimation() /* must be after updateContentData */
     }
 
-    private fun updateContentData(time: Date) {
-        hoursView.setTextAnimated(hoursFormat.format(time))
-        minutesView.setTextAnimated(minutesFormat.format(time))
+    private fun updateContentData() {
+        hoursView.setTextAnimated(hoursFormat.format(currentTime))
+        minutesView.setTextAnimated(minutesFormat.format(currentTime))
         if (secondsView.visibility == VISIBLE) {
-            secondsView.setTextAnimated(secondsFormat.format(time))
+            secondsView.setTextAnimated(secondsFormat.format(currentTime))
         }
         if (dateView.visibility == VISIBLE) {
-            dateView.setTextAnimated(dateFormat.format(time))
+            dateView.setTextAnimated(dateFormat.format(currentTime))
         }
         if (amPmMarkerView.visibility == VISIBLE) {
-            amPmMarkerView.text = amPmFormat.format(time)
+            amPmMarkerView.text = amPmFormat.format(currentTime)
         }
 
         fitContentIntoScreen()
@@ -494,12 +495,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun onTimer() {
-        val time = Date()
+//        currentTime = Date(currentTime.time + 10000)
+        currentTime = Date()
 
 //        Log.v(_tag, "On timer: $time")
 
-        updateContentData(time)
-        blinkTimeSeparator(time)
+        updateContentData()
+        blinkTimeSeparator()
         playTickSound()
     }
 
@@ -581,9 +583,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun blinkTimeSeparator(time: Date) {
+    private fun blinkTimeSeparator() {
         if (settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING)) {
-            if (time.time / 1000 % 2 != 0L) {
+            if (currentTime.time / 1000 % 2 != 0L) {
                 animations.blinkTimeSeparator(timeSeparator)
                 if (settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()) {
                     animations.blinkSecondsSeparator(secondsSeparator)
