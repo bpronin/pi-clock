@@ -11,12 +11,19 @@ fun is24HourLocale(): Boolean {
     return !pattern.lowercase(Locale.ROOT).contains("a")
 }
 
+/**
+ * Returns ID of resource by its name.
+ */
 fun Context.getResId(defType: String, resName: String): Int {
     if (resName.indexOf("/") != -1) {
-        /* Resource name must not be fully qualified */
+        /* Resource name must NOT be fully qualified */
         return 0
     }
     return resources.getIdentifier(resName, defType, packageName)
+}
+
+fun Fragment.getResId(defType: String, resName: String): Int {
+    return requireContext().getResId(defType, resName)
 }
 
 /**
@@ -29,13 +36,16 @@ fun Context.getResName(resId: Int): String {
 }
 
 /**
- * Returns true if resource array contains value.
+ * Returns true if resource array contains specified value.
  */
-fun <T> Context.isResExists(arrayResId: Int, value: T): Boolean {
+fun <T> Context.isResArrayContains(arrayResId: Int, value: T): Boolean {
     return resources.getStringArray(arrayResId).contains(value.toString())
 }
 
-fun <V, C : Collection<V>> Context.isAllResExists(arrayResId: Int, values: C): Boolean {
+/**
+ * Returns true if resource array contains all specified values.
+ */
+fun <V, C : Collection<V>> Context.isResArrayContainsAll(arrayResId: Int, values: C): Boolean {
     val array = resources.getStringArray(arrayResId)
     for (value in values) {
         if (!array.contains(value.toString())) {
@@ -46,18 +56,21 @@ fun <V, C : Collection<V>> Context.isAllResExists(arrayResId: Int, values: C): B
 }
 
 /**
- * Throws an exception if resource array does not contain value.
+ * Throws an exception if resource array does not contain specified value.
  */
-fun <T> Context.ensureResExists(arrayResId: Int, value: T): T {
-    if (!isResExists(arrayResId, value)) {
+fun <T> Context.ensureResArrayContains(arrayResId: Int, value: T): T {
+    if (!isResArrayContains(arrayResId, value)) {
         throw Error("Resource array: ${getResName(arrayResId)} does not contain value: $value")
     } else {
         return value
     }
 }
 
-fun <V, C : Collection<V>> Context.ensureAllResExists(arrayResId: Int, values: C): C {
-    if (!isAllResExists(arrayResId, values)) {
+/**
+ * Throws an exception if resource array does not contain all specified values.
+ */
+fun <C : Collection<*>> Context.ensureAllResExists(arrayResId: Int, values: C): C {
+    if (!isResArrayContainsAll(arrayResId, values)) {
         throw Error("Resource array: ${getResName(arrayResId)} does not contain values: $values")
     } else {
         return values

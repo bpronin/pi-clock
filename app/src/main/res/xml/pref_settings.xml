@@ -46,10 +46,6 @@
             android:key="time_separators_visible"
             android:title="@string/show_time_separators" />
 
-        <SwitchPreference
-            android:key="time_separators_blinking"
-            android:title="@string/blink_time_separator" />
-
         <com.bopr.piclock.util.ui.preference.LongListPreference
             android:entries="@array/content_float_interval_names"
             android:entryValues="@array/content_float_interval_values"
@@ -68,6 +64,20 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/animation">
+
+        <SwitchPreference
+            android:key="time_separators_blinking"
+            android:title="@string/blink_time_separator" />
+
+        <ListPreference
+            android:entries="@array/digits_animation_names"
+            android:entryValues="@array/digits_animation_values"
+            android:key="digits_animation"
+            android:title="@string/digits_animation" />
+
+    </PreferenceCategory>
+    
     <PreferenceCategory android:title="@string/sound">
 
         <ListPreference

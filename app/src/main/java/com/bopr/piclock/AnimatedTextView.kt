@@ -1,28 +1,25 @@
 package com.bopr.piclock
 
-import android.animation.Animator
+import android.animation.AnimatorInflater.loadAnimator
 import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
-import android.view.animation.BounceInterpolator
 import android.widget.FrameLayout
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
-import com.bopr.piclock.util.doOnLayoutComplete
 
+/**
+ * Text view with animated transitions when changing text.
+ */
 class AnimatedTextView : FrameLayout {
 
-    private lateinit var textView1: AppCompatTextView
-    private lateinit var textView2: AppCompatTextView
-
-    private lateinit var animator: Animator
-    private lateinit var showAnimator: ObjectAnimator
-    private lateinit var hideAnimator: ObjectAnimator
+    @Suppress("JoinDeclarationAndAssignment")
+    private lateinit var view: AppCompatTextView
+    private lateinit var shadowView: AppCompatTextView
+    private var textAnimator: AnimatorSet? = null
 
     constructor(context: Context) : super(context)
 
@@ -37,53 +34,64 @@ class AnimatedTextView : FrameLayout {
         context: Context, attrs: AttributeSet?,
         @AttrRes defStyleAttr: Int, @StyleRes defStyleRes: Int
     ) : super(context, attrs, defStyleAttr, defStyleRes) {
-        textView1 = AppCompatTextView(context, attrs, defStyleAttr)
-        textView2 = AppCompatTextView(context, attrs, defStyleAttr)
-        textView2.visibility = GONE
+        view = AppCompatTextView(context, attrs, defStyleAttr)
+        shadowView = AppCompatTextView(context, attrs, defStyleAttr)
 
-        addView(textView2)
-        addView(textView1)
+        addView(shadowView)
+        addView(view)
+        resetViews()
+    }
 
-        showAnimator = ObjectAnimator.ofFloat(null, TRANSLATION_Y, 0f).apply {
-            doOnStart { (target as View).visibility = VISIBLE }
+    private fun resetViews() {
+        // todo: should not the animators be responsible for it ?
+        view.apply {
+            alpha = 1f
+            scaleX = 1f
+            scaleY = 1f
+            translationY = 0f
+            translationX = 0f
+            visibility = VISIBLE
         }
-        hideAnimator = ObjectAnimator.ofFloat(null, TRANSLATION_Y, 0f).apply {
-            doOnStart { (target as View).visibility = VISIBLE }
-            doOnEnd { (target as View).visibility = GONE }
-        }
-        animator = AnimatorSet().apply {
-            playTogether(
-                showAnimator,
-                hideAnimator
-            )
-            interpolator = BounceInterpolator()
-            duration = 500
+        shadowView.apply {
+            alpha = 1f
+            scaleX = 1f
+            scaleY = 1f
+            translationY = 0f
+            translationX = 0f
+            visibility = GONE
         }
 
-        doOnLayoutComplete {
-            val h = height * 0.8f
-            showAnimator.setFloatValues(-h, 0f)
-            hideAnimator.setFloatValues(0f, h)
+//        view.setBackgroundColor(Color.RED)
+//        shadowView.setBackgroundColor(Color.BLUE)
+    }
+
+    fun setTextAnimator(animator: AnimatorSet?) {
+        if (animator?.childAnimations?.size != 2)
+            throw IllegalArgumentException("Invalid animation set")
+
+        resetViews()
+
+        textAnimator = animator.apply {
+            childAnimations[0].setTarget(view)
+            childAnimations[1].setTarget(shadowView)
+            doOnStart {
+                shadowView.visibility = VISIBLE
+            }
+            doOnEnd {
+                shadowView.text = view.text
+                shadowView.visibility = GONE
+            }
         }
     }
 
-    fun setText(text: CharSequence) {
-        val front: AppCompatTextView
-        val back: AppCompatTextView
+    fun setTextAnimatorRes(resId: Int) {
+        setTextAnimator(if (resId > 0) loadAnimator(context, resId) as AnimatorSet else null)
+    }
 
-        if (textView1.visibility == VISIBLE) {
-            front = textView2
-            back = textView1
-        } else {
-            front = textView1
-            back = textView2
-        }
-
-        if (back.text != text) {
-            front.text = text
-            showAnimator.target = front
-            hideAnimator.target = back
-            animator.start()
+    fun setTextAnimated(text: CharSequence) {
+        if (view.text != text) {
+            view.text = text
+            textAnimator?.start()
         }
     }
 

@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.*
 import android.view.WindowInsets
 import android.widget.TextView
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.Animations.Companion.FLOAT_CONTENT_DURATION
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
@@ -24,6 +25,7 @@ import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
@@ -138,7 +140,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     ): View {
         val root = inflater.inflate(R.layout.fragment_main, container, false) as ViewGroup
         root.apply {
-            doOnLayoutComplete {
+            doOnLayout {
                 doOnInitialLayoutComplete(savedState)
             }
             setOnClickListener {
@@ -269,8 +271,19 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateScale()
                 PREF_CONTENT_FLOAT_INTERVAL ->
                     updateFloatContentInterval()
+                PREF_DIGITS_ANIMATION ->
+                    updateDigitsAnimation()
             }
         }
+    }
+
+    private fun updateDigitsAnimation() {
+        val resId = getResId("animator", settings.getString(PREF_DIGITS_ANIMATION))
+
+        hoursView.setTextAnimatorRes(resId)
+        minutesView.setTextAnimatorRes(resId)
+        secondsView.setTextAnimatorRes(resId)
+        dateView.setTextAnimatorRes(resId)
     }
 
     /**
@@ -327,7 +340,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         contentView.apply {
             removeAllViews()
-            val resId = requireContext().getResId("layout", settings.getString(PREF_CONTENT_LAYOUT))
+            val resId = getResId("layout", settings.getString(PREF_CONTENT_LAYOUT))
             addView(layoutInflater.inflate(resId, this, false).apply {
                 hoursView = requireViewByIdCompat(R.id.hours_view)
                 minutesView = requireViewByIdCompat(R.id.minutes_view)
@@ -346,24 +359,23 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateDateView()
         updateScale()
         updateContentData(Date())
+        updateDigitsAnimation() /* must be after updateContentData */
     }
 
     private fun updateContentData(time: Date) {
-        animations.apply {
-            changeText(hoursView, hoursFormat.format(time))
-            changeText(minutesView, minutesFormat.format(time))
-            if (secondsView.visibility == VISIBLE) {
-                changeText(secondsView, secondsFormat.format(time))
-            }
-            if (dateView.visibility == VISIBLE) {
-                changeText(dateView, dateFormat.format(time))
-            }
-            if (amPmMarkerView.visibility == VISIBLE) {
-                amPmMarkerView.text = amPmFormat.format(time)
-            }
+        hoursView.setTextAnimated(hoursFormat.format(time))
+        minutesView.setTextAnimated(minutesFormat.format(time))
+        if (secondsView.visibility == VISIBLE) {
+            secondsView.setTextAnimated(secondsFormat.format(time))
+        }
+        if (dateView.visibility == VISIBLE) {
+            dateView.setTextAnimated(dateFormat.format(time))
+        }
+        if (amPmMarkerView.visibility == VISIBLE) {
+            amPmMarkerView.text = amPmFormat.format(time)
         }
 
-        fitContentIntoScreen ()
+        fitContentIntoScreen()
     }
 
     private fun updateRootView(animate: Boolean) {

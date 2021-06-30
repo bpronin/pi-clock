@@ -79,6 +79,13 @@
         <item>floating</item>
     </string-array>
 
+    <string-array name="digits_animation_values" translatable="false">
+        <item>text_slide_bounce</item>
+        <item>text_slide_accelerate</item>
+        <item>text_fade_linear</item>
+        <item/>
+    </string-array>
+
     <string name="debug_sha" translatable="false">637a049c399e085c699e1938d09e2ccfdf08071a66f9ef848edb06fbb751ad02da700f91cd0a8113820a32e98ff04dbb0ec5526c41385548081637392bb37ffd</string>
 
 </resources>

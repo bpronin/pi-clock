@@ -63,7 +63,7 @@ internal class TickPlayer(private val context: Context) {
         }
 
         if (prepared) {
-            Log.v(_tag, "Tik")
+//            Log.v(_tag, "Tik")
 
             player.run {
                 seekTo(0)

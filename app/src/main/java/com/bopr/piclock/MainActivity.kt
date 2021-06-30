@@ -24,6 +24,10 @@ class MainActivity : BaseActivity(MainFragment::class.java) {
     //todo: sound and vibration feedback when scaling and changing brightness
     //todo: buttons for fast timers (5, 10 , 15.. min) on main screen
     //todo: option to automatially switch to vertical layout on rotation
+    //todo: менять цвет фона в зависимости о времени
+    //todo: значки солнца и луны вместо am/pm
+    //todo: анимация вниз-вправо из кнопки настроек. пол экрана под пример
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

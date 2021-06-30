@@ -18,7 +18,7 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
     lateinit var onSlide: (value: Int) -> Unit
     lateinit var onEndSlide: () -> Unit
 
-    private var brightness = 0
+    private var brightness = 0  //todo: do let be less tah min
     private val detector = GestureDetectorCompat(context, this)
     private var scrolled = false
     private val scaleFactor = 10f // todo: make it depends on vertical screen size

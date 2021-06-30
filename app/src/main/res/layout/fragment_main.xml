@@ -22,10 +22,14 @@
         android:id="@+id/settings_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
         android:contentDescription="@string/settings_button"
+        android:tint="?attr/contentTextColor"
         app:maxImageSize="32dp"
-        app:rippleColor="@color/white_overlay"
+        app:rippleColor="?attr/colorOnSecondary"
         app:srcCompat="@drawable/ic_baseline_menu" />
 
     <TextView
@@ -36,7 +40,7 @@
         android:layout_margin="@dimen/fab_margin"
         android:fontFamily="@font/comfortaa"
         android:text="Brightness 30%"
-        android:textColor="@color/white_overlay"
+        android:textColor="?attr/contentTextColor"
         tools:ignore="HardcodedText,RtlHardcoded" />
 
 </RelativeLayout>

@@ -7,10 +7,11 @@ import android.graphics.RectF
 import android.os.Build
 import android.text.InputType
 import android.view.View
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.EditText
 import androidx.annotation.IdRes
+import androidx.core.view.forEach
 import com.bopr.piclock.R
 
 /**
@@ -19,16 +20,26 @@ import com.bopr.piclock.R
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 
-fun View.doOnLayoutComplete(action: () -> Unit) {
-    viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+//fun View.doOnLayoutComplete(action: () -> Unit) {
+//    viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+//
+//        /** At this point the layout is complete and the dimensions
+//         * of the view and any child views are known.*/
+//        override fun onGlobalLayout() {
+//            viewTreeObserver.removeOnGlobalLayoutListener(this)
+//            action()
+//        }
+//    })
+//}
 
-        /** At this point the layout is complete and the dimensions
-         * of the view and any child views are known.*/
-        override fun onGlobalLayout() {
-            viewTreeObserver.removeOnGlobalLayoutListener(this)
-            action()
+fun ViewGroup.forEachDeep(action: (view: View) -> Unit) {
+    forEach { view ->
+        if (view is ViewGroup) {
+            view.forEachDeep(action)
+        } else {
+            action(view)
         }
-    })
+    }
 }
 
 fun <T : View?> View.requireViewByIdCompat(@IdRes id: Int): T {

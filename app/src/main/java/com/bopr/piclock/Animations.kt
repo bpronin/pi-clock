@@ -9,7 +9,6 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
 import android.view.animation.DecelerateInterpolator
-import androidx.core.animation.doOnCancel
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.bopr.piclock.util.getParentView
@@ -233,7 +232,6 @@ internal class Animations {
             duration = floatDuration
             interpolator = AccelerateDecelerateInterpolator()
             doOnEnd { onEnd() }
-            doOnCancel { onEnd() }
             start()
         }
     }
@@ -313,10 +311,6 @@ internal class Animations {
 //            createVerticalSlideExchangeAnimator(front, back).start()
 //        }
 //    }
-
-    fun changeText(view: AnimatedTextView, text: String) {
-        view.setText(text)
-    }
 
     companion object {
 

@@ -19,69 +19,89 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
             putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)
             putFloatOptional(PREF_CONTENT_SCALE, 1f)
-
-            putStringSetOptional(
-                PREF_TICK_SOUND_MODE,
-                ensureAllResExists(R.array.tick_sound_mode_values, setOf(TICK_ACTIVE))
-            ) {
-                isAllResExists(R.array.tick_sound_mode_values, getStringSet(PREF_TICK_SOUND_MODE))
-            }
-
-            putStringOptional(
-                PREF_TIME_FORMAT,
-                ensureResExists(
-                    R.array.time_format_values,
-                    if (is24HourLocale()) "HH:mm" else "h:mm"
-                )
-            ) {
-                isResExists(R.array.time_format_values, getString(PREF_TIME_FORMAT))
-            }
-
-            putStringOptional(
-                PREF_SECONDS_FORMAT,
-                ensureResExists(R.array.seconds_format_values, "ss")
-            ) {
-                isResExists(R.array.seconds_format_values, getString(PREF_SECONDS_FORMAT))
-            }
-
-            putStringOptional(
-                PREF_DATE_FORMAT,
-                ensureResExists(R.array.date_format_values, SYSTEM_DEFAULT)
-            ) {
-                isResExists(R.array.date_format_values, getString(PREF_DATE_FORMAT))
-            }
-
-            putLongOptional(
-                PREF_AUTO_DEACTIVATION_DELAY,
-                ensureResExists(R.array.deactivation_delay_values, 5000)
-            ) {
-                isResExists(
-                    R.array.deactivation_delay_values,
-                    getLong(PREF_AUTO_DEACTIVATION_DELAY)
-                )
-            }
-
-            putIntOptional(
-                PREF_INACTIVE_BRIGHTNESS, 20
-            ) {
+            putIntOptional(PREF_INACTIVE_BRIGHTNESS, 20) {
                 getInt(PREF_INACTIVE_BRIGHTNESS) in 0..100
             }
 
-            putStringOptional(
-                PREF_CONTENT_LAYOUT,
-                ensureResExists(
-                    R.array.content_layout_values,
-                    getResName(R.layout.view_digital_default)
-                )
-            ) {
-                isResExists(R.array.content_layout_values, getString(PREF_CONTENT_LAYOUT))
-            }
+            putStringSetResourceOptional(
+                PREF_TICK_SOUND_MODE,
+                setOf(TICK_ACTIVE),
+                R.array.tick_sound_mode_values
+            )
 
-            putStringOptional(
+            putStringResourceOptional(
+                PREF_TIME_FORMAT,
+                if (is24HourLocale()) "HH:mm" else "h:mm",
+                R.array.time_format_values
+            )
+
+            putStringResourceOptional(
+                PREF_SECONDS_FORMAT,
+                "ss",
+                R.array.seconds_format_values
+            )
+
+            putStringResourceOptional(
+                PREF_DATE_FORMAT,
+                SYSTEM_DEFAULT,
+                R.array.date_format_values
+            )
+
+            putLongResourceOptional(
+                PREF_AUTO_DEACTIVATION_DELAY,
+                5000,
+                R.array.deactivation_delay_values
+            )
+
+            putStringResourceOptional(
+                PREF_CONTENT_LAYOUT,
+                getResName(R.layout.view_digital_default),
+                R.array.content_layout_values
+            )
+
+            putStringResourceOptional(
                 PREF_TICK_SOUND,
-                ensureResExists(R.array.tick_sound_values, getResName(R.raw.alarm_clock))
+                getResName(R.raw.alarm_clock),
+                R.array.tick_sound_values
+            )
+
+            putStringResourceOptional(
+                PREF_DIGITS_ANIMATION,
+                getResName(R.animator.text_slide_bounce),
+                R.array.digits_animation_values
+            )
+        }
+    }
+
+    private fun EditorWrapper.putLongResourceOptional(key: String, value: Long, valuesRes: Int) {
+        context.apply {
+            putLongOptional(
+                key,
+                ensureResArrayContains(valuesRes, value)
             ) {
-                isResExists(R.array.tick_sound_values, getString(PREF_TICK_SOUND))
+                isResArrayContains(valuesRes, getLong(key))
+            }
+        }
+    }
+
+    private fun EditorWrapper.putStringResourceOptional(key: String, value: String, valuesRes: Int) {
+        context.apply {
+            putStringOptional(
+                key,
+                ensureResArrayContains(valuesRes, value)
+            ) {
+                isResArrayContains(valuesRes, getString(key))
+            }
+        }
+    }
+
+    private fun EditorWrapper.putStringSetResourceOptional(key: String, value: Set<String>, valuesRes: Int) {
+        context.apply {
+            putStringSetOptional(
+                key,
+                ensureAllResExists(valuesRes, value)
+            ) {
+                isResArrayContainsAll(valuesRes, getStringSet(key))
             }
         }
     }
@@ -115,6 +135,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_TICK_SOUND_MODE = "tick_sound_mode"
         const val PREF_TIME_SEPARATORS_BLINKING = "time_separators_blinking"
         const val PREF_TIME_SEPARATORS_VISIBLE = "time_separators_visible"
+        const val PREF_DIGITS_ANIMATION = "digits_animation"
     }
 
 }

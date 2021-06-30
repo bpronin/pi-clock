@@ -15,6 +15,7 @@ import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
@@ -90,6 +91,14 @@ class SettingsFragment : CustomPreferenceFragment(),
             PREF_TICK_SOUND_MODE -> updateTickModePreferenceView()
             PREF_TIME_FORMAT -> updateTimeFormatPreferenceView()
             PREF_TIME_SEPARATORS_VISIBLE -> updateSeparatorsPreferenceViews()
+            PREF_DIGITS_ANIMATION -> updateDigitsAnimationPreferenceViews()
+        }
+    }
+
+    private fun updateDigitsAnimationPreferenceViews() {
+        (requirePreference(PREF_DIGITS_ANIMATION) as ListPreference).apply {
+            val value = settings.getString(PREF_DIGITS_ANIMATION)
+            summary = entries[findIndexOfValue(value)]
         }
     }
 
