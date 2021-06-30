@@ -1,17 +1,19 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <objectAnimator
-        android:duration="800"
-        android:interpolator="@android:anim/bounce_interpolator"
-        android:propertyName="translationY"
-        android:valueFrom="-48sp"
-        android:valueTo="0" />
+    <!-- NOTE: relative_translationY is a custom property -->
 
     <objectAnimator
         android:duration="800"
         android:interpolator="@android:anim/bounce_interpolator"
-        android:propertyName="translationY"
-        android:valueFrom="0"
-        android:valueTo="48sp" />
+        android:propertyName="relative_translationY"
+        android:valueFrom="-1f"
+        android:valueTo="0f" />
+
+    <objectAnimator
+        android:duration="800"
+        android:interpolator="@android:anim/bounce_interpolator"
+        android:propertyName="relative_translationY"
+        android:valueFrom="0f"
+        android:valueTo="1f" />
 
 </set>

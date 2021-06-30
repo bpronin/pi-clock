@@ -5,7 +5,6 @@ import android.animation.AnimatorInflater.loadAnimator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.graphics.Color
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.annotation.AttrRes
@@ -13,7 +12,7 @@ import androidx.annotation.StyleRes
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
-import com.bopr.piclock.util.RelativeTranslationYProperty
+import com.bopr.piclock.util.RELATIVE_TRANSLATION_Y
 
 /**
  * Text view with animated transitions when changing text.
@@ -52,8 +51,6 @@ class AnimatedTextView : FrameLayout {
             alpha = 1f
             scaleX = 1f
             scaleY = 1f
-            scrollX = 0
-            scrollY = 0
             translationY = 0f
             translationX = 0f
             visibility = VISIBLE
@@ -62,15 +59,13 @@ class AnimatedTextView : FrameLayout {
             alpha = 1f
             scaleX = 1f
             scaleY = 1f
-            scrollX = 0
-            scrollY = 0
             translationY = 0f
             translationX = 0f
             visibility = GONE
         }
 
-        view.setBackgroundColor(Color.RED)
-        shadowView.setBackgroundColor(Color.BLUE)
+//        view.setBackgroundColor(Color.RED)
+//        shadowView.setBackgroundColor(Color.BLUE)
     }
 
     fun setTextAnimator(animator: AnimatorSet?) {
@@ -108,8 +103,8 @@ class AnimatedTextView : FrameLayout {
 
     private fun Animator.extendProperties() {
         if (this is ObjectAnimator) {
-            if (propertyName == RelativeTranslationYProperty.NAME) {
-                setProperty(RelativeTranslationYProperty())
+            if (propertyName == RELATIVE_TRANSLATION_Y.name) {
+                setProperty(RELATIVE_TRANSLATION_Y)
             }
         }
     }

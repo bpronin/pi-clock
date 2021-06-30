@@ -1,5 +1,7 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- NOTE: relative_translationY is a custom property -->
+
     <objectAnimator
         android:duration="800"
         android:interpolator="@android:anim/linear_interpolator"
