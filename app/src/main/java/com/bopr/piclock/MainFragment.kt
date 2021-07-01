@@ -171,8 +171,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         container: ViewGroup?,
         savedState: Bundle?
     ): View {
-
-
         val root = inflater.inflate(R.layout.fragment_main, container, false).apply {
             doOnLayout {
                 doOnInitialLayoutComplete(savedState)
@@ -342,8 +340,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun setMode(mode: Int, animate: Boolean) {
         beforeSetMode()
+
         this.mode = mode
+        fullscreenControl.onChangeViewMode(mode)
         updateRootView(animate)
+        updateBrightness()
+
         afterSetMode()
 
         Log.d(_tag, "Mode: $mode")
@@ -395,11 +397,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun updateRootView(animate: Boolean) {
         Log.d(_tag, "Updating controls. mode: $mode, animated: $animate")
 
-        fullscreenControl.fullscreen = (mode == MODE_INACTIVE)
-
         if (animate) {
             tickControl.onChangeViewMode(mode)
-
             when (mode) {
                 MODE_ACTIVE -> {
                     animations.showFab(settingsButton)
@@ -417,13 +416,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                         inactiveBrightness
                     )
                 }
-                MODE_EDITOR -> TODO()
+                MODE_EDITOR -> {
+//                    moveSettingsButtonUp()
+                }
             }
         } else {
             settingsButton.visibility = if (mode == MODE_INACTIVE) GONE else VISIBLE
         }
-
-        updateBrightness()
     }
 
     private fun updateFullscreenControl() {
@@ -517,7 +516,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         updateContentViewData()
         blinkTimeSeparator()
-        tickControl.onTick(mode, floating)
+        tickControl.onTimer(mode, floating)
     }
 
     private fun startAutoDeactivate() {

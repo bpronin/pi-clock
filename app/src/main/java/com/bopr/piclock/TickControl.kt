@@ -151,7 +151,7 @@ internal class TickControl(private val context: Context) {
         }
     }
 
-    fun onTick(mode: Int, floating: Boolean) {
+    fun onTimer(mode: Int, floating: Boolean) {
         if ((playWhenActive && mode == MODE_ACTIVE)
             || (playWhenInactive && mode == MODE_INACTIVE)
             || (playWhenFloating && floating)
