@@ -74,9 +74,9 @@
     </string-array>
 
     <string-array name="tick_sound_mode_values" translatable="false">
-        <item>inactive</item>
         <item>active</item>
         <item>floating</item>
+        <item>inactive</item>
     </string-array>
 
     <string-array name="digits_animation_values" translatable="false">

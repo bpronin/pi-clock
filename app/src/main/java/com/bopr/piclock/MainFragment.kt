@@ -30,6 +30,8 @@ import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_TICK_RULES
+import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
@@ -122,7 +124,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         settings.registerOnSharedPreferenceChangeListener(this)
 
         fullscreenControl = FullscreenControl(requireActivity())
-        tickControl = TickControl(requireContext(), settings)
+
+        tickControl = TickControl(requireContext()).apply {
+            setSound(settings.getString(PREF_TICK_SOUND))
+            setRules(settings.getStringSet(PREF_TICK_RULES))
+        }
 
         scaleControl = ScaleControl(requireContext()).apply {
             onPinchStart = {
@@ -236,7 +242,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     override fun onDestroy() {
         settings.unregisterOnSharedPreferenceChangeListener(this)
-        tickControl.destroy()
+        tickControl.stop()
         fullscreenControl.destroy()
         super.onDestroy()
     }
@@ -270,6 +276,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateSecondsView()
                     updateSeparatorViews()
                 }
+                PREF_TICK_SOUND ->
+                    tickControl.setSound(getString(key))
+                PREF_TICK_RULES ->
+                    tickControl.setRules(getStringSet(key))
                 PREF_TIME_SEPARATORS_VISIBLE ->
                     updateSeparatorViews()
                 PREF_TIME_SEPARATORS_BLINKING ->
@@ -388,7 +398,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         fullscreenControl.fullscreen = (mode == MODE_INACTIVE)
 
         if (animate) {
-            tickControl.onChangeMode(mode)
+            tickControl.onChangeViewMode(mode)
 
             when (mode) {
                 MODE_ACTIVE -> {

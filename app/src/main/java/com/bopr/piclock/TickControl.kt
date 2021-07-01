@@ -2,7 +2,6 @@ package com.bopr.piclock
 
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.content.SharedPreferences
 import android.media.MediaPlayer
 import android.util.Log
 import android.util.Property
@@ -13,8 +12,6 @@ import com.bopr.piclock.Animations.Companion.FLOAT_CONTENT_DURATION
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
-import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
-import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_MODE
 import com.bopr.piclock.Settings.Companion.TICK_ACTIVE
 import com.bopr.piclock.Settings.Companion.TICK_FLOATING
 import com.bopr.piclock.Settings.Companion.TICK_INACTIVE
@@ -23,11 +20,9 @@ import com.bopr.piclock.util.getResId
 /**
  * Controls ticking sound.
  */
-internal class TickControl(private val context: Context, private val settings: Settings) :
-    SharedPreferences.OnSharedPreferenceChangeListener {
+internal class TickControl(private val context: Context) {
 
     private val _tag = "TickControl"
-
     private val volumeAnimator: ObjectAnimator by lazy {
         val volumeProperty = object : Property<MediaPlayer, Float>(Float::class.java, "volume") {
 
@@ -44,18 +39,17 @@ internal class TickControl(private val context: Context, private val settings: S
             interpolator = LinearInterpolator()
         }
     }
+
     private lateinit var player: MediaPlayer
-    private lateinit var modes: Set<String>
+    private lateinit var soundName: String
+    private var playWhenActive: Boolean = false
+    private var playWhenInactive: Boolean = false
+    private var playWhenFloating: Boolean = false
     private var changingVolume = false
     private var prepared = false
 
-    init {
-        settings.registerOnSharedPreferenceChangeListener(this)
-        updateModes()
-    }
-
     private fun prepare() {
-        val resId = context.getResId("raw", settings.getString(PREF_TICK_SOUND))
+        val resId = context.getResId("raw", soundName)
         if (resId != 0) {
             player = MediaPlayer.create(context, resId)
             resetVolume()
@@ -80,7 +74,7 @@ internal class TickControl(private val context: Context, private val settings: S
         }
     }
 
-    private fun stop() {
+    fun stop() {
         if (prepared) {
             volumeAnimator.cancel()
             player.stop()
@@ -122,35 +116,29 @@ internal class TickControl(private val context: Context, private val settings: S
         }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        Log.d(_tag, "Setting: $key changed to: ${settings.all[key]}")
-        if (key == PREF_TICK_SOUND) {
-            stop()
-        } else if (key == PREF_TICK_SOUND_MODE) {
-            updateModes()
-        }
+    fun setSound(name: String) {
+        stop()
+        this.soundName = name
     }
 
-    private fun updateModes() {
-        modes = settings.getStringSet(PREF_TICK_SOUND_MODE)
+    fun setRules(rules: Set<String>) {
+        playWhenFloating = rules.contains(TICK_FLOATING)
+        playWhenInactive = rules.contains(TICK_INACTIVE)
+        playWhenActive = rules.contains(TICK_ACTIVE)
     }
 
-    fun destroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(this)
-    }
-
-    fun onChangeMode(mode: Int) {
+    fun onChangeViewMode(mode: Int) {
         when (mode) {
-            MODE_ACTIVE -> if (!modes.containsAll(setOf(TICK_ACTIVE, TICK_INACTIVE))) {
+            MODE_ACTIVE -> if (!(playWhenActive && playWhenInactive)) {
                 when {
-                    modes.contains(TICK_ACTIVE) -> fadeVolume(4000, 0f, 1f)
-                    modes.contains(TICK_INACTIVE) -> fadeVolume(4000, 1f, 0f)
+                    playWhenActive -> fadeVolume(4000, 0f, 1f)
+                    playWhenInactive -> fadeVolume(4000, 1f, 0f)
                 }
             }
-            MODE_INACTIVE -> if (!modes.containsAll(setOf(TICK_ACTIVE, TICK_INACTIVE))) {
+            MODE_INACTIVE -> if (!(playWhenActive && playWhenInactive)) {
                 when {
-                    modes.contains(TICK_ACTIVE) -> fadeVolume(4000, 1f, 0f)
-                    modes.contains(TICK_INACTIVE) -> fadeVolume(4000, 0f, 1f)
+                    playWhenActive -> fadeVolume(4000, 1f, 0f)
+                    playWhenInactive -> fadeVolume(4000, 0f, 1f)
                 }
             }
             MODE_EDITOR -> stop()
@@ -158,15 +146,15 @@ internal class TickControl(private val context: Context, private val settings: S
     }
 
     fun onFloatContent(floating: Boolean) {
-        if (floating && modes.contains(TICK_FLOATING)) {
+        if (floating && playWhenFloating) {
             fadeVolume(FLOAT_CONTENT_DURATION, 0f, 1f, 0f)
         }
     }
 
     fun onTick(mode: Int, floating: Boolean) {
-        if ((modes.contains(TICK_ACTIVE) && mode == MODE_ACTIVE)
-            || (modes.contains(TICK_INACTIVE) && mode == MODE_INACTIVE)
-            || (modes.contains(TICK_FLOATING) && floating)
+        if ((playWhenActive && mode == MODE_ACTIVE)
+            || (playWhenInactive && mode == MODE_INACTIVE)
+            || (playWhenFloating && floating)
             || changingVolume
         ) {
             play()

@@ -24,7 +24,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             }
 
             putStringSetResourceOptional(
-                PREF_TICK_SOUND_MODE,
+                PREF_TICK_RULES,
                 setOf(TICK_ACTIVE),
                 R.array.tick_sound_mode_values
             )
@@ -132,7 +132,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_INACTIVE_BRIGHTNESS = "min_brightness"
         const val PREF_SECONDS_FORMAT = "seconds_format"
         const val PREF_TICK_SOUND = "tick_sound"
-        const val PREF_TICK_SOUND_MODE = "tick_sound_mode"
+        const val PREF_TICK_RULES = "tick_sound_mode"
         const val PREF_TIME_SEPARATORS_BLINKING = "time_separators_blinking"
         const val PREF_TIME_SEPARATORS_VISIBLE = "time_separators_visible"
         const val PREF_DIGITS_ANIMATION = "digits_animation"

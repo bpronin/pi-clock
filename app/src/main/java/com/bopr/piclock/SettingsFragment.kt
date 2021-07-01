@@ -18,8 +18,8 @@ import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_TICK_RULES
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
-import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_MODE
 import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
@@ -88,7 +88,7 @@ class SettingsFragment : CustomPreferenceFragment(),
             PREF_INACTIVE_BRIGHTNESS -> updateMinBrightnessPreferenceView()
             PREF_SECONDS_FORMAT -> updateSecondsFormatPreferenceView()
             PREF_TICK_SOUND -> updateTickSoundPreferenceView()
-            PREF_TICK_SOUND_MODE -> updateTickModePreferenceView()
+            PREF_TICK_RULES -> updateTickModePreferenceView()
             PREF_TIME_FORMAT -> updateTimeFormatPreferenceView()
             PREF_TIME_SEPARATORS_VISIBLE -> updateSeparatorsPreferenceViews()
             PREF_DIGITS_ANIMATION -> updateDigitsAnimationPreferenceViews()
@@ -139,9 +139,9 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateTickModePreferenceView() {
-        (requirePreference(PREF_TICK_SOUND_MODE) as MultiSelectListPreference).apply {
+        (requirePreference(PREF_TICK_RULES) as MultiSelectListPreference).apply {
             val titles = mutableListOf<String>()
-            for (item in settings.getStringSet(PREF_TICK_SOUND_MODE)) {
+            for (item in settings.getStringSet(PREF_TICK_RULES)) {
                 titles.add(entries[entryValues.indexOf(item)].toString())
             }
             summary = if (titles.isNotEmpty())
