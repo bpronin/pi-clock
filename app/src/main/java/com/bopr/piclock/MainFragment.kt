@@ -20,8 +20,6 @@ import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.doOnLayout
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
-import com.bopr.piclock.Animations.Companion.FLOAT_CONTENT_DURATION
-import com.bopr.piclock.MainFragment.Mode.*
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_DEACTIVATION_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
@@ -32,15 +30,10 @@ import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
-import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND_MODE
 import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
-import com.bopr.piclock.Settings.Companion.TICK_ACTIVE
-import com.bopr.piclock.Settings.Companion.TICK_FLOATING
-import com.bopr.piclock.Settings.Companion.TICK_INACTIVE
 import com.bopr.piclock.util.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
@@ -75,8 +68,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var secondsFormat: DateFormat
     private lateinit var dateFormat: DateFormat
     private lateinit var fullscreenControl: FullscreenControl
+    private lateinit var tickControl: TickControl
 
-    private var mode = INACTIVE
+    private var mode = MODE_INACTIVE
 
     private var autoDeactivating = false
     private val autoDeactivateTask = Runnable { onAutoDeactivate() }
@@ -100,9 +94,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
         }
     private var scaling: Boolean = false
-
-    private lateinit var tickPlayer: TickPlayer
-    private val tickMode get() = settings.getStringSet(PREF_TICK_SOUND_MODE)
 
     private val floatContentTask = Runnable { onFloatContent() }
     private var floatContentEnabled = false
@@ -130,18 +121,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
 
-        tickPlayer = TickPlayer(requireContext()).apply {
-            soundName = settings.getString(PREF_TICK_SOUND)
-        }
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedState: Bundle?
-    ): View {
-        fullscreenControl = FullscreenControl(requireActivity().window)
+        fullscreenControl = FullscreenControl(requireActivity())
+        tickControl = TickControl(requireContext(), settings)
 
         scaleControl = ScaleControl(requireContext()).apply {
             onPinchStart = {
@@ -176,6 +157,15 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 inactiveBrightness = currentBrightness
             }
         }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedState: Bundle?
+    ): View {
+
 
         val root = inflater.inflate(R.layout.fragment_main, container, false).apply {
             doOnLayout {
@@ -184,9 +174,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
             setOnClickListener {
                 when (mode) {
-                    ACTIVE -> setMode(INACTIVE, true)
-                    INACTIVE -> setMode(ACTIVE, true)
-                    EDITOR -> TODO()
+                    MODE_ACTIVE -> setMode(MODE_INACTIVE, true)
+                    MODE_INACTIVE -> setMode(MODE_ACTIVE, true)
+                    MODE_EDITOR -> TODO()
                 }
             }
 
@@ -240,13 +230,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onSaveInstanceState(savedState: Bundle) {
         super.onSaveInstanceState(savedState)
         savedState.apply {
-            putString("mode", mode.name)
+            putInt("mode", mode)
         }
     }
 
     override fun onDestroy() {
         settings.unregisterOnSharedPreferenceChangeListener(this)
-        tickPlayer.stop()
+        tickControl.destroy()
         fullscreenControl.destroy()
         super.onDestroy()
     }
@@ -288,8 +278,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateDateView()
                 PREF_AUTO_DEACTIVATION_DELAY ->
                     startAutoDeactivate()
-                PREF_TICK_SOUND ->
-                    updateTickSound()
                 PREF_INACTIVE_BRIGHTNESS ->
                     updateBrightness()
                 PREF_CONTENT_SCALE ->
@@ -308,16 +296,16 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun doOnInitialLayoutComplete(savedState: Bundle?) {
         savedState?.apply {
             fitContentIntoScreen()
-            setMode(Mode.valueOf(getString("mode")!!), false)
+            setMode(getInt("mode"), false)
         } ?: apply {
-            setMode(INACTIVE, true)
+            setMode(MODE_INACTIVE, true)
         }
     }
 
     private fun beforeSetMode() {
         stopAutoDeactivate()
         floatContentEnabled = false
-        if (mode == INACTIVE) {
+        if (mode == MODE_INACTIVE) {
             floatContentHome()
         }
 /*      todo: floating
@@ -342,7 +330,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 */
     }
 
-    private fun setMode(mode: Mode, animate: Boolean) {
+    private fun setMode(mode: Int, animate: Boolean) {
         beforeSetMode()
         this.mode = mode
         updateRootView(animate)
@@ -397,18 +385,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun updateRootView(animate: Boolean) {
         Log.d(_tag, "Updating controls. mode: $mode, animated: $animate")
 
-        fullscreenControl.fullscreen = (mode == INACTIVE)
+        fullscreenControl.fullscreen = (mode == MODE_INACTIVE)
 
         if (animate) {
-            val wantFadeTickVolume = !tickMode.containsAll(setOf(TICK_ACTIVE, TICK_INACTIVE))
+            tickControl.onChangeMode(mode)
+
             when (mode) {
-                ACTIVE -> {
-                    if (wantFadeTickVolume) {
-                        when {
-                            tickMode.contains(TICK_ACTIVE) -> tickPlayer.fadeVolume(4000, 0f, 1f)
-                            tickMode.contains(TICK_INACTIVE) -> tickPlayer.fadeVolume(4000, 1f, 0f)
-                        }
-                    }
+                MODE_ACTIVE -> {
                     animations.showFab(settingsButton)
                     animations.fadeBrightness(
                         contentView,
@@ -416,13 +399,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                         BrightnessControl.MAX_BRIGHTNESS
                     )
                 }
-                INACTIVE -> {
-                    if (wantFadeTickVolume) {
-                        when {
-                            tickMode.contains(TICK_ACTIVE) -> tickPlayer.fadeVolume(4000, 1f, 0f)
-                            tickMode.contains(TICK_INACTIVE) -> tickPlayer.fadeVolume(4000, 0f, 1f)
-                        }
-                    }
+                MODE_INACTIVE -> {
                     animations.hideFab(settingsButton)
                     animations.fadeBrightness(
                         contentView,
@@ -430,10 +407,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                         inactiveBrightness
                     )
                 }
-                EDITOR -> TODO()
+                MODE_EDITOR -> TODO()
             }
         } else {
-            settingsButton.visibility = if (mode == INACTIVE) GONE else VISIBLE
+            settingsButton.visibility = if (mode == MODE_INACTIVE) GONE else VISIBLE
         }
 
         updateBrightness()
@@ -512,7 +489,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
 
     private fun updateBrightness() {
-        currentBrightness = if (mode == INACTIVE)
+        currentBrightness = if (mode == MODE_INACTIVE)
             inactiveBrightness
         else
             BrightnessControl.MAX_BRIGHTNESS
@@ -530,11 +507,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         updateContentViewData()
         blinkTimeSeparator()
-        playTickSound()
+        tickControl.onTick(mode, floating)
     }
 
     private fun startAutoDeactivate() {
-        if (mode == ACTIVE && !autoDeactivating) {
+        if (mode == MODE_ACTIVE && !autoDeactivating) {
             stopAutoDeactivate()
             val delay = settings.getLong(PREF_AUTO_DEACTIVATION_DELAY)
             if (delay > 0) {
@@ -556,9 +533,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun onAutoDeactivate() {
-        if (mode == ACTIVE && autoDeactivating) {
+        if (mode == MODE_ACTIVE && autoDeactivating) {
             autoDeactivating = false
-            setMode(INACTIVE, true)
+            setMode(MODE_INACTIVE, true)
 
             Log.d(_tag, "Auto-deactivation complete")
         }
@@ -581,7 +558,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         Log.d(_tag, "Scheduling floating")
 
         val interval = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
-        if (mode == INACTIVE && floatContentEnabled && interval >= 0) {
+        if (mode == MODE_INACTIVE && floatContentEnabled && interval >= 0) {
             if (interval == 0L) {
                 handler.post(floatContentTask)
 
@@ -598,11 +575,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         Log.d(_tag, "Start floating animation")
 
         floating = true
-
-        if (tickMode.contains(TICK_FLOATING)) {
-            tickPlayer.fadeVolume(FLOAT_CONTENT_DURATION, 0f, 1f, 0f)
-        }
-
+        tickControl.onFloatContent(floating)
         animations.floatContentSomewhere(contentView) {
             Log.d(_tag, "End floating animation")
 
@@ -619,20 +592,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     animations.blinkSecondsSeparator(secondsSeparator)
                 }
             }
-        }
-    }
-
-    private fun updateTickSound() {
-        tickPlayer.soundName = settings.getString(PREF_TICK_SOUND)
-    }
-
-    private fun playTickSound() {
-        if ((tickMode.contains(TICK_ACTIVE) && mode == ACTIVE)
-            || (tickMode.contains(TICK_INACTIVE) && mode == INACTIVE)
-            || (tickMode.contains(TICK_FLOATING) && floating)
-            || tickPlayer.changingVolume
-        ) {
-            tickPlayer.play()
         }
     }
 
@@ -661,10 +620,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         startActivity(Intent(requireContext(), SettingsActivity::class.java))
     }
 
-    private enum class Mode {
-        INACTIVE,
-        ACTIVE,
-        EDITOR
+    companion object {
+
+        const val MODE_INACTIVE = 0
+        const val MODE_ACTIVE = 1
+        const val MODE_EDITOR = 2
     }
 
 }

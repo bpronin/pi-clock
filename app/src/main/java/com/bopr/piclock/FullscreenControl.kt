@@ -1,15 +1,18 @@
 package com.bopr.piclock
 
+import android.app.Activity
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View.*
-import android.view.Window
 import android.view.WindowInsets.Type.systemBars
 import android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
-internal class FullscreenControl(private val window: Window) {
+/**
+ * Controls showing and hiding system UI.
+ */
+internal class FullscreenControl(private val activity: Activity) {
 
     /** Logger tag. */
     private val _tag = "FullscreenSupport"
@@ -57,7 +60,7 @@ internal class FullscreenControl(private val window: Window) {
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.apply {
+            activity.window.apply {
                 setDecorFitsSystemWindows(false)
                 insetsController?.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
@@ -69,7 +72,7 @@ internal class FullscreenControl(private val window: Window) {
     }
 
     private fun showSystemUI() {
-        window.apply {
+        activity.window.apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 insetsController?.show(systemBars())
             } else {
@@ -85,7 +88,7 @@ internal class FullscreenControl(private val window: Window) {
 
     //todo: after rotating it does not hide UI
     private fun hideSystemUI() {
-        window.apply {
+        activity.window.apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 insetsController?.hide(systemBars())
             } else {
