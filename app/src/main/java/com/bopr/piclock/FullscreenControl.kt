@@ -3,7 +3,6 @@ package com.bopr.piclock
 import android.app.Activity
 import android.os.Build
 import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View.*
 import android.view.WindowInsets.Type.systemBars
@@ -13,12 +12,10 @@ import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 /**
  * Controls showing and hiding system UI.
  */
-internal class FullscreenControl(private val activity: Activity) {
+internal class FullscreenControl(private val activity: Activity, private val handler: Handler) {
 
     /** Logger tag. */
     private val _tag = "FullscreenSupport"
-
-    private val handler = Handler(Looper.getMainLooper())
 
     /**
      * Some older devices needs a small delay between UI widget updates
@@ -37,7 +34,8 @@ internal class FullscreenControl(private val activity: Activity) {
     private var fullscreen: Boolean = false
         set(value) {
             if (enabled && field != value) {
-                handler.removeCallbacksAndMessages(null)
+                handler.removeCallbacks(turnOnTask)
+                handler.removeCallbacks(turnOffTask)
                 field = value
                 if (field) {
                     handler.postDelayed(turnOffTask, startDelay)
@@ -70,10 +68,6 @@ internal class FullscreenControl(private val activity: Activity) {
 
     fun onChangeViewMode(mode: Int) {
         fullscreen = (mode == MODE_INACTIVE)
-    }
-
-    fun destroy() {
-        handler.removeCallbacksAndMessages(null)
     }
 
     private fun showSystemUI() {

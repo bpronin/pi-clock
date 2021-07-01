@@ -71,10 +71,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var dateFormat: DateFormat
     private lateinit var fullscreenControl: FullscreenControl
     private lateinit var tickControl: TickControl
+    private lateinit var floatControl: FloatContentControl
 
-    private var mode = MODE_INACTIVE
-
-    private var autoDeactivating = false
     private val autoDeactivateTask = Runnable { onAutoDeactivate() }
 
     private lateinit var brightnessControl: BrightnessControl
@@ -95,25 +93,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 scaleY = value
             }
         }
-    private var scaling: Boolean = false
 
-    private val floatContentTask = Runnable { onFloatContent() }
-    private var floatContentEnabled = false
-        set(value) {
-            if (field != value) {
-                field = value
-                if (field) {
-                    Log.d(_tag, "Floating enabled")
-
-                    scheduleFloatContent()
-                } else {
-                    Log.d(_tag, "Floating disabled")
-
-                    handler.removeCallbacks(floatContentTask)
-                }
-            }
-        }
-    private var floating = false
+    private var mode = MODE_INACTIVE
+    private var scaling = false
+    private var autoDeactivating = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.w(_tag, "Creating fragment")
@@ -123,11 +106,24 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
 
-        fullscreenControl = FullscreenControl(requireActivity())
+        fullscreenControl = FullscreenControl(requireActivity(), handler)
 
         tickControl = TickControl(requireContext()).apply {
             setSound(settings.getString(PREF_TICK_SOUND))
             setRules(settings.getStringSet(PREF_TICK_RULES))
+        }
+
+        floatControl = FloatContentControl(handler).apply {
+            setInterval(settings.getLong(PREF_CONTENT_FLOAT_INTERVAL))
+            onFloatSomewhere = { onEnd ->
+                animations.floatContentSomewhere(contentView) { onEnd() }
+            }
+            onFloatHome = { onEnd ->
+                animations.floatContentHome(contentView) { onEnd() }
+            }
+            onFloating = { floating ->
+                tickControl.onFloatContent(floating)
+            }
         }
 
         scaleControl = ScaleControl(requireContext()).apply {
@@ -241,21 +237,20 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onDestroy() {
         settings.unregisterOnSharedPreferenceChangeListener(this)
         tickControl.stop()
-        fullscreenControl.destroy()
         super.onDestroy()
     }
 
     override fun onResume() {
         super.onResume()
         timer.enabled = true
-        floatContentEnabled = true
+        floatControl.enabled = true
         startAutoDeactivate()
     }
 
     override fun onPause() {
         stopAutoDeactivate()
         timer.enabled = false
-        floatContentEnabled = false
+        floatControl.enabled = false
         super.onPause()
     }
 
@@ -274,10 +269,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateSecondsView()
                     updateSeparatorViews()
                 }
-                PREF_TICK_SOUND ->
-                    tickControl.setSound(getString(key))
-                PREF_TICK_RULES ->
-                    tickControl.setRules(getStringSet(key))
                 PREF_TIME_SEPARATORS_VISIBLE ->
                     updateSeparatorViews()
                 PREF_TIME_SEPARATORS_BLINKING ->
@@ -290,10 +281,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateBrightness()
                 PREF_CONTENT_SCALE ->
                     updateScale()
-                PREF_CONTENT_FLOAT_INTERVAL ->
-                    updateFloatContentInterval()
                 PREF_DIGITS_ANIMATION ->
                     updateDigitsAnimation()
+                PREF_TICK_SOUND ->
+                    tickControl.setSound(getString(key))
+                PREF_TICK_RULES ->
+                    tickControl.setRules(getStringSet(key))
+                PREF_CONTENT_FLOAT_INTERVAL ->
+                    floatControl.setInterval(getLong(key))
             }
         }
     }
@@ -312,14 +307,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun beforeSetMode() {
         stopAutoDeactivate()
-        floatContentEnabled = false
-        if (mode == MODE_INACTIVE) {
-            floatContentHome()
-        }
 /*      todo: floating
         if (!active) {
-            floatContentEnabled = false
-            floatContentHome()
         } else {
             stopAutoDeactivate()
         }
@@ -328,10 +317,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun afterSetMode() {
         startAutoDeactivate()
-        floatContentEnabled = true
 /*      todo: floating
         if (!active) {
-            floatContentEnabled = true
         } else {
             startAutoDeactivate()
         }
@@ -342,10 +329,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         beforeSetMode()
 
         this.mode = mode
+
+        floatControl.onChangeViewMode(mode)
         fullscreenControl.onChangeViewMode(mode)
         updateRootView(animate)
         updateBrightness()
-
         afterSetMode()
 
         Log.d(_tag, "Mode: $mode")
@@ -496,7 +484,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         dateView.setTextAnimatorRes(resId)
     }
 
-
     private fun updateBrightness() {
         currentBrightness = if (mode == MODE_INACTIVE)
             inactiveBrightness
@@ -516,7 +503,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         updateContentViewData()
         blinkTimeSeparator()
-        tickControl.onTimer(mode, floating)
+        tickControl.onTimer(mode, floatControl.floating)
     }
 
     private fun startAutoDeactivate() {
@@ -547,49 +534,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             setMode(MODE_INACTIVE, true)
 
             Log.d(_tag, "Auto-deactivation complete")
-        }
-    }
-
-    private fun updateFloatContentInterval() {
-        floatContentEnabled = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL) >= 0
-        if (!floatContentEnabled) {
-            floatContentHome()
-        }
-    }
-
-    private fun floatContentHome() {
-        Log.d(_tag, "Floating home")
-
-        animations.floatContentHome(contentView)
-    }
-
-    private fun scheduleFloatContent() {
-        Log.d(_tag, "Scheduling floating")
-
-        val interval = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
-        if (mode == MODE_INACTIVE && floatContentEnabled && interval >= 0) {
-            if (interval == 0L) {
-                handler.post(floatContentTask)
-
-                Log.d(_tag, "Floating task posted")
-            } else if (interval > 0) {
-                handler.postDelayed(floatContentTask, interval)
-
-                Log.d(_tag, "Floating task scheduled after: $interval ms")
-            }
-        }
-    }
-
-    private fun onFloatContent() {
-        Log.d(_tag, "Start floating animation")
-
-        floating = true
-        tickControl.onFloatContent(floating)
-        animations.floatContentSomewhere(contentView) {
-            Log.d(_tag, "End floating animation")
-
-            floating = false
-            scheduleFloatContent()
         }
     }
 
