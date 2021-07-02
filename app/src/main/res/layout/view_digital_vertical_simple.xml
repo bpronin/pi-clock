@@ -62,25 +62,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="-32sp"
-        android:layout_marginBottom="-10sp"
+        android:layout_marginTop="-64sp"
+        android:layout_marginBottom="-34sp"
         android:fontFamily="@font/gruppo"
-        android:includeFontPadding="false"
         android:text="_"
         android:textColor="?attr/contentTextColor"
-        android:textSize="48sp"
+        android:textSize="96sp"
         tools:ignore="HardcodedText" />
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/seconds_view"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:fontFamily="@font/gruppo"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:fontFamily="@font/gruppo"
         android:includeFontPadding="false"
         android:text="04"
         android:textColor="?attr/contentTextColor"
-        android:textSize="48sp"
+        android:textSize="96sp"
         tools:ignore="HardcodedText" />
 
     <com.bopr.piclock.AnimatedTextView
@@ -88,8 +87,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="8sp"
-        android:layout_marginBottom="4sp"
         android:fontFamily="@font/comfortaa"
         android:includeFontPadding="false"
         android:text="Wednesday\nJanuary 13"
