@@ -19,8 +19,6 @@ internal class ScaleControl(context: Context) : ScaleGestureDetector.OnScaleGest
     lateinit var onPinchStart: () -> Float
     lateinit var onPinch: (Float) -> Unit
     lateinit var onPinchEnd: () -> Unit
-    lateinit var needFit: () -> Boolean
-    lateinit var onFit: (onEnd: () -> Unit) -> Unit
 
     private val detector = ScaleGestureDetector(context, this)
     private val minScaleFactor = context.getStringArray(R.array.scale_values).first().toFloat()

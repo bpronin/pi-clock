@@ -71,8 +71,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var tickControl: TickControl
     private lateinit var floatControl: FloatContentControl
     private lateinit var autoDeactivationControl: AutoDeactivationControl
-
     private lateinit var brightnessControl: BrightnessControl
+    private lateinit var scaleControl: ScaleControl
+
     private var inactiveBrightness: Int by IntSettingsPropertyDelegate(PREF_INACTIVE_BRIGHTNESS) { settings }
     private var currentBrightness: Int
         get() = (contentView.alpha * 100).toInt()
@@ -80,7 +81,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             contentView.alpha = value / 100f
         }
 
-    private lateinit var scaleControl: ScaleControl
     private var scale: Float by FloatSettingsPropertyDelegate(PREF_CONTENT_SCALE) { settings }
     private var currentScale: Float
         get() = contentView.scaleX
@@ -422,17 +422,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun updateDateView() {
         val pattern = settings.getString(PREF_DATE_FORMAT)
 
-        dateFormat = if (pattern == SYSTEM_DEFAULT) {
-            DEFAULT_DATE_FORMAT
-        } else {
-            defaultDatetimeFormat(pattern)
-        }
-
-        if (pattern.isEmpty()) {
-            dateView.visibility = GONE
-        } else {
-            dateView.visibility = VISIBLE
-        }
+        dateFormat =
+            if (pattern == SYSTEM_DEFAULT) DEFAULT_DATE_FORMAT else defaultDatetimeFormat(pattern)
+        dateView.visibility = if (pattern.isEmpty()) GONE else VISIBLE
 
         fitContentIntoScreen()
     }
@@ -441,7 +433,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         if (settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE)) {
             timeSeparator.visibility = VISIBLE
             secondsSeparator.visibility =
-                (if (settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()) VISIBLE else INVISIBLE)
+                if (settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()) VISIBLE else INVISIBLE
 
             if (!settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING)) {
                 timeSeparator.alpha = 1f
@@ -505,6 +497,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 Log.d(_tag, "Fitting content scale")
 
                 scaling = true
+                //todo: move into if out of screen
                 animations.fitScaleIntoParent(contentView) {
                     scaling = false
                     onEnd()
