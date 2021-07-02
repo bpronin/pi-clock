@@ -11,20 +11,36 @@ internal class FloatContentControl(private val handler: Handler) {
 
     private val _tag = "FloatContentControl"
 
+    var interval = 0L
+        set(value) {
+            if (field != value) {
+                field = value
+
+                Log.d(_tag, "Interval set to: $interval")
+            }
+        }
+    var busy = false
+        private set(value) {
+            if (field != value) {
+                field = value
+                onBusy(field)
+            }
+        }
+    lateinit var onFloatSomewhere: (onEnd: () -> Unit) -> Unit
+    lateinit var onFloatHome: (onEnd: () -> Unit) -> Unit
+    lateinit var onBusy: (busy: Boolean) -> Unit
+
     private val task = Runnable { floatSomewhere() }
-
-    private var interval = 0L
-
-    var enabled = false
+    private var enabled = false
         set(value) {
             if (field != value) {
                 field = value
                 if (field) {
-                    Log.d(_tag, "Floating enabled")
+                    Log.d(_tag, "Enabled")
 
-                    scheduleFloatContent()
+                    scheduleTask()
                 } else {
-                    Log.d(_tag, "Floating disabled")
+                    Log.d(_tag, "Disabled")
 
                     handler.removeCallbacks(task)
                     floatHome()
@@ -32,67 +48,63 @@ internal class FloatContentControl(private val handler: Handler) {
             }
         }
 
-    var floating = false
-        private set(value) {
-            if (field != value) {
-                field = value
-                onFloating(field)
-            }
-        }
-
-    lateinit var onFloatSomewhere: (onEnd: () -> Unit) -> Unit
-    lateinit var onFloatHome: (onEnd: () -> Unit) -> Unit
-    lateinit var onFloating: (floating: Boolean) -> Unit
-
-    private fun scheduleFloatContent() {
+    private fun scheduleTask() {
         if (enabled) {
             when {
                 interval == 0L -> {
                     handler.post(task)
 
-                    Log.d(_tag, "Floating task posted now")
+                    Log.d(_tag, "Task posted now")
                 }
                 interval > 0 -> {
                     handler.postDelayed(task, interval)
 
-                    Log.d(_tag, "Floating task scheduled after: $interval ms")
+                    Log.d(_tag, "Task scheduled after: $interval")
                 }
                 else -> {
-                    Log.v(_tag, "Floating task not scheduled")
+                    Log.v(_tag, "Task not scheduled. interval: $interval")
                 }
             }
         }
     }
 
     private fun floatSomewhere() {
-        Log.d(_tag, "Floating somewhere")
+        Log.v(_tag, "Start floating somewhere")
 
-        floating = true
+        busy = true
         onFloatSomewhere {
-            Log.v(_tag, "End floating animation")
+            Log.v(_tag, "End floating somewhere")
 
-            floating = false
-            scheduleFloatContent()
+            busy = false
+            scheduleTask()
         }
     }
 
     private fun floatHome() {
-        Log.d(_tag, "Floating home")
+        Log.v(_tag, "Start floating home")
 
-        floating = true
+        busy = true
         onFloatHome {
-            Log.v(_tag, "End floating animation")
+            Log.v(_tag, "End floating home")
 
-            floating = false
+            busy = false
         }
     }
 
-    fun setInterval(interval: Long) {
-        this.interval = interval
+    fun onModeChanged(mode: Int) {
+        enabled = (mode == MODE_INACTIVE)
     }
 
-    fun onChangeViewMode(mode: Int) {
-        enabled = (mode == MODE_INACTIVE)
+    fun onPause() {
+        Log.v(_tag, "Pause")
+
+        enabled = false
+    }
+
+    fun onResume() {
+        Log.v(_tag, "Resume")
+
+        enabled = true
     }
 
 }

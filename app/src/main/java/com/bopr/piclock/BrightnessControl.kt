@@ -43,7 +43,7 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
     /**
      * To be called in owner's onTouch.
      */
-    fun processTouch(event: MotionEvent): Boolean {
+    fun onTouch(event: MotionEvent): Boolean {
         detector.onTouchEvent(event)
 
         /* this is to prevent of calling onClick if scrolled */

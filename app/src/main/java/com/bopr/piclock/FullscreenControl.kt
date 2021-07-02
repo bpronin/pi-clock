@@ -14,7 +14,16 @@ import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
  */
 internal class FullscreenControl(private val activity: Activity, private val handler: Handler) {
 
-    /** Logger tag. */
+    var enabled = true
+        set(value) {
+            if (field != value) {
+                field = value
+                if (!field) {
+                    fullscreen = false
+                }
+            }
+        }
+
     private val _tag = "FullscreenSupport"
 
     /**
@@ -47,16 +56,6 @@ internal class FullscreenControl(private val activity: Activity, private val han
             }
         }
 
-    var enabled = true
-        set(value) {
-            if (field != value) {
-                if (!value) {
-                    fullscreen = false
-                }
-                field = value
-            }
-        }
-
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             activity.window.apply {
@@ -66,7 +65,7 @@ internal class FullscreenControl(private val activity: Activity, private val han
         }
     }
 
-    fun onChangeViewMode(mode: Int) {
+    fun onModeChanged(mode: Int) {
         fullscreen = (mode == MODE_INACTIVE)
     }
 

@@ -9,8 +9,6 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent.ACTION_DOWN
-import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.*
@@ -72,8 +70,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var fullscreenControl: FullscreenControl
     private lateinit var tickControl: TickControl
     private lateinit var floatControl: FloatContentControl
-
-    private val autoDeactivateTask = Runnable { onAutoDeactivate() }
+    private lateinit var autoDeactivationControl: AutoDeactivationControl
 
     private lateinit var brightnessControl: BrightnessControl
     private var inactiveBrightness: Int by IntSettingsPropertyDelegate(PREF_INACTIVE_BRIGHTNESS) { settings }
@@ -96,7 +93,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private var mode = MODE_INACTIVE
     private var scaling = false
-    private var autoDeactivating = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.w(_tag, "Creating fragment")
@@ -106,22 +102,31 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
 
-        fullscreenControl = FullscreenControl(requireActivity(), handler)
-
         tickControl = TickControl(requireContext()).apply {
             setSound(settings.getString(PREF_TICK_SOUND))
             setRules(settings.getStringSet(PREF_TICK_RULES))
         }
 
+        autoDeactivationControl = AutoDeactivationControl(handler).apply {
+            delay = settings.getLong(PREF_AUTO_DEACTIVATION_DELAY)
+            onDeactivate = {
+                setMode(MODE_INACTIVE, true)
+            }
+        }
+
         floatControl = FloatContentControl(handler).apply {
-            setInterval(settings.getLong(PREF_CONTENT_FLOAT_INTERVAL))
+            interval = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
             onFloatSomewhere = { onEnd ->
-                animations.floatContentSomewhere(contentView) { onEnd() }
+                if (contentView.isLaidOut) {
+                    animations.floatContentSomewhere(contentView) { onEnd() }
+                } else onEnd()
             }
             onFloatHome = { onEnd ->
-                animations.floatContentHome(contentView) { onEnd() }
+                if (contentView.isLaidOut) {
+                    animations.floatContentHome(contentView) { onEnd() }
+                } else onEnd()
             }
-            onFloating = { floating ->
+            onBusy = { floating ->
                 tickControl.onFloatContent(floating)
             }
         }
@@ -161,15 +166,24 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedState: Bundle?
     ): View {
+        /* [fullscreenControl] must be initialized after window is created */
+        fullscreenControl = FullscreenControl(requireActivity(), handler)
+
         val root = inflater.inflate(R.layout.fragment_main, container, false).apply {
             doOnLayout {
-                doOnInitialLayoutComplete(savedState)
+                savedState?.apply {
+                    fitContentIntoScreen()
+                    setMode(getInt("mode"), false)
+                } ?: apply {
+                    setMode(MODE_INACTIVE, true)
+                }
             }
 
             setOnClickListener {
@@ -181,12 +195,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
 
             setOnTouchListener { _, event ->
-                when (event.action) {
-                    ACTION_DOWN -> stopAutoDeactivate()
-                    ACTION_UP -> startAutoDeactivate()
-                }
-                //todo: allow change in any mode
-                brightnessControl.processTouch(event) || scaleControl.processTouch(event)
+                autoDeactivationControl.onTouch(event, mode)
+                        || brightnessControl.onTouch(event)
+                        || scaleControl.onTouch(event)
             }
 
             settingsButton = viewById<FloatingActionButton>(R.id.settings_button).apply {
@@ -237,21 +248,22 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onDestroy() {
         settings.unregisterOnSharedPreferenceChangeListener(this)
         tickControl.stop()
+        handler.removeCallbacksAndMessages(null)
         super.onDestroy()
+    }
+
+    override fun onPause() {
+        autoDeactivationControl.onPause()
+        timer.enabled = false
+        floatControl.onPause()
+        super.onPause()
     }
 
     override fun onResume() {
         super.onResume()
         timer.enabled = true
-        floatControl.enabled = true
-        startAutoDeactivate()
-    }
-
-    override fun onPause() {
-        stopAutoDeactivate()
-        timer.enabled = false
-        floatControl.enabled = false
-        super.onPause()
+        floatControl.onResume()
+        autoDeactivationControl.onResume()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -275,8 +287,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateSeparatorViews()
                 PREF_DATE_FORMAT ->
                     updateDateView()
-                PREF_AUTO_DEACTIVATION_DELAY ->
-                    startAutoDeactivate()
                 PREF_INACTIVE_BRIGHTNESS ->
                     updateBrightness()
                 PREF_CONTENT_SCALE ->
@@ -288,53 +298,21 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_TICK_RULES ->
                     tickControl.setRules(getStringSet(key))
                 PREF_CONTENT_FLOAT_INTERVAL ->
-                    floatControl.setInterval(getLong(key))
+                    floatControl.interval = getLong(key)
+                PREF_AUTO_DEACTIVATION_DELAY ->
+                    autoDeactivationControl.delay = getLong(key)
             }
         }
     }
 
-    /**
-     * Occurs when all views are properly resized according to layout.
-     */
-    private fun doOnInitialLayoutComplete(savedState: Bundle?) {
-        savedState?.apply {
-            fitContentIntoScreen()
-            setMode(getInt("mode"), false)
-        } ?: apply {
-            setMode(MODE_INACTIVE, true)
-        }
-    }
-
-    private fun beforeSetMode() {
-        stopAutoDeactivate()
-/*      todo: floating
-        if (!active) {
-        } else {
-            stopAutoDeactivate()
-        }
-*/
-    }
-
-    private fun afterSetMode() {
-        startAutoDeactivate()
-/*      todo: floating
-        if (!active) {
-        } else {
-            startAutoDeactivate()
-        }
-*/
-    }
-
     private fun setMode(mode: Int, animate: Boolean) {
-        beforeSetMode()
-
         this.mode = mode
 
-        floatControl.onChangeViewMode(mode)
-        fullscreenControl.onChangeViewMode(mode)
+        autoDeactivationControl.onModeChanged(mode)
+        floatControl.onModeChanged(mode)
+        fullscreenControl.onModeChanged(mode)
         updateRootView(animate)
         updateBrightness()
-        afterSetMode()
 
         Log.d(_tag, "Mode: $mode")
     }
@@ -503,38 +481,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         updateContentViewData()
         blinkTimeSeparator()
-        tickControl.onTimer(mode, floatControl.floating)
-    }
-
-    private fun startAutoDeactivate() {
-        if (mode == MODE_ACTIVE && !autoDeactivating) {
-            stopAutoDeactivate()
-            val delay = settings.getLong(PREF_AUTO_DEACTIVATION_DELAY)
-            if (delay > 0) {
-                autoDeactivating = true
-                handler.postDelayed(autoDeactivateTask, delay)
-
-                Log.d(_tag, "Auto-deactivate task scheduled at: $delay ms")
-            }
-        }
-    }
-
-    private fun stopAutoDeactivate() {
-        if (autoDeactivating) {
-            autoDeactivating = false
-            handler.removeCallbacks(autoDeactivateTask)
-
-            Log.d(_tag, "Auto-deactivation canceled")
-        }
-    }
-
-    private fun onAutoDeactivate() {
-        if (mode == MODE_ACTIVE && autoDeactivating) {
-            autoDeactivating = false
-            setMode(MODE_INACTIVE, true)
-
-            Log.d(_tag, "Auto-deactivation complete")
-        }
+        tickControl.onTimer(mode, floatControl.busy)
     }
 
     private fun blinkTimeSeparator() {

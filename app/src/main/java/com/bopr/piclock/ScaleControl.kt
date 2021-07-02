@@ -10,13 +10,17 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Convenience class to control scale by pinch gesture.
+ * Convenience class to control scale.
  */
 internal class ScaleControl(context: Context) : ScaleGestureDetector.OnScaleGestureListener {
+
+    private val _tag = "ScaleControl"
 
     lateinit var onPinchStart: () -> Float
     lateinit var onPinch: (Float) -> Unit
     lateinit var onPinchEnd: () -> Unit
+    lateinit var needFit: () -> Boolean
+    lateinit var onFit: (onEnd: () -> Unit) -> Unit
 
     private val detector = ScaleGestureDetector(context, this)
     private val minScaleFactor = context.getStringArray(R.array.scale_values).first().toFloat()
@@ -43,7 +47,7 @@ internal class ScaleControl(context: Context) : ScaleGestureDetector.OnScaleGest
     /**
      * To be called in owner's onTouch.
      */
-    fun processTouch(event: MotionEvent): Boolean {
+    fun onTouch(event: MotionEvent): Boolean {
         detector.onTouchEvent(event)
 
         /* this is to prevent of calling onClick if pinched */
