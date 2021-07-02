@@ -28,7 +28,6 @@
         android:fontFamily="@font/gruppo"
         android:includeFontPadding="false"
         android:text="21"
-        android:textAlignment="center"
         android:textColor="?attr/contentTextColor"
         android:textSize="96sp"
         tools:ignore="HardcodedText" />
@@ -54,7 +53,6 @@
         android:fontFamily="@font/gruppo"
         android:includeFontPadding="false"
         android:text="56"
-        android:textAlignment="center"
         android:textColor="?attr/contentTextColor"
         android:textSize="96sp"
         tools:ignore="HardcodedText" />
@@ -80,7 +78,6 @@
         android:fontFamily="@font/gruppo"
         android:includeFontPadding="false"
         android:text="04"
-        android:textAlignment="center"
         android:textColor="?attr/contentTextColor"
         android:textSize="48sp"
         tools:ignore="HardcodedText" />

@@ -82,7 +82,6 @@
                     android:fontFamily="@font/comfortaa"
                     android:includeFontPadding="false"
                     android:text=":"
-                    android:textAlignment="center"
                     android:textColor="?attr/contentTextColor"
                     android:textSize="42sp"
                     tools:ignore="HardcodedText" />
@@ -111,7 +110,7 @@
         android:fontFamily="@font/montserrat"
         android:includeFontPadding="false"
         android:text="Someday, Month 00 "
-        android:textAlignment="center"
+        android:gravity="center"
         android:textColor="?attr/contentTextColor"
         android:textSize="18sp"
         tools:ignore="HardcodedText" />

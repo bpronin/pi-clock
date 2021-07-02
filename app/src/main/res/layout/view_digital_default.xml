@@ -81,7 +81,6 @@
                     android:fontFamily="@font/gruppo"
                     android:includeFontPadding="false"
                     android:text=":"
-                    android:textAlignment="center"
                     android:textColor="?attr/contentTextColor"
                     android:textSize="48sp"
                     tools:ignore="HardcodedText" />
@@ -109,6 +108,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/comfortaa"
         android:includeFontPadding="false"
+        android:gravity="center"
         android:text="Someday, Month 00 "
         android:textColor="?attr/contentTextColor"
         android:textSize="18sp"

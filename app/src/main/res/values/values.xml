@@ -2,6 +2,7 @@
 <resources>
 
     <string-array name="content_layout_values" translatable="false">
+        <item>view_digital_simple</item>
         <item>view_digital_default</item>
         <item>view_digital_round</item>
         <item>view_digital_square</item>

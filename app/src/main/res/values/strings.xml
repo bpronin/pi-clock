@@ -42,6 +42,7 @@
     <string name="digits_animation">Digits animation</string>
 
     <string-array name="content_layout_names">
+        <item>Digital simple</item>
         <item>Digital default</item>
         <item>Digital round</item>
         <item>Digital square</item>

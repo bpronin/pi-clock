@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:background="?attr/contentBackgroundColor"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.bopr.piclock.AnimatedTextView
+            android:id="@+id/hours_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/gruppo"
+            android:includeFontPadding="false"
+            android:text="00"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="82sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/time_separator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-8sp"
+            android:fontFamily="@font/gruppo"
+            android:includeFontPadding="false"
+            android:text=":"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="82sp"
+            tools:ignore="HardcodedText" />
+
+        <com.bopr.piclock.AnimatedTextView
+            android:id="@+id/minutes_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/gruppo"
+            android:includeFontPadding="false"
+            android:text="00"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="82sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/seconds_separator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-8sp"
+            android:fontFamily="@font/gruppo"
+            android:includeFontPadding="false"
+            android:text=":"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="82sp"
+            tools:ignore="HardcodedText" />
+
+        <com.bopr.piclock.AnimatedTextView
+            android:id="@+id/seconds_view"
+            android:layout_width="90sp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/gruppo"
+            android:includeFontPadding="false"
+            android:text="00"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="82sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/am_pm_marker_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="14sp"
+            android:fontFamily="@font/gruppo"
+            android:gravity="top|center_horizontal"
+            android:includeFontPadding="false"
+            android:text="AM"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="34sp"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+
+    <com.bopr.piclock.AnimatedTextView
+        android:id="@+id/date_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/comfortaa"
+        android:includeFontPadding="false"
+        android:text="Someday, Month 00 "
+        android:gravity="center"
+        android:textColor="?attr/contentTextColor"
+        android:textSize="18sp"
+        tools:ignore="HardcodedText" />
+
+</LinearLayout>
