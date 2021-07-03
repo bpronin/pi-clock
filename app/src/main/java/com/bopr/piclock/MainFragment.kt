@@ -50,9 +50,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val handler = Handler(Looper.getMainLooper())
     private val timer = HandlerTimer(handler, 1000, this::onTimer)
     private val amPmFormat = defaultDatetimeFormat("a")
+    private val rootView get() = requireView() as ViewGroup
     private var currentTime = Date()
 
     private lateinit var contentView: ViewGroup
+    private lateinit var settingsContainer: FragmentContainerView
     private lateinit var settingsButton: FloatingActionButton
     private lateinit var hoursView: AnimatedTextView
     private lateinit var minutesView: AnimatedTextView
@@ -73,6 +75,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var autoDeactivationControl: AutoDeactivationControl
     private lateinit var brightnessControl: BrightnessControl
     private lateinit var scaleControl: ScaleControl
+
+    private val transitionControl: TransitionControl by lazy {
+        TransitionControl(rootView)
+    }
 
     private var inactiveBrightness: Int by IntSettingsPropertyDelegate(PREF_INACTIVE_BRIGHTNESS) { settings }
     private var currentBrightness: Int
@@ -166,6 +172,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -187,9 +194,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
             setOnClickListener {
                 when (mode) {
-                    MODE_ACTIVE -> setMode(MODE_INACTIVE, true)
+                    MODE_ACTIVE, MODE_EDITOR -> setMode(MODE_INACTIVE, true)
                     MODE_INACTIVE -> setMode(MODE_ACTIVE, true)
-                    MODE_EDITOR -> TODO()
                 }
             }
 
@@ -200,16 +206,27 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
 
             settingsButton = findViewById<FloatingActionButton>(R.id.settings_button).apply {
+            settingsContainer = viewById<FragmentContainerView>(R.id.settings_container).apply {
+                visibility = GONE
+                ViewCompat.setOnApplyWindowInsetsListener(this) { view, windowInsets ->
+                    fixInsets(view, windowInsets, 0)
+                    windowInsets
+                }
+            }
+
+            settingsButton = viewById<FloatingActionButton>(R.id.settings_button).apply {
                 setOnClickListener {
-                    showPreferencesView()
+                    when (mode) {
+                        MODE_ACTIVE, MODE_INACTIVE -> setMode(MODE_EDITOR, true)
+                        MODE_EDITOR -> setMode(MODE_INACTIVE, true)
+                    }
                 }
                 ViewCompat.setOnApplyWindowInsetsListener(this) { view, windowInsets ->
-                    val insets = windowInsets.getInsets(Type.systemBars())
-                    val margin = resources.getDimension(R.dimen.fab_margin).toInt()
-                    view.updateLayoutParams<MarginLayoutParams> {
-                        rightMargin = margin + insets.right
-                        bottomMargin = margin + insets.bottom
-                    }
+                    fixInsets(
+                        view,
+                        windowInsets,
+                        resources.getDimension(R.dimen.fab_margin).toInt()
+                    )
                     windowInsets
                 }
             }
@@ -217,12 +234,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             infoView = findViewById<TextView>(R.id.info_view).apply {
                 visibility = GONE
                 ViewCompat.setOnApplyWindowInsetsListener(this) { view, windowInsets ->
-                    val insets = windowInsets.getInsets(Type.systemBars())
-                    val margin = resources.getDimension(R.dimen.fab_margin).toInt()
-                    view.updateLayoutParams<MarginLayoutParams> {
-                        leftMargin = margin + insets.left
-                        topMargin = margin + insets.top
-                    }
+                    fixInsets(
+                        view,
+                        windowInsets,
+                        resources.getDimension(R.dimen.fab_margin).toInt()
+                    )
                     windowInsets
                 }
             }
@@ -270,7 +286,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_FULLSCREEN_ENABLED ->
                     updateFullscreenControl()
                 PREF_CONTENT_LAYOUT ->
-                    createContentView()
+                    createContent()
                 PREF_TIME_FORMAT ->
                     updateHoursMinutesViews()
                 PREF_SECONDS_FORMAT -> {
@@ -301,19 +317,20 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun setMode(mode: Int, animate: Boolean) {
-        this.mode = mode
+    private fun setMode(newMode: Int, animate: Boolean) {
+        val oldMode = mode
+        mode = newMode
 
         autoDeactivationControl.onModeChanged(mode)
         floatControl.onModeChanged(mode)
         fullscreenControl.onModeChanged(mode)
-        updateRootView(animate)
+        updateRootView(oldMode, mode, animate)
         updateBrightness()
 
         Log.d(_tag, "Mode: $mode")
     }
 
-    private fun createContentView() {
+    private fun createContent() {
         Log.d(_tag, "Creating content")
 
         contentView.apply {
@@ -356,34 +373,63 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         fitContentIntoScreen()
     }
 
-    private fun updateRootView(animate: Boolean) {
-        Log.d(_tag, "Updating controls. mode: $mode, animated: $animate")
+    private fun updateRootView(oldMode: Int, newMode: Int, animate: Boolean) {
+        Log.d(_tag, "Updating controls. from $oldMode to $newMode, animated: $animate")
 
         if (animate) {
-            tickControl.onChangeViewMode(mode)
-            when (mode) {
+            tickControl.onChangeViewMode(newMode)
+            when (newMode) {
                 MODE_ACTIVE -> {
-                    animations.showFab(settingsButton)
-                    animations.fadeBrightness(
-                        contentView,
-                        currentBrightness,
-                        BrightnessControl.MAX_BRIGHTNESS
-                    )
+                    when (oldMode) {
+                        MODE_INACTIVE, MODE_ACTIVE -> {
+                            animations.showFab(settingsButton)
+                            animations.fadeBrightness(
+                                contentView,
+                                currentBrightness,
+                                BrightnessControl.MAX_BRIGHTNESS
+                            )
+                        }
+                        MODE_EDITOR -> {
+//                            transitionControl.setScene(mode)
+                        }
+                    }
                 }
                 MODE_INACTIVE -> {
-                    animations.hideFab(settingsButton)
-                    animations.fadeBrightness(
-                        contentView,
-                        currentBrightness,
-                        inactiveBrightness
-                    )
+                    when (oldMode) {
+                        MODE_INACTIVE, MODE_ACTIVE -> {
+                            animations.hideFab(settingsButton)
+                            animations.fadeBrightness(
+                                contentView,
+                                currentBrightness,
+                                inactiveBrightness
+                            )
+                        }
+                        MODE_EDITOR -> {
+//                            transitionControl.setScene(mode)
+                        }
+                    }
                 }
                 MODE_EDITOR -> {
-//                    moveSettingsButtonUp()
+//                    transitionControl.setScene(mode)
                 }
             }
+
+            transitionControl.onChangeViewMode(oldMode, newMode)
         } else {
-            settingsButton.visibility = if (mode == MODE_INACTIVE) GONE else VISIBLE
+            when (newMode) {
+                MODE_ACTIVE -> {
+                    settingsButton.visibility = VISIBLE
+//                    hideSettingsView()
+                }
+                MODE_INACTIVE -> {
+                    settingsButton.visibility = GONE
+//                    hideSettingsView()
+                }
+                MODE_EDITOR -> {
+                    settingsButton.visibility = VISIBLE
+//                    showSettingsView()
+                }
+            }
         }
     }
 
@@ -483,6 +529,16 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
+    private fun fixInsets(view: View, windowInsets: WindowInsetsCompat, margin: Int) {
+        val insets = windowInsets.getInsets(Type.systemBars())
+        view.updateLayoutParams<MarginLayoutParams> {
+            leftMargin = margin + insets.left
+            topMargin = margin + insets.top
+            rightMargin = margin + insets.right
+            bottomMargin = margin + insets.bottom
+        }
+    }
+
     private fun fitContentIntoScreen(onEnd: () -> Unit = {}) {
         if (!scaling) {
             val pr = contentView.getParentView().getScaledRect()
@@ -500,13 +556,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 }
             }
         }
-    }
-
-    private fun showPreferencesView() {
-//        settingsView.apply {
-//            visibility = if (visibility == VISIBLE) GONE else VISIBLE
-//        }
-        startActivity(Intent(requireContext(), SettingsActivity::class.java))
     }
 
     companion object {

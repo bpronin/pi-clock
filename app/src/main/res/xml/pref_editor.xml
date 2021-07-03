@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/formats">
+
+        <ListPreference
+            android:entries="@array/content_layout_names"
+            android:entryValues="@array/content_layout_values"
+            android:key="content_layout"
+            android:title="@string/layout" />
+
+        <ListPreference
+            android:entries="@array/time_format_names"
+            android:entryValues="@array/time_format_values"
+            android:key="time_format"
+            android:title="@string/hours_minutes_format" />
+
+        <ListPreference
+            android:entries="@array/seconds_format_names"
+            android:entryValues="@array/seconds_format_values"
+            android:key="seconds_format"
+            android:title="@string/seconds_format" />
+
+        <ListPreference
+            android:entryValues="@array/date_format_values"
+            android:key="date_format"
+            android:title="@string/date_format" />
+        <!-- android:entries for date_format are build in code -->
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/user_interface">
+
+        <com.bopr.piclock.util.ui.preference.FloatListPreference
+            android:entries="@array/scale_names"
+            android:entryValues="@array/scale_values"
+            android:key="content_scale"
+            android:title="@string/scale" />
+
+        <SeekBarPreference
+            android:key="min_brightness"
+            android:max="100"
+            android:title="@string/min_brightness" />
+
+        <SwitchPreference
+            android:key="time_separators_visible"
+            android:title="@string/show_time_separators" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/animation">
+
+        <SwitchPreference
+            android:key="time_separators_blinking"
+            android:title="@string/blink_time_separator" />
+
+        <ListPreference
+            android:entries="@array/digits_animation_names"
+            android:entryValues="@array/digits_animation_values"
+            android:key="digits_animation"
+            android:title="@string/digits_animation" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

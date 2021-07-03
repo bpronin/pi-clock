@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="?attr/mainBackgroundColor"
-        app:layout_constraintBottom_toTopOf="@id/settings_container"
+        app:layout_constraintHeight_percent="0.3"
         app:layout_constraintTop_toTopOf="parent">
 
         <FrameLayout
@@ -41,21 +41,20 @@
         android:name="com.bopr.piclock.EditorFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHeight_percent="0.7" />
+        app:layout_constraintTop_toBottomOf="@id/main_container" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/settings_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="@dimen/fab_margin"
         android:backgroundTint="@color/onyx"
         android:contentDescription="@string/settings_button"
         android:tint="?attr/contentTextColor"
         app:layout_constraintBottom_toBottomOf="@id/main_container"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_container"
         app:maxImageSize="32dp"
         app:rippleColor="?attr/colorOnSecondary"
         app:srcCompat="@drawable/ic_baseline_menu" />
