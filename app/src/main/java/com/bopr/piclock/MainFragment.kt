@@ -166,7 +166,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -176,7 +175,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         /* [fullscreenControl] must be initialized after window is created */
         fullscreenControl = FullscreenControl(requireActivity(), handler)
 
-        val root = inflater.inflate(R.layout.fragment_main, container, false).apply {
+        return inflater.inflate(R.layout.fragment_main, container, false).apply {
             doOnLayout {
                 savedState?.apply {
                     fitContentIntoScreen()
@@ -200,7 +199,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                         || scaleControl.onTouch(event)
             }
 
-            settingsButton = viewById<FloatingActionButton>(R.id.settings_button).apply {
+            settingsButton = findViewById<FloatingActionButton>(R.id.settings_button).apply {
                 setOnClickListener {
                     showPreferencesView()
                 }
@@ -215,7 +214,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 }
             }
 
-            infoView = viewById<TextView>(R.id.info_view).apply {
+            infoView = findViewById<TextView>(R.id.info_view).apply {
                 visibility = GONE
                 ViewCompat.setOnApplyWindowInsetsListener(this) { view, windowInsets ->
                     val insets = windowInsets.getInsets(Type.systemBars())
@@ -228,14 +227,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 }
             }
 
-            contentView = viewById<ViewGroup>(R.id.content_container).apply {
+            contentView = findViewById<ViewGroup>(R.id.content_container).apply {
                 setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
             }
+            createContentView()
         }
-
-        createContentView()
-
-        return root
     }
 
     override fun onSaveInstanceState(savedState: Bundle) {
@@ -324,13 +320,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             removeAllViews()
             val resId = getResId("layout", settings.getString(PREF_CONTENT_LAYOUT))
             addView(layoutInflater.inflate(resId, this, false).apply {
-                hoursView = viewById(R.id.hours_view)
-                minutesView = viewById(R.id.minutes_view)
-                secondsView = viewById(R.id.seconds_view)
-                amPmMarkerView = viewById(R.id.am_pm_marker_view)
-                dateView = viewById(R.id.date_view)
-                timeSeparator = viewById(R.id.time_separator)
-                secondsSeparator = viewById(R.id.seconds_separator)
+                hoursView = findViewById(R.id.hours_view)
+                minutesView = findViewById(R.id.minutes_view)
+                secondsView = findViewById(R.id.seconds_view)
+                amPmMarkerView = findViewById(R.id.am_pm_marker_view)
+                dateView = findViewById(R.id.date_view)
+                timeSeparator = findViewById(R.id.time_separator)
+                secondsSeparator = findViewById(R.id.seconds_separator)
             })
         }
 

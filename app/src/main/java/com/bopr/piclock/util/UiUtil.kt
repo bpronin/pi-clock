@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.EditText
-import androidx.annotation.IdRes
 import androidx.core.view.forEach
 import com.bopr.piclock.R
 
@@ -40,11 +39,6 @@ fun ViewGroup.forEachDeep(action: (view: View) -> Unit) {
             action(view)
         }
     }
-}
-
-fun <T : View?> View.viewById(@IdRes id: Int): T {
-    return findViewById(id)
-        ?: throw IllegalArgumentException("ID does not reference a View inside this View")
 }
 
 @Suppress("DEPRECATION")
