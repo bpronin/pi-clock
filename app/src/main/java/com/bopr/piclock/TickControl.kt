@@ -127,21 +127,23 @@ internal class TickControl(private val context: Context) {
         playWhenActive = rules.contains(TICK_ACTIVE)
     }
 
-    fun onChangeViewMode(mode: Int) {
-        when (mode) {
-            MODE_ACTIVE -> if (!(playWhenActive && playWhenInactive)) {
-                when {
-                    playWhenActive -> fadeVolume(4000, 0f, 1f)
-                    playWhenInactive -> fadeVolume(4000, 1f, 0f)
+    fun onModeChanged(mode: Int, animate: Boolean) {
+        if (animate) {
+            when (mode) {
+                MODE_ACTIVE -> if (!(playWhenActive && playWhenInactive)) {
+                    when {
+                        playWhenActive -> fadeVolume(4000, 0f, 1f)
+                        playWhenInactive -> fadeVolume(4000, 1f, 0f)
+                    }
                 }
-            }
-            MODE_INACTIVE -> if (!(playWhenActive && playWhenInactive)) {
-                when {
-                    playWhenActive -> fadeVolume(4000, 1f, 0f)
-                    playWhenInactive -> fadeVolume(4000, 0f, 1f)
+                MODE_INACTIVE -> if (!(playWhenActive && playWhenInactive)) {
+                    when {
+                        playWhenActive -> fadeVolume(4000, 1f, 0f)
+                        playWhenInactive -> fadeVolume(4000, 0f, 1f)
+                    }
                 }
+                MODE_EDITOR -> stop()
             }
-            MODE_EDITOR -> stop()
         }
     }
 

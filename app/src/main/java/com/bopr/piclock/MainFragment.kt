@@ -1,7 +1,6 @@
 package com.bopr.piclock
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
@@ -13,11 +12,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.*
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.doOnLayout
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_DEACTIVATION_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
@@ -50,7 +52,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val handler = Handler(Looper.getMainLooper())
     private val timer = HandlerTimer(handler, 1000, this::onTimer)
     private val amPmFormat = defaultDatetimeFormat("a")
-    private val rootView get() = requireView() as ViewGroup
+    private val rootView get() = requireView() as ConstraintLayout
     private var currentTime = Date()
 
     private lateinit var contentView: ViewGroup
@@ -75,10 +77,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var autoDeactivationControl: AutoDeactivationControl
     private lateinit var brightnessControl: BrightnessControl
     private lateinit var scaleControl: ScaleControl
-
-    private val transitionControl: TransitionControl by lazy {
-        TransitionControl(rootView)
-    }
+    private lateinit var layoutControl: LayoutControl
 
     private var inactiveBrightness: Int by IntSettingsPropertyDelegate(PREF_INACTIVE_BRIGHTNESS) { settings }
     private var currentBrightness: Int
@@ -172,14 +171,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedState: Bundle?
     ): View {
-        /* [fullscreenControl] must be initialized after window is created */
         fullscreenControl = FullscreenControl(requireActivity(), handler)
 
         return inflater.inflate(R.layout.fragment_main, container, false).apply {
@@ -205,16 +202,15 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                         || scaleControl.onTouch(event)
             }
 
-            settingsButton = findViewById<FloatingActionButton>(R.id.settings_button).apply {
-            settingsContainer = viewById<FragmentContainerView>(R.id.settings_container).apply {
-                visibility = GONE
-                ViewCompat.setOnApplyWindowInsetsListener(this) { view, windowInsets ->
-                    fixInsets(view, windowInsets, 0)
-                    windowInsets
+            settingsContainer =
+                findViewById<FragmentContainerView>(R.id.settings_container).apply {
+                    ViewCompat.setOnApplyWindowInsetsListener(this) { view, windowInsets ->
+                        fixInsets(view, windowInsets, 0)
+                        windowInsets
+                    }
                 }
-            }
 
-            settingsButton = viewById<FloatingActionButton>(R.id.settings_button).apply {
+            settingsButton = findViewById<FloatingActionButton>(R.id.settings_button).apply {
                 setOnClickListener {
                     when (mode) {
                         MODE_ACTIVE, MODE_INACTIVE -> setMode(MODE_EDITOR, true)
@@ -225,7 +221,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     fixInsets(
                         view,
                         windowInsets,
-                        resources.getDimension(R.dimen.fab_margin).toInt()
+                        requireContext().fabMargin
                     )
                     windowInsets
                 }
@@ -237,7 +233,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     fixInsets(
                         view,
                         windowInsets,
-                        resources.getDimension(R.dimen.fab_margin).toInt()
+                        requireContext().fabMargin
                     )
                     windowInsets
                 }
@@ -246,8 +242,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             contentView = findViewById<ViewGroup>(R.id.content_container).apply {
                 setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
             }
-            createContentView()
+            createContent()
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        layoutControl = LayoutControl(rootView)
     }
 
     override fun onSaveInstanceState(savedState: Bundle) {
@@ -324,8 +324,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         autoDeactivationControl.onModeChanged(mode)
         floatControl.onModeChanged(mode)
         fullscreenControl.onModeChanged(mode)
-        updateRootView(oldMode, mode, animate)
-        updateBrightness()
+        tickControl.onModeChanged(mode, animate)
+        layoutControl.onModeChanged(mode, animate)
+        updateLayout(oldMode, mode, animate)
 
         Log.d(_tag, "Mode: $mode")
     }
@@ -373,64 +374,28 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         fitContentIntoScreen()
     }
 
-    private fun updateRootView(oldMode: Int, newMode: Int, animate: Boolean) {
+    private fun updateLayout(oldMode: Int, newMode: Int, animate: Boolean) {
         Log.d(_tag, "Updating controls. from $oldMode to $newMode, animated: $animate")
 
-        if (animate) {
-            tickControl.onChangeViewMode(newMode)
-            when (newMode) {
-                MODE_ACTIVE -> {
-                    when (oldMode) {
-                        MODE_INACTIVE, MODE_ACTIVE -> {
-                            animations.showFab(settingsButton)
-                            animations.fadeBrightness(
-                                contentView,
-                                currentBrightness,
-                                BrightnessControl.MAX_BRIGHTNESS
-                            )
-                        }
-                        MODE_EDITOR -> {
-//                            transitionControl.setScene(mode)
-                        }
-                    }
-                }
-                MODE_INACTIVE -> {
-                    when (oldMode) {
-                        MODE_INACTIVE, MODE_ACTIVE -> {
-                            animations.hideFab(settingsButton)
-                            animations.fadeBrightness(
-                                contentView,
-                                currentBrightness,
-                                inactiveBrightness
-                            )
-                        }
-                        MODE_EDITOR -> {
-//                            transitionControl.setScene(mode)
-                        }
-                    }
-                }
-                MODE_EDITOR -> {
-//                    transitionControl.setScene(mode)
-                }
-            }
+        brightnessControl.onModeChanged(oldMode, newMode, animate)
 
-            transitionControl.onChangeViewMode(oldMode, newMode)
-        } else {
-            when (newMode) {
-                MODE_ACTIVE -> {
-                    settingsButton.visibility = VISIBLE
-//                    hideSettingsView()
-                }
-                MODE_INACTIVE -> {
-                    settingsButton.visibility = GONE
-//                    hideSettingsView()
-                }
-                MODE_EDITOR -> {
-                    settingsButton.visibility = VISIBLE
-//                    showSettingsView()
-                }
+        if (animate) {
+            if (newMode == MODE_ACTIVE && oldMode == MODE_INACTIVE) {
+                animations.fadeBrightness(
+                    contentView,
+                    currentBrightness,
+                    BrightnessControl.MAX_BRIGHTNESS
+                )
+            } else if (newMode == MODE_INACTIVE && oldMode == MODE_ACTIVE) {
+                animations.fadeBrightness(
+                    contentView,
+                    currentBrightness,
+                    inactiveBrightness
+                )
             }
         }
+
+        updateBrightness()
     }
 
     private fun updateFullscreenControl() {

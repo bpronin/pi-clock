@@ -58,6 +58,17 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
         return false
     }
 
+    fun onModeChanged(oldMode: Int, newMode: Int, animate: Boolean) {
+        updateBrightness(newMode)
+    }
+
+    private fun updateBrightness(mode: Int) {
+//        currentBrightness = if (mode == MODE_INACTIVE)
+//            inactiveBrightness
+//        else
+//            BrightnessControl.MAX_BRIGHTNESS
+    }
+
     companion object {
 
         private const val MIN_BRIGHTNESS = 10
