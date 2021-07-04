@@ -29,9 +29,9 @@ internal class BrightnessControl(private val view: View) :
 
     private val detector = GestureDetectorCompat(view.context, this)
     private var scaleFactor = 0f
-    private var scrollAlpha = 0f
+    private var slidingAlpha = 0f
     private var mutedAlpha = MIN_ALPHA
-    private var scrolled = false
+    private var sliding = false
 
     private val fadeAnimator by lazy {
         ObjectAnimator().apply {
@@ -51,18 +51,17 @@ internal class BrightnessControl(private val view: View) :
         distanceX: Float,
         distanceY: Float
     ): Boolean {
-        if (!scrolled) {
-            /* set factor to 2/3 of parents height */
-            scaleFactor = 1.5f / view.parentView.scaledRect.height()
-            scrollAlpha = view.alpha
+        if (!sliding) {
+            scaleFactor = 1.5f / view.parentView.scaledRect.height() /* to 2/3 of parents height */
+            slidingAlpha = view.alpha
             onStartSlide()
+            sliding = true
         } else {
-            scrollAlpha += distanceY * scaleFactor
-            scrollAlpha = min(MAX_ALPHA, max(scrollAlpha, MIN_ALPHA))
-            view.alpha = scrollAlpha
-            onSlide(brightness(scrollAlpha))
+            slidingAlpha += distanceY * scaleFactor
+            slidingAlpha = min(MAX_ALPHA, max(slidingAlpha, MIN_ALPHA))
+            view.alpha = slidingAlpha
+            onSlide(brightness(slidingAlpha))
         }
-        scrolled = true
         return false
     }
 
@@ -107,10 +106,10 @@ internal class BrightnessControl(private val view: View) :
             /* this is to prevent of calling onClick if scrolled */
             when (event.action) {
                 ACTION_DOWN ->
-                    scrolled = false
+                    sliding = false
                 ACTION_UP -> {
-                    if (scrolled) onEndSlide(brightness(scrollAlpha))
-                    return scrolled
+                    if (sliding) onEndSlide(brightness(slidingAlpha))
+                    return sliding
                 }
             }
         }

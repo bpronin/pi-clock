@@ -64,6 +64,7 @@ internal class FloatContentControl(private val view: View, private val handler: 
         }
 
     private val animator = AnimatorSet().apply {
+        //todo: use ObjectAnimator with path
         playTogether(
             ObjectAnimator.ofFloat(view, View.X, 0f),
             ObjectAnimator.ofFloat(view, View.Y, 0f)

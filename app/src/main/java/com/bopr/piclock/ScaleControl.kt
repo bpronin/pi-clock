@@ -1,45 +1,147 @@
 package com.bopr.piclock
 
-import android.content.Context
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.util.Log
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import android.view.ScaleGestureDetector
+import android.view.View
+import android.view.View.SCALE_X
+import android.view.View.SCALE_Y
+import android.view.animation.DecelerateInterpolator
+import androidx.core.animation.doOnEnd
 import com.bopr.piclock.util.getStringArray
+import com.bopr.piclock.util.parentView
+import com.bopr.piclock.util.scaledRect
 import kotlin.math.max
 import kotlin.math.min
 
 /**
  * Convenience class to control scale.
  */
-internal class ScaleControl(context: Context) : ScaleGestureDetector.OnScaleGestureListener {
+internal class ScaleControl(private val view: View) : ScaleGestureDetector.OnScaleGestureListener {
+
     //todo: individual scale settings for different screen orientation
     private val _tag = "ScaleControl"
 
-    lateinit var onPinchStart: () -> Float
-    lateinit var onPinch: (Float) -> Unit
-    lateinit var onPinchEnd: () -> Unit
+    private val detector = ScaleGestureDetector(view.context, this)
 
-    private val detector = ScaleGestureDetector(context, this)
-    private val minScaleFactor = context.getStringArray(R.array.scale_values).first().toFloat()
-    private var factor = 0f
-    private var pinched = false
+    private val rescaleAnimator by lazy {
+        AnimatorSet().apply {
+            playTogether(
+                ObjectAnimator.ofFloat(view, SCALE_X, 0f),
+                ObjectAnimator.ofFloat(view, SCALE_Y, 0f)
+            )
+            duration = 700
+            interpolator = DecelerateInterpolator()
+        }
+//        ObjectAnimator.ofFloat(view, SCALE_X, SCALE_Y, null).apply {
+//            duration = 700
+//            interpolator = DecelerateInterpolator()
+//        }
+    }
+
+    private var viewScale: Float
+        get() = view.scaleX
+        set(value) {
+            Log.v(_tag, "Set view scale to: $value")
+
+            view.apply {
+                scaleX = value
+                scaleY = value
+            }
+        }
+
+    private var pinching = false
+    private var rescaling = false
+    private val minScale = view.context.getStringArray(R.array.scale_values).first().toFloat()
+    private var pinchingScale = 0f
+    private var defaultScale = 0f
+
+    lateinit var onPinchStart: () -> Unit
+    lateinit var onPinch: (scale: Float) -> Unit
+    lateinit var onPinchEnd: () -> Unit
+    lateinit var onScaleChanged: (scale: Float) -> Unit
+
+    init {
+        view.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            onLayoutChanged()
+        }
+    }
 
     override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
-        pinched = true
-        factor = onPinchStart()
+        Log.d(_tag, "Start pinching")
+
+        pinching = true
+        pinchingScale = viewScale
+        onPinchStart()
         return true
     }
 
     override fun onScale(detector: ScaleGestureDetector): Boolean {
-        factor *= detector.scaleFactor
-        factor = max(minScaleFactor, min(factor, MAX_SCALE_FACTOR))
-        onPinch(factor)
+        pinchingScale *= detector.scaleFactor
+        pinchingScale = max(minScale, min(pinchingScale, MAX_SCALE_FACTOR))
+        viewScale = pinchingScale
+        onPinch(pinchingScale)
         return true
     }
 
     override fun onScaleEnd(detector: ScaleGestureDetector?) {
+        Log.d(_tag, "End pinching")
+
         onPinchEnd()
+        updateDefaultScale()
+    }
+
+    private fun updateDefaultScale() {
+        defaultScale = fitViewScaleIntoScreen()
+        onScaleChanged(defaultScale)
+    }
+
+    private fun fitViewScaleIntoScreen(): Float {
+        //todo: also move into if out of screen
+        val pr = view.parentView.scaledRect
+        val vr = view.scaledRect
+        return if (pr.width() >= vr.width() && pr.height() >= vr.height())
+            viewScale
+        else {
+            val scale = min(pr.width() / view.width, pr.height() / view.height)
+            rescaleView(scale)
+            return scale
+        }
+    }
+
+    private fun rescaleView(scale: Float) {
+        if (!rescaling) {
+            Log.d(_tag, "Start fitting")
+
+            rescaling = true
+            rescaleAnimator.apply {
+                cancel()
+                removeAllListeners()
+
+                (childAnimations[0] as ObjectAnimator).setFloatValues(view.scaleX, scale)
+                (childAnimations[1] as ObjectAnimator).setFloatValues(view.scaleY, scale)
+                doOnEnd {
+                    Log.d(_tag, "End fitting")
+
+                    rescaling = false
+                }
+
+                start()
+            }
+        }
+    }
+
+    fun setDefaultScale(value: Float) {
+        viewScale = value
+        updateDefaultScale()
+    }
+
+    fun onLayoutChanged() {
+        updateDefaultScale()
     }
 
     /**
@@ -51,9 +153,9 @@ internal class ScaleControl(context: Context) : ScaleGestureDetector.OnScaleGest
         /* this is to prevent of calling onClick if pinched */
         when (event.action) {
             ACTION_DOWN ->
-                pinched = false
+                pinching = false
             ACTION_UP ->
-                return pinched
+                return pinching
         }
 
         return false

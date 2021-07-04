@@ -1,18 +1,13 @@
 package com.bopr.piclock
 
 import android.animation.Animator
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.view.View
 import android.view.View.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.CycleInterpolator
-import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
-import com.bopr.piclock.util.parentView
-import com.bopr.piclock.util.scaledRect
-import kotlin.math.min
 
 
 internal class Animations {
@@ -76,13 +71,6 @@ internal class Animations {
         }
     }
 
-    private val fitScaleAnimator by lazy {
-        AnimatorSet().apply {
-            duration = 700
-            interpolator = DecelerateInterpolator()
-        }
-    }
-
     private fun Animator.reset(view: View) = apply {
         cancel()
         removeAllListeners() /*important. doOnStart(), doOnEnd() add! the listeners */
@@ -135,21 +123,6 @@ internal class Animations {
     fun blinkSecondsSeparator(view: View) {
         secondsSeparatorAnimator.apply {
             reset(view)
-            start()
-        }
-    }
-
-    fun fitScaleIntoParent(view: View, onEnd: () -> Unit) {
-        val pr = view.parentView.scaledRect
-        val scale = min(pr.width() / view.width, pr.height() / view.height)
-
-        fitScaleAnimator.apply {
-            reset(view)
-            playTogether(
-                ObjectAnimator.ofFloat(view, SCALE_X, scale),
-                ObjectAnimator.ofFloat(view, SCALE_Y, scale)
-            )
-            doOnEnd { onEnd() }
             start()
         }
     }

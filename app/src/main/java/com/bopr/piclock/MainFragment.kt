@@ -36,7 +36,10 @@ import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
-import com.bopr.piclock.util.*
+import com.bopr.piclock.util.HandlerTimer
+import com.bopr.piclock.util.defaultDatetimeFormat
+import com.bopr.piclock.util.fabMargin
+import com.bopr.piclock.util.getResId
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
 import java.util.*
@@ -118,23 +121,20 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private val scaleControl: ScaleControl by lazy {
-        ScaleControl(requireContext()).apply {
+        ScaleControl(contentView).apply {
             onPinchStart = {
-                scaling = true
                 animations.showInfo(infoView)
-                currentScale
             }
-            onPinch = { factor ->
-                currentScale = factor
-                infoView.text = getString(R.string.scale_info, currentScale * 100f)
+            onPinch = { scale ->
+                infoView.text = getString(R.string.scale_info, scale)
             }
             onPinchEnd = {
                 animations.hideInfo(infoView)
-                scaling = false
-                fitContentIntoScreen {
-                    scale = currentScale
-                }
             }
+            onScaleChanged = { scale ->
+                settings.update { putFloat(PREF_CONTENT_SCALE, scale) }
+            }
+            setDefaultScale(settings.getFloat(PREF_CONTENT_SCALE))
         }
     }
 
@@ -142,18 +142,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         LayoutControl(rootView)
     }
 
-    private var scale: Float by FloatSettingsPropertyDelegate(PREF_CONTENT_SCALE) { settings }
-    private var currentScale: Float
-        get() = contentView.scaleX
-        set(value) {
-            contentView.apply {
-                scaleX = value
-                scaleY = value
-            }
-        }
-
     private var mode = MODE_INACTIVE
-    private var scaling = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.w(_tag, "Creating fragment")
@@ -186,7 +175,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
             doOnLayout {
                 savedState?.apply {
-                    fitContentIntoScreen()
                     setMode(getInt("mode"), false)
                 } ?: apply {
                     setMode(MODE_INACTIVE, true)
@@ -272,10 +260,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateSeparatorViews()
                 PREF_DATE_FORMAT ->
                     updateDateView()
-                PREF_CONTENT_SCALE ->
-                    updateScale()
                 PREF_DIGITS_ANIMATION ->
                     updateDigitsAnimation()
+                PREF_CONTENT_SCALE ->
+                    scaleControl.setDefaultScale(getFloat(key))
                 PREF_MUTED_BRIGHTNESS ->
                     brightnessControl.setMutedBrightness(getInt(key), mode)
                 PREF_TICK_SOUND ->
@@ -325,9 +313,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateSecondsView()
         updateSeparatorViews()
         updateDateView()
-        updateScale()
         updateContentViewData()
         updateDigitsAnimation() /* must be after updateContentData */
+
+        scaleControl.onLayoutChanged()
     }
 
     private fun updateContentViewData() {
@@ -342,8 +331,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         if (amPmMarkerView.visibility == VISIBLE) {
             amPmMarkerView.text = amPmFormat.format(currentTime)
         }
-
-        fitContentIntoScreen()
     }
 
     private fun updateFullscreenControl() {
@@ -358,8 +345,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         hoursFormat = defaultDatetimeFormat(hoursPattern)
         minutesFormat = defaultDatetimeFormat(minutesPattern)
         amPmMarkerView.visibility = if (hoursPattern.startsWith("h")) VISIBLE else GONE
-
-        fitContentIntoScreen()
     }
 
     private fun updateSecondsView() {
@@ -370,8 +355,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         } else {
             secondsView.visibility = GONE
         }
-
-        fitContentIntoScreen()
     }
 
     private fun updateDateView() {
@@ -380,8 +363,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         dateFormat =
             if (pattern == SYSTEM_DEFAULT) DEFAULT_DATE_FORMAT else defaultDatetimeFormat(pattern)
         dateView.visibility = if (pattern.isEmpty()) GONE else VISIBLE
-
-        fitContentIntoScreen()
     }
 
     private fun updateSeparatorViews() {
@@ -410,10 +391,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         dateView.setTextAnimatorRes(resId)
     }
 
-    private fun updateScale() {
-        currentScale = scale
-    }
-
     private fun onTimer() {
 //        Log.v(_tag, "On timer: $time")
 //        currentTime = Date(currentTime.time + 10000) /* debug time */
@@ -430,25 +407,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 animations.blinkTimeSeparator(timeSeparator)
                 if (settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()) {
                     animations.blinkSecondsSeparator(secondsSeparator)
-                }
-            }
-        }
-    }
-
-    private fun fitContentIntoScreen(onEnd: () -> Unit = {}) {
-        if (!scaling) {
-            val pr = contentView.parentView.scaledRect
-            val vr = contentView.scaledRect
-            if (pr.width() >= vr.width() && pr.height() >= vr.height()) {
-                onEnd()
-            } else {
-                Log.d(_tag, "Fitting content scale")
-
-                scaling = true
-                //todo: move into if out of screen
-                animations.fitScaleIntoParent(contentView) {
-                    scaling = false
-                    onEnd()
                 }
             }
         }
