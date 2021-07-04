@@ -1,6 +1,7 @@
 package com.bopr.piclock.util
 
 import android.content.Context
+import android.content.res.Resources
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.R
 import java.text.DateFormat
@@ -88,4 +89,4 @@ fun Fragment.getStringArray(resId: Int): Array<out String> {
 
 fun defaultDatetimeFormat(pattern: String) = SimpleDateFormat(pattern, Locale.getDefault())
 
-val Context.fabMargin get() = resources.getDimension(R.dimen.fab_margin).toInt()
+val Resources.fabMargin get() = getDimension(R.dimen.fab_margin).toInt()

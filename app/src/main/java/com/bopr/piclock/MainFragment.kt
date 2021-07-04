@@ -477,7 +477,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun adjustMargins(windowInsets: WindowInsetsCompat) {
         val insets = windowInsets.getInsets(Type.systemBars())
-        val fabMargin = requireContext().fabMargin
+        val fabMargin = resources.fabMargin
         infoView.updateLayoutParams<MarginLayoutParams> {
             leftMargin = fabMargin + insets.left
             topMargin = fabMargin + insets.top

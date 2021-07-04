@@ -41,7 +41,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/settings_container"
-        android:name="com.bopr.piclock.EditorFragment"
+        android:name="com.bopr.piclock.SettingsFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

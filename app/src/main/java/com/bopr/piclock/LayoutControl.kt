@@ -1,5 +1,7 @@
 package com.bopr.piclock
 
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
+import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -14,9 +16,9 @@ import com.bopr.piclock.util.fabMargin
 
 internal class LayoutControl(private val rootView: ConstraintLayout) {
 
-    private val fabMargin = rootView.context.fabMargin
+    private val fabMargin = rootView.resources.fabMargin
 
-    private val fabConstraintsDefault = ConstraintSet().apply {
+    private val constraintsDefault = ConstraintSet().apply {
         R.id.settings_button.let {
             constrainWidth(it, WRAP_CONTENT)
             constrainHeight(it, WRAP_CONTENT)
@@ -25,36 +27,48 @@ internal class LayoutControl(private val rootView: ConstraintLayout) {
         }
     }
 
-    private val fabConstraintsEditor = ConstraintSet().apply {
-        R.id.settings_button.let {
-            constrainWidth(it, WRAP_CONTENT)
-            constrainHeight(it, WRAP_CONTENT)
-            connect(it, RIGHT, PARENT_ID, RIGHT, fabMargin)
-            connect(it, BOTTOM, R.id.main_container, BOTTOM)
-            connect(it, TOP, R.id.main_container, BOTTOM)
-        }
-    }
+    private val constraintsEditor = mapOf(
+        ORIENTATION_PORTRAIT to ConstraintSet().apply {
+            R.id.settings_button.let {
+                constrainWidth(it, WRAP_CONTENT)
+                constrainHeight(it, WRAP_CONTENT)
+                connect(it, RIGHT, PARENT_ID, RIGHT, fabMargin)
+                connect(it, BOTTOM, R.id.main_container, BOTTOM)
+                connect(it, TOP, R.id.main_container, BOTTOM)
+            }
+        },
+        ORIENTATION_LANDSCAPE to ConstraintSet().apply {
+            R.id.settings_button.let {
+                constrainWidth(it, WRAP_CONTENT)
+                constrainHeight(it, WRAP_CONTENT)
+                connect(it, BOTTOM, PARENT_ID, BOTTOM, fabMargin)
+                connect(it, LEFT, R.id.main_container, RIGHT)
+                connect(it, RIGHT, R.id.main_container, RIGHT)
+            }
+        })
 
     fun onModeChanged(mode: Int, animate: Boolean) {
+        val orientation = rootView.resources.configuration.orientation
+        val button = rootView.findViewById<View>(R.id.settings_button)
+        val container = rootView.findViewById<View>(R.id.settings_container)
+
         if (animate) {
             TransitionManager.beginDelayedTransition(rootView)
         }
 
-        val button = rootView.findViewById<View>(R.id.settings_button)
-        val container = rootView.findViewById<View>(R.id.settings_container)
         when (mode) {
             MODE_ACTIVE -> {
-                fabConstraintsDefault.applyTo(rootView)
+                constraintsDefault.applyTo(rootView)
                 button.visibility = VISIBLE
                 container.visibility = GONE
             }
             MODE_INACTIVE -> {
-                fabConstraintsDefault.applyTo(rootView)
+                constraintsDefault.applyTo(rootView)
                 button.visibility = GONE
                 container.visibility = GONE
             }
             MODE_EDITOR -> {
-                fabConstraintsEditor.applyTo(rootView)
+                constraintsEditor[orientation]!!.applyTo(rootView)
                 button.visibility = VISIBLE
                 container.visibility = VISIBLE
             }
