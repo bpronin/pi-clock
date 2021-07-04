@@ -71,19 +71,33 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var minutesFormat: DateFormat
     private lateinit var secondsFormat: DateFormat
     private lateinit var dateFormat: DateFormat
+
     private lateinit var fullscreenControl: FullscreenControl
-    private lateinit var tickControl: TickControl
+
+    private val soundControl: SoundControl by lazy {
+        SoundControl(requireContext()).apply {
+            setSound(settings.getString(PREF_TICK_SOUND))
+            setRules(settings.getStringSet(PREF_TICK_RULES))
+        }
+    }
 
     private val floatControl: FloatContentControl by lazy {
         FloatContentControl(contentView, handler).apply {
             interval = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
             onBusy = { busy ->
-                tickControl.onFloatContent(busy)
+                soundControl.onFloatContent(busy)
             }
         }
     }
 
-    private lateinit var autoDeactivationControl: AutoDeactivationControl
+    private val autoDeactivationControl: AutoDeactivationControl by lazy {
+        AutoDeactivationControl(handler).apply {
+            delay = settings.getLong(PREF_AUTO_DEACTIVATION_DELAY)
+            onDeactivate = {
+                setMode(MODE_INACTIVE, true)
+            }
+        }
+    }
 
     private val brightnessControl: BrightnessControl by lazy {
         BrightnessControl(contentView).apply {
@@ -101,7 +115,27 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private lateinit var scaleControl: ScaleControl
+    private val scaleControl: ScaleControl by lazy {
+        ScaleControl(requireContext()).apply {
+            onPinchStart = {
+                scaling = true
+                animations.showInfo(infoView)
+                currentScale
+            }
+            onPinch = { factor ->
+                currentScale = factor
+                infoView.text = getString(R.string.scale_info, currentScale * 100f)
+            }
+            onPinchEnd = {
+                animations.hideInfo(infoView)
+                scaling = false
+                fitContentIntoScreen {
+                    scale = currentScale
+                }
+            }
+        }
+    }
+
     private lateinit var layoutControl: LayoutControl
 
     private var scale: Float by FloatSettingsPropertyDelegate(PREF_CONTENT_SCALE) { settings }
@@ -124,37 +158,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
-
-        tickControl = TickControl(requireContext()).apply {
-            setSound(settings.getString(PREF_TICK_SOUND))
-            setRules(settings.getStringSet(PREF_TICK_RULES))
-        }
-
-        autoDeactivationControl = AutoDeactivationControl(handler).apply {
-            delay = settings.getLong(PREF_AUTO_DEACTIVATION_DELAY)
-            onDeactivate = {
-                setMode(MODE_INACTIVE, true)
-            }
-        }
-
-        scaleControl = ScaleControl(requireContext()).apply {
-            onPinchStart = {
-                scaling = true
-                animations.showInfo(infoView)
-                currentScale
-            }
-            onPinch = { factor ->
-                currentScale = factor
-                infoView.text = getString(R.string.scale_info, currentScale * 100f)
-            }
-            onPinchEnd = {
-                animations.hideInfo(infoView)
-                scaling = false
-                fitContentIntoScreen {
-                    scale = currentScale
-                }
-            }
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -231,7 +234,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     override fun onDestroy() {
         settings.unregisterOnSharedPreferenceChangeListener(this)
-        tickControl.stop()
+        soundControl.stop()
         handler.removeCallbacksAndMessages(null)
         super.onDestroy()
     }
@@ -278,9 +281,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_INACTIVE_BRIGHTNESS ->
                     brightnessControl.setInactiveBrightness(getInt(PREF_INACTIVE_BRIGHTNESS), mode)
                 PREF_TICK_SOUND ->
-                    tickControl.setSound(getString(key))
+                    soundControl.setSound(getString(key))
                 PREF_TICK_RULES ->
-                    tickControl.setRules(getStringSet(key))
+                    soundControl.setRules(getStringSet(key))
                 PREF_CONTENT_FLOAT_INTERVAL ->
                     floatControl.interval = getLong(key)
                 PREF_AUTO_DEACTIVATION_DELAY ->
@@ -295,7 +298,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         autoDeactivationControl.onModeChanged(mode)
         floatControl.onModeChanged(mode)
         fullscreenControl.onModeChanged(mode)
-        tickControl.onModeChanged(mode, animate)
+        soundControl.onModeChanged(mode, animate)
         layoutControl.onModeChanged(mode, animate)
         brightnessControl.onModeChanged(mode, animate)
 
@@ -414,14 +417,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun onTimer() {
+//        Log.v(_tag, "On timer: $time")
 //        currentTime = Date(currentTime.time + 10000)
         currentTime = Date()
-
-//        Log.v(_tag, "On timer: $time")
-
         updateContentViewData()
         blinkTimeSeparator()
-        tickControl.onTimer(mode, floatControl.busy)
+        soundControl.onTimer(mode, floatControl.busy)
     }
 
     private fun blinkTimeSeparator() {
@@ -437,8 +438,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun fitContentIntoScreen(onEnd: () -> Unit = {}) {
         if (!scaling) {
-            val pr = contentView.parentView.getScaledRect()
-            val vr = contentView.getScaledRect()
+            val pr = contentView.parentView.scaledRect
+            val vr = contentView.scaledRect
             if (pr.width() >= vr.width() && pr.height() >= vr.height()) {
                 onEnd()
             } else {

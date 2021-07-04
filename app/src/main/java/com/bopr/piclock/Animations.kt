@@ -10,8 +10,8 @@ import android.view.animation.CycleInterpolator
 import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
-import com.bopr.piclock.util.getScaledRect
 import com.bopr.piclock.util.parentView
+import com.bopr.piclock.util.scaledRect
 import kotlin.math.min
 
 
@@ -34,22 +34,22 @@ internal class Animations {
 //        }
 //    }
 
-    private val fabHideAnimator by lazy {
-        AnimatorSet().apply {
-            playTogether(
-                ObjectAnimator().apply {
-                    setProperty(ALPHA)
-                    setFloatValues(1f, 0f)
-                },
-                ObjectAnimator().apply {
-                    setProperty(ROTATION)
-                    setFloatValues(0f, -90f)
-                }
-            )
-            duration = 1000
-            interpolator = AccelerateInterpolator()
-        }
-    }
+//    private val fabHideAnimator by lazy {
+//        AnimatorSet().apply {
+//            playTogether(
+//                ObjectAnimator().apply {
+//                    setProperty(ALPHA)
+//                    setFloatValues(1f, 0f)
+//                },
+//                ObjectAnimator().apply {
+//                    setProperty(ROTATION)
+//                    setFloatValues(0f, -90f)
+//                }
+//            )
+//            duration = 1000
+//            interpolator = AccelerateInterpolator()
+//        }
+//    }
 
     private val infoAnimator by lazy {
         ObjectAnimator().apply {
@@ -140,7 +140,7 @@ internal class Animations {
     }
 
     fun fitScaleIntoParent(view: View, onEnd: () -> Unit) {
-        val pr = view.parentView.getScaledRect()
+        val pr = view.parentView.scaledRect
         val scale = min(pr.width() / view.width, pr.height() / view.height)
 
         fitScaleAnimator.apply {

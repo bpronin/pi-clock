@@ -12,9 +12,9 @@ import androidx.core.animation.doOnStart
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
-import com.bopr.piclock.util.getRect
-import com.bopr.piclock.util.getScaledRect
 import com.bopr.piclock.util.parentView
+import com.bopr.piclock.util.rect
+import com.bopr.piclock.util.scaledRect
 import java.lang.Math.random
 
 /**
@@ -96,8 +96,8 @@ internal class FloatContentControl(private val view: View, private val handler: 
             return
         }
 
-        val pr = view.parentView.getScaledRect()
-        val vr = view.getScaledRect()
+        val pr = view.parentView.scaledRect
+        val vr = view.scaledRect
         val dw = pr.width() - vr.width()
         val dh = pr.height() - vr.height()
         val dx = view.x - vr.left
@@ -132,8 +132,8 @@ internal class FloatContentControl(private val view: View, private val handler: 
     private fun floatHome() {
         if (!view.isLaidOut) return
 
-        val pr = view.parentView.getRect()
-        val vr = view.getRect()
+        val pr = view.parentView.rect
+        val vr = view.rect
         val x = (pr.width() - vr.width()) / 2
         val y = (pr.height() - vr.height()) / 2
 

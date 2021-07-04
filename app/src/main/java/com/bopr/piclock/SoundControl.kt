@@ -19,7 +19,7 @@ import com.bopr.piclock.util.getResId
 /**
  * Controls ticking sound.
  */
-internal class TickControl(private val context: Context) {
+internal class SoundControl(private val context: Context) {
 
     private val _tag = "TickControl"
 

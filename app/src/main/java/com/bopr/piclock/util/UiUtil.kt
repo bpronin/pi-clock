@@ -2,13 +2,10 @@ package com.bopr.piclock.util
 
 import android.app.AlertDialog
 import android.content.Context
-import android.graphics.Rect
 import android.graphics.RectF
-import android.os.Build
 import android.text.InputType
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.widget.EditText
 import androidx.core.view.forEach
 import com.bopr.piclock.R
@@ -18,18 +15,6 @@ import com.bopr.piclock.R
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-
-//fun View.doOnLayoutComplete(action: () -> Unit) {
-//    viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-//
-//        /** At this point the layout is complete and the dimensions
-//         * of the view and any child views are known.*/
-//        override fun onGlobalLayout() {
-//            viewTreeObserver.removeOnGlobalLayoutListener(this)
-//            action()
-//        }
-//    })
-//}
 
 fun ViewGroup.forEachDeep(action: (view: View) -> Unit) {
     forEach { view ->
@@ -41,29 +26,25 @@ fun ViewGroup.forEachDeep(action: (view: View) -> Unit) {
     }
 }
 
-@Suppress("DEPRECATION")
-fun getSystemInsetsCompat(insets: WindowInsets): Rect {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        val sbInsets = insets.getInsets(WindowInsets.Type.systemBars())
-        return Rect(
-            sbInsets.left,
-            sbInsets.top,
-            sbInsets.right,
-            sbInsets.bottom
-        )
-    } else {
-        return Rect(
-            insets.systemWindowInsetLeft,
-            insets.systemWindowInsetTop,
-            insets.systemWindowInsetRight,
-            insets.systemWindowInsetBottom
-        )
-    }
-}
-
-fun View.getRect(): RectF {
-    return RectF(x, y, x + width.toFloat(), y + height.toFloat())
-}
+//@Suppress("DEPRECATION")
+//fun getSystemInsetsCompat(insets: WindowInsets): Rect {
+//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//        val sbInsets = insets.getInsets(WindowInsets.Type.systemBars())
+//        return Rect(
+//            sbInsets.left,
+//            sbInsets.top,
+//            sbInsets.right,
+//            sbInsets.bottom
+//        )
+//    } else {
+//        return Rect(
+//            insets.systemWindowInsetLeft,
+//            insets.systemWindowInsetTop,
+//            insets.systemWindowInsetRight,
+//            insets.systemWindowInsetBottom
+//        )
+//    }
+//}
 
 fun RectF.scale(factorX: Float, factorY: Float) {
     if (factorX != 1f && factorY != 1f) {
@@ -71,9 +52,9 @@ fun RectF.scale(factorX: Float, factorY: Float) {
     }
 }
 
-fun View.getScaledRect(): RectF {
-    return getRect().apply { scale(scaleX, scaleY) }
-}
+val View.rect get() = RectF(x, y, x + width.toFloat(), y + height.toFloat())
+
+val View.scaledRect get() = rect.apply { scale(scaleX, scaleY) }
 
 val View.parentView get() = (parent as ViewGroup)
 
