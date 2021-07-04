@@ -8,7 +8,6 @@ import android.view.View.VISIBLE
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
-import androidx.transition.TransitionManager
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
@@ -52,9 +51,9 @@ internal class LayoutControl(private val rootView: ConstraintLayout) {
         val button = rootView.findViewById<View>(R.id.settings_button)
         val container = rootView.findViewById<View>(R.id.settings_container)
 
-        if (animate) {
-            TransitionManager.beginDelayedTransition(rootView)
-        }
+//        if (animate) {
+//            TransitionManager.beginDelayedTransition(rootView)
+//        }
 
         when (mode) {
             MODE_ACTIVE -> {

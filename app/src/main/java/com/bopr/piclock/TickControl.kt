@@ -8,7 +8,6 @@ import android.util.Property
 import android.view.animation.LinearInterpolator
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
-import com.bopr.piclock.Animations.Companion.FLOAT_CONTENT_DURATION
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
@@ -23,6 +22,7 @@ import com.bopr.piclock.util.getResId
 internal class TickControl(private val context: Context) {
 
     private val _tag = "TickControl"
+
     private val volumeAnimator: ObjectAnimator by lazy {
         val volumeProperty = object : Property<MediaPlayer, Float>(Float::class.java, "volume") {
 
@@ -149,13 +149,13 @@ internal class TickControl(private val context: Context) {
 
     fun onFloatContent(floating: Boolean) {
         if (floating && playWhenFloating) {
-            fadeVolume(FLOAT_CONTENT_DURATION, 0f, 1f, 0f)
+            fadeVolume(10000L, 0f, 1f, 0f)
         }
     }
 
     fun onTimer(mode: Int, floating: Boolean) {
         if ((playWhenActive && mode == MODE_ACTIVE)
-            || (playWhenInactive && mode == MODE_INACTIVE)
+            || (playWhenInactive && (mode == MODE_INACTIVE || mode == MODE_EDITOR))
             || (playWhenFloating && floating)
             || changingVolume
         ) {

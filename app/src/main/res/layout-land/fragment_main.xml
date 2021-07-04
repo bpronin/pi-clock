@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_container"
     android:layout_width="match_parent"
+    android:animateLayoutChanges="true"
     android:layout_height="match_parent"
     android:keepScreenOn="true">
 
@@ -56,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="@dimen/fab_margin"
-        android:backgroundTint="@color/onyx"
+        android:backgroundTint="?attr/fabColor"
         android:contentDescription="@string/settings_button"
         android:tint="?attr/contentTextColor"
         app:layout_constraintBottom_toBottomOf="parent"

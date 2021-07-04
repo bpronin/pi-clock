@@ -1,13 +1,26 @@
 package com.bopr.piclock
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.os.Handler
 import android.util.Log
+import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
+import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
+import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
+import com.bopr.piclock.util.getRect
+import com.bopr.piclock.util.getScaledRect
+import com.bopr.piclock.util.parentView
+import java.lang.Math.random
 
 /**
  * Controls floating content along the screen.
  */
-internal class FloatContentControl(private val handler: Handler) {
+internal class FloatContentControl(private val view: View, private val handler: Handler) {
 
     private val _tag = "FloatContentControl"
 
@@ -15,7 +28,7 @@ internal class FloatContentControl(private val handler: Handler) {
         set(value) {
             if (field != value) {
                 field = value
-
+                //todo: remove setter?
                 Log.d(_tag, "Interval set to: $interval")
             }
         }
@@ -26,11 +39,14 @@ internal class FloatContentControl(private val handler: Handler) {
                 onBusy(field)
             }
         }
-    lateinit var onFloatSomewhere: (onEnd: () -> Unit) -> Unit
-    lateinit var onFloatHome: (onEnd: () -> Unit) -> Unit
     lateinit var onBusy: (busy: Boolean) -> Unit
 
-    private val task = Runnable { floatSomewhere() }
+    private val task = Runnable {
+        if (enabled) floatSomewhere {
+            scheduleTask()
+        }
+    }
+
     private var enabled = false
         set(value) {
             if (field != value) {
@@ -43,10 +59,16 @@ internal class FloatContentControl(private val handler: Handler) {
                     Log.d(_tag, "Disabled")
 
                     handler.removeCallbacks(task)
-                    floatHome()
                 }
             }
         }
+
+    private val animator = AnimatorSet().apply {
+        playTogether(
+            ObjectAnimator.ofFloat(view, View.X, 0f),
+            ObjectAnimator.ofFloat(view, View.Y, 0f)
+        )
+    }
 
     private fun scheduleTask() {
         if (enabled) {
@@ -68,31 +90,91 @@ internal class FloatContentControl(private val handler: Handler) {
         }
     }
 
-    private fun floatSomewhere() {
-        Log.v(_tag, "Start floating somewhere")
+    private fun floatSomewhere(onEnd: () -> Unit) {
+        if (!view.isLaidOut) {
+            onEnd()
+            return
+        }
 
-        busy = true
-//        onFloatSomewhere {
-//            Log.v(_tag, "End floating somewhere")
-//
-//            busy = false
-//            scheduleTask()
-//        }
+        val pr = view.parentView.getScaledRect()
+        val vr = view.getScaledRect()
+        val dw = pr.width() - vr.width()
+        val dh = pr.height() - vr.height()
+        val dx = view.x - vr.left
+        val dy = view.y - vr.top
+        val x = random().toFloat() * dw + dx
+        val y = random().toFloat() * dh + dy
+
+        animator.apply {
+            cancel()
+            removeAllListeners()
+
+            duration = 10000L
+            interpolator = AccelerateDecelerateInterpolator()
+            (childAnimations[0] as ObjectAnimator).setFloatValues(view.x, x)
+            (childAnimations[1] as ObjectAnimator).setFloatValues(view.y, y)
+            doOnStart {
+                Log.v(_tag, "Start moving somewhere")
+
+                busy = true
+            }
+            doOnEnd {
+                Log.v(_tag, "End moving somewhere")
+
+                busy = false
+                onEnd()
+            }
+
+            start()
+        }
     }
 
     private fun floatHome() {
-        Log.v(_tag, "Start floating home")
+        if (!view.isLaidOut) return
 
-//        busy = true
-//        onFloatHome {
-//            Log.v(_tag, "End floating home")
-//
-//            busy = false
-//        }
+        val pr = view.parentView.getRect()
+        val vr = view.getRect()
+        val x = (pr.width() - vr.width()) / 2
+        val y = (pr.height() - vr.height()) / 2
+
+        animator.apply {
+            cancel()
+            removeAllListeners()
+
+            duration = 1000L
+            interpolator = DecelerateInterpolator()
+            (childAnimations[0] as ObjectAnimator).setFloatValues(view.x, x)
+            (childAnimations[1] as ObjectAnimator).setFloatValues(view.y, y)
+            doOnStart {
+                Log.v(_tag, "Start moving home")
+
+                busy = true
+            }
+            doOnEnd {
+                Log.v(_tag, "End moving home")
+
+                busy = false
+            }
+
+            start()
+        }
     }
 
     fun onModeChanged(mode: Int) {
-        enabled = (mode == MODE_INACTIVE)
+        when (mode) {
+            MODE_ACTIVE -> {
+                enabled = false
+                floatHome()
+            }
+            MODE_INACTIVE -> {
+                floatHome()
+                enabled = true
+            }
+            MODE_EDITOR -> {
+//                floatHome()
+                enabled = false
+            }
+        }
     }
 
     fun onPause() {

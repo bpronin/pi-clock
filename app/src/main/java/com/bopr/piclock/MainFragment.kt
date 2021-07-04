@@ -73,16 +73,28 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var dateFormat: DateFormat
     private lateinit var fullscreenControl: FullscreenControl
     private lateinit var tickControl: TickControl
-    private lateinit var floatControl: FloatContentControl
+
+    private val floatControl: FloatContentControl by lazy {
+        FloatContentControl(contentView, handler).apply {
+            interval = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
+            onBusy = { busy ->
+                tickControl.onFloatContent(busy)
+            }
+        }
+    }
+
     private lateinit var autoDeactivationControl: AutoDeactivationControl
 
     private val brightnessControl: BrightnessControl by lazy {
         BrightnessControl(requireContext()).apply {
             onChangeBrightness = { inactiveValue, maxValue ->
-                currentBrightness = if (mode != MODE_ACTIVE) inactiveValue else maxValue
+                currentBrightness = if (mode == MODE_INACTIVE || mode == MODE_EDITOR)
+                    inactiveValue
+                else
+                    maxValue
             }
-            onFadeBrightness = { value ->
-                animations.fadeBrightness(contentView, currentBrightness, value)
+            onFadeBrightness = { value, onEnd ->
+                animations.fadeBrightness(contentView, currentBrightness, value, onEnd)
             }
             onStartSlide = {
                 animations.showInfo(infoView)
@@ -143,23 +155,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
         }
 
-        floatControl = FloatContentControl(handler).apply {
-            interval = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
-            onFloatSomewhere = { onEnd ->
-                if (contentView.isLaidOut) {
-                    animations.floatContentSomewhere(contentView) { onEnd() }
-                } else onEnd()
-            }
-            onFloatHome = { onEnd ->
-                if (contentView.isLaidOut) {
-                    animations.floatContentHome(contentView) { onEnd() }
-                } else onEnd()
-            }
-            onBusy = { floating ->
-                tickControl.onFloatContent(floating)
-            }
-        }
-
         scaleControl = ScaleControl(requireContext()).apply {
             onPinchStart = {
                 scaling = true
@@ -178,7 +173,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 }
             }
         }
-
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -217,9 +211,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 windowInsets
             }
 
-            settingsContainer = findViewById(R.id.settings_container)
+            settingsContainer = findViewById<FragmentContainerView>(R.id.settings_container).apply {
+                visibility = GONE
+            }
 
             settingsButton = findViewById<FloatingActionButton>(R.id.settings_button).apply {
+                visibility = GONE
                 setOnClickListener {
                     when (mode) {
                         MODE_ACTIVE, MODE_INACTIVE -> setMode(MODE_EDITOR, true)
@@ -235,7 +232,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             contentView = findViewById<ViewGroup>(R.id.content_view).apply {
                 setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
             }
-            createContentView()
+            updateContentView()
         }
     }
 
@@ -279,7 +276,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_FULLSCREEN_ENABLED ->
                     updateFullscreenControl()
                 PREF_CONTENT_LAYOUT ->
-                    createContentView()
+                    updateContentView()
                 PREF_TIME_FORMAT ->
                     updateHoursMinutesViews()
                 PREF_SECONDS_FORMAT -> {
@@ -319,12 +316,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         fullscreenControl.onModeChanged(mode)
         tickControl.onModeChanged(mode, animate)
         layoutControl.onModeChanged(mode, animate)
-        brightnessControl.onModeChanged(oldMode, newMode, animate)
+        brightnessControl.onModeChanged(newMode, animate)
 
         Log.d(_tag, "Mode: $mode")
     }
 
-    private fun createContentView() {
+    private fun updateContentView() {
         Log.d(_tag, "Creating content")
 
         contentView.apply {
@@ -406,6 +403,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun updateSeparatorViews() {
+        //todo: fix: when blink disabled separator hides
         if (settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE)) {
             timeSeparator.visibility = VISIBLE
             secondsSeparator.visibility =
@@ -458,7 +456,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun fitContentIntoScreen(onEnd: () -> Unit = {}) {
         if (!scaling) {
-            val pr = contentView.getParentView().getScaledRect()
+            val pr = contentView.parentView.getScaledRect()
             val vr = contentView.getScaledRect()
             if (pr.width() >= vr.width() && pr.height() >= vr.height()) {
                 onEnd()

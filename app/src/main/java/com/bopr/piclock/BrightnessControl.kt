@@ -7,6 +7,7 @@ import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import androidx.core.view.GestureDetectorCompat
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
+import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import kotlin.math.max
 import kotlin.math.min
@@ -16,11 +17,16 @@ import kotlin.math.min
  */
 internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGestureListener() {
 
+    private val detector = GestureDetectorCompat(context, this)
+    private val scaleFactor = 10f // todo: make it depends on vertical screen size
+    private var brightness = 0  //todo: do let be less tah min
+    private var scrolled = false
+
     var inactiveBrightness: Int = MIN_BRIGHTNESS
         set(value) {
             if (field != value) {
                 field = value
-                onChangeBrightness(inactiveBrightness, MAX_BRIGHTNESS)
+                updateBrightNess()
             }
         }
 
@@ -28,12 +34,7 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
     lateinit var onSlide: (value: Int) -> Unit
     lateinit var onEndSlide: () -> Unit
     lateinit var onChangeBrightness: (inactiveValue: Int, maxValue: Int) -> Unit
-    lateinit var onFadeBrightness: (value: Int) -> Unit
-
-    private var brightness = 0  //todo: do let be less tah min
-    private val detector = GestureDetectorCompat(context, this)
-    private var scrolled = false
-    private val scaleFactor = 10f // todo: make it depends on vertical screen size
+    lateinit var onFadeBrightness: (value: Int, onEnd: () -> Unit) -> Unit
 
     override fun onScroll(
         e1: MotionEvent?,
@@ -50,6 +51,10 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
         }
         scrolled = true
         return false
+    }
+
+    private fun updateBrightNess() {
+        onChangeBrightness(inactiveBrightness, MAX_BRIGHTNESS)
     }
 
     /**
@@ -70,15 +75,21 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
         return false
     }
 
-    fun onModeChanged(oldMode: Int, newMode: Int, animate: Boolean) {
+    fun onModeChanged(mode: Int, animate: Boolean) {
         if (animate) {
-            if (newMode == MODE_ACTIVE && oldMode == MODE_INACTIVE) {
-                onFadeBrightness(MAX_BRIGHTNESS)
-            } else if (newMode == MODE_INACTIVE && oldMode == MODE_ACTIVE) {
-                onFadeBrightness(inactiveBrightness)
+            when (mode) {
+                MODE_ACTIVE ->
+                    onFadeBrightness(MAX_BRIGHTNESS) {
+                        updateBrightNess()
+                    }
+                MODE_INACTIVE, MODE_EDITOR ->
+                    onFadeBrightness(inactiveBrightness) {
+                        updateBrightNess()
+                    }
             }
+        } else {
+            updateBrightNess()
         }
-        onChangeBrightness(inactiveBrightness, MAX_BRIGHTNESS)
     }
 
     companion object {

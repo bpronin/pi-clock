@@ -75,9 +75,7 @@ fun View.getScaledRect(): RectF {
     return getRect().apply { scale(scaleX, scaleY) }
 }
 
-fun View.getParentView(): View {
-    return (parent as View)
-}
+val View.parentView get() = (parent as ViewGroup)
 
 fun Context.messageBox(text: String) {
     AlertDialog.Builder(this).apply {
