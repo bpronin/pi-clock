@@ -13,8 +13,8 @@
     <string name="default_date_format">%s (system)</string>
     <string name="do_not_show">Do not show</string>
     <string name="fullscreen">Fullscreen</string>
-    <string name="min_brightness">Brightness</string>
-    <string name="min_brightness_summary">%d%%</string>
+    <string name="brightness">Brightness</string>
+    <string name="muted_brightness_summary">Brightness in inactive mode %d%%</string>
     <string name="play_always">Play sound in any mode</string>
     <string name="play_only_when_tapped">Play sound only in active mode</string>
     <string name="scale">Scale</string>
@@ -31,7 +31,7 @@
     <string name="clock_always_moves_along_screen">Clock always moves along the screen</string>
     <string name="keep_clock_view">Clock keeps its position on the screen</string>
     <string name="floating_interval">Floating interval</string>
-    <string name="min_brightness_info">Brightness %d%%</string>
+    <string name="brightness_info">Brightness %d%%</string>
     <string name="scale_info">Scale %.0f%%</string>
     <string name="show_time_separators">Show time separators</string>
     <string name="seconds_format">Seconds</string>

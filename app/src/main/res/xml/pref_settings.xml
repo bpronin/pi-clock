@@ -38,9 +38,9 @@
             android:title="@string/scale" />
 
         <SeekBarPreference
-            android:key="min_brightness"
+            android:key="muted_brightness"
             android:max="100"
-            android:title="@string/min_brightness" />
+            android:title="@string/brightness" />
 
         <SwitchPreference
             android:key="time_separators_visible"

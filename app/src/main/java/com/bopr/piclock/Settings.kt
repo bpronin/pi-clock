@@ -19,8 +19,8 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
             putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)
             putFloatOptional(PREF_CONTENT_SCALE, 1f)
-            putIntOptional(PREF_INACTIVE_BRIGHTNESS, 20) {
-                getInt(PREF_INACTIVE_BRIGHTNESS) in 0..100
+            putIntOptional(PREF_MUTED_BRIGHTNESS, 20) {
+                getInt(PREF_MUTED_BRIGHTNESS) in 0..100
             }
 
             putStringSetResourceOptional(
@@ -84,7 +84,11 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         }
     }
 
-    private fun EditorWrapper.putStringResourceOptional(key: String, value: String, valuesRes: Int) {
+    private fun EditorWrapper.putStringResourceOptional(
+        key: String,
+        value: String,
+        valuesRes: Int
+    ) {
         context.apply {
             putStringOptional(
                 key,
@@ -95,7 +99,11 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         }
     }
 
-    private fun EditorWrapper.putStringSetResourceOptional(key: String, value: Set<String>, valuesRes: Int) {
+    private fun EditorWrapper.putStringSetResourceOptional(
+        key: String,
+        value: Set<String>,
+        valuesRes: Int
+    ) {
         context.apply {
             putStringSetOptional(
                 key,
@@ -129,7 +137,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_CONTENT_SCALE = "content_scale"
         const val PREF_DATE_FORMAT = "date_format"
         const val PREF_FULLSCREEN_ENABLED = "fullscreen_enabled"
-        const val PREF_INACTIVE_BRIGHTNESS = "min_brightness"
+        const val PREF_MUTED_BRIGHTNESS = "muted_brightness"
         const val PREF_SECONDS_FORMAT = "seconds_format"
         const val PREF_TICK_SOUND = "tick_sound"
         const val PREF_TICK_RULES = "tick_sound_mode"

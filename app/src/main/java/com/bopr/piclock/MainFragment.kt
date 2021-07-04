@@ -28,7 +28,7 @@ import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
-import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
+import com.bopr.piclock.Settings.Companion.PREF_MUTED_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_RULES
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
@@ -72,7 +72,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var secondsFormat: DateFormat
     private lateinit var dateFormat: DateFormat
 
-    private lateinit var fullscreenControl: FullscreenControl
+    private val fullscreenControl: FullscreenControl by lazy {
+        FullscreenControl(requireActivity(), handler)
+    }
 
     private val soundControl: SoundControl by lazy {
         SoundControl(requireContext()).apply {
@@ -104,14 +106,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             onStartSlide = {
                 animations.showInfo(infoView)
             }
-            onSlide = { value ->
-                infoView.text = getString(R.string.min_brightness_info, value)
+            onSlide = { brightness ->
+                infoView.text = getString(R.string.brightness_info, brightness)
             }
-            onEndSlide = { value ->
+            onEndSlide = { brightness ->
                 animations.hideInfo(infoView)
-                settings.update { putInt(PREF_INACTIVE_BRIGHTNESS, value) }
+                settings.update { putInt(PREF_MUTED_BRIGHTNESS, brightness) }
             }
-            setInactiveBrightness(settings.getInt(PREF_INACTIVE_BRIGHTNESS), mode)
+            setMutedBrightness(settings.getInt(PREF_MUTED_BRIGHTNESS), mode)
         }
     }
 
@@ -136,7 +138,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private lateinit var layoutControl: LayoutControl
+    private val layoutControl: LayoutControl by lazy {
+        LayoutControl(rootView)
+    }
 
     private var scale: Float by FloatSettingsPropertyDelegate(PREF_CONTENT_SCALE) { settings }
     private var currentScale: Float
@@ -166,8 +170,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         container: ViewGroup?,
         savedState: Bundle?
     ): View {
-        fullscreenControl = FullscreenControl(requireActivity(), handler)
-
         return inflater.inflate(R.layout.fragment_main, container, false).apply {
             setOnClickListener {
                 when (mode) {
@@ -178,7 +180,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
             setOnTouchListener { _, event ->
                 autoDeactivationControl.onTouch(event, mode)
-                        || brightnessControl.onTouch(event)
+                        || brightnessControl.onTouch(event, mode)
                         || scaleControl.onTouch(event)
             }
 
@@ -221,10 +223,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        layoutControl = LayoutControl(rootView)
-    }
-
     override fun onSaveInstanceState(savedState: Bundle) {
         super.onSaveInstanceState(savedState)
         savedState.apply {
@@ -240,17 +238,17 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onPause() {
-        autoDeactivationControl.onPause()
         timer.enabled = false
+        autoDeactivationControl.onPause()
         floatControl.onPause()
         super.onPause()
     }
 
     override fun onResume() {
         super.onResume()
-        timer.enabled = true
         floatControl.onResume()
         autoDeactivationControl.onResume()
+        timer.enabled = true
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -278,8 +276,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateScale()
                 PREF_DIGITS_ANIMATION ->
                     updateDigitsAnimation()
-                PREF_INACTIVE_BRIGHTNESS ->
-                    brightnessControl.setInactiveBrightness(getInt(PREF_INACTIVE_BRIGHTNESS), mode)
+                PREF_MUTED_BRIGHTNESS ->
+                    brightnessControl.setMutedBrightness(getInt(key), mode)
                 PREF_TICK_SOUND ->
                     soundControl.setSound(getString(key))
                 PREF_TICK_RULES ->
@@ -418,7 +416,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun onTimer() {
 //        Log.v(_tag, "On timer: $time")
-//        currentTime = Date(currentTime.time + 10000)
+//        currentTime = Date(currentTime.time + 10000) /* debug time */
+
         currentTime = Date()
         updateContentViewData()
         blinkTimeSeparator()
@@ -455,6 +454,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
+    //todo: move to layoutControl ?
     private fun adjustMargins(windowInsets: WindowInsetsCompat) {
         val insets = windowInsets.getInsets(Type.systemBars())
         val fabMargin = resources.fabMargin

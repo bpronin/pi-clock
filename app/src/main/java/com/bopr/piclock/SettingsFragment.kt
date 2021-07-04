@@ -7,6 +7,7 @@ import androidx.preference.ListPreference
 import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
+import androidx.preference.SeekBarPreference
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ABOUT
@@ -16,7 +17,7 @@ import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
-import com.bopr.piclock.Settings.Companion.PREF_INACTIVE_BRIGHTNESS
+import com.bopr.piclock.Settings.Companion.PREF_MUTED_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_RULES
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
@@ -87,7 +88,7 @@ class SettingsFragment : CustomPreferenceFragment(),
             PREF_CONTENT_LAYOUT -> updateClockLayoutPreferenceView()
             PREF_CONTENT_SCALE -> updateScalePreferenceView()
             PREF_DATE_FORMAT -> updateDateFormatPreferenceView()
-            PREF_INACTIVE_BRIGHTNESS -> updateMinBrightnessPreferenceView()
+            PREF_MUTED_BRIGHTNESS -> updateMutedBrightnessPreferenceView()
             PREF_SECONDS_FORMAT -> updateSecondsFormatPreferenceView()
             PREF_TICK_SOUND -> updateTickSoundPreferenceView()
             PREF_TICK_RULES -> updateTickModePreferenceView()
@@ -220,10 +221,11 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateMinBrightnessPreferenceView() {
-        requirePreference(PREF_INACTIVE_BRIGHTNESS).apply {
-            val value = settings.getInt(PREF_INACTIVE_BRIGHTNESS)
-            summary = getString(R.string.min_brightness_summary, value)
+    private fun updateMutedBrightnessPreferenceView() {
+        (requirePreference(PREF_MUTED_BRIGHTNESS) as SeekBarPreference).apply {
+            val brightness = settings.getInt(PREF_MUTED_BRIGHTNESS)
+            value = brightness
+            summary = getString(R.string.muted_brightness_summary, brightness)
         }
     }
 

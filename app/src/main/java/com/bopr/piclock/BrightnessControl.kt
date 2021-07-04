@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import android.view.View
+import android.view.View.ALPHA
 import android.view.animation.AccelerateInterpolator
 import androidx.core.animation.doOnEnd
 import androidx.core.view.GestureDetectorCompat
@@ -28,22 +29,21 @@ internal class BrightnessControl(private val view: View) :
 
     private val detector = GestureDetectorCompat(view.context, this)
     private var scaleFactor = 0f
-    private var scrollingBrightness = MIN_BRIGHTNESS
-    private var inactiveBrightness = MIN_BRIGHTNESS
+    private var scrollAlpha = 0f
+    private var mutedAlpha = MIN_ALPHA
     private var scrolled = false
 
-    private val brightnessAnimator by lazy {
+    private val fadeAnimator by lazy {
         ObjectAnimator().apply {
             target = view
-            setProperty(View.ALPHA)
+            setProperty(ALPHA)
             duration = 2000
             interpolator = AccelerateInterpolator()
         }
     }
-
     lateinit var onStartSlide: () -> Unit
-    lateinit var onSlide: (value: Int) -> Unit
-    lateinit var onEndSlide: (value: Int) -> Unit
+    lateinit var onSlide: (brightness: Int) -> Unit
+    lateinit var onEndSlide: (brightness: Int) -> Unit
 
     override fun onScroll(
         e1: MotionEvent?,
@@ -53,28 +53,31 @@ internal class BrightnessControl(private val view: View) :
     ): Boolean {
         if (!scrolled) {
             /* set factor to 2/3 of parents height */
-            scaleFactor = 1.5f * (1.0f - MIN_BRIGHTNESS) / view.parentView.scaledRect.height()
-
-            scrollingBrightness = view.alpha
+            scaleFactor = 1.5f / view.parentView.scaledRect.height()
+            scrollAlpha = view.alpha
             onStartSlide()
         } else {
-            scrollingBrightness += distanceY * scaleFactor
-            scrollingBrightness = min(MAX_BRIGHTNESS, max(scrollingBrightness, MIN_BRIGHTNESS))
-            view.alpha = scrollingBrightness
-            onSlide((scrollingBrightness * 100).toInt())
+            scrollAlpha += distanceY * scaleFactor
+            scrollAlpha = min(MAX_ALPHA, max(scrollAlpha, MIN_ALPHA))
+            view.alpha = scrollAlpha
+            onSlide(brightness(scrollAlpha))
         }
         scrolled = true
         return false
     }
 
-    private fun fadeBrightness(value: Float, onEnd: () -> Unit = {}) {
-        Log.v(_tag, "Start fade to: $value")
+    private fun alpha(brightness: Int) = brightness / 100f
 
-        brightnessAnimator.apply {
+    private fun brightness(alpha: Float) = (alpha * 100).toInt()
+
+    private fun fade(alpha: Float, onEnd: () -> Unit = {}) {
+        Log.v(_tag, "Start fade to: $alpha")
+
+        fadeAnimator.apply {
             cancel()
             removeAllListeners()
 
-            setFloatValues(view.alpha, value)
+            setFloatValues(view.alpha, alpha)
             doOnEnd {
                 Log.v(_tag, "End fade")
 
@@ -85,31 +88,30 @@ internal class BrightnessControl(private val view: View) :
         }
     }
 
-    private fun updateViewBrightness(mode: Int) {
-        view.alpha = if (mode == MODE_INACTIVE || mode == MODE_EDITOR)
-            inactiveBrightness
-        else
-            MAX_BRIGHTNESS
+    private fun updateViewAlpha(mode: Int) {
+        view.alpha = if (mode == MODE_INACTIVE || mode == MODE_EDITOR) mutedAlpha else MAX_ALPHA
     }
 
-    fun setInactiveBrightness(value: Int, mode: Int) {
-        inactiveBrightness = value / 100f
-        updateViewBrightness(mode)
+    fun setMutedBrightness(brightness: Int, mode: Int) {
+        mutedAlpha = alpha(brightness)
+        updateViewAlpha(mode)
     }
 
     /**
      * To be called in owner's onTouch.
      */
-    fun onTouch(event: MotionEvent): Boolean {
-        detector.onTouchEvent(event)
+    fun onTouch(event: MotionEvent, mode: Int): Boolean {
+        if (mode == MODE_INACTIVE || mode == MODE_EDITOR) {
+            detector.onTouchEvent(event)
 
-        /* this is to prevent of calling onClick if scrolled */
-        when (event.action) {
-            ACTION_DOWN ->
-                scrolled = false
-            ACTION_UP -> {
-                if (scrolled) onEndSlide((scrollingBrightness * 100).toInt())
-                return scrolled
+            /* this is to prevent of calling onClick if scrolled */
+            when (event.action) {
+                ACTION_DOWN ->
+                    scrolled = false
+                ACTION_UP -> {
+                    if (scrolled) onEndSlide(brightness(scrollAlpha))
+                    return scrolled
+                }
             }
         }
 
@@ -120,19 +122,19 @@ internal class BrightnessControl(private val view: View) :
         if (animate) {
             when (mode) {
                 MODE_ACTIVE ->
-                    fadeBrightness(MAX_BRIGHTNESS) { updateViewBrightness(mode) }
+                    fade(MAX_ALPHA) { updateViewAlpha(mode) }
                 MODE_INACTIVE, MODE_EDITOR ->
-                    fadeBrightness(inactiveBrightness) { updateViewBrightness(mode) }
+                    fade(mutedAlpha) { updateViewAlpha(mode) }
             }
         } else {
-            updateViewBrightness(mode)
+            updateViewAlpha(mode)
         }
     }
 
     companion object {
 
-        private const val MIN_BRIGHTNESS = 0.1f
-        private const val MAX_BRIGHTNESS = 1.0f
+        private const val MIN_ALPHA = 0.1f
+        private const val MAX_ALPHA = 1f
     }
 
 }
