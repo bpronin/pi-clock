@@ -13,7 +13,7 @@ import kotlin.math.min
  * Convenience class to control scale.
  */
 internal class ScaleControl(context: Context) : ScaleGestureDetector.OnScaleGestureListener {
-
+    //todo: individual scale settings for different screen orientation
     private val _tag = "ScaleControl"
 
     lateinit var onPinchStart: () -> Float

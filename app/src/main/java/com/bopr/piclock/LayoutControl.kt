@@ -23,7 +23,7 @@ internal class LayoutControl(private val rootView: ConstraintLayout) {
             constrainWidth(it, WRAP_CONTENT)
             constrainHeight(it, WRAP_CONTENT)
             connect(it, RIGHT, PARENT_ID, RIGHT, fabMargin)
-            connect(it, BOTTOM, R.id.main_container, BOTTOM, fabMargin)
+            connect(it, BOTTOM, R.id.content_container, BOTTOM, fabMargin)
         }
     }
 
@@ -33,8 +33,8 @@ internal class LayoutControl(private val rootView: ConstraintLayout) {
                 constrainWidth(it, WRAP_CONTENT)
                 constrainHeight(it, WRAP_CONTENT)
                 connect(it, RIGHT, PARENT_ID, RIGHT, fabMargin)
-                connect(it, BOTTOM, R.id.main_container, BOTTOM)
-                connect(it, TOP, R.id.main_container, BOTTOM)
+                connect(it, BOTTOM, R.id.content_container, BOTTOM)
+                connect(it, TOP, R.id.content_container, BOTTOM)
             }
         },
         ORIENTATION_LANDSCAPE to ConstraintSet().apply {
@@ -42,8 +42,8 @@ internal class LayoutControl(private val rootView: ConstraintLayout) {
                 constrainWidth(it, WRAP_CONTENT)
                 constrainHeight(it, WRAP_CONTENT)
                 connect(it, BOTTOM, PARENT_ID, BOTTOM, fabMargin)
-                connect(it, LEFT, R.id.main_container, RIGHT)
-                connect(it, RIGHT, R.id.main_container, RIGHT)
+                connect(it, LEFT, R.id.content_container, RIGHT)
+                connect(it, RIGHT, R.id.content_container, RIGHT)
             }
         })
 

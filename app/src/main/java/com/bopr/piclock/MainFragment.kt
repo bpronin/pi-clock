@@ -232,10 +232,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 visibility = GONE
             }
 
-            contentView = findViewById<ViewGroup>(R.id.content_container).apply {
+            contentView = findViewById<ViewGroup>(R.id.content_view).apply {
                 setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
             }
-            createContent()
+            createContentView()
         }
     }
 
@@ -279,7 +279,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_FULLSCREEN_ENABLED ->
                     updateFullscreenControl()
                 PREF_CONTENT_LAYOUT ->
-                    createContent()
+                    createContentView()
                 PREF_TIME_FORMAT ->
                     updateHoursMinutesViews()
                 PREF_SECONDS_FORMAT -> {
@@ -324,7 +324,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         Log.d(_tag, "Mode: $mode")
     }
 
-    private fun createContent() {
+    private fun createContentView() {
         Log.d(_tag, "Creating content")
 
         contentView.apply {
