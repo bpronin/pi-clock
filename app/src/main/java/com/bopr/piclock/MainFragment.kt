@@ -75,11 +75,35 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var tickControl: TickControl
     private lateinit var floatControl: FloatContentControl
     private lateinit var autoDeactivationControl: AutoDeactivationControl
-    private lateinit var brightnessControl: BrightnessControl
+
+    private val brightnessControl: BrightnessControl by lazy {
+        BrightnessControl(requireContext()).apply {
+            onChangeBrightness = { inactiveValue, maxValue ->
+                currentBrightness = if (mode != MODE_ACTIVE) inactiveValue else maxValue
+            }
+            onFadeBrightness = { value ->
+                animations.fadeBrightness(contentView, currentBrightness, value)
+            }
+            onStartSlide = {
+                animations.showInfo(infoView)
+                currentBrightness
+            }
+            onSlide = { value ->
+                currentBrightness = value
+                infoView.text = getString(R.string.min_brightness_info, currentBrightness)
+            }
+            onEndSlide = {
+                animations.hideInfo(infoView)
+                inactiveBrightness = currentBrightness
+                settings.update { putInt(PREF_INACTIVE_BRIGHTNESS, inactiveBrightness) }
+            }
+            inactiveBrightness = settings.getInt(PREF_INACTIVE_BRIGHTNESS)
+        }
+    }
+
     private lateinit var scaleControl: ScaleControl
     private lateinit var layoutControl: LayoutControl
 
-    private var inactiveBrightness: Int by IntSettingsPropertyDelegate(PREF_INACTIVE_BRIGHTNESS) { settings }
     private var currentBrightness: Int
         get() = (contentView.alpha * 100).toInt()
         set(value) {
@@ -155,20 +179,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
         }
 
-        brightnessControl = BrightnessControl(requireContext()).apply {
-            onStartSlide = {
-                animations.showInfo(infoView)
-                currentBrightness
-            }
-            onSlide = { value ->
-                currentBrightness = value
-                infoView.text = getString(R.string.min_brightness_info, currentBrightness)
-            }
-            onEndSlide = {
-                animations.hideInfo(infoView)
-                inactiveBrightness = currentBrightness
-            }
-        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -282,12 +292,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateSeparatorViews()
                 PREF_DATE_FORMAT ->
                     updateDateView()
-                PREF_INACTIVE_BRIGHTNESS ->
-                    updateBrightness()
                 PREF_CONTENT_SCALE ->
                     updateScale()
                 PREF_DIGITS_ANIMATION ->
                     updateDigitsAnimation()
+                PREF_INACTIVE_BRIGHTNESS ->
+                    brightnessControl.inactiveBrightness = getInt(PREF_INACTIVE_BRIGHTNESS)
                 PREF_TICK_SOUND ->
                     tickControl.setSound(getString(key))
                 PREF_TICK_RULES ->
@@ -309,7 +319,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         fullscreenControl.onModeChanged(mode)
         tickControl.onModeChanged(mode, animate)
         layoutControl.onModeChanged(mode, animate)
-        updateLayout(oldMode, mode, animate)
+        brightnessControl.onModeChanged(oldMode, newMode, animate)
 
         Log.d(_tag, "Mode: $mode")
     }
@@ -355,30 +365,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
 
         fitContentIntoScreen()
-    }
-
-    private fun updateLayout(oldMode: Int, newMode: Int, animate: Boolean) {
-        Log.d(_tag, "Updating controls. from $oldMode to $newMode, animated: $animate")
-
-        brightnessControl.onModeChanged(oldMode, newMode, animate)
-
-        if (animate) {
-            if (newMode == MODE_ACTIVE && oldMode == MODE_INACTIVE) {
-                animations.fadeBrightness(
-                    contentView,
-                    currentBrightness,
-                    BrightnessControl.MAX_BRIGHTNESS
-                )
-            } else if (newMode == MODE_INACTIVE && oldMode == MODE_ACTIVE) {
-                animations.fadeBrightness(
-                    contentView,
-                    currentBrightness,
-                    inactiveBrightness
-                )
-            }
-        }
-
-        updateBrightness()
     }
 
     private fun updateFullscreenControl() {
@@ -442,13 +428,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         minutesView.setTextAnimatorRes(resId)
         secondsView.setTextAnimatorRes(resId)
         dateView.setTextAnimatorRes(resId)
-    }
-
-    private fun updateBrightness() {
-        currentBrightness = if (mode != MODE_ACTIVE)
-            inactiveBrightness
-        else
-            BrightnessControl.MAX_BRIGHTNESS
     }
 
     private fun updateScale() {

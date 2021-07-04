@@ -6,6 +6,8 @@ import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import androidx.core.view.GestureDetectorCompat
+import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
+import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import kotlin.math.max
 import kotlin.math.min
 
@@ -14,9 +16,19 @@ import kotlin.math.min
  */
 internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGestureListener() {
 
+    var inactiveBrightness: Int = MIN_BRIGHTNESS
+        set(value) {
+            if (field != value) {
+                field = value
+                onChangeBrightness(inactiveBrightness, MAX_BRIGHTNESS)
+            }
+        }
+
     lateinit var onStartSlide: () -> Int
     lateinit var onSlide: (value: Int) -> Unit
     lateinit var onEndSlide: () -> Unit
+    lateinit var onChangeBrightness: (inactiveValue: Int, maxValue: Int) -> Unit
+    lateinit var onFadeBrightness: (value: Int) -> Unit
 
     private var brightness = 0  //todo: do let be less tah min
     private val detector = GestureDetectorCompat(context, this)
@@ -59,20 +71,20 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
     }
 
     fun onModeChanged(oldMode: Int, newMode: Int, animate: Boolean) {
-        updateBrightness(newMode)
-    }
-
-    private fun updateBrightness(mode: Int) {
-//        currentBrightness = if (mode == MODE_INACTIVE)
-//            inactiveBrightness
-//        else
-//            BrightnessControl.MAX_BRIGHTNESS
+        if (animate) {
+            if (newMode == MODE_ACTIVE && oldMode == MODE_INACTIVE) {
+                onFadeBrightness(MAX_BRIGHTNESS)
+            } else if (newMode == MODE_INACTIVE && oldMode == MODE_ACTIVE) {
+                onFadeBrightness(inactiveBrightness)
+            }
+        }
+        onChangeBrightness(inactiveBrightness, MAX_BRIGHTNESS)
     }
 
     companion object {
 
         private const val MIN_BRIGHTNESS = 10
-        const val MAX_BRIGHTNESS = 100
+        private const val MAX_BRIGHTNESS = 100
     }
 
 }
