@@ -1,6 +1,6 @@
 package com.bopr.piclock
 
-import android.util.SparseArray
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -14,68 +14,51 @@ import com.bopr.piclock.util.fabMargin
 
 internal class LayoutControl(private val rootView: ConstraintLayout) {
 
-    private val modeConstraints = SparseArray<ConstraintSet>().apply {
-        val fabMargin = rootView.context.fabMargin
+    private val fabMargin = rootView.context.fabMargin
 
-        append(MODE_ACTIVE, ConstraintSet().apply {
-            R.id.settings_container.let {
-                connect(it, TOP, R.id.main_container, BOTTOM)
-                connect(it, BOTTOM, PARENT_ID, BOTTOM)
-                connect(it, RIGHT, PARENT_ID, RIGHT)
-                connect(it, LEFT, PARENT_ID, LEFT)
-                setVisibility(it, GONE)
-            }
-            R.id.settings_button.let {
-                constrainWidth(it, WRAP_CONTENT)
-                constrainHeight(it, WRAP_CONTENT)
-                connect(it, RIGHT, PARENT_ID, RIGHT, fabMargin)
-                connect(it, BOTTOM, R.id.main_container, BOTTOM, fabMargin)
-                setVisibility(it, VISIBLE)
-            }
-        })
+    private val fabConstraintsDefault = ConstraintSet().apply {
+        R.id.settings_button.let {
+            constrainWidth(it, WRAP_CONTENT)
+            constrainHeight(it, WRAP_CONTENT)
+            connect(it, RIGHT, PARENT_ID, RIGHT, fabMargin)
+            connect(it, BOTTOM, R.id.main_container, BOTTOM, fabMargin)
+        }
+    }
 
-        append(MODE_INACTIVE, ConstraintSet().apply {
-            R.id.settings_container.let {
-                connect(it, TOP, R.id.main_container, BOTTOM)
-                connect(it, BOTTOM, PARENT_ID, BOTTOM)
-                connect(it, RIGHT, PARENT_ID, RIGHT)
-                connect(it, LEFT, PARENT_ID, LEFT)
-                setVisibility(it, GONE)
-            }
-            R.id.settings_button.let {
-                constrainWidth(it, WRAP_CONTENT)
-                constrainHeight(it, WRAP_CONTENT)
-                connect(it, RIGHT, PARENT_ID, RIGHT, fabMargin)
-                connect(it, BOTTOM, R.id.main_container, BOTTOM, fabMargin)
-                setVisibility(it, GONE)
-            }
-        })
-
-        append(MODE_EDITOR, ConstraintSet().apply {
-            R.id.settings_container.let {
-                connect(it, TOP, R.id.main_container, BOTTOM)
-                connect(it, BOTTOM, PARENT_ID, BOTTOM)
-                connect(it, RIGHT, PARENT_ID, RIGHT)
-                connect(it, LEFT, PARENT_ID, LEFT)
-                constrainPercentHeight(it, 0.66f)
-                setVisibility(it, VISIBLE)
-            }
-            R.id.settings_button.let {
-                constrainWidth(it, WRAP_CONTENT)
-                constrainHeight(it, WRAP_CONTENT)
-                connect(it, RIGHT, PARENT_ID, RIGHT, fabMargin)
-                connect(it, BOTTOM, R.id.main_container, BOTTOM)
-                connect(it, TOP, R.id.main_container, BOTTOM)
-                setVisibility(it, VISIBLE)
-            }
-        })
+    private val fabConstraintsEditor = ConstraintSet().apply {
+        R.id.settings_button.let {
+            constrainWidth(it, WRAP_CONTENT)
+            constrainHeight(it, WRAP_CONTENT)
+            connect(it, RIGHT, PARENT_ID, RIGHT, fabMargin)
+            connect(it, BOTTOM, R.id.main_container, BOTTOM)
+            connect(it, TOP, R.id.main_container, BOTTOM)
+        }
     }
 
     fun onModeChanged(mode: Int, animate: Boolean) {
         if (animate) {
             TransitionManager.beginDelayedTransition(rootView)
         }
-        modeConstraints[mode].applyTo(rootView)
+
+        val button = rootView.findViewById<View>(R.id.settings_button)
+        val container = rootView.findViewById<View>(R.id.settings_container)
+        when (mode) {
+            MODE_ACTIVE -> {
+                fabConstraintsDefault.applyTo(rootView)
+                button.visibility = VISIBLE
+                container.visibility = GONE
+            }
+            MODE_INACTIVE -> {
+                fabConstraintsDefault.applyTo(rootView)
+                button.visibility = GONE
+                container.visibility = GONE
+            }
+            MODE_EDITOR -> {
+                fabConstraintsEditor.applyTo(rootView)
+                button.visibility = VISIBLE
+                container.visibility = VISIBLE
+            }
+        }
     }
 }
 

@@ -13,7 +13,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.*
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.ViewCompat
+import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.doOnLayout
@@ -180,18 +180,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         fullscreenControl = FullscreenControl(requireActivity(), handler)
 
         return inflater.inflate(R.layout.fragment_main, container, false).apply {
-            doOnLayout {
-                savedState?.apply {
-                    fitContentIntoScreen()
-                    setMode(getInt("mode"), false)
-                } ?: apply {
-                    setMode(MODE_INACTIVE, true)
-                }
-            }
-
             setOnClickListener {
                 when (mode) {
-                    MODE_ACTIVE, MODE_EDITOR -> setMode(MODE_INACTIVE, true)
+                    MODE_ACTIVE -> setMode(MODE_INACTIVE, true)
                     MODE_INACTIVE -> setMode(MODE_ACTIVE, true)
                 }
             }
@@ -202,13 +193,21 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                         || scaleControl.onTouch(event)
             }
 
-            settingsContainer =
-                findViewById<FragmentContainerView>(R.id.settings_container).apply {
-                    ViewCompat.setOnApplyWindowInsetsListener(this) { view, windowInsets ->
-                        fixInsets(view, windowInsets, 0)
-                        windowInsets
-                    }
+            doOnLayout {
+                savedState?.apply {
+                    fitContentIntoScreen()
+                    setMode(getInt("mode"), false)
+                } ?: apply {
+                    setMode(MODE_INACTIVE, true)
                 }
+            }
+
+            setOnApplyWindowInsetsListener(this) { _, windowInsets ->
+                adjustMargins(windowInsets)
+                windowInsets
+            }
+
+            settingsContainer = findViewById(R.id.settings_container)
 
             settingsButton = findViewById<FloatingActionButton>(R.id.settings_button).apply {
                 setOnClickListener {
@@ -217,26 +216,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                         MODE_EDITOR -> setMode(MODE_INACTIVE, true)
                     }
                 }
-                ViewCompat.setOnApplyWindowInsetsListener(this) { view, windowInsets ->
-                    fixInsets(
-                        view,
-                        windowInsets,
-                        requireContext().fabMargin
-                    )
-                    windowInsets
-                }
             }
 
             infoView = findViewById<TextView>(R.id.info_view).apply {
                 visibility = GONE
-                ViewCompat.setOnApplyWindowInsetsListener(this) { view, windowInsets ->
-                    fixInsets(
-                        view,
-                        windowInsets,
-                        requireContext().fabMargin
-                    )
-                    windowInsets
-                }
             }
 
             contentView = findViewById<ViewGroup>(R.id.content_container).apply {
@@ -462,7 +445,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun updateBrightness() {
-        currentBrightness = if (mode == MODE_INACTIVE)
+        currentBrightness = if (mode != MODE_ACTIVE)
             inactiveBrightness
         else
             BrightnessControl.MAX_BRIGHTNESS
@@ -494,16 +477,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun fixInsets(view: View, windowInsets: WindowInsetsCompat, margin: Int) {
-        val insets = windowInsets.getInsets(Type.systemBars())
-        view.updateLayoutParams<MarginLayoutParams> {
-            leftMargin = margin + insets.left
-            topMargin = margin + insets.top
-            rightMargin = margin + insets.right
-            bottomMargin = margin + insets.bottom
-        }
-    }
-
     private fun fitContentIntoScreen(onEnd: () -> Unit = {}) {
         if (!scaling) {
             val pr = contentView.getParentView().getScaledRect()
@@ -520,6 +493,23 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     onEnd()
                 }
             }
+        }
+    }
+
+    private fun adjustMargins(windowInsets: WindowInsetsCompat) {
+        val insets = windowInsets.getInsets(Type.systemBars())
+        val fabMargin = requireContext().fabMargin
+        infoView.updateLayoutParams<MarginLayoutParams> {
+            leftMargin = fabMargin + insets.left
+            topMargin = fabMargin + insets.top
+        }
+        settingsButton.updateLayoutParams<MarginLayoutParams> {
+            rightMargin = fabMargin + insets.right
+            bottomMargin = fabMargin + insets.bottom
+        }
+        settingsContainer.updateLayoutParams<MarginLayoutParams> {
+            rightMargin = insets.right
+            bottomMargin = insets.bottom
         }
     }
 

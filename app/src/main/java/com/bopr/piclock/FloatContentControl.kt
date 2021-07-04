@@ -72,23 +72,23 @@ internal class FloatContentControl(private val handler: Handler) {
         Log.v(_tag, "Start floating somewhere")
 
         busy = true
-        onFloatSomewhere {
-            Log.v(_tag, "End floating somewhere")
-
-            busy = false
-            scheduleTask()
-        }
+//        onFloatSomewhere {
+//            Log.v(_tag, "End floating somewhere")
+//
+//            busy = false
+//            scheduleTask()
+//        }
     }
 
     private fun floatHome() {
         Log.v(_tag, "Start floating home")
 
-        busy = true
-        onFloatHome {
-            Log.v(_tag, "End floating home")
-
-            busy = false
-        }
+//        busy = true
+//        onFloatHome {
+//            Log.v(_tag, "End floating home")
+//
+//            busy = false
+//        }
     }
 
     fun onModeChanged(mode: Int) {
