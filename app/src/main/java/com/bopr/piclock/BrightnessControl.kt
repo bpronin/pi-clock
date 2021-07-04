@@ -1,10 +1,14 @@
 package com.bopr.piclock
 
-import android.content.Context
+import android.animation.ObjectAnimator
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
+import android.view.View
+import android.view.animation.AccelerateInterpolator
+import androidx.core.animation.doOnEnd
 import androidx.core.view.GestureDetectorCompat
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
@@ -15,46 +19,81 @@ import kotlin.math.min
 /**
  * Convenience class to control brightness by slide gesture.
  */
-internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGestureListener() {
+internal class BrightnessControl(private val view: View) :
+    GestureDetector.SimpleOnGestureListener() {
 
-    private val detector = GestureDetectorCompat(context, this)
+    private val _tag = "BrightnessControl"
+
+    private val detector = GestureDetectorCompat(view.context, this)
     private val scaleFactor = 10f // todo: make it depends on vertical screen size
-    private var brightness = 0  //todo: do let be less tah min
+    private var scrollingBrightness = MIN_BRIGHTNESS
     private var scrolled = false
 
-    var inactiveBrightness: Int = MIN_BRIGHTNESS
+    private val brightnessAnimator by lazy {
+        ObjectAnimator().apply {
+            target = view
+            setProperty(View.ALPHA)
+            duration = 2000
+            interpolator = AccelerateInterpolator()
+        }
+    }
+
+    private var inactiveBrightness: Int = MIN_BRIGHTNESS
+
+    private var viewBrightness: Int
+        get() = (view.alpha * 100).toInt()
         set(value) {
-            if (field != value) {
-                field = value
-                updateBrightNess()
-            }
+            view.alpha = value / 100f
+
+//            Log.v(_tag, "View alpha set to: ${view.alpha}")
         }
 
-    lateinit var onStartSlide: () -> Int
+    lateinit var onStartSlide: () -> Unit
     lateinit var onSlide: (value: Int) -> Unit
-    lateinit var onEndSlide: () -> Unit
-    lateinit var onChangeBrightness: (inactiveValue: Int, maxValue: Int) -> Unit
-    lateinit var onFadeBrightness: (value: Int, onEnd: () -> Unit) -> Unit
+    lateinit var onEndSlide: (value: Int) -> Unit
 
-    override fun onScroll(
-        e1: MotionEvent?,
-        e2: MotionEvent?,
-        distanceX: Float,
-        distanceY: Float
-    ): Boolean {
+    override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
         if (!scrolled) {
-            brightness = onStartSlide()
+            scrollingBrightness = viewBrightness
+            onStartSlide()
         } else {
-            brightness += (distanceY / scaleFactor).toInt()
-            brightness = min(MAX_BRIGHTNESS, max(brightness, MIN_BRIGHTNESS))
-            onSlide(brightness)
+            scrollingBrightness += (distanceY / scaleFactor).toInt()
+            scrollingBrightness = min(MAX_BRIGHTNESS, max(scrollingBrightness, MIN_BRIGHTNESS))
+            viewBrightness = scrollingBrightness
+            onSlide(scrollingBrightness)
         }
         scrolled = true
         return false
     }
 
-    private fun updateBrightNess() {
-        onChangeBrightness(inactiveBrightness, MAX_BRIGHTNESS)
+    private fun fadeBrightness(value: Int, onEnd: () -> Unit = {}) {
+        Log.v(_tag, "Start fade to:$value")
+
+        brightnessAnimator.apply {
+            cancel()
+            removeAllListeners()
+
+            setFloatValues(viewBrightness / 100f, value / 100f)
+            doOnEnd {
+                Log.v(_tag, "End fade")
+
+                onEnd()
+            }
+
+            start()
+        }
+    }
+
+    private fun updateBrightness(mode: Int) {
+        viewBrightness = if (mode == MODE_INACTIVE || mode == MODE_EDITOR)
+            inactiveBrightness
+        else
+            MAX_BRIGHTNESS
+    }
+
+    fun setInactiveBrightness(value: Int, mode: Int) {
+        inactiveBrightness = value
+        updateBrightness(mode)
     }
 
     /**
@@ -65,9 +104,10 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
 
         /* this is to prevent of calling onClick if scrolled */
         when (event.action) {
-            ACTION_DOWN -> scrolled = false
+            ACTION_DOWN ->
+                scrolled = false
             ACTION_UP -> {
-                if (scrolled) onEndSlide()
+                if (scrolled) onEndSlide(scrollingBrightness)
                 return scrolled
             }
         }
@@ -79,16 +119,12 @@ internal class BrightnessControl(context: Context) : GestureDetector.SimpleOnGes
         if (animate) {
             when (mode) {
                 MODE_ACTIVE ->
-                    onFadeBrightness(MAX_BRIGHTNESS) {
-                        updateBrightNess()
-                    }
+                    fadeBrightness(MAX_BRIGHTNESS) { updateBrightness(mode) }
                 MODE_INACTIVE, MODE_EDITOR ->
-                    onFadeBrightness(inactiveBrightness) {
-                        updateBrightNess()
-                    }
+                    fadeBrightness(inactiveBrightness) { updateBrightness(mode) }
             }
         } else {
-            updateBrightNess()
+            updateBrightness(mode)
         }
     }
 

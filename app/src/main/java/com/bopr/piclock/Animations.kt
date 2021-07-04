@@ -51,14 +51,6 @@ internal class Animations {
         }
     }
 
-    private val brightnessAnimator by lazy {
-        ObjectAnimator().apply {
-            setProperty(ALPHA)
-            duration = 2000
-            interpolator = AccelerateInterpolator()
-        }
-    }
-
     private val infoAnimator by lazy {
         ObjectAnimator().apply {
             setProperty(ALPHA)
@@ -133,20 +125,6 @@ internal class Animations {
         }
     }
 
-    fun fadeBrightness(
-        view: View,
-        fromBrightness: Int,
-        toBrightness: Int,
-        onEnd: () -> Unit = {}
-    ) {
-        brightnessAnimator.apply {
-            reset(view)
-            setFloatValues(fromBrightness / 100f, toBrightness / 100f)
-            doOnEnd { onEnd() }
-            start()
-        }
-    }
-
     fun blinkTimeSeparator(view: View) {
         timeSeparatorAnimator.apply {
             reset(view)
@@ -175,61 +153,6 @@ internal class Animations {
             start()
         }
     }
-
-//    fun floatContentSomewhere(view: View, onEnd: () -> Unit = {}) {
-//        val pr = view.getParentView().getScaledRect()
-//        val vr = view.getScaledRect()
-//        val dw = pr.width() - vr.width()
-//        val dh = pr.height() - vr.height()
-//        val dx = view.x - vr.left
-//        val dy = view.y - vr.top
-//
-//        floatTo(
-//            view,
-//            random().toFloat() * dw + dx,
-//            random().toFloat() * dh + dy,
-//            FLOAT_CONTENT_DURATION,
-//            onEnd
-//        )
-//    }
-//
-//    fun floatContentHome(view: View, onEnd: () -> Unit = {}) {
-//        val pr = view.getParentView().getRect()
-//        val vr = view.getRect()
-//
-//        floatTo(
-//            view,
-//            (pr.width() - vr.width()) / 2,
-//            (pr.height() - vr.height()) / 2,
-//            2000L,
-//            onEnd
-//        )
-//    }
-//
-//    private fun floatTo(
-//        view: View,
-//        x: Float,
-//        y: Float,
-//        floatDuration: Long,
-//        onEnd: () -> Unit = {}
-//    ) {
-//        floatContentAnimator.apply {
-//            reset(view)
-//            playTogether(
-//                ObjectAnimator.ofFloat(view, X, view.x, x),
-//                ObjectAnimator.ofFloat(view, Y, view.y, y)
-//            )
-//            duration = floatDuration
-//            interpolator = AccelerateDecelerateInterpolator()
-//            doOnEnd { onEnd() }
-//            start()
-//        }
-//    }
-//
-//    companion object {
-//
-//        const val FLOAT_CONTENT_DURATION = 10000L
-//    }
 
 }
 

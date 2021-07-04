@@ -86,41 +86,23 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var autoDeactivationControl: AutoDeactivationControl
 
     private val brightnessControl: BrightnessControl by lazy {
-        BrightnessControl(requireContext()).apply {
-            onChangeBrightness = { inactiveValue, maxValue ->
-                currentBrightness = if (mode == MODE_INACTIVE || mode == MODE_EDITOR)
-                    inactiveValue
-                else
-                    maxValue
-            }
-            onFadeBrightness = { value, onEnd ->
-                animations.fadeBrightness(contentView, currentBrightness, value, onEnd)
-            }
+        BrightnessControl(contentView).apply {
             onStartSlide = {
                 animations.showInfo(infoView)
-                currentBrightness
             }
             onSlide = { value ->
-                currentBrightness = value
-                infoView.text = getString(R.string.min_brightness_info, currentBrightness)
+                infoView.text = getString(R.string.min_brightness_info, value)
             }
-            onEndSlide = {
+            onEndSlide = { value ->
                 animations.hideInfo(infoView)
-                inactiveBrightness = currentBrightness
-                settings.update { putInt(PREF_INACTIVE_BRIGHTNESS, inactiveBrightness) }
+                settings.update { putInt(PREF_INACTIVE_BRIGHTNESS, value) }
             }
-            inactiveBrightness = settings.getInt(PREF_INACTIVE_BRIGHTNESS)
+            setInactiveBrightness(settings.getInt(PREF_INACTIVE_BRIGHTNESS), mode)
         }
     }
 
     private lateinit var scaleControl: ScaleControl
     private lateinit var layoutControl: LayoutControl
-
-    private var currentBrightness: Int
-        get() = (contentView.alpha * 100).toInt()
-        set(value) {
-            contentView.alpha = value / 100f
-        }
 
     private var scale: Float by FloatSettingsPropertyDelegate(PREF_CONTENT_SCALE) { settings }
     private var currentScale: Float
@@ -294,7 +276,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_DIGITS_ANIMATION ->
                     updateDigitsAnimation()
                 PREF_INACTIVE_BRIGHTNESS ->
-                    brightnessControl.inactiveBrightness = getInt(PREF_INACTIVE_BRIGHTNESS)
+                    brightnessControl.setInactiveBrightness(getInt(PREF_INACTIVE_BRIGHTNESS), mode)
                 PREF_TICK_SOUND ->
                     tickControl.setSound(getString(key))
                 PREF_TICK_RULES ->
@@ -308,7 +290,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun setMode(newMode: Int, animate: Boolean) {
-        val oldMode = mode
         mode = newMode
 
         autoDeactivationControl.onModeChanged(mode)
@@ -316,7 +297,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         fullscreenControl.onModeChanged(mode)
         tickControl.onModeChanged(mode, animate)
         layoutControl.onModeChanged(mode, animate)
-        brightnessControl.onModeChanged(newMode, animate)
+        brightnessControl.onModeChanged(mode, animate)
 
         Log.d(_tag, "Mode: $mode")
     }
