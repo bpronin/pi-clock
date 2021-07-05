@@ -150,7 +150,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         super.onCreate(savedInstanceState)
 
         settings = Settings(requireContext())
-        settings.registerOnSharedPreferenceChangeListener(this)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -212,6 +211,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
             updateContentView()
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        settings.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onSaveInstanceState(savedState: Bundle) {

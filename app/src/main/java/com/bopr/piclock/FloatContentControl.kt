@@ -25,13 +25,6 @@ internal class FloatContentControl(private val view: View, private val handler: 
     private val _tag = "FloatContentControl"
 
     var interval = 0L
-        set(value) {
-            if (field != value) {
-                field = value
-                //todo: remove setter?
-                Log.d(_tag, "Interval set to: $interval")
-            }
-        }
     var busy = false
         private set(value) {
             if (field != value) {
@@ -63,12 +56,10 @@ internal class FloatContentControl(private val view: View, private val handler: 
             }
         }
 
+    private val xAnimator = ObjectAnimator.ofFloat(view, View.X, 0f)
+    private val yAnimator = ObjectAnimator.ofFloat(view, View.Y, 0f)
     private val animator = AnimatorSet().apply {
-        //todo: use ObjectAnimator with path
-        playTogether(
-            ObjectAnimator.ofFloat(view, View.X, 0f),
-            ObjectAnimator.ofFloat(view, View.Y, 0f)
-        )
+        playTogether(xAnimator, yAnimator)
     }
 
     private fun scheduleTask() {
@@ -112,8 +103,8 @@ internal class FloatContentControl(private val view: View, private val handler: 
 
             duration = 10000L
             interpolator = AccelerateDecelerateInterpolator()
-            (childAnimations[0] as ObjectAnimator).setFloatValues(view.x, x)
-            (childAnimations[1] as ObjectAnimator).setFloatValues(view.y, y)
+            xAnimator.setFloatValues(view.x, x)
+            yAnimator.setFloatValues(view.y, y)
             doOnStart {
                 Log.v(_tag, "Start moving somewhere")
 
@@ -144,8 +135,8 @@ internal class FloatContentControl(private val view: View, private val handler: 
 
             duration = 1000L
             interpolator = DecelerateInterpolator()
-            (childAnimations[0] as ObjectAnimator).setFloatValues(view.x, x)
-            (childAnimations[1] as ObjectAnimator).setFloatValues(view.y, y)
+            xAnimator.setFloatValues(view.x, x)
+            yAnimator.setFloatValues(view.y, y)
             doOnStart {
                 Log.v(_tag, "Start moving home")
 
