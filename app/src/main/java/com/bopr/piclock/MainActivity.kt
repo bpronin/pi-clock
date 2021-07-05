@@ -10,7 +10,7 @@ import com.bopr.piclock.util.ui.BaseActivity
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MainActivity : BaseActivity(MainFragment::class.java) {
+class MainActivity : BaseActivity<MainFragment>(MainFragment::class.java) {
 
     //todo: separate date view into 'date' and 'day name'
     //todo: option to set floating speed
@@ -29,6 +29,7 @@ class MainActivity : BaseActivity(MainFragment::class.java) {
     //todo: анимация вниз-вправо из кнопки настроек. пол экрана под пример
     //todo: при наклоне экрана двигать в сторону наклона ("падать")
     //todo: option to tell time aloud
+    //todo: option to animate digits only in active mode
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,4 +53,7 @@ class MainActivity : BaseActivity(MainFragment::class.java) {
         }
     }
 
+    override fun onBackPressed() {
+        if (!fragment.onBackPressed()) super.onBackPressed()
+    }
 }

@@ -7,4 +7,4 @@ import com.bopr.piclock.util.ui.BaseActivity
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class SettingsActivity : BaseActivity(SettingsFragment::class.java)
+class SettingsActivity : BaseActivity<SettingsFragment>(SettingsFragment::class.java)

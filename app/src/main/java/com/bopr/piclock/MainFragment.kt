@@ -285,6 +285,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
+    fun onBackPressed(): Boolean {
+        return if (mode == MODE_EDITOR) {
+            setMode(MODE_INACTIVE, true)
+            true
+        }
+        else false
+    }
+
     private fun setMode(newMode: Int, animate: Boolean) {
         mode = newMode
 
