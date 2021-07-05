@@ -2,6 +2,10 @@ package com.bopr.piclock
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
+import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
+import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
+import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.util.*
 import java.text.DateFormat
 import java.text.DateFormat.FULL
@@ -18,9 +22,11 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
             putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
             putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)
-            putFloatOptional(PREF_CONTENT_SCALE, 1f)
+            putIntOptional(PREF_CONTENT_SCALE, 100) {
+                getInt(PREF_CONTENT_SCALE) in MIN_SCALE..MAX_SCALE
+            }
             putIntOptional(PREF_MUTED_BRIGHTNESS, 20) {
-                getInt(PREF_MUTED_BRIGHTNESS) in 0..100
+                getInt(PREF_MUTED_BRIGHTNESS) in MIN_BRIGHTNESS..MAX_BRIGHTNESS
             }
 
             putStringSetResourceOptional(

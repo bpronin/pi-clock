@@ -18,7 +18,7 @@
     <string name="play_always">Play sound in any mode</string>
     <string name="play_only_when_tapped">Play sound only in active mode</string>
     <string name="scale">Scale</string>
-    <string name="scale_summary">Scale factor %.1f%%</string>
+    <string name="scale_summary">Scale factor %d%%</string>
     <string name="seconds_separator">Seconds separator</string>
     <string name="settings">Settings</string>
     <string name="settings_button">Settings button</string>
@@ -32,7 +32,7 @@
     <string name="keep_clock_view">Clock keeps its position on the screen</string>
     <string name="floating_interval">Floating interval</string>
     <string name="brightness_info">Brightness %d%%</string>
-    <string name="scale_info">Scale %.0f%%</string>
+    <string name="scale_info">Scale %d%%</string>
     <string name="show_time_separators">Show time separators</string>
     <string name="seconds_format">Seconds</string>
     <string name="hours_minutes_format">Hours and minutes</string>

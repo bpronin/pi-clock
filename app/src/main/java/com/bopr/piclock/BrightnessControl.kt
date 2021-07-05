@@ -65,10 +65,6 @@ internal class BrightnessControl(private val view: View) :
         return false
     }
 
-    private fun alpha(brightness: Int) = brightness / 100f
-
-    private fun brightness(alpha: Float) = (alpha * 100).toInt()
-
     private fun fade(alpha: Float, onEnd: () -> Unit = {}) {
         Log.v(_tag, "Start fade to: $alpha")
 
@@ -132,8 +128,15 @@ internal class BrightnessControl(private val view: View) :
 
     companion object {
 
-        private const val MIN_ALPHA = 0.1f
-        private const val MAX_ALPHA = 1f
+        private fun alpha(brightness: Int) = brightness / 100f
+
+        private fun brightness(alpha: Float) = (alpha * 100).toInt()
+
+        const val MIN_BRIGHTNESS = 10
+        const val MAX_BRIGHTNESS = 100
+
+        private val MIN_ALPHA = alpha(MIN_BRIGHTNESS)
+        private val MAX_ALPHA = alpha(MAX_BRIGHTNESS)
     }
 
 }

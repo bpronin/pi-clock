@@ -1,6 +1,5 @@
 package com.bopr.piclock
 
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.util.Log
 import android.view.MotionEvent
@@ -8,12 +7,13 @@ import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import android.view.ScaleGestureDetector
 import android.view.View
-import android.view.View.SCALE_X
-import android.view.View.SCALE_Y
+import android.view.View.OnLayoutChangeListener
+import android.view.ViewGroup
+import android.view.ViewGroup.OnHierarchyChangeListener
 import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.doOnEnd
-import com.bopr.piclock.util.getStringArray
 import com.bopr.piclock.util.parentView
+import com.bopr.piclock.util.property.ScaleProperty
 import com.bopr.piclock.util.scaledRect
 import kotlin.math.max
 import kotlin.math.min
@@ -21,7 +21,8 @@ import kotlin.math.min
 /**
  * Convenience class to control scale.
  */
-internal class ScaleControl(private val view: View) : ScaleGestureDetector.OnScaleGestureListener {
+internal class ScaleControl(private val view: ViewGroup) :
+    ScaleGestureDetector.OnScaleGestureListener {
 
     //todo: individual scale settings for different screen orientation
     private val _tag = "ScaleControl"
@@ -29,47 +30,58 @@ internal class ScaleControl(private val view: View) : ScaleGestureDetector.OnSca
     private val detector = ScaleGestureDetector(view.context, this)
 
     private val rescaleAnimator by lazy {
-        AnimatorSet().apply {
-            playTogether(
-                ObjectAnimator.ofFloat(view, SCALE_X, 0f),
-                ObjectAnimator.ofFloat(view, SCALE_Y, 0f)
-            )
+        ObjectAnimator.ofFloat(view, ScaleProperty(), 0f).apply {
             duration = 700
             interpolator = DecelerateInterpolator()
         }
-//        ObjectAnimator.ofFloat(view, SCALE_X, SCALE_Y, null).apply {
-//            duration = 700
-//            interpolator = DecelerateInterpolator()
-//        }
     }
 
     private var viewScale: Float
         get() = view.scaleX
         set(value) {
-            Log.v(_tag, "Set view scale to: $value")
+//            Log.v(_tag, "Set view scale to: $value")
 
             view.apply {
                 scaleX = value
-                scaleY = value
+                scaleY = scaleX
             }
         }
 
     private var pinching = false
     private var rescaling = false
-    private val minScale = view.context.getStringArray(R.array.scale_values).first().toFloat()
     private var pinchingScale = 0f
     private var defaultScale = 0f
 
-    lateinit var onPinchStart: () -> Unit
-    lateinit var onPinch: (scale: Float) -> Unit
-    lateinit var onPinchEnd: () -> Unit
-    lateinit var onScaleChanged: (scale: Float) -> Unit
+    private val viewListener = object : OnLayoutChangeListener, OnHierarchyChangeListener {
 
-    init {
-        view.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            onLayoutChanged()
+        override fun onLayoutChange(
+            v: View?,
+            left: Int,
+            top: Int,
+            right: Int,
+            bottom: Int,
+            oldLeft: Int,
+            oldTop: Int,
+            oldRight: Int,
+            oldBottom: Int
+        ) {
+            updateDefaultScale()
         }
+
+        override fun onChildViewAdded(parent: View?, child: View?) {
+            updateDefaultScale()
+        }
+
+        override fun onChildViewRemoved(parent: View?, child: View?) {
+            /* do nothing */
+        }
+
     }
+
+    lateinit var onPinchStart: () -> Unit
+    lateinit var onPinch: (scalePercent: Int) -> Unit
+    lateinit var onPinchEnd: () -> Unit
+    lateinit var onScaleChanged: (scalePercent: Int) -> Unit
 
     override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
         Log.d(_tag, "Start pinching")
@@ -82,9 +94,9 @@ internal class ScaleControl(private val view: View) : ScaleGestureDetector.OnSca
 
     override fun onScale(detector: ScaleGestureDetector): Boolean {
         pinchingScale *= detector.scaleFactor
-        pinchingScale = max(minScale, min(pinchingScale, MAX_SCALE_FACTOR))
+        pinchingScale = max(MIN_FACTOR, min(pinchingScale, MAX_FACTOR))
         viewScale = pinchingScale
-        onPinch(pinchingScale)
+        onPinch(percents(pinchingScale))
         return true
     }
 
@@ -97,7 +109,7 @@ internal class ScaleControl(private val view: View) : ScaleGestureDetector.OnSca
 
     private fun updateDefaultScale() {
         defaultScale = fitViewScaleIntoScreen()
-        onScaleChanged(defaultScale)
+        onScaleChanged(percents(defaultScale))
     }
 
     private fun fitViewScaleIntoScreen(): Float {
@@ -122,8 +134,7 @@ internal class ScaleControl(private val view: View) : ScaleGestureDetector.OnSca
                 cancel()
                 removeAllListeners()
 
-                (childAnimations[0] as ObjectAnimator).setFloatValues(view.scaleX, scale)
-                (childAnimations[1] as ObjectAnimator).setFloatValues(view.scaleY, scale)
+                setFloatValues(view.scaleX, scale)
                 doOnEnd {
                     Log.d(_tag, "End scale animation")
 
@@ -135,12 +146,18 @@ internal class ScaleControl(private val view: View) : ScaleGestureDetector.OnSca
         }
     }
 
-    fun setDefaultScale(value: Float) {
-        viewScale = value
-        updateDefaultScale()
+    fun init() {
+        view.addOnLayoutChangeListener(viewListener)
+        view.setOnHierarchyChangeListener(viewListener)
     }
 
-    fun onLayoutChanged() {
+    fun destroy() {
+        view.removeOnLayoutChangeListener(viewListener)
+        view.setOnHierarchyChangeListener(null)
+    }
+
+    fun setDefaultScale(valuePercent: Int) {
+        viewScale = factor(valuePercent)
         updateDefaultScale()
     }
 
@@ -163,7 +180,15 @@ internal class ScaleControl(private val view: View) : ScaleGestureDetector.OnSca
 
     companion object {
 
-        private const val MAX_SCALE_FACTOR = 100f
+        const val MIN_SCALE = 25
+        const val MAX_SCALE = 500
+
+        private fun percents(factor: Float) = (factor * 100).toInt()
+
+        private fun factor(percents: Int) = percents / 100f
+
+        private val MIN_FACTOR = factor(MIN_SCALE)
+        private val MAX_FACTOR = factor(MAX_SCALE)
     }
 
 }

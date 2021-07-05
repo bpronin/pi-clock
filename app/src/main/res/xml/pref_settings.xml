@@ -31,10 +31,9 @@
 
     <PreferenceCategory android:title="@string/user_interface">
 
-        <com.bopr.piclock.util.ui.preference.FloatListPreference
-            android:entries="@array/scale_names"
-            android:entryValues="@array/scale_values"
+        <SeekBarPreference
             android:key="content_scale"
+            android:max="100"
             android:title="@string/scale" />
 
         <SeekBarPreference

@@ -9,6 +9,10 @@ import androidx.preference.Preference
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.preference.SeekBarPreference
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
+import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
+import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
+import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ABOUT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_DEACTIVATION_DELAY
@@ -98,9 +102,18 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
+    private fun updateAboutPreferenceView() {
+        requirePreference(PREF_ABOUT).apply {
+            val info = ReleaseInfo.get(requireContext())
+            summary =
+                getString(R.string.about_summary, info.versionName, info.buildNumber)
+            onPreferenceClickListener = AboutPreferenceClickListener()
+        }
+    }
+
     private fun updateDigitsAnimationPreferenceViews() {
         (requirePreference(PREF_DIGITS_ANIMATION) as ListPreference).apply {
-            val value = settings.getString(PREF_DIGITS_ANIMATION)
+            val value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
         }
     }
@@ -112,7 +125,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateFloatIntervalPreferenceView() {
         (requirePreference(PREF_CONTENT_FLOAT_INTERVAL) as ListPreference).apply {
-            val value = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
+            val value = settings.getLong(key)
             summary = when (value) {
                 0L -> getString(R.string.clock_always_moves_along_screen)
                 -1L -> getString(R.string.keep_clock_view)
@@ -124,27 +137,19 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateAboutPreferenceView() {
-        requirePreference(PREF_ABOUT).apply {
-            val info = ReleaseInfo.get(requireContext())
-            summary =
-                getString(R.string.about_summary, info.versionName, info.buildNumber)
-            onPreferenceClickListener = AboutPreferenceClickListener()
-        }
-    }
-
     private fun updateScalePreferenceView() {
-        requirePreference(PREF_CONTENT_SCALE).apply {
-            val value = settings.getFloat(PREF_CONTENT_SCALE) * 100f
-            /* Single percent sign in summary of causes an exception here. */
-            summary = getString(R.string.scale_summary, value).replace("%", "%%")
+        (requirePreference(PREF_CONTENT_SCALE) as SeekBarPreference).apply {
+            min = MIN_SCALE
+            max = MAX_SCALE
+            value = settings.getInt(key)
+            summary = getString(R.string.scale_summary, value)
         }
     }
 
     private fun updateTickModePreferenceView() {
         (requirePreference(PREF_TICK_RULES) as MultiSelectListPreference).apply {
             val titles = mutableListOf<String>()
-            for (item in settings.getStringSet(PREF_TICK_RULES)) {
+            for (item in settings.getStringSet(key)) {
                 titles.add(entries[entryValues.indexOf(item)].toString())
             }
             summary = if (titles.isNotEmpty())
@@ -173,13 +178,13 @@ class SettingsFragment : CustomPreferenceFragment(),
 
         (requirePreference(PREF_DATE_FORMAT) as ListPreference).apply {
             entries = entryNames
-            summary = entryNames[findIndexOfValue(settings.getString(PREF_DATE_FORMAT))]
+            summary = entryNames[findIndexOfValue(settings.getString(key))]
         }
     }
 
     private fun updateTimeFormatPreferenceView() {
         (requirePreference(PREF_TIME_FORMAT) as ListPreference).apply {
-            val value = settings.getString(PREF_TIME_FORMAT)
+            val value = settings.getString(key)
             val ix = findIndexOfValue(value)
             val hint = getStringArray(R.array.time_format_hints)[ix]
             summary = "${entries[ix]} $hint"
@@ -188,7 +193,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateSecondsFormatPreferenceView() {
         (requirePreference(PREF_SECONDS_FORMAT) as ListPreference).apply {
-            val value = settings.getString(PREF_SECONDS_FORMAT)
+            val value = settings.getString(key)
             val ix = findIndexOfValue(value)
             val hint = getStringArray(R.array.seconds_format_hints)[ix]
             summary = "${entries[ix]} $hint"
@@ -197,21 +202,21 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateClockLayoutPreferenceView() {
         (requirePreference(PREF_CONTENT_LAYOUT) as ListPreference).apply {
-            val value = settings.getString(PREF_CONTENT_LAYOUT)
+            val value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
         }
     }
 
     private fun updateTickSoundPreferenceView() {
         (requirePreference(PREF_TICK_SOUND) as ListPreference).apply {
-            val value = settings.getString(PREF_TICK_SOUND)
+            val value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
         }
     }
 
     private fun updateAutoFullscreenPreferenceView() {
         (requirePreference(PREF_AUTO_DEACTIVATION_DELAY) as ListPreference).apply {
-            val value = settings.getLong(PREF_AUTO_DEACTIVATION_DELAY)
+            val value = settings.getLong(key)
             summary = if (value > 0) {
                 val index = findIndexOfValue(value.toString())
                 getString(R.string.deactivation_summary, entries[index])
@@ -223,9 +228,10 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateMutedBrightnessPreferenceView() {
         (requirePreference(PREF_MUTED_BRIGHTNESS) as SeekBarPreference).apply {
-            val brightness = settings.getInt(PREF_MUTED_BRIGHTNESS)
-            value = brightness
-            summary = getString(R.string.muted_brightness_summary, brightness)
+            min = MIN_BRIGHTNESS
+            max = MAX_BRIGHTNESS
+            value = settings.getInt(key)
+            summary = getString(R.string.muted_brightness_summary, value)
         }
     }
 

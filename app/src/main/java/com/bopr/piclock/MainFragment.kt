@@ -132,9 +132,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 animations.hideInfo(infoView)
             }
             onScaleChanged = { scale ->
-                settings.update { putFloat(PREF_CONTENT_SCALE, scale) }
+                settings.update { putInt(PREF_CONTENT_SCALE, scale) }
             }
-            setDefaultScale(settings.getFloat(PREF_CONTENT_SCALE))
+            setDefaultScale(settings.getInt(PREF_CONTENT_SCALE))
         }
     }
 
@@ -207,6 +207,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             contentView = findViewById<ViewGroup>(R.id.content_view).apply {
                 setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
             }
+
+            scaleControl.init()
+
             updateContentView()
         }
     }
@@ -219,9 +222,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onDestroy() {
+        handler.removeCallbacksAndMessages(null)
+        scaleControl.destroy()
         settings.unregisterOnSharedPreferenceChangeListener(this)
         soundControl.stop()
-        handler.removeCallbacksAndMessages(null)
         super.onDestroy()
     }
 
@@ -263,7 +267,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_DIGITS_ANIMATION ->
                     updateDigitsAnimation()
                 PREF_CONTENT_SCALE ->
-                    scaleControl.setDefaultScale(getFloat(key))
+                    scaleControl.setDefaultScale(getInt(key))
                 PREF_MUTED_BRIGHTNESS ->
                     brightnessControl.setMutedBrightness(getInt(key), mode)
                 PREF_TICK_SOUND ->
@@ -315,8 +319,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateDateView()
         updateContentViewData()
         updateDigitsAnimation() /* must be after updateContentData */
-
-        scaleControl.onLayoutChanged()
     }
 
     private fun updateContentViewData() {
