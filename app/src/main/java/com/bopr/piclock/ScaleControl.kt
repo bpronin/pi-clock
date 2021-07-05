@@ -115,7 +115,7 @@ internal class ScaleControl(private val view: View) : ScaleGestureDetector.OnSca
 
     private fun rescaleView(scale: Float) {
         if (!rescaling) {
-            Log.d(_tag, "Start fitting")
+            Log.d(_tag, "Start scale animation")
 
             rescaling = true
             rescaleAnimator.apply {
@@ -125,7 +125,7 @@ internal class ScaleControl(private val view: View) : ScaleGestureDetector.OnSca
                 (childAnimations[0] as ObjectAnimator).setFloatValues(view.scaleX, scale)
                 (childAnimations[1] as ObjectAnimator).setFloatValues(view.scaleY, scale)
                 doOnEnd {
-                    Log.d(_tag, "End fitting")
+                    Log.d(_tag, "End scale animation")
 
                     rescaling = false
                 }
