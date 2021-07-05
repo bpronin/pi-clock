@@ -163,7 +163,6 @@ internal class FloatContentControl(private val view: View, private val handler: 
                 enabled = true
             }
             MODE_EDITOR -> {
-//                floatHome()
                 enabled = false
             }
         }

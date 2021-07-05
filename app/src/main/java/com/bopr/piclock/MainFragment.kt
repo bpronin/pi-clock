@@ -108,6 +108,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         BrightnessControl(contentView).apply {
             onStartSlide = {
                 animations.showInfo(infoView)
+                setMode(MODE_INACTIVE, true)
             }
             onSlide = { brightness ->
                 infoView.text = getString(R.string.brightness_info, brightness)
@@ -132,7 +133,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 animations.hideInfo(infoView)
             }
             onScaleChanged = { scale ->
-                settings.update { putInt(PREF_CONTENT_SCALE, scale) }
+                if (mode == MODE_ACTIVE || mode == MODE_INACTIVE) {
+                    settings.update { putInt(PREF_CONTENT_SCALE, scale) }
+                }
             }
             setDefaultScale(settings.getInt(PREF_CONTENT_SCALE))
         }
@@ -169,7 +172,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             setOnTouchListener { _, event ->
                 autoDeactivationControl.onTouch(event, mode)
                         || brightnessControl.onTouch(event, mode)
-                        || scaleControl.onTouch(event)
+                        || scaleControl.onTouch(event, mode)
             }
 
             doOnLayout {
@@ -294,16 +297,18 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun setMode(newMode: Int, animate: Boolean) {
-        mode = newMode
+        if (mode != newMode) {
+            mode = newMode
 
-        autoDeactivationControl.onModeChanged(mode)
-        floatControl.onModeChanged(mode)
-        fullscreenControl.onModeChanged(mode)
-        soundControl.onModeChanged(mode, animate)
-        layoutControl.onModeChanged(mode, animate)
-        brightnessControl.onModeChanged(mode, animate)
+            autoDeactivationControl.onModeChanged(mode)
+            floatControl.onModeChanged(mode)
+            fullscreenControl.onModeChanged(mode)
+            soundControl.onModeChanged(mode, animate)
+            layoutControl.onModeChanged(mode, animate)
+            brightnessControl.onModeChanged(mode, animate)
 
-        Log.d(_tag, "Mode: $mode")
+            Log.d(_tag, "Mode: $mode")
+        }
     }
 
     private fun updateContentView() {

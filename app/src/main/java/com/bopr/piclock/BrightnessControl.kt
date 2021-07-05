@@ -96,7 +96,7 @@ internal class BrightnessControl(private val view: View) :
      * To be called in owner's onTouch.
      */
     fun onTouch(event: MotionEvent, mode: Int): Boolean {
-        if (mode == MODE_INACTIVE || mode == MODE_EDITOR) {
+        if (mode == MODE_INACTIVE || mode == MODE_ACTIVE) {
             detector.onTouchEvent(event)
 
             /* this is to prevent of calling onClick if scrolled */
