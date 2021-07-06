@@ -15,7 +15,7 @@ abstract class BaseActivity<F : Fragment>(fragmentClass: Class<out F>) : AppComp
 /* NOTE: "To keep fragments self-contained, you SHOULD NOT have fragments communicate directly
    with other fragments or with its host activity." (i.e. do not use fragment listeners, references etc. ) */
 
-    protected val fragment = fragmentClass.newInstance()
+    protected val fragment: F = fragmentClass.newInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

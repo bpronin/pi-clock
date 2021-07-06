@@ -65,7 +65,7 @@ internal class FullscreenControl(private val activity: Activity, private val han
         }
     }
 
-    fun onModeChanged(mode: Int) {
+    fun onModeChanged(@MainFragment.Mode mode: Int) {
         fullscreen = (mode == MODE_INACTIVE)
     }
 

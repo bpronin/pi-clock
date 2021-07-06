@@ -14,6 +14,7 @@ import androidx.core.view.GestureDetectorCompat
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
+import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.util.parentView
 import com.bopr.piclock.util.scaledRect
 import kotlin.math.max
@@ -83,11 +84,11 @@ internal class BrightnessControl(private val view: View) :
         }
     }
 
-    private fun updateViewAlpha(mode: Int) {
+    private fun updateViewAlpha(@Mode mode: Int) {
         view.alpha = if (mode == MODE_INACTIVE || mode == MODE_EDITOR) mutedAlpha else MAX_ALPHA
     }
 
-    fun setMutedBrightness(brightness: Int, mode: Int) {
+    fun setMutedBrightness(brightness: Int, @Mode mode: Int) {
         mutedAlpha = alpha(brightness)
         updateViewAlpha(mode)
     }
@@ -95,7 +96,7 @@ internal class BrightnessControl(private val view: View) :
     /**
      * To be called in owner's onTouch.
      */
-    fun onTouch(event: MotionEvent, mode: Int): Boolean {
+    fun onTouch(event: MotionEvent, @Mode mode: Int): Boolean {
         if (mode == MODE_INACTIVE || mode == MODE_ACTIVE) {
             detector.onTouchEvent(event)
 
@@ -113,7 +114,7 @@ internal class BrightnessControl(private val view: View) :
         return false
     }
 
-    fun onModeChanged(mode: Int, animate: Boolean) {
+    fun onModeChanged(@Mode mode: Int, animate: Boolean) {
         if (animate) {
             when (mode) {
                 MODE_ACTIVE ->

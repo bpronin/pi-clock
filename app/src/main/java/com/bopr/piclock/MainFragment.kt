@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.*
 import android.widget.TextView
+import androidx.annotation.IntDef
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
@@ -19,7 +20,6 @@ import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.doOnLayout
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainerView
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_DEACTIVATION_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
@@ -59,7 +59,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private var currentTime = Date()
 
     private lateinit var contentView: ViewGroup
-    private lateinit var settingsContainer: FragmentContainerView
+    private lateinit var settingsContainer: View
     private lateinit var settingsButton: FloatingActionButton
     private lateinit var hoursView: AnimatedTextView
     private lateinit var minutesView: AnimatedTextView
@@ -142,9 +142,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private val layoutControl: LayoutControl by lazy {
-        LayoutControl(rootView)
+        LayoutControl(rootView, parentFragmentManager)
     }
 
+    @Mode
     private var mode = MODE_INACTIVE
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -188,7 +189,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 windowInsets
             }
 
-            settingsContainer = findViewById<FragmentContainerView>(R.id.settings_container).apply {
+            settingsContainer = findViewById<View>(R.id.settings_container).apply {
                 visibility = GONE
             }
 
@@ -212,7 +213,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
             scaleControl.init()
 
-            updateContentView()
+            createContentView()
         }
     }
 
@@ -228,10 +229,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onDestroy() {
-        handler.removeCallbacksAndMessages(null)
-        scaleControl.destroy()
         settings.unregisterOnSharedPreferenceChangeListener(this)
+        handler.removeCallbacksAndMessages(null)
         soundControl.stop()
+        scaleControl.destroy()
         super.onDestroy()
     }
 
@@ -257,7 +258,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_FULLSCREEN_ENABLED ->
                     updateFullscreenControl()
                 PREF_CONTENT_LAYOUT ->
-                    updateContentView()
+                    createContentView()
                 PREF_TIME_FORMAT ->
                     updateHoursMinutesViews()
                 PREF_SECONDS_FORMAT -> {
@@ -292,11 +293,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         return if (mode == MODE_EDITOR) {
             setMode(MODE_INACTIVE, true)
             true
-        }
-        else false
+        } else false
     }
 
-    private fun setMode(newMode: Int, animate: Boolean) {
+    private fun setMode(@Mode newMode: Int, animate: Boolean) {
         if (mode != newMode) {
             mode = newMode
 
@@ -307,13 +307,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             layoutControl.onModeChanged(mode, animate)
             brightnessControl.onModeChanged(mode, animate)
 
-            Log.d(_tag, "Mode: $mode")
+            Log.d(_tag, "Mode set to: $mode")
         }
     }
 
-    private fun updateContentView() {
-        Log.d(_tag, "Creating content")
-
+    private fun createContentView() {
         contentView.apply {
             removeAllViews()
             val resId = getResId("layout", settings.getString(PREF_CONTENT_LAYOUT))
@@ -335,6 +333,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateDateView()
         updateContentViewData()
         updateDigitsAnimation() /* must be after updateContentData */
+
+        Log.d(_tag, "Created content view")
     }
 
     private fun updateContentViewData() {
@@ -447,6 +447,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             bottomMargin = insets.bottom
         }
     }
+
+    @IntDef(value = [MODE_ACTIVE, MODE_INACTIVE, MODE_EDITOR])
+    annotation class Mode
 
     companion object {
 

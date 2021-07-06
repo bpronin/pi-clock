@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_container"
     android:layout_width="match_parent"
-    android:animateLayoutChanges="true"
     android:layout_height="match_parent"
     android:keepScreenOn="true">
 
@@ -40,9 +39,8 @@
             tools:ignore="HardcodedText,RtlHardcoded" />
     </FrameLayout>
 
-    <androidx.fragment.app.FragmentContainerView
+    <FrameLayout
         android:id="@+id/settings_container"
-        android:name="com.bopr.piclock.SettingsFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -65,6 +63,5 @@
         app:maxImageSize="32dp"
         app:rippleColor="?attr/colorOnSecondary"
         app:srcCompat="@drawable/ic_baseline_menu" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
+import com.bopr.piclock.MainFragment.Mode
 
 /**
  * Responsible for auto-deactivation of [MainFragment].
@@ -41,7 +42,7 @@ internal class AutoDeactivationControl(private val handler: Handler) {
             }
         }
 
-    fun onModeChanged(mode: Int) {
+    fun onModeChanged(@Mode mode: Int) {
         enabled = (mode == MODE_ACTIVE)
     }
 
@@ -57,7 +58,7 @@ internal class AutoDeactivationControl(private val handler: Handler) {
         enabled = true
     }
 
-    fun onTouch(event: MotionEvent, mode: Int): Boolean {
+    fun onTouch(event: MotionEvent, @Mode mode: Int): Boolean {
         when (event.action) {
             ACTION_DOWN -> {
                 Log.v(_tag, "Processing touch: ${event.action}")

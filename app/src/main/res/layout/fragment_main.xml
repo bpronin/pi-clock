@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_container"
     android:layout_width="match_parent"
-    android:animateLayoutChanges="true"
     android:layout_height="match_parent"
     android:keepScreenOn="true">
 
@@ -40,16 +39,15 @@
             tools:ignore="HardcodedText,RtlHardcoded" />
     </FrameLayout>
 
-    <androidx.fragment.app.FragmentContainerView
+    <FrameLayout
         android:id="@+id/settings_container"
-        android:name="com.bopr.piclock.SettingsFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_percent="0.7"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintHeight_percent="0.7"
-        app:layout_constraintTop_toBottomOf="@id/content_container" />
+        app:layout_constraintTop_toBottomOf="@id/content_container"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/settings_button"

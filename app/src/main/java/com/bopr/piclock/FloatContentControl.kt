@@ -152,14 +152,13 @@ internal class FloatContentControl(private val view: View, private val handler: 
         }
     }
 
-    fun onModeChanged(mode: Int) {
+    fun onModeChanged(@MainFragment.Mode mode: Int) {
         when (mode) {
             MODE_ACTIVE -> {
                 enabled = false
                 floatHome()
             }
             MODE_INACTIVE -> {
-                floatHome()
                 enabled = true
             }
             MODE_EDITOR -> {

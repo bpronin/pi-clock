@@ -127,7 +127,7 @@ internal class SoundControl(private val context: Context) {
         playWhenActive = rules.contains(TICK_ACTIVE)
     }
 
-    fun onModeChanged(mode: Int, animate: Boolean) {
+    fun onModeChanged(@MainFragment.Mode mode: Int, animate: Boolean) {
         if (animate) {
             when (mode) {
                 MODE_ACTIVE -> if (!(playWhenActive && playWhenInactive)) {
