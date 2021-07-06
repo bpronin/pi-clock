@@ -11,7 +11,7 @@ import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
-import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
+import com.bopr.piclock.MainFragment.Companion.MODE_FULLSCREEN
 import com.bopr.piclock.util.parentView
 import com.bopr.piclock.util.rect
 import com.bopr.piclock.util.scaledRect
@@ -158,7 +158,7 @@ internal class FloatContentControl(private val view: View, private val handler: 
                 enabled = false
                 floatHome()
             }
-            MODE_INACTIVE -> {
+            MODE_FULLSCREEN -> {
                 enabled = true
             }
             MODE_EDITOR -> {

@@ -14,7 +14,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.transition.TransitionManager
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
-import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
+import com.bopr.piclock.MainFragment.Companion.MODE_FULLSCREEN
 import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.util.fabMargin
 
@@ -97,7 +97,7 @@ internal class LayoutControl(
                 container.visibility = GONE
                 removeSettingsView()
             }
-            MODE_INACTIVE -> {
+            MODE_FULLSCREEN -> {
                 mainConstraints.applyTo(rootView)
                 button.visibility = GONE
                 container.visibility = GONE

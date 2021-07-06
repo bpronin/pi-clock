@@ -10,10 +10,10 @@ import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
-import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
+import com.bopr.piclock.MainFragment.Companion.MODE_FULLSCREEN
 import com.bopr.piclock.Settings.Companion.TICK_ACTIVE
 import com.bopr.piclock.Settings.Companion.TICK_FLOATING
-import com.bopr.piclock.Settings.Companion.TICK_INACTIVE
+import com.bopr.piclock.Settings.Companion.TICK_FULLSCREEN
 import com.bopr.piclock.util.getResId
 
 /**
@@ -42,9 +42,9 @@ internal class SoundControl(private val context: Context) {
 
     private lateinit var player: MediaPlayer
     private lateinit var soundName: String
-    private var playWhenActive: Boolean = false
-    private var playWhenInactive: Boolean = false
-    private var playWhenFloating: Boolean = false
+    private var whenActive: Boolean = false
+    private var whenFullscreen: Boolean = false
+    private var whenFloating: Boolean = false
     private var changingVolume = false
     private var prepared = false
 
@@ -122,24 +122,24 @@ internal class SoundControl(private val context: Context) {
     }
 
     fun setRules(rules: Set<String>) {
-        playWhenFloating = rules.contains(TICK_FLOATING)
-        playWhenInactive = rules.contains(TICK_INACTIVE)
-        playWhenActive = rules.contains(TICK_ACTIVE)
+        whenFloating = rules.contains(TICK_FLOATING)
+        whenFullscreen = rules.contains(TICK_FULLSCREEN)
+        whenActive = rules.contains(TICK_ACTIVE)
     }
 
     fun onModeChanged(@MainFragment.Mode mode: Int, animate: Boolean) {
         if (animate) {
             when (mode) {
-                MODE_ACTIVE -> if (!(playWhenActive && playWhenInactive)) {
+                MODE_ACTIVE -> if (!(whenActive && whenFullscreen)) {
                     when {
-                        playWhenActive -> fadeVolume(4000, 0f, 1f)
-                        playWhenInactive -> fadeVolume(4000, 1f, 0f)
+                        whenActive -> fadeVolume(4000, 0f, 1f)
+                        whenFullscreen -> fadeVolume(4000, 1f, 0f)
                     }
                 }
-                MODE_INACTIVE -> if (!(playWhenActive && playWhenInactive)) {
+                MODE_FULLSCREEN -> if (!(whenActive && whenFullscreen)) {
                     when {
-                        playWhenActive -> fadeVolume(4000, 1f, 0f)
-                        playWhenInactive -> fadeVolume(4000, 0f, 1f)
+                        whenActive -> fadeVolume(4000, 1f, 0f)
+                        whenFullscreen -> fadeVolume(4000, 0f, 1f)
                     }
                 }
                 MODE_EDITOR -> stop()
@@ -148,15 +148,15 @@ internal class SoundControl(private val context: Context) {
     }
 
     fun onFloatContent(floating: Boolean) {
-        if (floating && playWhenFloating) {
+        if (floating && whenFloating) {
             fadeVolume(10000L, 0f, 1f, 0f)
         }
     }
 
     fun onTimer(mode: Int, floating: Boolean) {
-        if ((playWhenActive && mode == MODE_ACTIVE)
-            || (playWhenInactive && (mode == MODE_INACTIVE || mode == MODE_EDITOR))
-            || (playWhenFloating && floating)
+        if ((whenActive && mode == MODE_ACTIVE)
+            || (whenFullscreen && (mode == MODE_FULLSCREEN || mode == MODE_EDITOR))
+            || (whenFloating && floating)
             || changingVolume
         ) {
             play()

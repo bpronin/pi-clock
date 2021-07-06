@@ -13,7 +13,7 @@ import androidx.core.animation.doOnEnd
 import androidx.core.view.GestureDetectorCompat
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
-import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
+import com.bopr.piclock.MainFragment.Companion.MODE_FULLSCREEN
 import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.util.parentView
 import com.bopr.piclock.util.scaledRect
@@ -85,7 +85,7 @@ internal class BrightnessControl(private val view: View) :
     }
 
     private fun updateViewAlpha(@Mode mode: Int) {
-        view.alpha = if (mode == MODE_INACTIVE || mode == MODE_EDITOR) mutedAlpha else MAX_ALPHA
+        view.alpha = if (mode == MODE_FULLSCREEN || mode == MODE_EDITOR) mutedAlpha else MAX_ALPHA
     }
 
     fun setMutedBrightness(brightness: Int, @Mode mode: Int) {
@@ -97,7 +97,7 @@ internal class BrightnessControl(private val view: View) :
      * To be called in owner's onTouch.
      */
     fun onTouch(event: MotionEvent, @Mode mode: Int): Boolean {
-        if (mode == MODE_INACTIVE || mode == MODE_ACTIVE) {
+        if (mode == MODE_FULLSCREEN || mode == MODE_ACTIVE) {
             detector.onTouchEvent(event)
 
             /* this is to prevent of calling onClick if scrolled */
@@ -119,7 +119,7 @@ internal class BrightnessControl(private val view: View) :
             when (mode) {
                 MODE_ACTIVE ->
                     fade(MAX_ALPHA) { updateViewAlpha(mode) }
-                MODE_INACTIVE, MODE_EDITOR ->
+                MODE_FULLSCREEN, MODE_EDITOR ->
                     fade(mutedAlpha) { updateViewAlpha(mode) }
             }
         } else {

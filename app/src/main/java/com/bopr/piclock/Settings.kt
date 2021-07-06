@@ -54,9 +54,9 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             )
 
             putLongResourceOptional(
-                PREF_AUTO_DEACTIVATION_DELAY,
+                PREF_AUTO_FULLSCREEN_DELAY,
                 5000,
-                R.array.deactivation_delay_values
+                R.array.auto_fullscreen_delay_values
             )
 
             putStringResourceOptional(
@@ -127,7 +127,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val SHARED_PREFERENCES_NAME = "com.bopr.piclock_preferences"
         const val SYSTEM_DEFAULT = "system_default"
         const val TICK_ACTIVE = "active"
-        const val TICK_INACTIVE = "inactive"
+        const val TICK_FULLSCREEN = "fullscreen"
         const val TICK_FLOATING = "floating"
 
         val DEFAULT_DATE_FORMAT: DateFormat = DateFormat.getDateInstance(FULL)
@@ -137,7 +137,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_ABOUT = "about_app" /* internal, marker */
 
         const val PREF_TIME_FORMAT = "time_format"
-        const val PREF_AUTO_DEACTIVATION_DELAY = "auto_deactivation_delay"
+        const val PREF_AUTO_FULLSCREEN_DELAY = "auto_fullscreen_delay"
         const val PREF_CONTENT_FLOAT_INTERVAL = "content_float_interval"
         const val PREF_CONTENT_LAYOUT = "content_layout"
         const val PREF_CONTENT_SCALE = "content_scale"
