@@ -81,17 +81,6 @@ internal class SoundControl(private val context: Context) {
         }
     }
 
-    fun stop() {
-        if (prepared) {
-            volumeAnimator.cancel()
-            player.stop()
-            player.release()
-            prepared = false
-
-            Log.d(_tag, "Stopped")
-        }
-    }
-
     private fun resetVolume() {
         player.setVolume(1f, 1f)
 
@@ -120,6 +109,17 @@ internal class SoundControl(private val context: Context) {
 
                 start()
             }
+        }
+    }
+
+    fun stop() {
+        if (prepared) {
+            volumeAnimator.cancel()
+            player.stop()
+            player.release()
+            prepared = false
+
+            Log.d(_tag, "Stopped")
         }
     }
 
