@@ -12,6 +12,7 @@ import androidx.core.animation.doOnStart
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
+import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.util.parentView
 import com.bopr.piclock.util.rect
 import com.bopr.piclock.util.scaledRect
@@ -152,7 +153,7 @@ internal class FloatContentControl(private val view: View, private val handler: 
         }
     }
 
-    fun onModeChanged(@MainFragment.Mode mode: Int) {
+    fun onModeChanged(@Mode mode: Int) {
         when (mode) {
             MODE_ACTIVE -> {
                 enabled = false

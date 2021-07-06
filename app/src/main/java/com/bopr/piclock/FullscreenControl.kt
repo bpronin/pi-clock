@@ -8,21 +8,12 @@ import android.view.View.*
 import android.view.WindowInsets.Type.systemBars
 import android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
+import com.bopr.piclock.MainFragment.Mode
 
 /**
  * Controls showing and hiding system UI.
  */
 internal class FullscreenControl(private val activity: Activity, private val handler: Handler) {
-
-    var enabled = true
-        set(value) {
-            if (field != value) {
-                field = value
-                if (!field) {
-                    fullscreen = false
-                }
-            }
-        }
 
     private val _tag = "FullscreenSupport"
 
@@ -42,7 +33,7 @@ internal class FullscreenControl(private val activity: Activity, private val han
 
     private var fullscreen: Boolean = false
         set(value) {
-            if (enabled && field != value) {
+            if (field != value) {
                 handler.removeCallbacks(turnOnTask)
                 handler.removeCallbacks(turnOffTask)
                 field = value
@@ -56,6 +47,16 @@ internal class FullscreenControl(private val activity: Activity, private val han
             }
         }
 
+    var enabled = true
+        set(value) {
+            if (field != value) {
+                field = value
+                if (!field) {
+                    fullscreen = false
+                }
+            }
+        }
+
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             activity.window.apply {
@@ -63,10 +64,6 @@ internal class FullscreenControl(private val activity: Activity, private val han
                 insetsController?.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
         }
-    }
-
-    fun onModeChanged(@MainFragment.Mode mode: Int) {
-        fullscreen = (mode == MODE_INACTIVE)
     }
 
     private fun showSystemUI() {
@@ -84,7 +81,6 @@ internal class FullscreenControl(private val activity: Activity, private val han
         Log.d(_tag, "System UI shown")
     }
 
-    //todo: after rotating it does not hide UI
     private fun hideSystemUI() {
         activity.window.apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -101,6 +97,12 @@ internal class FullscreenControl(private val activity: Activity, private val han
         }
 
         Log.d(_tag, "System UI hidden")
+    }
+
+    fun onModeChanged(@Mode mode: Int) {
+        if (enabled) {
+            fullscreen = (mode == MODE_INACTIVE)
+        }
     }
 
 }

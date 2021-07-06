@@ -11,6 +11,7 @@ import androidx.core.animation.doOnStart
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
+import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.Settings.Companion.TICK_ACTIVE
 import com.bopr.piclock.Settings.Companion.TICK_FLOATING
 import com.bopr.piclock.Settings.Companion.TICK_INACTIVE
@@ -127,7 +128,7 @@ internal class SoundControl(private val context: Context) {
         whenActive = rules.contains(TICK_ACTIVE)
     }
 
-    fun onModeChanged(@MainFragment.Mode mode: Int, animate: Boolean) {
+    fun onModeChanged(@Mode mode: Int, animate: Boolean) {
         if (animate) {
             when (mode) {
                 MODE_ACTIVE -> if (!(whenActive && whenInactive)) {

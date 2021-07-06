@@ -7,13 +7,12 @@ import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import android.view.ScaleGestureDetector
 import android.view.View
-import android.view.View.OnLayoutChangeListener
 import android.view.ViewGroup
-import android.view.ViewGroup.OnHierarchyChangeListener
 import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
+import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.util.parentView
 import com.bopr.piclock.util.property.ScaleProperty
 import com.bopr.piclock.util.scaledRect
@@ -41,7 +40,7 @@ internal class ScaleControl(private val view: ViewGroup) :
     private var viewScale: Float
         get() = view.scaleX
         set(value) {
-//            Log.v(_tag, "Set view scale to: $value")
+            Log.v(_tag, "Set view scale to: $value")
 
             view.apply {
                 scaleX = value
@@ -52,9 +51,13 @@ internal class ScaleControl(private val view: ViewGroup) :
     private var pinching = false
     private var rescaling = false
     private var pinchingScale = 0f
-    private var defaultScale = 0f
+    private var scale = 0f
 
-    private val viewListener = object : OnLayoutChangeListener, OnHierarchyChangeListener {
+    @Mode
+    var mode = MODE_INACTIVE
+
+    private val viewListener = object : View.OnLayoutChangeListener,
+        ViewGroup.OnHierarchyChangeListener {
 
         override fun onLayoutChange(
             v: View?,
@@ -67,11 +70,11 @@ internal class ScaleControl(private val view: ViewGroup) :
             oldRight: Int,
             oldBottom: Int
         ) {
-            updateDefaultScale()
+//            captureScale()
         }
 
         override fun onChildViewAdded(parent: View?, child: View?) {
-            updateDefaultScale()
+//            captureScale()
         }
 
         override fun onChildViewRemoved(parent: View?, child: View?) {
@@ -106,15 +109,18 @@ internal class ScaleControl(private val view: ViewGroup) :
         Log.d(_tag, "End pinching")
 
         onPinchEnd()
-        updateDefaultScale()
+        captureScale()
     }
 
-    private fun updateDefaultScale() {
-        defaultScale = fitViewScaleIntoScreen()
-        onScaleChanged(percents(defaultScale))
+    private fun captureScale() {
+        scale = fitViewIntoScreen()
+//        scale = viewScale
+        if (mode == MODE_ACTIVE || mode == MODE_INACTIVE) {
+            onScaleChanged(percents(scale))
+        }
     }
 
-    private fun fitViewScaleIntoScreen(): Float {
+    private fun fitViewIntoScreen(): Float {
         //todo: also move into if out of screen
         val pr = view.parentView.scaledRect
         val vr = view.scaledRect
@@ -158,15 +164,15 @@ internal class ScaleControl(private val view: ViewGroup) :
         view.setOnHierarchyChangeListener(null)
     }
 
-    fun setDefaultScale(valuePercent: Int) {
+    fun setScale(valuePercent: Int) {
         viewScale = factor(valuePercent)
-        updateDefaultScale()
+        captureScale()
     }
 
     /**
      * To be called in owner's onTouch.
      */
-    fun onTouch(event: MotionEvent, mode: Int): Boolean {
+    fun onTouch(event: MotionEvent): Boolean {
         if (mode == MODE_ACTIVE || mode == MODE_INACTIVE) {
             detector.onTouchEvent(event)
 
@@ -180,6 +186,10 @@ internal class ScaleControl(private val view: ViewGroup) :
         }
 
         return false
+    }
+
+    fun onModeChanged(mode: Int) {
+        this.mode = mode
     }
 
     companion object {

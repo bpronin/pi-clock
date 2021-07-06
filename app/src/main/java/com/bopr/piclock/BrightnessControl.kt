@@ -1,5 +1,7 @@
 package com.bopr.piclock
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.util.Log
 import android.view.GestureDetector
@@ -9,7 +11,6 @@ import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import android.view.View.ALPHA
 import android.view.animation.AccelerateInterpolator
-import androidx.core.animation.doOnEnd
 import androidx.core.view.GestureDetectorCompat
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
@@ -34,11 +35,14 @@ internal class BrightnessControl(private val view: View) :
     private var mutedAlpha = MIN_ALPHA
     private var sliding = false
 
+    @Mode
+    private var mode: Int = MODE_INACTIVE
+
     private val fadeAnimator by lazy {
         ObjectAnimator().apply {
             target = view
             setProperty(ALPHA)
-            duration = 2000
+            duration = 1000
             interpolator = AccelerateInterpolator()
         }
     }
@@ -68,35 +72,42 @@ internal class BrightnessControl(private val view: View) :
 
     private fun fade(alpha: Float, onEnd: () -> Unit = {}) {
         Log.v(_tag, "Start fade to: $alpha")
-
         fadeAnimator.apply {
             cancel()
             removeAllListeners()
 
-            setFloatValues(view.alpha, alpha)
-            doOnEnd {
-                Log.v(_tag, "End fade")
+            addListener(object : AnimatorListenerAdapter() {
+                var canceled = false;
 
-                onEnd()
-            }
+                override fun onAnimationCancel(animation: Animator?) {
+                    Log.v(_tag, "Canceled fade")
+
+                    canceled = true
+                }
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    if (!canceled) {
+                        Log.v(_tag, "End fade")
+
+                        onEnd()
+                    }
+                }
+            })
+
+            setFloatValues(view.alpha, alpha)
 
             start()
         }
     }
 
-    private fun updateViewAlpha(@Mode mode: Int) {
+    private fun updateViewAlpha() {
         view.alpha = if (mode == MODE_INACTIVE || mode == MODE_EDITOR) mutedAlpha else MAX_ALPHA
-    }
-
-    fun setMutedBrightness(brightness: Int, @Mode mode: Int) {
-        mutedAlpha = alpha(brightness)
-        updateViewAlpha(mode)
     }
 
     /**
      * To be called in owner's onTouch.
      */
-    fun onTouch(event: MotionEvent, @Mode mode: Int): Boolean {
+    fun onTouch(event: MotionEvent): Boolean {
         if (mode == MODE_INACTIVE || mode == MODE_ACTIVE) {
             detector.onTouchEvent(event)
 
@@ -114,16 +125,23 @@ internal class BrightnessControl(private val view: View) :
         return false
     }
 
+    fun setMutedBrightness(brightness: Int) {
+        mutedAlpha = alpha(brightness)
+        updateViewAlpha()
+    }
+
     fun onModeChanged(@Mode mode: Int, animate: Boolean) {
+        this.mode = mode
+
         if (animate) {
             when (mode) {
                 MODE_ACTIVE ->
-                    fade(MAX_ALPHA) { updateViewAlpha(mode) }
+                    fade(MAX_ALPHA) { updateViewAlpha() }
                 MODE_INACTIVE, MODE_EDITOR ->
-                    fade(mutedAlpha) { updateViewAlpha(mode) }
+                    fade(mutedAlpha) { updateViewAlpha() }
             }
         } else {
-            updateViewAlpha(mode)
+            updateViewAlpha()
         }
     }
 

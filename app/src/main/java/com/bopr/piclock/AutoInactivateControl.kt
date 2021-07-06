@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
+import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
 
 /**
@@ -14,9 +15,6 @@ import com.bopr.piclock.MainFragment.Mode
 internal class AutoInactivateControl(private val handler: Handler) {
 
     private val _tag = "AutoInactivateControl"
-
-    var delay = 0L
-    lateinit var onInactivate: () -> Unit
 
     private val task = Runnable {
         if (enabled) {
@@ -41,9 +39,15 @@ internal class AutoInactivateControl(private val handler: Handler) {
                 }
             }
         }
+    lateinit var onInactivate: () -> Unit
+
+    @Mode
+    var mode = MODE_INACTIVE
+    var delay = 0L
 
     fun onModeChanged(@Mode mode: Int) {
-        enabled = (mode == MODE_ACTIVE)
+        this.mode = mode
+        enabled = (this.mode == MODE_ACTIVE)
     }
 
     fun onPause() {
@@ -58,7 +62,7 @@ internal class AutoInactivateControl(private val handler: Handler) {
         enabled = true
     }
 
-    fun onTouch(event: MotionEvent, @Mode mode: Int): Boolean {
+    fun onTouch(event: MotionEvent): Boolean {
         when (event.action) {
             ACTION_DOWN -> {
                 Log.v(_tag, "Processing touch: ${event.action}")

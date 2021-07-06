@@ -108,7 +108,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         BrightnessControl(contentView).apply {
             onStartSlide = {
                 animations.showInfo(infoView)
-                setMode(MODE_INACTIVE, true)
+                onModeChanged(MODE_INACTIVE, true)
             }
             onSlide = { brightness ->
                 infoView.text = getString(R.string.brightness_info, brightness)
@@ -117,7 +117,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 animations.hideInfo(infoView)
                 settings.update { putInt(PREF_MUTED_BRIGHTNESS, brightness) }
             }
-            setMutedBrightness(settings.getInt(PREF_MUTED_BRIGHTNESS), mode)
         }
     }
 
@@ -133,11 +132,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 animations.hideInfo(infoView)
             }
             onScaleChanged = { scale ->
-                if (mode == MODE_ACTIVE || mode == MODE_INACTIVE) {
-                    settings.update { putInt(PREF_CONTENT_SCALE, scale) }
-                }
+                settings.update { putInt(PREF_CONTENT_SCALE, scale) }
             }
-            setDefaultScale(settings.getInt(PREF_CONTENT_SCALE))
         }
     }
 
@@ -171,14 +167,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
 
             setOnTouchListener { _, event ->
-                autoInactivateControl.onTouch(event, mode)
-                        || brightnessControl.onTouch(event, mode)
-                        || scaleControl.onTouch(event, mode)
+                autoInactivateControl.onTouch(event)
+                        || brightnessControl.onTouch(event)
+                        || scaleControl.onTouch(event)
             }
 
             doOnLayout {
                 savedState?.apply {
-                    setMode(getInt("mode"), false)
+                    setMode(getInt(STATE_KEY_MODE), false)
                 } ?: apply {
                     setMode(MODE_INACTIVE, true)
                 }
@@ -211,20 +207,23 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
             }
 
-            scaleControl.init()
-
             createContentView()
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         settings.registerOnSharedPreferenceChangeListener(this)
+
+        brightnessControl.setMutedBrightness(settings.getInt(PREF_MUTED_BRIGHTNESS))
+
+        scaleControl.init()
+        scaleControl.setScale(settings.getInt(PREF_CONTENT_SCALE))
     }
 
     override fun onSaveInstanceState(savedState: Bundle) {
         super.onSaveInstanceState(savedState)
         savedState.apply {
-            putInt("mode", mode)
+            putInt(STATE_KEY_MODE, mode)
         }
     }
 
@@ -274,9 +273,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_DIGITS_ANIMATION ->
                     updateDigitsAnimation()
                 PREF_CONTENT_SCALE ->
-                    scaleControl.setDefaultScale(getInt(key))
+                    scaleControl.setScale(getInt(key))
                 PREF_MUTED_BRIGHTNESS ->
-                    brightnessControl.setMutedBrightness(getInt(key), mode)
+                    brightnessControl.setMutedBrightness(getInt(key))
                 PREF_TICK_SOUND ->
                     soundControl.setSound(getString(key))
                 PREF_TICK_RULES ->
@@ -306,6 +305,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             soundControl.onModeChanged(mode, animate)
             layoutControl.onModeChanged(mode, animate)
             brightnessControl.onModeChanged(mode, animate)
+            scaleControl.onModeChanged(mode)
 
             Log.d(_tag, "Mode set to: $mode")
         }
@@ -456,6 +456,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         const val MODE_INACTIVE = 0
         const val MODE_ACTIVE = 1
         const val MODE_EDITOR = 2
+
+        const val STATE_KEY_MODE = "mode"
     }
 
 }
