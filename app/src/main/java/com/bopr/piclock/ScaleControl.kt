@@ -22,17 +22,19 @@ import kotlin.math.min
 /**
  * Convenience class to control scale.
  */
-internal class ScaleControl(private val view: ViewGroup) :
+internal class ScaleControl() :
     ScaleGestureDetector.OnScaleGestureListener {
 
     //todo: individual scale settings for different screen orientation
     private val _tag = "ScaleControl"
 
-    private val detector = ScaleGestureDetector(view.context, this)
+    private val detector by lazy {
+        ScaleGestureDetector(view.context, this)
+    }
 
     private val rescaleAnimator by lazy {
         ObjectAnimator.ofFloat(view, ScaleProperty(), 0f).apply {
-            duration = 700
+            duration = 500
             interpolator = DecelerateInterpolator()
         }
     }
@@ -56,6 +58,7 @@ internal class ScaleControl(private val view: ViewGroup) :
     @Mode
     var mode = MODE_INACTIVE
 
+    private lateinit var view: ViewGroup
     private val viewListener = object : View.OnLayoutChangeListener,
         ViewGroup.OnHierarchyChangeListener {
 
@@ -70,11 +73,13 @@ internal class ScaleControl(private val view: ViewGroup) :
             oldRight: Int,
             oldBottom: Int
         ) {
-//            captureScale()
+            if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
+                Log.d(_tag, "Layout changed")
+            }
         }
 
         override fun onChildViewAdded(parent: View?, child: View?) {
-//            captureScale()
+            Log.d(_tag, "View added")
         }
 
         override fun onChildViewRemoved(parent: View?, child: View?) {
@@ -109,31 +114,28 @@ internal class ScaleControl(private val view: ViewGroup) :
         Log.d(_tag, "End pinching")
 
         onPinchEnd()
-        captureScale()
+        captureViewScale()
+//        fitViewIntoScreen { }
     }
 
-    private fun captureScale() {
-        scale = fitViewIntoScreen()
-//        scale = viewScale
+    private fun captureViewScale() {
+        scale = viewScale
         if (mode == MODE_ACTIVE || mode == MODE_INACTIVE) {
             onScaleChanged(percents(scale))
         }
     }
 
-    private fun fitViewIntoScreen(): Float {
+    private fun fitViewIntoScreen(onEnd: () -> Unit) {
         //todo: also move into if out of screen
         val pr = view.parentView.scaledRect
         val vr = view.scaledRect
-        return if (pr.width() >= vr.width() && pr.height() >= vr.height())
-            viewScale
-        else {
+        if (pr.width() < vr.width() || pr.height() < vr.height()) {
             val scale = min(pr.width() / view.width, pr.height() / view.height)
-            rescaleView(scale)
-            return scale
+            rescaleView(scale, onEnd)
         }
     }
 
-    private fun rescaleView(scale: Float) {
+    private fun rescaleView(scale: Float, onEnd: () -> Unit) {
         if (!rescaling) {
             Log.d(_tag, "Start scale animation")
 
@@ -147,6 +149,7 @@ internal class ScaleControl(private val view: ViewGroup) :
                     Log.d(_tag, "End scale animation")
 
                     rescaling = false
+                    onEnd()
                 }
 
                 start()
@@ -154,19 +157,9 @@ internal class ScaleControl(private val view: ViewGroup) :
         }
     }
 
-    fun init() {
-        view.addOnLayoutChangeListener(viewListener)
-        view.setOnHierarchyChangeListener(viewListener)
-    }
-
-    fun destroy() {
-        view.removeOnLayoutChangeListener(viewListener)
-        view.setOnHierarchyChangeListener(null)
-    }
-
     fun setScale(valuePercent: Int) {
-        viewScale = factor(valuePercent)
-        captureScale()
+        scale = factor(valuePercent)
+        viewScale = scale
     }
 
     /**
@@ -188,8 +181,19 @@ internal class ScaleControl(private val view: ViewGroup) :
         return false
     }
 
+    fun onViewCreated(view: ViewGroup) {
+        this.view = view
+//        view.addOnLayoutChangeListener(viewListener)
+//        view.setOnHierarchyChangeListener(viewListener)
+    }
+
     fun onModeChanged(mode: Int) {
         this.mode = mode
+    }
+
+    fun destroy() {
+        view.removeOnLayoutChangeListener(viewListener)
+        view.setOnHierarchyChangeListener(null)
     }
 
     companion object {

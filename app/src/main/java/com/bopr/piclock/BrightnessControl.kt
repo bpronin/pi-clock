@@ -10,6 +10,7 @@ import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import android.view.View.ALPHA
+import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import androidx.core.view.GestureDetectorCompat
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
@@ -24,19 +25,14 @@ import kotlin.math.min
 /**
  * Convenience class to control brightness by slide gesture.
  */
-internal class BrightnessControl(private val view: View) :
+internal class BrightnessControl() :
     GestureDetector.SimpleOnGestureListener() {
 
     private val _tag = "BrightnessControl"
 
-    private val detector = GestureDetectorCompat(view.context, this)
-    private var scaleFactor = 0f
-    private var slidingAlpha = 0f
-    private var mutedAlpha = MIN_ALPHA
-    private var sliding = false
-
-    @Mode
-    private var mode: Int = MODE_INACTIVE
+    private val detector by lazy {
+        GestureDetectorCompat(view.context, this)
+    }
 
     private val fadeAnimator by lazy {
         ObjectAnimator().apply {
@@ -46,6 +42,16 @@ internal class BrightnessControl(private val view: View) :
             interpolator = AccelerateInterpolator()
         }
     }
+
+    private lateinit var view: View
+    private var scaleFactor = 0f
+    private var slidingAlpha = 0f
+    private var mutedAlpha = MIN_ALPHA
+    private var sliding = false
+
+    @Mode
+    private var mode: Int = MODE_INACTIVE
+
     lateinit var onStartSlide: () -> Unit
     lateinit var onSlide: (brightness: Int) -> Unit
     lateinit var onEndSlide: (brightness: Int) -> Unit
@@ -71,7 +77,10 @@ internal class BrightnessControl(private val view: View) :
     }
 
     private fun fade(alpha: Float, onEnd: () -> Unit = {}) {
+        if (view.alpha == alpha) return
+
         Log.v(_tag, "Start fade to: $alpha")
+
         fadeAnimator.apply {
             cancel()
             removeAllListeners()
@@ -86,11 +95,11 @@ internal class BrightnessControl(private val view: View) :
                 }
 
                 override fun onAnimationEnd(animation: Animator?) {
-                    if (!canceled) {
-                        Log.v(_tag, "End fade")
+                    if (canceled) return
 
-                        onEnd()
-                    }
+                    Log.v(_tag, "End fade")
+
+                    onEnd()
                 }
             })
 
@@ -102,6 +111,8 @@ internal class BrightnessControl(private val view: View) :
 
     private fun updateViewAlpha() {
         view.alpha = if (mode == MODE_INACTIVE || mode == MODE_EDITOR) mutedAlpha else MAX_ALPHA
+
+        Log.v(_tag, "View alpha set to: ${view.alpha}")
     }
 
     /**
@@ -125,9 +136,8 @@ internal class BrightnessControl(private val view: View) :
         return false
     }
 
-    fun setMutedBrightness(brightness: Int) {
-        mutedAlpha = alpha(brightness)
-        updateViewAlpha()
+    fun onViewCreated(view: ViewGroup) {
+        this.view = view
     }
 
     fun onModeChanged(@Mode mode: Int, animate: Boolean) {
@@ -143,6 +153,14 @@ internal class BrightnessControl(private val view: View) :
         } else {
             updateViewAlpha()
         }
+    }
+
+    fun setMutedBrightness(brightness: Int) {
+        mutedAlpha = alpha(brightness)
+
+        Log.d(_tag, "Muted alpha set to: $mutedAlpha")
+
+        updateViewAlpha()
     }
 
     companion object {

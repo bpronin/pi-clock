@@ -30,6 +30,7 @@ class MainActivity : BaseActivity<MainFragment>(MainFragment::class.java) {
     //todo: при наклоне экрана двигать в сторону наклона ("падать")
     //todo: option to tell time aloud
     //todo: option to animate digits only in active mode
+    //todo: option to auto disable animations when unplugged
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

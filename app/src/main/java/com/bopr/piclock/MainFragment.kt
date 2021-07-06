@@ -105,10 +105,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private val brightnessControl: BrightnessControl by lazy {
-        BrightnessControl(contentView).apply {
+        BrightnessControl().apply {
             onStartSlide = {
+                setMode(MODE_INACTIVE, true)
                 animations.showInfo(infoView)
-                onModeChanged(MODE_INACTIVE, true)
             }
             onSlide = { brightness ->
                 infoView.text = getString(R.string.brightness_info, brightness)
@@ -121,7 +121,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private val scaleControl: ScaleControl by lazy {
-        ScaleControl(contentView).apply {
+        ScaleControl().apply {
             onPinchStart = {
                 animations.showInfo(infoView)
             }
@@ -214,9 +214,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         settings.registerOnSharedPreferenceChangeListener(this)
 
+        brightnessControl.onViewCreated(contentView)
         brightnessControl.setMutedBrightness(settings.getInt(PREF_MUTED_BRIGHTNESS))
 
-        scaleControl.init()
+        scaleControl.onViewCreated(contentView)
         scaleControl.setScale(settings.getInt(PREF_CONTENT_SCALE))
     }
 

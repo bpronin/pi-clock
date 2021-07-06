@@ -31,14 +31,16 @@
 
     <PreferenceCategory android:title="@string/user_interface">
 
+        <!-- 'max' attribute here must be greater than preference value, otherwise it would be reset -->
         <SeekBarPreference
             android:key="content_scale"
-            android:max="100"
+            android:max="10000"
             android:title="@string/scale" />
 
+        <!-- 'max' attribute here must be greater than preference value, otherwise it would be reset -->
         <SeekBarPreference
             android:key="muted_brightness"
-            android:max="100"
+            android:max="10000"
             android:title="@string/brightness" />
 
         <SwitchPreference
@@ -76,7 +78,7 @@
             android:title="@string/digits_animation" />
 
     </PreferenceCategory>
-    
+
     <PreferenceCategory android:title="@string/sound">
 
         <ListPreference
@@ -86,10 +88,10 @@
             android:title="@string/tick_sound" />
 
         <MultiSelectListPreference
-            android:key="tick_sound_mode"
-            android:title="@string/tick_sound_mode"
             android:entries="@array/tick_sound_mode_names"
-            android:entryValues="@array/tick_sound_mode_values"/>
+            android:entryValues="@array/tick_sound_mode_values"
+            android:key="tick_sound_mode"
+            android:title="@string/tick_sound_mode" />
 
     </PreferenceCategory>
 
