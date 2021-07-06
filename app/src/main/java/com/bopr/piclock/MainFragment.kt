@@ -55,7 +55,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val animations = Animations()
     private val handler = Handler(Looper.getMainLooper())
-    private val timer = HandlerTimer(handler, 1000, this::onTimer)
+    private val timerSecond = HandlerTimer(handler, 1000, this::onTimer)
     private val amPmFormat = defaultDatetimeFormat("a")
     private val rootView get() = requireView() as ConstraintLayout
     private var currentTime = Date()
@@ -77,27 +77,27 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var secondsFormat: DateFormat
     private lateinit var dateFormat: DateFormat
 
-    private val fullscreenControl: FullscreenControl by lazy {
+    private val fullscreenControl by lazy {
         FullscreenControl(requireActivity(), handler)
     }
 
-    private val soundControl: SoundControl by lazy {
+    private val soundControl by lazy {
         SoundControl(requireContext()).apply {
             setSound(settings.getString(PREF_TICK_SOUND))
             setRules(settings.getStringSet(PREF_TICK_RULES))
         }
     }
 
-    private val floatControl: FloatControl by lazy {
+    private val floatControl by lazy {
         FloatControl(contentView, handler).apply {
             interval = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
             onBusy = { busy ->
-                soundControl.onFloatContent(busy)
+                soundControl.onFloatView(busy)
             }
         }
     }
 
-    private val autoInactivateControl: AutoInactivateControl by lazy {
+    private val autoInactivateControl by lazy {
         AutoInactivateControl(handler).apply {
             delay = settings.getLong(PREF_AUTO_INACTIVATE_DELAY)
             onInactivate = {
@@ -106,7 +106,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private val brightnessControl: BrightnessControl by lazy {
+    private val brightnessControl by lazy {
         BrightnessControl().apply {
             onStartSlide = {
                 setMode(MODE_INACTIVE, true)
@@ -122,7 +122,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private val scaleControl: ScaleControl by lazy {
+    private val scaleControl by lazy {
         ScaleControl().apply {
             onPinchStart = {
                 animations.showInfo(infoView)
@@ -139,8 +139,18 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private val layoutControl: LayoutControl by lazy {
+    private val layoutControl by lazy {
         LayoutControl(rootView, parentFragmentManager)
+    }
+
+    private val blinkAnimator by lazy {
+        BlinkControl(setOf(timeSeparator, secondsSeparator)).apply {
+            setEnabled(
+                settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE) &&
+                        settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING)
+            )
+            setAnimated(false)
+        }
     }
 
     @Mode
@@ -239,7 +249,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onPause() {
-        timer.enabled = false
+        timerSecond.enabled = false
         autoInactivateControl.onPause()
         floatControl.onPause()
         super.onPause()
@@ -249,7 +259,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         super.onResume()
         floatControl.onResume()
         autoInactivateControl.onResume()
-        timer.enabled = true
+        timerSecond.enabled = true
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -387,19 +397,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun updateSeparatorViews() {
-        //todo: fix: when blink disabled separator hides
         if (settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE)) {
             timeSeparator.visibility = VISIBLE
-            secondsSeparator.visibility =
-                if (settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()) VISIBLE else INVISIBLE
-
-            if (!settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING)) {
-                timeSeparator.alpha = 1f
-                secondsSeparator.alpha = 1f
-            }
+            secondsSeparator.visibility = if (isSecondsSeparatorVisible()) VISIBLE else INVISIBLE
+            blinkAnimator.setEnabled(settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING))
         } else {
             timeSeparator.visibility = INVISIBLE
             secondsSeparator.visibility = INVISIBLE
+            blinkAnimator.setEnabled(false)
         }
     }
 
@@ -413,25 +418,29 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun onTimer() {
-//        Log.v(_tag, "On timer: $time")
 //        currentTime = Date(currentTime.time + 10000) /* debug time */
-
         currentTime = Date()
+
+//        Log.v(_tag, "On timer: $currentTime")
+
         updateContentViewData()
-        blinkTimeSeparator()
-        soundControl.onTimer(mode, floatControl.busy)
+        blinkAnimator.onTimer(currentTime)
+        soundControl.onTimer(currentTime)
     }
 
-    private fun blinkTimeSeparator() {
-        if (settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING)) {
-            if (currentTime.time / 1000 % 2 != 0L) {
-                animations.blinkTimeSeparator(timeSeparator)
-                if (settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()) {
-                    animations.blinkSecondsSeparator(secondsSeparator)
-                }
-            }
-        }
-    }
+//    private fun blinkTimeSeparator() {
+//        if (settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING)) {
+//            if (currentTime.time / 1000 % 2 != 0L) {
+//                animations.blinkTimeSeparator(timeSeparator)
+//                if (isSecondsSeparatorVisible()) animations.blinkSecondsSeparator(secondsSeparator)
+//            }
+//        } else {
+//            timeSeparator.alpha = 1f
+//            secondsSeparator.alpha = 1f
+//        }
+//    }
+
+    private fun isSecondsSeparatorVisible() = settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()
 
     //todo: move to layoutControl ?
     private fun adjustMargins(windowInsets: WindowInsetsCompat) {

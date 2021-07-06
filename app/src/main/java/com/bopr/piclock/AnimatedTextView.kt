@@ -74,7 +74,7 @@ class AnimatedTextView : FrameLayout {
 */
     }
 
-    fun setTextAnimator(animator: AnimatorSet?) {
+    private fun setTextAnimator(animator: AnimatorSet?) {
         animator?.apply {
             if (childAnimations.size != 2) throw IllegalArgumentException("Invalid animation set")
         }

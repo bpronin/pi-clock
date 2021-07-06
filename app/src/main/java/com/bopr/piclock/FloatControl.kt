@@ -28,7 +28,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
     private val _tag = "FloatControl"
 
     var interval = 0L
-    var busy = false
+    private var busy = false
         private set(value) {
             if (field != value) {
                 field = value

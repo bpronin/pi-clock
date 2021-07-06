@@ -5,7 +5,6 @@ import android.animation.ObjectAnimator
 import android.view.View
 import android.view.View.*
 import android.view.animation.AccelerateInterpolator
-import android.view.animation.CycleInterpolator
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 
@@ -53,24 +52,6 @@ internal class Animations {
         }
     }
 
-    private val timeSeparatorAnimator by lazy {
-        ObjectAnimator().apply {
-            setProperty(ALPHA)
-            setFloatValues(0f, 1f)
-            duration = 2000
-            interpolator = CycleInterpolator(1f)
-        }
-    }
-
-    private val secondsSeparatorAnimator by lazy {
-        ObjectAnimator().apply {
-            setProperty(ALPHA)
-            setFloatValues(0f, 1f)
-            duration = 2000
-            interpolator = CycleInterpolator(1f)
-        }
-    }
-
     private fun Animator.reset(view: View) = apply {
         cancel()
         removeAllListeners() /*important. doOnStart(), doOnEnd() add! the listeners */
@@ -109,20 +90,6 @@ internal class Animations {
             setFloatValues(1f, 0f)
             duration = 1000
             doOnEnd { view.visibility = GONE }
-            start()
-        }
-    }
-
-    fun blinkTimeSeparator(view: View) {
-        timeSeparatorAnimator.apply {
-            reset(view)
-            start()
-        }
-    }
-
-    fun blinkSecondsSeparator(view: View) {
-        secondsSeparatorAnimator.apply {
-            reset(view)
             start()
         }
     }

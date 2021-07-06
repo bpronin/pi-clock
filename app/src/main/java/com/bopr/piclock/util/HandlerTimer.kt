@@ -11,7 +11,7 @@ class HandlerTimer(
     private val onEnd: () -> Unit = {}
 ) {
 
-    private val _tag = "LooperTimer"
+    private val _tag = "HandlerTimer"
 
     private val task = Runnable(this::executeTask)
 
@@ -39,3 +39,7 @@ class HandlerTimer(
     }
 
 }
+
+//fun isWholeSecond(time: Date) = time.time / 500 % 2 == 0L
+//
+//fun isOddSecond(time: Date) = time.time / 500 % 4 == 0L

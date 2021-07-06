@@ -16,6 +16,7 @@ import com.bopr.piclock.Settings.Companion.TICK_ACTIVE
 import com.bopr.piclock.Settings.Companion.TICK_FLOATING
 import com.bopr.piclock.Settings.Companion.TICK_INACTIVE
 import com.bopr.piclock.util.getResId
+import java.util.*
 
 /**
  * Convenience class to control app sounds.
@@ -50,6 +51,10 @@ internal class SoundControl(private val context: Context) {
     private var whenFloating: Boolean = false
     private var changingVolume = false
     private var prepared = false
+
+    @Mode
+    private var mode = MODE_INACTIVE
+    private var viewFloating = false
 
     private fun prepare() {
         val resId = context.getResId("raw", soundName)
@@ -131,6 +136,7 @@ internal class SoundControl(private val context: Context) {
     }
 
     fun onModeChanged(@Mode mode: Int, animate: Boolean) {
+        this.mode = mode
         if (animate) {
             when (mode) {
                 MODE_ACTIVE -> if (!(whenActive && whenInactive)) {
@@ -150,20 +156,19 @@ internal class SoundControl(private val context: Context) {
         }
     }
 
-    fun onFloatContent(floating: Boolean) {
-        if (floating && whenFloating) {
+    fun onFloatView(floating: Boolean) {
+        this.viewFloating = floating
+        if (viewFloating && whenFloating) {
             fadeVolume(10000L, 0f, 1f, 0f)
         }
     }
 
-    fun onTimer(mode: Int, floating: Boolean) {
+    fun onTimer(time: Date) {
         if ((whenActive && mode == MODE_ACTIVE)
             || (whenInactive && (mode == MODE_INACTIVE || mode == MODE_EDITOR))
-            || (whenFloating && floating)
+            || (whenFloating && viewFloating)
             || changingVolume
-        ) {
-            play()
-        }
+        ) play()
     }
 
 }
