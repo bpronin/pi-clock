@@ -10,6 +10,11 @@ import com.bopr.piclock.util.*
 import java.text.DateFormat
 import java.text.DateFormat.FULL
 
+/**
+ * Application settings.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ */
 class Settings(private val context: Context) : SharedPreferencesWrapper(
     context.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE)
 ) {

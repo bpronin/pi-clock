@@ -10,7 +10,9 @@ import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
 
 /**
- * Responsible for auto switching [MainFragment] to inactive mode.
+ * Convenience class for auto switching app into inactive mode after delay.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class AutoInactivateControl(private val handler: Handler) {
 

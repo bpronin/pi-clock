@@ -18,6 +18,11 @@ import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.util.fabMargin
 
+/**
+ * Convenience class to control content view layouts.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ */
 internal class LayoutControl(
     private val rootView: ConstraintLayout,
     private val fragmentManager: FragmentManager

@@ -19,11 +19,13 @@ import com.bopr.piclock.util.scaledRect
 import java.lang.Math.random
 
 /**
- * Controls floating content along the screen.
+ * Convenience class to control floating content view along the screen.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class FloatContentControl(private val view: View, private val handler: Handler) {
+internal class FloatControl(private val view: View, private val handler: Handler) {
 
-    private val _tag = "FloatContentControl"
+    private val _tag = "FloatControl"
 
     var interval = 0L
     var busy = false

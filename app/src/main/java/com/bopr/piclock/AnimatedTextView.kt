@@ -16,7 +16,9 @@ import com.bopr.piclock.util.property.RelativeTransitionXProperty
 import com.bopr.piclock.util.property.RelativeTransitionYProperty
 
 /**
- * Text view with animated transitions when changing text.
+ * Text view with animated transitions.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class AnimatedTextView : FrameLayout {
 
@@ -66,8 +68,10 @@ class AnimatedTextView : FrameLayout {
             visibility = GONE
         }
 
-//        view.setBackgroundColor(Color.RED)
-//        shadowView.setBackgroundColor(Color.BLUE)
+/*  DEBUG COLORS
+        view.setBackgroundColor(Color.RED)
+        shadowView.setBackgroundColor(Color.BLUE)
+*/
     }
 
     fun setTextAnimator(animator: AnimatorSet?) {

@@ -8,7 +8,7 @@ import com.bopr.piclock.util.ui.BaseActivity
 /**
  * Main activity.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class MainActivity : BaseActivity<MainFragment>(MainFragment::class.java) {
 

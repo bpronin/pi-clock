@@ -18,11 +18,13 @@ import com.bopr.piclock.Settings.Companion.TICK_INACTIVE
 import com.bopr.piclock.util.getResId
 
 /**
- * Controls ticking sound.
+ * Convenience class to control app sounds.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class SoundControl(private val context: Context) {
 
-    private val _tag = "TickControl"
+    private val _tag = "SoundControl"
 
     private val volumeAnimator: ObjectAnimator by lazy {
         val volumeProperty = object : Property<MediaPlayer, Float>(Float::class.java, "volume") {

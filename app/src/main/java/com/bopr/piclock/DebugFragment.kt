@@ -6,6 +6,11 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import com.bopr.piclock.util.ui.preference.CustomPreferenceFragment
 
+/**
+ * Debug actions fragment.
+ *
+ *  @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ */
 class DebugFragment : CustomPreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 

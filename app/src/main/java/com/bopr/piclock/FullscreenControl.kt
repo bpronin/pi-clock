@@ -11,7 +11,9 @@ import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
 
 /**
- * Controls showing and hiding system UI.
+ * Convenience class to control system UI's visibility.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class FullscreenControl(private val activity: Activity, private val handler: Handler) {
 

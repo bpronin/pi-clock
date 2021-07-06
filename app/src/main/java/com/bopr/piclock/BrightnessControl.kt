@@ -23,7 +23,9 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Convenience class to control brightness by slide gesture.
+ * Convenience class to control content view brightness.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class BrightnessControl() :
     GestureDetector.SimpleOnGestureListener() {
@@ -136,7 +138,7 @@ internal class BrightnessControl() :
         return false
     }
 
-    fun onViewCreated(view: ViewGroup) {
+    fun setView(view: ViewGroup) {
         this.view = view
     }
 

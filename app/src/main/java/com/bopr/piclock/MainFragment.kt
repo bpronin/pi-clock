@@ -46,6 +46,8 @@ import java.util.*
 
 /**
  * Main application fragment.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
@@ -86,8 +88,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private val floatControl: FloatContentControl by lazy {
-        FloatContentControl(contentView, handler).apply {
+    private val floatControl: FloatControl by lazy {
+        FloatControl(contentView, handler).apply {
             interval = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
             onBusy = { busy ->
                 soundControl.onFloatContent(busy)
@@ -214,10 +216,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         settings.registerOnSharedPreferenceChangeListener(this)
 
-        brightnessControl.onViewCreated(contentView)
+        brightnessControl.setView(contentView)
         brightnessControl.setMutedBrightness(settings.getInt(PREF_MUTED_BRIGHTNESS))
 
-        scaleControl.onViewCreated(contentView)
+        scaleControl.setView(contentView)
         scaleControl.setScale(settings.getInt(PREF_CONTENT_SCALE))
     }
 

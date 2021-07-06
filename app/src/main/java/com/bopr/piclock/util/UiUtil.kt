@@ -13,9 +13,8 @@ import com.bopr.piclock.R
 /**
  * Miscellaneous UI and resources utilities.
  *
- * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-
 fun ViewGroup.forEachDeep(action: (view: View) -> Unit) {
     forEach { view ->
         if (view is ViewGroup) {

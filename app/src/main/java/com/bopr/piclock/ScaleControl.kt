@@ -20,12 +20,12 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * Convenience class to control scale.
+ * Convenience class to control content view scale.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class ScaleControl() :
-    ScaleGestureDetector.OnScaleGestureListener {
+internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
 
-    //todo: individual scale settings for different screen orientation
     private val _tag = "ScaleControl"
 
     private val detector by lazy {
@@ -42,7 +42,7 @@ internal class ScaleControl() :
     private var viewScale: Float
         get() = view.scaleX
         set(value) {
-            Log.v(_tag, "Set view scale to: $value")
+//            Log.v(_tag, "Set view scale to: $value")
 
             view.apply {
                 scaleX = value
@@ -59,8 +59,7 @@ internal class ScaleControl() :
     var mode = MODE_INACTIVE
 
     private lateinit var view: ViewGroup
-    private val viewListener = object : View.OnLayoutChangeListener,
-        ViewGroup.OnHierarchyChangeListener {
+    private val viewListener = object : View.OnLayoutChangeListener {
 
         override fun onLayoutChange(
             v: View?,
@@ -75,15 +74,9 @@ internal class ScaleControl() :
         ) {
             if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
                 Log.d(_tag, "Layout changed")
+
+                fitViewIntoScreen()
             }
-        }
-
-        override fun onChildViewAdded(parent: View?, child: View?) {
-            Log.d(_tag, "View added")
-        }
-
-        override fun onChildViewRemoved(parent: View?, child: View?) {
-            /* do nothing */
         }
 
     }
@@ -115,7 +108,7 @@ internal class ScaleControl() :
 
         onPinchEnd()
         captureViewScale()
-//        fitViewIntoScreen { }
+        fitViewIntoScreen()
     }
 
     private fun captureViewScale() {
@@ -125,41 +118,31 @@ internal class ScaleControl() :
         }
     }
 
-    private fun fitViewIntoScreen(onEnd: () -> Unit) {
+    private fun fitViewIntoScreen(onEnd: () -> Unit = {}) {
         //todo: also move into if out of screen
         val pr = view.parentView.scaledRect
         val vr = view.scaledRect
         if (pr.width() < vr.width() || pr.height() < vr.height()) {
-            val scale = min(pr.width() / view.width, pr.height() / view.height)
-            rescaleView(scale, onEnd)
-        }
-    }
+            if (!rescaling) {
+                Log.d(_tag, "Does not fit. Start rescaling")
+                rescaling = true
+                val scale = min(pr.width() / view.width, pr.height() / view.height)
+                rescaleAnimator.apply {
+                    cancel()
+                    removeAllListeners()
 
-    private fun rescaleView(scale: Float, onEnd: () -> Unit) {
-        if (!rescaling) {
-            Log.d(_tag, "Start scale animation")
+                    setFloatValues(view.scaleX, scale)
+                    doOnEnd {
+                        Log.d(_tag, "End rescaling")
 
-            rescaling = true
-            rescaleAnimator.apply {
-                cancel()
-                removeAllListeners()
+                        rescaling = false
+                        onEnd()
+                    }
 
-                setFloatValues(view.scaleX, scale)
-                doOnEnd {
-                    Log.d(_tag, "End scale animation")
-
-                    rescaling = false
-                    onEnd()
+                    start()
                 }
-
-                start()
             }
         }
-    }
-
-    fun setScale(valuePercent: Int) {
-        scale = factor(valuePercent)
-        viewScale = scale
     }
 
     /**
@@ -181,19 +164,23 @@ internal class ScaleControl() :
         return false
     }
 
-    fun onViewCreated(view: ViewGroup) {
-        this.view = view
-//        view.addOnLayoutChangeListener(viewListener)
-//        view.setOnHierarchyChangeListener(viewListener)
-    }
-
     fun onModeChanged(mode: Int) {
         this.mode = mode
     }
 
+    fun setView(view: ViewGroup) {
+        this.view = view.apply {
+            addOnLayoutChangeListener(viewListener)
+        }
+    }
+
+    fun setScale(valuePercent: Int) {
+        scale = factor(valuePercent)
+        viewScale = scale
+    }
+
     fun destroy() {
         view.removeOnLayoutChangeListener(viewListener)
-        view.setOnHierarchyChangeListener(null)
     }
 
     companion object {
