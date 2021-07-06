@@ -15,7 +15,7 @@ import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ABOUT
-import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
+import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
@@ -87,7 +87,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            PREF_AUTO_FULLSCREEN_DELAY -> updateAutoFullscreenPreferenceView()
+            PREF_AUTO_INACTIVATE_DELAY -> updateAutoInactivatePreferenceView()
             PREF_CONTENT_FLOAT_INTERVAL -> updateFloatIntervalPreferenceView()
             PREF_CONTENT_LAYOUT -> updateClockLayoutPreferenceView()
             PREF_CONTENT_SCALE -> updateScalePreferenceView()
@@ -214,14 +214,14 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateAutoFullscreenPreferenceView() {
-        (requirePreference(PREF_AUTO_FULLSCREEN_DELAY) as ListPreference).apply {
+    private fun updateAutoInactivatePreferenceView() {
+        (requirePreference(PREF_AUTO_INACTIVATE_DELAY) as ListPreference).apply {
             val value = settings.getLong(key)
             summary = if (value > 0) {
                 val index = findIndexOfValue(value.toString())
-                getString(R.string.auto_fullscreen_summary, entries[index])
+                getString(R.string.auto_inactivate_summary, entries[index])
             } else {
-                getString(R.string.auto_fullscreen_never_summary)
+                getString(R.string.auto_inactivate_never_summary)
             }
         }
     }

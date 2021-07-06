@@ -50,7 +50,7 @@
         <item />
     </string-array>
 
-    <string-array name="auto_fullscreen_delay_values" translatable="false">
+    <string-array name="auto_inactivate_delay_values" translatable="false">
         <item>2000</item>
         <item>5000</item>
         <item>10000</item>
@@ -78,7 +78,7 @@
     <string-array name="tick_sound_mode_values" translatable="false">
         <item>active</item>
         <item>floating</item>
-        <item>fullscreen</item>
+        <item>inactive</item>
     </string-array>
 
     <string-array name="digits_animation_values" translatable="false">

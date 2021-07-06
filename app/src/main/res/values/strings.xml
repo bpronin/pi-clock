@@ -4,9 +4,9 @@
     <string name="about_version">Version</string>
     <string name="app_name">Pi Clock</string>
     <string name="formats">Formats</string>
-    <string name="auto_fullscreen">Auto fullscreen</string>
-    <string name="auto_fullscreen_never_summary">Disabled. Switch to fullscreen manually</string>
-    <string name="auto_fullscreen_summary">Switch to fullscreen after %s</string>
+    <string name="auto_inactivate">Auto mute brightness</string>
+    <string name="auto_inactivate_never_summary">Disabled. Switch to muted mode manually</string>
+    <string name="auto_inactivate_summary">Switch to muted mode after %s</string>
     <string name="blink_time_separator">Blink time separator</string>
     <string name="layout">Layout</string>
     <string name="date_format">Date</string>
@@ -14,7 +14,7 @@
     <string name="do_not_show">Do not show</string>
     <string name="fullscreen">Fullscreen</string>
     <string name="brightness">Brightness</string>
-    <string name="muted_brightness_summary">Brightness in fullscreen mode %d%%</string>
+    <string name="muted_brightness_summary">Brightness in muted mode %d%%</string>
     <string name="play_always">Play sound in any mode</string>
     <string name="play_only_when_tapped">Play sound only in active mode</string>
     <string name="scale">Scale</string>
@@ -61,7 +61,7 @@
         <item>Disabled</item>
     </string-array>
 
-    <string-array name="auto_fullscreen_delay_names">
+    <string-array name="auto_inactivate_delay_names">
         <item>2 second</item>
         <item>5 seconds</item>
         <item>10 seconds</item>

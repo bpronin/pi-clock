@@ -13,7 +13,7 @@ import android.view.ViewGroup.OnHierarchyChangeListener
 import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
-import com.bopr.piclock.MainFragment.Companion.MODE_FULLSCREEN
+import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.util.parentView
 import com.bopr.piclock.util.property.ScaleProperty
 import com.bopr.piclock.util.scaledRect
@@ -167,7 +167,7 @@ internal class ScaleControl(private val view: ViewGroup) :
      * To be called in owner's onTouch.
      */
     fun onTouch(event: MotionEvent, mode: Int): Boolean {
-        if (mode == MODE_ACTIVE || mode == MODE_FULLSCREEN) {
+        if (mode == MODE_ACTIVE || mode == MODE_INACTIVE) {
             detector.onTouchEvent(event)
 
             /* this is to prevent of calling onClick if pinched */

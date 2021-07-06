@@ -9,20 +9,20 @@ import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Mode
 
 /**
- * Responsible for auto-fullscreen mode switch of [MainFragment].
+ * Responsible for auto switching [MainFragment] to inactive mode.
  */
-internal class AutoFullscreenControl(private val handler: Handler) {
+internal class AutoInactivateControl(private val handler: Handler) {
 
-    private val _tag = "AutoFullscreenControl"
+    private val _tag = "AutoInactivateControl"
 
     var delay = 0L
-    lateinit var onFullscreen: () -> Unit
+    lateinit var onInactivate: () -> Unit
 
     private val task = Runnable {
         if (enabled) {
-            Log.d(_tag, "Switching to fullscreen")
+            Log.d(_tag, "Inactivating")
 
-            onFullscreen()
+            onInactivate()
         }
     }
 

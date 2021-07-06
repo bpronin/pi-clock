@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.View.*
 import android.view.WindowInsets.Type.systemBars
 import android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-import com.bopr.piclock.MainFragment.Companion.MODE_FULLSCREEN
+import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 
 /**
  * Controls showing and hiding system UI.
@@ -66,7 +66,7 @@ internal class FullscreenControl(private val activity: Activity, private val han
     }
 
     fun onModeChanged(@MainFragment.Mode mode: Int) {
-        fullscreen = (mode == MODE_FULLSCREEN)
+        fullscreen = (mode == MODE_INACTIVE)
     }
 
     private fun showSystemUI() {

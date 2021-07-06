@@ -21,7 +21,7 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_AUTO_FULLSCREEN_DELAY
+import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
@@ -95,11 +95,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private val autoFullscreenControl: AutoFullscreenControl by lazy {
-        AutoFullscreenControl(handler).apply {
-            delay = settings.getLong(PREF_AUTO_FULLSCREEN_DELAY)
-            onFullscreen = {
-                setMode(MODE_FULLSCREEN, true)
+    private val autoInactivateControl: AutoInactivateControl by lazy {
+        AutoInactivateControl(handler).apply {
+            delay = settings.getLong(PREF_AUTO_INACTIVATE_DELAY)
+            onInactivate = {
+                setMode(MODE_INACTIVE, true)
             }
         }
     }
@@ -108,7 +108,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         BrightnessControl(contentView).apply {
             onStartSlide = {
                 animations.showInfo(infoView)
-                setMode(MODE_FULLSCREEN, true)
+                setMode(MODE_INACTIVE, true)
             }
             onSlide = { brightness ->
                 infoView.text = getString(R.string.brightness_info, brightness)
@@ -133,7 +133,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 animations.hideInfo(infoView)
             }
             onScaleChanged = { scale ->
-                if (mode == MODE_ACTIVE || mode == MODE_FULLSCREEN) {
+                if (mode == MODE_ACTIVE || mode == MODE_INACTIVE) {
                     settings.update { putInt(PREF_CONTENT_SCALE, scale) }
                 }
             }
@@ -146,7 +146,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     @Mode
-    private var mode = MODE_FULLSCREEN
+    private var mode = MODE_INACTIVE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.w(_tag, "Creating fragment")
@@ -165,13 +165,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         return inflater.inflate(R.layout.fragment_main, container, false).apply {
             setOnClickListener {
                 when (mode) {
-                    MODE_ACTIVE -> setMode(MODE_FULLSCREEN, true)
-                    MODE_FULLSCREEN -> setMode(MODE_ACTIVE, true)
+                    MODE_ACTIVE -> setMode(MODE_INACTIVE, true)
+                    MODE_INACTIVE -> setMode(MODE_ACTIVE, true)
                 }
             }
 
             setOnTouchListener { _, event ->
-                autoFullscreenControl.onTouch(event, mode)
+                autoInactivateControl.onTouch(event, mode)
                         || brightnessControl.onTouch(event, mode)
                         || scaleControl.onTouch(event, mode)
             }
@@ -180,7 +180,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 savedState?.apply {
                     setMode(getInt("mode"), false)
                 } ?: apply {
-                    setMode(MODE_FULLSCREEN, true)
+                    setMode(MODE_INACTIVE, true)
                 }
             }
 
@@ -197,8 +197,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 visibility = GONE
                 setOnClickListener {
                     when (mode) {
-                        MODE_ACTIVE, MODE_FULLSCREEN -> setMode(MODE_EDITOR, true)
-                        MODE_EDITOR -> setMode(MODE_FULLSCREEN, true)
+                        MODE_ACTIVE, MODE_INACTIVE -> setMode(MODE_EDITOR, true)
+                        MODE_EDITOR -> setMode(MODE_INACTIVE, true)
                     }
                 }
             }
@@ -238,7 +238,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     override fun onPause() {
         timer.enabled = false
-        autoFullscreenControl.onPause()
+        autoInactivateControl.onPause()
         floatControl.onPause()
         super.onPause()
     }
@@ -246,7 +246,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onResume() {
         super.onResume()
         floatControl.onResume()
-        autoFullscreenControl.onResume()
+        autoInactivateControl.onResume()
         timer.enabled = true
     }
 
@@ -283,15 +283,15 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     soundControl.setRules(getStringSet(key))
                 PREF_CONTENT_FLOAT_INTERVAL ->
                     floatControl.interval = getLong(key)
-                PREF_AUTO_FULLSCREEN_DELAY ->
-                    autoFullscreenControl.delay = getLong(key)
+                PREF_AUTO_INACTIVATE_DELAY ->
+                    autoInactivateControl.delay = getLong(key)
             }
         }
     }
 
     fun onBackPressed(): Boolean {
         return if (mode == MODE_EDITOR) {
-            setMode(MODE_FULLSCREEN, true)
+            setMode(MODE_INACTIVE, true)
             true
         } else false
     }
@@ -300,7 +300,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         if (mode != newMode) {
             mode = newMode
 
-            autoFullscreenControl.onModeChanged(mode)
+            autoInactivateControl.onModeChanged(mode)
             floatControl.onModeChanged(mode)
             fullscreenControl.onModeChanged(mode)
             soundControl.onModeChanged(mode, animate)
@@ -448,12 +448,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    @IntDef(value = [MODE_ACTIVE, MODE_FULLSCREEN, MODE_EDITOR])
+    @IntDef(value = [MODE_ACTIVE, MODE_INACTIVE, MODE_EDITOR])
     annotation class Mode
 
     companion object {
 
-        const val MODE_FULLSCREEN = 0
+        const val MODE_INACTIVE = 0
         const val MODE_ACTIVE = 1
         const val MODE_EDITOR = 2
     }
