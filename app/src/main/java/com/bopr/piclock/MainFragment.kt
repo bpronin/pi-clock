@@ -14,11 +14,7 @@ import android.view.ViewGroup.*
 import android.widget.TextView
 import androidx.annotation.IntDef
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsCompat.Type
 import androidx.core.view.doOnLayout
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
@@ -39,7 +35,6 @@ import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.HandlerTimer
 import com.bopr.piclock.util.defaultDatetimeFormat
-import com.bopr.piclock.util.fabMargin
 import com.bopr.piclock.util.getResId
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
@@ -91,7 +86,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val floatControl by lazy {
         FloatControl(contentView, handler).apply {
-            interval = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
+            setInterval(settings.getLong(PREF_CONTENT_FLOAT_INTERVAL))
             onBusy = { busy ->
                 soundControl.onFloatView(busy)
             }
@@ -100,7 +95,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val autoInactivateControl by lazy {
         AutoInactivateControl(handler).apply {
-            delay = settings.getLong(PREF_AUTO_INACTIVATE_DELAY)
+            setDelay(settings.getLong(PREF_AUTO_INACTIVATE_DELAY))
             onInactivate = {
                 setMode(MODE_INACTIVE, true)
             }
@@ -109,14 +104,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val brightnessControl by lazy {
         BrightnessControl().apply {
-            onStartSlide = {
+            onSwipeStart = {
                 setMode(MODE_INACTIVE, true)
                 animations.showInfo(infoView)
             }
-            onSlide = { brightness ->
+            onSwipe = { brightness ->
                 infoView.text = getString(R.string.brightness_info, brightness)
             }
-            onEndSlide = { brightness ->
+            onSwipeEnd = { brightness ->
                 animations.hideInfo(infoView)
                 settings.update { putInt(PREF_MUTED_BRIGHTNESS, brightness) }
             }
@@ -191,11 +186,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 } ?: apply {
                     setMode(MODE_INACTIVE, true)
                 }
-            }
-
-            setOnApplyWindowInsetsListener(this) { _, windowInsets ->
-                adjustMargins(windowInsets)
-                windowInsets
             }
 
             settingsContainer = findViewById<View>(R.id.settings_container).apply {
@@ -295,9 +285,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_TICK_RULES ->
                     soundControl.setRules(getStringSet(key))
                 PREF_CONTENT_FLOAT_INTERVAL ->
-                    floatControl.interval = getLong(key)
+                    floatControl.setInterval(getLong(key))
                 PREF_AUTO_INACTIVATE_DELAY ->
-                    autoInactivateControl.delay = getLong(key)
+                    autoInactivateControl.setDelay(getLong(key))
             }
         }
     }
@@ -429,25 +419,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateContentViewData()
         blinkAnimator.onTimer(currentTime)
         soundControl.onTimer(currentTime)
-    }
-
-    //todo: move to layoutControl ?
-    //todo: does not work when fullsceen setting is disabled
-    private fun adjustMargins(windowInsets: WindowInsetsCompat) {
-        val insets = windowInsets.getInsets(Type.systemBars())
-        val fabMargin = resources.fabMargin
-        infoView.updateLayoutParams<MarginLayoutParams> {
-            leftMargin = fabMargin + insets.left
-            topMargin = fabMargin + insets.top
-        }
-        settingsButton.updateLayoutParams<MarginLayoutParams> {
-            rightMargin = fabMargin + insets.right
-            bottomMargin = fabMargin + insets.bottom
-        }
-        settingsContainer.updateLayoutParams<MarginLayoutParams> {
-            rightMargin = insets.right
-            bottomMargin = insets.bottom
-        }
     }
 
     @IntDef(value = [MODE_ACTIVE, MODE_INACTIVE, MODE_EDITOR])

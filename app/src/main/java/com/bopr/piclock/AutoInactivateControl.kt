@@ -41,15 +41,20 @@ internal class AutoInactivateControl(private val handler: Handler) {
                 }
             }
         }
-    lateinit var onInactivate: () -> Unit
 
     @Mode
-    var mode = MODE_INACTIVE
-    var delay = 0L
+    private var mode = MODE_INACTIVE
+    private var delay = 0L
 
-    fun onModeChanged(@Mode mode: Int) {
-        this.mode = mode
-        enabled = (this.mode == MODE_ACTIVE)
+    lateinit var onInactivate: () -> Unit
+
+    fun setDelay(value: Long) {
+        delay = value
+    }
+
+    fun onModeChanged(@Mode value: Int) {
+        mode = value
+        enabled = (mode == MODE_ACTIVE)
     }
 
     fun onPause() {

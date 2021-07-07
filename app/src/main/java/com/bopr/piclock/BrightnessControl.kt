@@ -54,9 +54,9 @@ internal class BrightnessControl() :
     @Mode
     private var mode: Int = MODE_INACTIVE
 
-    lateinit var onStartSlide: () -> Unit
-    lateinit var onSlide: (brightness: Int) -> Unit
-    lateinit var onEndSlide: (brightness: Int) -> Unit
+    lateinit var onSwipeStart: () -> Unit
+    lateinit var onSwipe: (brightness: Int) -> Unit
+    lateinit var onSwipeEnd: (brightness: Int) -> Unit
 
     override fun onScroll(
         e1: MotionEvent?,
@@ -67,13 +67,13 @@ internal class BrightnessControl() :
         if (!sliding) {
             scaleFactor = 1.5f / view.parentView.scaledRect.height() /* to 2/3 of parents height */
             slidingAlpha = view.alpha
-            onStartSlide()
+            onSwipeStart()
             sliding = true
         } else {
             slidingAlpha += distanceY * scaleFactor
             slidingAlpha = min(MAX_ALPHA, max(slidingAlpha, MIN_ALPHA))
             view.alpha = slidingAlpha
-            onSlide(brightness(slidingAlpha))
+            onSwipe(brightness(slidingAlpha))
         }
         return false
     }
@@ -129,7 +129,7 @@ internal class BrightnessControl() :
                 ACTION_DOWN ->
                     sliding = false
                 ACTION_UP -> {
-                    if (sliding) onEndSlide(brightness(slidingAlpha))
+                    if (sliding) onSwipeEnd(brightness(slidingAlpha))
                     return sliding
                 }
             }

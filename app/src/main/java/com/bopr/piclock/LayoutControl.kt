@@ -6,10 +6,14 @@ import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.collection.arrayMapOf
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.FragmentManager
 import androidx.transition.TransitionManager
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
@@ -31,6 +35,10 @@ internal class LayoutControl(
     private val _tag = "LayoutControl"
 
     private val fabMargin = rootView.resources.fabMargin
+    private val screenOrientation get() = rootView.resources.configuration.orientation
+    private val infoView get() = rootView.findViewById<View>(R.id.info_view)
+    private val settingsButton get() = rootView.findViewById<View>(R.id.settings_button)
+    private val settingsContainer get() = rootView.findViewById<View>(R.id.settings_container)
 
     private val mainConstraints = createDefaultConstraints().apply {
         R.id.settings_button.let {
@@ -54,6 +62,13 @@ internal class LayoutControl(
                 connect(it, RIGHT, R.id.content_container, RIGHT)
             }
         })
+
+    init {
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { _, windowInsets ->
+            adjustMargins(windowInsets)
+            windowInsets
+        }
+    }
 
     private fun createDefaultConstraints() = ConstraintSet().apply {
         R.id.settings_button.let {
@@ -86,11 +101,27 @@ internal class LayoutControl(
         }
     }
 
-    fun onModeChanged(@Mode mode: Int, animate: Boolean) {
-        val orientation = rootView.resources.configuration.orientation
-        val button = rootView.findViewById<View>(R.id.settings_button)
-        val container = rootView.findViewById<View>(R.id.settings_container)
+    //todo: fix: does not work when fullscreen setting is disabled
+    private fun adjustMargins(windowInsets: WindowInsetsCompat) {
+        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
 
+        TransitionManager.beginDelayedTransition(rootView)
+
+        infoView.updateLayoutParams<MarginLayoutParams> {
+            leftMargin = fabMargin + insets.left
+            topMargin = fabMargin + insets.top
+        }
+        settingsButton.updateLayoutParams<MarginLayoutParams> {
+            rightMargin = fabMargin + insets.right
+            bottomMargin = fabMargin + insets.bottom
+        }
+        settingsContainer.updateLayoutParams<MarginLayoutParams> {
+            rightMargin = insets.right
+            bottomMargin = insets.bottom
+        }
+    }
+
+    fun onModeChanged(@Mode mode: Int, animate: Boolean) {
         if (animate) {
             TransitionManager.beginDelayedTransition(rootView)
         }
@@ -98,21 +129,21 @@ internal class LayoutControl(
         when (mode) {
             MODE_ACTIVE -> {
                 mainConstraints.applyTo(rootView)
-                button.visibility = VISIBLE
-                container.visibility = GONE
+                settingsButton.visibility = VISIBLE
+                settingsContainer.visibility = GONE
                 removeSettingsView()
             }
             MODE_INACTIVE -> {
                 mainConstraints.applyTo(rootView)
-                button.visibility = GONE
-                container.visibility = GONE
+                settingsButton.visibility = GONE
+                settingsContainer.visibility = GONE
                 removeSettingsView()
             }
             MODE_EDITOR -> {
                 createSettingsView()
-                editorConstraints[orientation]?.applyTo(rootView)
-                button.visibility = VISIBLE
-                container.visibility = VISIBLE
+                editorConstraints[screenOrientation]?.applyTo(rootView)
+                settingsButton.visibility = VISIBLE
+                settingsContainer.visibility = VISIBLE
             }
         }
     }

@@ -27,7 +27,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
 
     private val _tag = "FloatControl"
 
-    var interval = 0L
+    private var interval = 0L
     private var busy = false
         private set(value) {
             if (field != value) {
@@ -35,6 +35,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
                 onBusy(field)
             }
         }
+
     lateinit var onBusy: (busy: Boolean) -> Unit
 
     private val task = Runnable {
@@ -153,6 +154,10 @@ internal class FloatControl(private val view: View, private val handler: Handler
 
             start()
         }
+    }
+
+    fun setInterval(value: Long) {
+        interval = value
     }
 
     fun onModeChanged(@Mode mode: Int) {
