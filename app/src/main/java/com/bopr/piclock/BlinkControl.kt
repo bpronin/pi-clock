@@ -1,7 +1,7 @@
 package com.bopr.piclock
 
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.util.Log
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
@@ -13,40 +13,65 @@ import java.util.*
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class BlinkControl(blinkingViews: Collection<View>) {
+internal class BlinkControl(
+    private val minutesSeparator: View,
+    private val secondsSeparator: View
+) {
 
-    private val animator by lazy {
-        AnimatorSet().apply {
+    private val _tag = "BlinkControl"
+
+    private var animated = true
+    private var enabled = true
+    private var secondsEnabled = true
+
+    private val minutesSeparatorAnimator by lazy {
+        ObjectAnimator().apply {
+            setProperty(View.ALPHA)
+            setFloatValues(0f, 1f)
+            target = minutesSeparator
             duration = 2000
             interpolator = CycleInterpolator(1f)
-            playTogether(views.map { createViewAnimator(it) })
         }
     }
 
-    private val views = blinkingViews
-    private var animated = true
-    private var enabled = true
-
-    private fun createViewAnimator(view: View) = ObjectAnimator().apply {
-        setProperty(View.ALPHA)
-        setFloatValues(0f, 1f)
-        target = view
+    private val secondsSeparatorAnimator by lazy {
+        ObjectAnimator().apply {
+            setProperty(View.ALPHA)
+            setFloatValues(0f, 1f)
+            target = secondsSeparator
+            duration = 2000
+            interpolator = CycleInterpolator(1f)
+        }
     }
 
     private fun resetAlpha() {
-        for (view in views) view.alpha = 1f
+        minutesSeparator.alpha = 1f
+        secondsSeparator.alpha = 1f
+    }
+
+    private fun toggleVisibility(view: View) {
+        view.visibility = if (view.visibility == INVISIBLE) VISIBLE else INVISIBLE
     }
 
     private fun toggleVisibility(time: Date) {
-        for (view in views) {
-            view.visibility = if (view.visibility == INVISIBLE) VISIBLE else INVISIBLE
+        resetAlpha()
+        toggleVisibility(minutesSeparator)
+        if (secondsEnabled) {
+            toggleVisibility(secondsSeparator)
         }
     }
 
-    private fun startAnimator(time: Date) {
-        animator.apply {
+    private fun startAnimators(time: Date) {
+        minutesSeparatorAnimator.apply {
             end()
             start()
+        }
+
+        if (secondsEnabled) {
+            secondsSeparatorAnimator.apply {
+                end()
+                start()
+            }
         }
     }
 
@@ -54,22 +79,42 @@ internal class BlinkControl(blinkingViews: Collection<View>) {
         if (!enabled) return
 
         if (animated) {
-            startAnimator(time)
+            startAnimators(time)
         } else {
             toggleVisibility(time)
         }
     }
 
     fun setAnimated(animated: Boolean) {
-        this.animated = animated
-        resetAlpha()
+        if (this.animated != animated) {
+            this.animated = animated
+            resetAlpha()
+        }
     }
 
     fun setEnabled(enabled: Boolean) {
-        this.enabled = enabled
-        if (!this.enabled) {
-            animator.end()
-            resetAlpha() /* because we are using Cycling interpolator */
+        if (this.enabled != enabled) {
+            this.enabled = enabled
+
+            Log.d(_tag, "Enabled: $enabled")
+
+            if (!this.enabled) {
+                minutesSeparatorAnimator.end()
+                secondsSeparatorAnimator.end()
+                resetAlpha() /* because we are using Cycling interpolator */
+            }
+        }
+    }
+
+    fun setSecondsEnabled(enabled: Boolean) {
+        if (secondsEnabled != enabled) {
+            secondsEnabled = enabled
+
+            Log.d(_tag, "Seconds enabled: $secondsEnabled")
+
+            if (!secondsEnabled) {
+                secondsSeparatorAnimator.end()
+            }
         }
     }
 }

@@ -7,7 +7,7 @@
     <string name="auto_inactivate">Auto-deactivation</string>
     <string name="auto_inactivate_never_summary">Disabled. Toggle active mode by touching screen</string>
     <string name="auto_inactivate_summary">Hide controls and decrease brightness after %s</string>
-    <string name="blink_time_separator">Blink time separator</string>
+    <string name="blink_time_separators">Blink time separators</string>
     <string name="layout">Layout</string>
     <string name="date_format">Date</string>
     <string name="default_date_format">%s (system)</string>
@@ -25,7 +25,7 @@
     <string name="sound">Sound</string>
     <string name="tick_sound">Tick sound</string>
     <string name="tick_sound_always">Tick always</string>
-    <string name="time_separator">Time separator</string>
+    <string name="minutes_separator">Minutes separator</string>
     <string name="user_interface">Interface</string>
     <string name="clock_moves_along_screen">Clock moves along the screen every %s</string>
     <string name="clock_always_moves_along_screen">Clock always moves along the screen</string>

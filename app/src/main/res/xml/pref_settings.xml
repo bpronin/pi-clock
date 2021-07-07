@@ -73,7 +73,7 @@
 
         <SwitchPreference
             android:key="time_separators_blinking"
-            android:title="@string/blink_time_separator" />
+            android:title="@string/blink_time_separators" />
 
         <ListPreference
             android:entries="@array/digits_animation_names"

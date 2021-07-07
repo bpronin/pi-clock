@@ -68,7 +68,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var minutesView: AnimatedTextView
     private lateinit var secondsView: AnimatedTextView
     private lateinit var dateView: AnimatedTextView
-    private lateinit var timeSeparator: TextView
+    private lateinit var minutesSeparator: TextView
     private lateinit var secondsSeparator: TextView
     private lateinit var amPmMarkerView: TextView
     private lateinit var infoView: TextView
@@ -145,12 +145,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private val blinkAnimator by lazy {
-        BlinkControl(setOf(timeSeparator, secondsSeparator)).apply {
+        BlinkControl(minutesSeparator, secondsSeparator).apply {
             setEnabled(
                 settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE) &&
                         settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING)
             )
-            setAnimated(false)
+            setSecondsEnabled(settings.getString(PREF_SECONDS_FORMAT).isNotEmpty())
+//            setAnimated(false)
         }
     }
 
@@ -275,12 +276,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateHoursMinutesViews()
                 PREF_SECONDS_FORMAT -> {
                     updateSecondsView()
-                    updateSeparatorViews()
+                    updateSeparatorsViews()
                 }
                 PREF_TIME_SEPARATORS_VISIBLE ->
-                    updateSeparatorViews()
+                    updateSeparatorsViews()
                 PREF_TIME_SEPARATORS_BLINKING ->
-                    updateSeparatorViews()
+                    updateSeparatorsViews()
                 PREF_DATE_FORMAT ->
                     updateDateView()
                 PREF_DIGITS_ANIMATION ->
@@ -334,7 +335,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 secondsView = findViewById(R.id.seconds_view)
                 amPmMarkerView = findViewById(R.id.am_pm_marker_view)
                 dateView = findViewById(R.id.date_view)
-                timeSeparator = findViewById(R.id.time_separator)
+                minutesSeparator = findViewById(R.id.minutes_separator)
                 secondsSeparator = findViewById(R.id.seconds_separator)
             })
         }
@@ -342,7 +343,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateFullscreenControl()
         updateHoursMinutesViews()
         updateSecondsView()
-        updateSeparatorViews()
+        updateSeparatorsViews()
         updateDateView()
         updateContentViewData()
         updateDigitsAnimation() /* must be after updateContentData */
@@ -396,13 +397,15 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         dateView.visibility = if (pattern.isEmpty()) GONE else VISIBLE
     }
 
-    private fun updateSeparatorViews() {
+    private fun updateSeparatorsViews() {
         if (settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE)) {
-            timeSeparator.visibility = VISIBLE
-            secondsSeparator.visibility = if (isSecondsSeparatorVisible()) VISIBLE else INVISIBLE
+            val secondsVisible = settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()
+            minutesSeparator.visibility = VISIBLE
+            secondsSeparator.visibility = if (secondsVisible) VISIBLE else INVISIBLE
             blinkAnimator.setEnabled(settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING))
+            blinkAnimator.setSecondsEnabled(secondsVisible)
         } else {
-            timeSeparator.visibility = INVISIBLE
+            minutesSeparator.visibility = INVISIBLE
             secondsSeparator.visibility = INVISIBLE
             blinkAnimator.setEnabled(false)
         }
@@ -428,21 +431,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         soundControl.onTimer(currentTime)
     }
 
-//    private fun blinkTimeSeparator() {
-//        if (settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING)) {
-//            if (currentTime.time / 1000 % 2 != 0L) {
-//                animations.blinkTimeSeparator(timeSeparator)
-//                if (isSecondsSeparatorVisible()) animations.blinkSecondsSeparator(secondsSeparator)
-//            }
-//        } else {
-//            timeSeparator.alpha = 1f
-//            secondsSeparator.alpha = 1f
-//        }
-//    }
-
-    private fun isSecondsSeparatorVisible() = settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()
-
     //todo: move to layoutControl ?
+    //todo: does not work when fullsceen setting is disabled
     private fun adjustMargins(windowInsets: WindowInsetsCompat) {
         val insets = windowInsets.getInsets(Type.systemBars())
         val fabMargin = resources.fabMargin

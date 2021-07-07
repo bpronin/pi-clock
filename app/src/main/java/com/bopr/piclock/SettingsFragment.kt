@@ -52,7 +52,6 @@ class SettingsFragment : CustomPreferenceFragment(),
 
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
-
     }
 
     override fun onDestroy() {
