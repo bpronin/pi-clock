@@ -3,11 +3,8 @@ package com.bopr.piclock
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.preference.ListPreference
-import androidx.preference.MultiSelectListPreference
-import androidx.preference.Preference
+import androidx.preference.*
 import androidx.preference.Preference.OnPreferenceClickListener
-import androidx.preference.SeekBarPreference
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
 import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
@@ -21,6 +18,8 @@ import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
+import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
+import com.bopr.piclock.Settings.Companion.PREF_GESTURES_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_MUTED_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_RULES
@@ -54,7 +53,6 @@ class SettingsFragment : CustomPreferenceFragment(),
         settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
 
-        updateAboutPreferenceView()
     }
 
     override fun onDestroy() {
@@ -68,6 +66,8 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     override fun onStart() {
         super.onStart()
+
+        updateAboutView()
 
         /* force update preference views at startup */
         for (key in settings.all.keys) {
@@ -89,22 +89,24 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            PREF_AUTO_INACTIVATE_DELAY -> updateAutoInactivatePreferenceView()
-            PREF_CONTENT_FLOAT_INTERVAL -> updateFloatIntervalPreferenceView()
-            PREF_CONTENT_LAYOUT -> updateClockLayoutPreferenceView()
-            PREF_CONTENT_SCALE -> updateScalePreferenceView()
-            PREF_DATE_FORMAT -> updateDateFormatPreferenceView()
-            PREF_MUTED_BRIGHTNESS -> updateMutedBrightnessPreferenceView()
-            PREF_SECONDS_FORMAT -> updateSecondsFormatPreferenceView()
-            PREF_TICK_SOUND -> updateTickSoundPreferenceView()
-            PREF_TICK_RULES -> updateTickModePreferenceView()
-            PREF_TIME_FORMAT -> updateTimeFormatPreferenceView()
-            PREF_TIME_SEPARATORS_VISIBLE -> updateSeparatorsPreferenceViews()
-            PREF_DIGITS_ANIMATION -> updateDigitsAnimationPreferenceViews()
+            PREF_AUTO_INACTIVATE_DELAY -> updateAutoInactivateView()
+            PREF_CONTENT_FLOAT_INTERVAL -> updateFloatIntervalView()
+            PREF_CONTENT_LAYOUT -> updateClockLayoutView()
+            PREF_CONTENT_SCALE -> updateScaleView()
+            PREF_DATE_FORMAT -> updateDateFormatView()
+            PREF_MUTED_BRIGHTNESS -> updateMutedBrightnessView()
+            PREF_SECONDS_FORMAT -> updateSecondsFormatView()
+            PREF_TICK_SOUND -> updateTickSoundView()
+            PREF_TICK_RULES -> updateTickModeView()
+            PREF_TIME_FORMAT -> updateTimeFormatView()
+            PREF_TIME_SEPARATORS_VISIBLE -> updateSeparatorsViews()
+            PREF_DIGITS_ANIMATION -> updateDigitsAnimationViews()
+            PREF_GESTURES_ENABLED -> updateGesturesViews()
+            PREF_FULLSCREEN_ENABLED -> updateFullscreenViews()
         }
     }
 
-    private fun updateAboutPreferenceView() {
+    private fun updateAboutView() {
         requirePreference(PREF_ABOUT).apply {
             val info = ReleaseInfo.get(requireContext())
             summary =
@@ -113,19 +115,19 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateDigitsAnimationPreferenceViews() {
+    private fun updateDigitsAnimationViews() {
         (requirePreference(PREF_DIGITS_ANIMATION) as ListPreference).apply {
             val value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
         }
     }
 
-    private fun updateSeparatorsPreferenceViews() {
+    private fun updateSeparatorsViews() {
         requirePreference(PREF_TIME_SEPARATORS_BLINKING).isEnabled =
             settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE)
     }
 
-    private fun updateFloatIntervalPreferenceView() {
+    private fun updateFloatIntervalView() {
         (requirePreference(PREF_CONTENT_FLOAT_INTERVAL) as ListPreference).apply {
             val value = settings.getLong(key)
             summary = when (value) {
@@ -139,7 +141,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateScalePreferenceView() {
+    private fun updateScaleView() {
         (requirePreference(PREF_CONTENT_SCALE) as SeekBarPreference).apply {
             min = MIN_SCALE
             max = MAX_SCALE
@@ -148,7 +150,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateTickModePreferenceView() {
+    private fun updateTickModeView() {
         (requirePreference(PREF_TICK_RULES) as MultiSelectListPreference).apply {
             val titles = mutableListOf<String>()
             for (item in settings.getStringSet(key)) {
@@ -161,7 +163,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateDateFormatPreferenceView() {
+    private fun updateDateFormatView() {
         val patterns = getStringArray(R.array.date_format_values)
         val date = Date()
 
@@ -184,7 +186,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateTimeFormatPreferenceView() {
+    private fun updateTimeFormatView() {
         (requirePreference(PREF_TIME_FORMAT) as ListPreference).apply {
             val value = settings.getString(key)
             val ix = findIndexOfValue(value)
@@ -193,7 +195,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateSecondsFormatPreferenceView() {
+    private fun updateSecondsFormatView() {
         (requirePreference(PREF_SECONDS_FORMAT) as ListPreference).apply {
             val value = settings.getString(key)
             val ix = findIndexOfValue(value)
@@ -202,21 +204,21 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateClockLayoutPreferenceView() {
+    private fun updateClockLayoutView() {
         (requirePreference(PREF_CONTENT_LAYOUT) as ListPreference).apply {
             val value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
         }
     }
 
-    private fun updateTickSoundPreferenceView() {
+    private fun updateTickSoundView() {
         (requirePreference(PREF_TICK_SOUND) as ListPreference).apply {
             val value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
         }
     }
 
-    private fun updateAutoInactivatePreferenceView() {
+    private fun updateAutoInactivateView() {
         (requirePreference(PREF_AUTO_INACTIVATE_DELAY) as ListPreference).apply {
             val value = settings.getLong(key)
             summary = if (value > 0) {
@@ -228,12 +230,34 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateMutedBrightnessPreferenceView() {
+    private fun updateMutedBrightnessView() {
         (requirePreference(PREF_MUTED_BRIGHTNESS) as SeekBarPreference).apply {
             min = MIN_BRIGHTNESS
             max = MAX_BRIGHTNESS
             value = settings.getInt(key)
             summary = getString(R.string.muted_brightness_summary, value)
+        }
+    }
+
+    private fun updateFullscreenViews() {
+        (requirePreference(PREF_FULLSCREEN_ENABLED) as SwitchPreference).apply {
+            summary = getString(
+                if (settings.getBoolean(key))
+                    R.string.fullscreen_enabled_summary
+                else
+                    R.string.fullscreen_disabled_summary
+            )
+        }
+    }
+
+    private fun updateGesturesViews() {
+        (requirePreference(PREF_GESTURES_ENABLED) as SwitchPreference).apply {
+            summary = getString(
+                if (settings.getBoolean(key))
+                    R.string.gestures_enabled_summary
+                else
+                    R.string.gestures_disabled_summary
+            )
         }
     }
 

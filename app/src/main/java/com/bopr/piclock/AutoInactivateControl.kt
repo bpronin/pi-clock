@@ -65,15 +65,13 @@ internal class AutoInactivateControl(private val handler: Handler) {
     }
 
     fun onTouch(event: MotionEvent): Boolean {
+        Log.v(_tag, "Processing touch: ${event.action}")
+
         when (event.action) {
             ACTION_DOWN -> {
-                Log.v(_tag, "Processing touch: ${event.action}")
-
                 enabled = false
             }
             ACTION_UP -> {
-                Log.v(_tag, "Processing touch: ${event.action}")
-
                 onModeChanged(mode)
             }
         }

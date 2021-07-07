@@ -4,17 +4,17 @@
     <string name="about_version">Version</string>
     <string name="app_name">Pi Clock</string>
     <string name="formats">Formats</string>
-    <string name="auto_inactivate">Auto mute brightness</string>
-    <string name="auto_inactivate_never_summary">Disabled. Switch to muted mode manually</string>
-    <string name="auto_inactivate_summary">Switch to muted mode after %s</string>
+    <string name="auto_inactivate">Auto-deactivation</string>
+    <string name="auto_inactivate_never_summary">Disabled. Toggle active mode by touching screen</string>
+    <string name="auto_inactivate_summary">Hide controls and decrease brightness after %s</string>
     <string name="blink_time_separator">Blink time separator</string>
     <string name="layout">Layout</string>
     <string name="date_format">Date</string>
     <string name="default_date_format">%s (system)</string>
     <string name="do_not_show">Do not show</string>
     <string name="fullscreen">Fullscreen</string>
-    <string name="brightness">Brightness</string>
-    <string name="muted_brightness_summary">Brightness in muted mode %d%%</string>
+    <string name="brightness_level">Brightness level</string>
+    <string name="muted_brightness_summary">Decreased brightness in inactive mode %d%%</string>
     <string name="play_always">Play sound in any mode</string>
     <string name="play_only_when_tapped">Play sound only in active mode</string>
     <string name="scale">Scale</string>
@@ -40,6 +40,11 @@
     <string name="never_tick">Never</string>
     <string name="animation">Animation</string>
     <string name="digits_animation">Digits animation</string>
+    <string name="gestures">Gestures</string>
+    <string name="gestures_enabled_summary">Adjust scale and brightness by swiping across the screen</string>
+    <string name="gestures_disabled_summary">Gestures disabled</string>
+    <string name="fullscreen_disabled_summary">Always show system bars</string>
+    <string name="fullscreen_enabled_summary">Hide system bars in inactive mode</string>
 
     <string-array name="content_layout_names">
         <item>Digital simple</item>
@@ -104,8 +109,8 @@
 
     <string-array name="tick_sound_mode_names">
         <item>Active</item>
+        <item>Inactive</item>
         <item>Floating</item>
-        <item>Fullscreen</item>
     </string-array>
 
     <string-array name="digits_animation_names">

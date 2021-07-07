@@ -41,7 +41,7 @@
         <SeekBarPreference
             android:key="muted_brightness"
             android:max="10000"
-            android:title="@string/brightness" />
+            android:title="@string/brightness_level" />
 
         <SwitchPreference
             android:key="time_separators_visible"
@@ -52,6 +52,10 @@
             android:entryValues="@array/content_float_interval_values"
             android:key="content_float_interval"
             android:title="@string/floating_interval" />
+
+        <SwitchPreference
+            android:key="gestures_enabled"
+            android:title="@string/gestures" />
 
         <SwitchPreference
             android:key="fullscreen_enabled"

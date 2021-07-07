@@ -28,6 +28,7 @@ import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
+import com.bopr.piclock.Settings.Companion.PREF_GESTURES_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_MUTED_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_RULES
@@ -179,9 +180,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
 
             setOnTouchListener { _, event ->
-                autoInactivateControl.onTouch(event)
-                        || brightnessControl.onTouch(event)
-                        || scaleControl.onTouch(event)
+                autoInactivateControl.onTouch(event) || (settings.getBoolean(PREF_GESTURES_ENABLED)
+                        && (brightnessControl.onTouch(event) || scaleControl.onTouch(event)))
             }
 
             doOnLayout {

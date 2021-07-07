@@ -31,7 +31,7 @@ class MainActivity : BaseActivity<MainFragment>(MainFragment::class.java) {
     //todo: option to tell time aloud
     //todo: option to animate digits only in active mode
     //todo: option to auto disable animations when unplugged
-
+    //todo: option to show milliseconds (why not?)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

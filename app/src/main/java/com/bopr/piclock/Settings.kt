@@ -26,6 +26,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             putBooleanOptional(PREF_TIME_SEPARATORS_BLINKING, true)
             putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
             putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
+            putBooleanOptional(PREF_GESTURES_ENABLED, true)
             putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)
             putIntOptional(PREF_CONTENT_SCALE, 100) {
                 getInt(PREF_CONTENT_SCALE) in MIN_SCALE..MAX_SCALE
@@ -155,6 +156,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_TIME_SEPARATORS_BLINKING = "time_separators_blinking"
         const val PREF_TIME_SEPARATORS_VISIBLE = "time_separators_visible"
         const val PREF_DIGITS_ANIMATION = "digits_animation"
+        const val PREF_GESTURES_ENABLED = "gestures_enabled"
     }
 
 }
