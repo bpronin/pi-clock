@@ -151,7 +151,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     @Mode
-    private var mode = MODE_INACTIVE
+    private var mode = MODE_ACTIVE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.w(_tag, "Creating fragment")
@@ -222,6 +222,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         scaleControl.setView(contentView)
         scaleControl.setScale(settings.getInt(PREF_CONTENT_SCALE))
+
+        fullscreenControl.setEnabled(settings.getBoolean(PREF_FULLSCREEN_ENABLED))
     }
 
     override fun onSaveInstanceState(savedState: Bundle) {
@@ -258,8 +260,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         settings.apply {
             when (key) {
-                PREF_FULLSCREEN_ENABLED ->
-                    updateFullscreenControl()
                 PREF_CONTENT_LAYOUT ->
                     createContentView()
                 PREF_TIME_FORMAT ->
@@ -276,6 +276,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateDateView()
                 PREF_DIGITS_ANIMATION ->
                     updateDigitsAnimation()
+                PREF_FULLSCREEN_ENABLED ->
+                    fullscreenControl.setEnabled(getBoolean(key))
                 PREF_CONTENT_SCALE ->
                     scaleControl.setScale(getInt(key))
                 PREF_MUTED_BRIGHTNESS ->
@@ -330,7 +332,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             })
         }
 
-        updateFullscreenControl()
         updateHoursMinutesViews()
         updateSecondsView()
         updateSeparatorsViews()
@@ -353,10 +354,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         if (amPmMarkerView.visibility == VISIBLE) {
             amPmMarkerView.text = amPmFormat.format(currentTime)
         }
-    }
-
-    private fun updateFullscreenControl() {
-        fullscreenControl.enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
     }
 
     private fun updateHoursMinutesViews() {
@@ -392,11 +389,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             val secondsVisible = settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()
             minutesSeparator.visibility = VISIBLE
             secondsSeparator.visibility = if (secondsVisible) VISIBLE else INVISIBLE
+
             blinkAnimator.setEnabled(settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING))
             blinkAnimator.setSecondsEnabled(secondsVisible)
         } else {
             minutesSeparator.visibility = INVISIBLE
             secondsSeparator.visibility = INVISIBLE
+
             blinkAnimator.setEnabled(false)
         }
     }

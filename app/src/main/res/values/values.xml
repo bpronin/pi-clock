@@ -47,7 +47,6 @@
         <item>mantle_clock</item>
         <item>wooden_wall_clock</item>
         <item>wrist_watch</item>
-        <item />
     </string-array>
 
     <string-array name="auto_inactivate_delay_values" translatable="false">

@@ -63,7 +63,6 @@
         <item>Mantle clock</item>
         <item>Wall clock</item>
         <item>Wrist watch</item>
-        <item>Disabled</item>
     </string-array>
 
     <string-array name="auto_inactivate_delay_names">

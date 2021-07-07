@@ -103,6 +103,8 @@ internal class LayoutControl(
 
     //todo: fix: does not work when fullscreen setting is disabled
     private fun adjustMargins(windowInsets: WindowInsetsCompat) {
+        Log.d(_tag, "Adjusting margins")
+
         val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
 
         TransitionManager.beginDelayedTransition(rootView)

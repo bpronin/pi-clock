@@ -39,25 +39,15 @@ internal class FullscreenControl(private val activity: Activity, private val han
                 handler.removeCallbacks(turnOnTask)
                 handler.removeCallbacks(turnOffTask)
                 field = value
-                if (field) {
-                    handler.postDelayed(turnOffTask, startDelay)
-                } else {
-                    handler.postDelayed(turnOnTask, startDelay)
-                }
+
+                val task = if (field) turnOffTask else turnOnTask
+                handler.postDelayed(task, startDelay)
 
                 Log.d(_tag, "Fullscreen: $field")
             }
         }
 
-    var enabled = true
-        set(value) {
-            if (field != value) {
-                field = value
-                if (!field) {
-                    fullscreen = false
-                }
-            }
-        }
+    private var enabled = true
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -99,6 +89,15 @@ internal class FullscreenControl(private val activity: Activity, private val han
         }
 
         Log.d(_tag, "System UI hidden")
+    }
+
+    fun setEnabled(value: Boolean) {
+        if (enabled != value) {
+            enabled = value
+            if (!enabled) {
+                fullscreen = false
+            }
+        }
     }
 
     fun onModeChanged(@Mode mode: Int) {

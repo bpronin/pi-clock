@@ -4,7 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.util.Log
-import android.view.GestureDetector
+import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
@@ -19,6 +19,8 @@ import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.util.parentView
 import com.bopr.piclock.util.scaledRect
+import com.bopr.piclock.util.toDecimal
+import com.bopr.piclock.util.toPercents
 import kotlin.math.max
 import kotlin.math.min
 
@@ -27,8 +29,7 @@ import kotlin.math.min
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class BrightnessControl() :
-    GestureDetector.SimpleOnGestureListener() {
+internal class BrightnessControl : SimpleOnGestureListener() {
 
     private val _tag = "BrightnessControl"
 
@@ -47,9 +48,8 @@ internal class BrightnessControl() :
 
     private lateinit var view: View
     private var scaleFactor = 0f
-    private var slidingAlpha = 0f
     private var mutedAlpha = MIN_ALPHA
-    private var sliding = false
+    private var swiping = false
 
     @Mode
     private var mode: Int = MODE_INACTIVE
@@ -64,16 +64,14 @@ internal class BrightnessControl() :
         distanceX: Float,
         distanceY: Float
     ): Boolean {
-        if (!sliding) {
+        if (!swiping) {
             scaleFactor = 1.5f / view.parentView.scaledRect.height() /* to 2/3 of parents height */
-            slidingAlpha = view.alpha
+            swiping = true
             onSwipeStart()
-            sliding = true
         } else {
-            slidingAlpha += distanceY * scaleFactor
-            slidingAlpha = min(MAX_ALPHA, max(slidingAlpha, MIN_ALPHA))
-            view.alpha = slidingAlpha
-            onSwipe(brightness(slidingAlpha))
+            val alpha = view.alpha + distanceY * scaleFactor
+            view.alpha = min(MAX_ALPHA, max(alpha, MIN_ALPHA))
+            onSwipe(toPercents(view.alpha))
         }
         return false
     }
@@ -88,7 +86,7 @@ internal class BrightnessControl() :
             removeAllListeners()
 
             addListener(object : AnimatorListenerAdapter() {
-                var canceled = false;
+                var canceled = false
 
                 override fun onAnimationCancel(animation: Animator?) {
                     Log.v(_tag, "Canceled fade")
@@ -127,10 +125,10 @@ internal class BrightnessControl() :
             /* this is to prevent of calling onClick if scrolled */
             when (event.action) {
                 ACTION_DOWN ->
-                    sliding = false
+                    swiping = false
                 ACTION_UP -> {
-                    if (sliding) onSwipeEnd(brightness(slidingAlpha))
-                    return sliding
+                    if (swiping) onSwipeEnd(toPercents(view.alpha))
+                    return swiping
                 }
             }
         }
@@ -158,7 +156,7 @@ internal class BrightnessControl() :
     }
 
     fun setMutedBrightness(brightness: Int) {
-        mutedAlpha = alpha(brightness)
+        mutedAlpha = toDecimal(brightness)
 
         Log.d(_tag, "Muted alpha set to: $mutedAlpha")
 
@@ -167,15 +165,11 @@ internal class BrightnessControl() :
 
     companion object {
 
-        private fun alpha(brightness: Int) = brightness / 100f
-
-        private fun brightness(alpha: Float) = (alpha * 100).toInt()
-
         const val MIN_BRIGHTNESS = 10
         const val MAX_BRIGHTNESS = 100
 
-        private val MIN_ALPHA = alpha(MIN_BRIGHTNESS)
-        private val MAX_ALPHA = alpha(MAX_BRIGHTNESS)
+        private val MIN_ALPHA = toDecimal(MIN_BRIGHTNESS)
+        private val MAX_ALPHA = toDecimal(MAX_BRIGHTNESS)
     }
 
 }
