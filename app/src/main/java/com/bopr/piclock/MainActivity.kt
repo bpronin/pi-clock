@@ -32,6 +32,10 @@ class MainActivity : BaseActivity<MainFragment>(MainFragment::class.java) {
     //todo: option to animate digits only in active mode
     //todo: option to auto disable animations when unplugged
     //todo: option to show milliseconds (why not?)
+    //todo: звук кукушки каждый час
+    //todo: звук курантов, бой каждый час
+    //todo: ability to hide settings view by swiping down the settings button
+    //todo: ability to open settings view by swiping up the screen edge
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

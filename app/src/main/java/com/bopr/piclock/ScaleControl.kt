@@ -11,14 +11,10 @@ import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
-import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
-import com.bopr.piclock.util.parentView
+import com.bopr.piclock.util.*
 import com.bopr.piclock.util.property.ScaleProperty
-import com.bopr.piclock.util.scaledRect
-import com.bopr.piclock.util.toDecimal
-import com.bopr.piclock.util.toPercents
 import kotlin.math.max
 import kotlin.math.min
 
@@ -35,7 +31,7 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
         ScaleGestureDetector(view.context, this)
     }
 
-    private val rescaleAnimator by lazy {
+    private val animator by lazy {
         ObjectAnimator.ofFloat(view, ScaleProperty(), 0f).apply {
             duration = 500
             interpolator = DecelerateInterpolator()
@@ -55,6 +51,7 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
 
     private var pinching = false
     private var defaultScale = 1f
+    private var animated = true
 
     @Mode
     var mode = MODE_INACTIVE
@@ -65,7 +62,9 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
             if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
                 Log.d(_tag, "Layout changed")
 
-                fitViewIntoScreen()
+//                if (mode != MODE_EDITOR) {
+                    animateTo(fitScale(defaultScale))
+//                }
             }
         }
 
@@ -94,7 +93,7 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
 
         onPinchEnd()
         captureViewScale()
-        fitViewIntoScreen()
+        animateTo(fitScale(defaultScale))
     }
 
     private fun captureViewScale() {
@@ -104,29 +103,36 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
         }
     }
 
-    private fun fitViewIntoScreen() {
-        //todo: also move into if out of screen
-        val pr = view.parentView.scaledRect
-        val vr = view.scaledRect
-        if (pr.width() < vr.width() || pr.height() < vr.height()) {
-            Log.d(_tag, "Does not fit. Start rescaling")
-
-            val scale = min(pr.width() / view.width, pr.height() / view.height)
-            animateRescale(scale)
+    private fun fitScale(scale: Float): Float {
+        val viewRect = view.rect.scaled(scale)
+        val parentRect = view.parentView.scaledRect
+        return if (viewRect.width() > parentRect.width() || viewRect.height() > parentRect.height()) {
+            min(
+                parentRect.width() / view.width,
+                parentRect.height() / view.height
+            )
+        } else {
+            scale
         }
     }
 
-    private fun animateRescale(scale: Float) {
-        rescaleAnimator.apply {
-            cancel()
-            removeAllListeners()
+    private fun animateTo(scale: Float) {
+        if (animated) {
+            Log.d(_tag, "Start animation")
 
-            setFloatValues(viewScale, scale)
-            doOnEnd {
-                Log.d(_tag, "End rescaling")
+            animator.apply {
+                cancel()
+                removeAllListeners()
+
+                setFloatValues(viewScale, scale)
+                doOnEnd {
+                    Log.d(_tag, "End animation")
+                }
+
+                start()
             }
-
-            start()
+        } else {
+            viewScale = scale
         }
     }
 
@@ -151,11 +157,11 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
 
     fun onModeChanged(value: Int) {
         mode = value
-        if (mode == MODE_EDITOR) {
-            animateRescale(1f)
-        } else {
-            animateRescale(defaultScale)
-        }
+//        if (mode == MODE_EDITOR) {
+//            animateTo(1f)
+//        } else {
+//            animateTo(fitScale(defaultScale))
+//        }
     }
 
     fun setView(value: ViewGroup) {
@@ -166,7 +172,12 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
 
     fun setScale(valuePercent: Int) {
         defaultScale = toDecimal(valuePercent)
-        viewScale = defaultScale
+        viewScale = defaultScale /* show actual size first then shrink if needed */
+        animateTo(fitScale(defaultScale))
+    }
+
+    fun setAnimated(value: Boolean) {
+        animated = value
     }
 
     fun destroy() {

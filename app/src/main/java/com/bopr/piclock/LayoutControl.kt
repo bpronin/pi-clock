@@ -123,8 +123,8 @@ internal class LayoutControl(
         }
     }
 
-    fun onModeChanged(@Mode mode: Int, animate: Boolean) {
-        if (animate) {
+    fun onModeChanged(@Mode mode: Int, animated: Boolean) {
+        if (animated) {
             TransitionManager.beginDelayedTransition(rootView)
         }
 

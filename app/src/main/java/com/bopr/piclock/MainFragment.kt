@@ -16,6 +16,10 @@ import androidx.annotation.IntDef
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
+import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
+import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
+import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
+import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
@@ -109,7 +113,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 animations.showInfo(infoView)
             }
             onSwipe = { brightness ->
-                infoView.text = getString(R.string.brightness_info, brightness)
+                val resId = when (brightness) {
+                    MAX_BRIGHTNESS -> R.string.brightness_info_max
+                    MIN_BRIGHTNESS -> R.string.brightness_info_min
+                    else -> R.string.brightness_info
+                }
+                infoView.text = getString(resId, brightness)
             }
             onSwipeEnd = { brightness ->
                 animations.hideInfo(infoView)
@@ -124,7 +133,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 animations.showInfo(infoView)
             }
             onPinch = { scale ->
-                infoView.text = getString(R.string.scale_info, scale)
+                val resId = when (scale) {
+                    MAX_SCALE -> R.string.scale_info_max
+                    MIN_SCALE -> R.string.scale_info_min
+                    else -> R.string.scale_info
+                }
+                infoView.text = getString(resId, scale)
             }
             onPinchEnd = {
                 animations.hideInfo(infoView)

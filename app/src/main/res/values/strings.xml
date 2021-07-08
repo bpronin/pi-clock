@@ -30,10 +30,14 @@
     <string name="clock_moves_along_screen">Clock moves along the screen every %s</string>
     <string name="clock_always_moves_along_screen">Clock always moves along the screen</string>
     <string name="keep_clock_view">Clock keeps its position on the screen</string>
-    <string name="floating_interval">Floating interval</string>
+    <string name="floating_interval">Floating</string>
+    <string name="brightness_info_min">Brightness %d%% (min)</string>
+    <string name="brightness_info_max">Brightness %d%% (max)</string>
     <string name="brightness_info">Brightness %d%%</string>
     <string name="scale_info">Scale %d%%</string>
-    <string name="show_time_separators">Show time separators</string>
+    <string name="scale_info_max">Scale %d%% (max)</string>
+    <string name="scale_info_min">Scale %d%% (min)</string>
+    <string name="show_time_separators">Time separators</string>
     <string name="seconds_format">Seconds</string>
     <string name="hours_minutes_format">Hours and minutes</string>
     <string name="tick_sound_mode">Play tick sound when</string>

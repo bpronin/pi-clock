@@ -25,35 +25,20 @@ fun ViewGroup.forEachDeep(action: (view: View) -> Unit) {
     }
 }
 
-//@Suppress("DEPRECATION")
-//fun getSystemInsetsCompat(insets: WindowInsets): Rect {
-//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//        val sbInsets = insets.getInsets(WindowInsets.Type.systemBars())
-//        return Rect(
-//            sbInsets.left,
-//            sbInsets.top,
-//            sbInsets.right,
-//            sbInsets.bottom
-//        )
-//    } else {
-//        return Rect(
-//            insets.systemWindowInsetLeft,
-//            insets.systemWindowInsetTop,
-//            insets.systemWindowInsetRight,
-//            insets.systemWindowInsetBottom
-//        )
-//    }
-//}
-
-fun RectF.scale(factorX: Float, factorY: Float) {
+fun RectF.scaled(factorX: Float, factorY: Float): RectF {
     if (factorX != 1f && factorY != 1f) {
         inset(width() * (1 - factorX) / 2, height() * (1 - factorY) / 2)
     }
+    return this
+}
+
+fun RectF.scaled(factor: Float): RectF {
+    return scaled(factor, factor)
 }
 
 val View.rect get() = RectF(x, y, x + width.toFloat(), y + height.toFloat())
 
-val View.scaledRect get() = rect.apply { scale(scaleX, scaleY) }
+val View.scaledRect get() = rect.scaled(scaleX, scaleY)
 
 val View.parentView get() = (parent as ViewGroup)
 
