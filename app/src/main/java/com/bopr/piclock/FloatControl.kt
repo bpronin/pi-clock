@@ -51,7 +51,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
                 if (field) {
                     Log.d(_tag, "Enabled")
 
-                    scheduleTask()
+                    scheduleTask(1000)
                 } else {
                     Log.d(_tag, "Disabled")
 
@@ -66,16 +66,16 @@ internal class FloatControl(private val view: View, private val handler: Handler
         playTogether(xAnimator, yAnimator)
     }
 
-    private fun scheduleTask() {
+    private fun scheduleTask(startDelay: Long = 0) {
         if (enabled) {
             when {
                 interval == 0L -> {
-                    handler.post(task)
+                    handler.postDelayed(task, startDelay)
 
                     Log.d(_tag, "Task posted now")
                 }
                 interval > 0 -> {
-                    handler.postDelayed(task, interval)
+                    handler.postDelayed(task, interval + startDelay)
 
                     Log.d(_tag, "Task scheduled after: $interval")
                 }
@@ -125,13 +125,21 @@ internal class FloatControl(private val view: View, private val handler: Handler
         }
     }
 
-    private fun floatHome() {
-        if (!view.isLaidOut) return
+    private fun floatHome(onEnd: () -> Unit = {}) {
+        if (!view.isLaidOut) {
+            onEnd()
+            return
+        }
 
         val pr = view.parentView.rect
         val vr = view.rect
         val x = (pr.width() - vr.width()) / 2
         val y = (pr.height() - vr.height()) / 2
+
+        if (x == view.x || y == view.y) {
+            onEnd()
+            return
+        }
 
         animator.apply {
             cancel()
@@ -150,6 +158,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
                 Log.v(_tag, "End moving home")
 
                 busy = false
+                onEnd()
             }
 
             start()
