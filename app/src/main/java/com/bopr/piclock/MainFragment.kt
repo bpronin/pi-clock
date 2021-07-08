@@ -92,6 +92,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val floatControl by lazy {
         FloatControl(contentView, handler).apply {
             setInterval(settings.getLong(PREF_CONTENT_FLOAT_INTERVAL))
+            setAnimatorRes(R.animator.float_slide)
+//            setAnimatorRes(R.animator.float_fade)
             onBusy = { busy ->
                 soundControl.onFloatView(busy)
             }

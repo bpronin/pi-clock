@@ -1,5 +1,6 @@
 package com.bopr.piclock
 
+import android.animation.AnimatorInflater.loadAnimator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Handler
@@ -60,11 +61,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
             }
         }
 
-    private val xAnimator = ObjectAnimator.ofFloat(view, View.X, 0f)
-    private val yAnimator = ObjectAnimator.ofFloat(view, View.Y, 0f)
-    private val animator = AnimatorSet().apply {
-        playTogether(xAnimator, yAnimator)
-    }
+    private lateinit var animator: AnimatorSet
 
     private fun scheduleTask(startDelay: Long = 0) {
         if (enabled) {
@@ -107,8 +104,8 @@ internal class FloatControl(private val view: View, private val handler: Handler
 
             duration = 10000L
             interpolator = AccelerateDecelerateInterpolator()
-            xAnimator.setFloatValues(view.x, x)
-            yAnimator.setFloatValues(view.y, y)
+            (childAnimations[0] as ObjectAnimator).setFloatValues(view.x, x)
+            (childAnimations[1] as ObjectAnimator).setFloatValues(view.y, y)
             doOnStart {
                 Log.v(_tag, "Start moving somewhere")
 
@@ -147,8 +144,8 @@ internal class FloatControl(private val view: View, private val handler: Handler
 
             duration = 1000L
             interpolator = DecelerateInterpolator()
-            xAnimator.setFloatValues(view.x, x)
-            yAnimator.setFloatValues(view.y, y)
+            (childAnimations[0] as ObjectAnimator).setFloatValues(view.x, x)
+            (childAnimations[1] as ObjectAnimator).setFloatValues(view.y, y)
             doOnStart {
                 Log.v(_tag, "Start moving home")
 
@@ -163,6 +160,16 @@ internal class FloatControl(private val view: View, private val handler: Handler
 
             start()
         }
+    }
+
+    fun setAnimatorRes(resId: Int) {
+        setAnimator(loadAnimator(view.context, resId) as AnimatorSet)
+    }
+
+    fun setAnimator(value: AnimatorSet) {
+        if (value.childAnimations.size < 2) throw IllegalArgumentException("Invalid animation set")
+        animator = value
+        animator.setTarget(view)
     }
 
     fun setInterval(value: Long) {
