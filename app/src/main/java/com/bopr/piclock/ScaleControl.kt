@@ -51,7 +51,6 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
 
     private var pinching = false
     private var defaultScale = 1f
-    private var animated = true
 
     @Mode
     var mode = MODE_INACTIVE
@@ -60,18 +59,15 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
     private val viewListener =
         OnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
-                Log.d(_tag, "Layout changed")
+                Log.v(_tag, "Layout changed")
 
-//                if (mode != MODE_EDITOR) {
-                    animateTo(fitScale(defaultScale))
-//                }
+                animateTo(computeFitScale(defaultScale), true)
             }
         }
 
     lateinit var onPinchStart: () -> Unit
     lateinit var onPinch: (scalePercent: Int) -> Unit
-    lateinit var onPinchEnd: () -> Unit
-    lateinit var onScaleChanged: (scalePercent: Int) -> Unit
+    lateinit var onPinchEnd: (scalePercent: Int) -> Unit
 
     override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
         Log.d(_tag, "Start pinching")
@@ -91,19 +87,12 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
     override fun onScaleEnd(detector: ScaleGestureDetector?) {
         Log.d(_tag, "End pinching")
 
-        onPinchEnd()
-        captureViewScale()
-        animateTo(fitScale(defaultScale))
-    }
-
-    private fun captureViewScale() {
         defaultScale = viewScale
-        if (mode == MODE_ACTIVE || mode == MODE_INACTIVE) {
-            onScaleChanged(toPercents(defaultScale))
-        }
+        onPinchEnd(toPercents(defaultScale))
+        animateTo(computeFitScale(defaultScale), true)
     }
 
-    private fun fitScale(scale: Float): Float {
+    private fun computeFitScale(scale: Float): Float {
         val viewRect = view.rect.scaled(scale)
         val parentRect = view.parentView.scaledRect
         return if (viewRect.width() > parentRect.width() || viewRect.height() > parentRect.height()) {
@@ -116,7 +105,9 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
         }
     }
 
-    private fun animateTo(scale: Float) {
+    private fun animateTo(scale: Float, animated: Boolean, onEnd: () -> Unit = {}) {
+        if (viewScale == scale) return
+
         if (animated) {
             Log.d(_tag, "Start animation")
 
@@ -127,6 +118,8 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
                 setFloatValues(viewScale, scale)
                 doOnEnd {
                     Log.d(_tag, "End animation")
+
+                    onEnd()
                 }
 
                 start()
@@ -157,11 +150,6 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
 
     fun onModeChanged(value: Int) {
         mode = value
-//        if (mode == MODE_EDITOR) {
-//            animateTo(1f)
-//        } else {
-//            animateTo(fitScale(defaultScale))
-//        }
     }
 
     fun setView(value: ViewGroup) {
@@ -170,14 +158,13 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
         }
     }
 
-    fun setScale(valuePercent: Int) {
+    fun setScale(valuePercent: Int, animated: Boolean) {
         defaultScale = toDecimal(valuePercent)
-        viewScale = defaultScale /* show actual size first then shrink if needed */
-        animateTo(fitScale(defaultScale))
-    }
 
-    fun setAnimated(value: Boolean) {
-        animated = value
+        /* show actual size first then shrink if needed */
+        animateTo(defaultScale, animated) {
+            animateTo(computeFitScale(defaultScale), animated)
+        }
     }
 
     fun destroy() {

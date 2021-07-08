@@ -140,10 +140,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 }
                 infoView.text = getString(resId, scale)
             }
-            onPinchEnd = {
+            onPinchEnd = { scale ->
                 animations.hideInfo(infoView)
-            }
-            onScaleChanged = { scale ->
                 settings.update { putInt(PREF_CONTENT_SCALE, scale) }
             }
         }
@@ -235,7 +233,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         brightnessControl.setMutedBrightness(settings.getInt(PREF_MUTED_BRIGHTNESS))
 
         scaleControl.setView(contentView)
-        scaleControl.setScale(settings.getInt(PREF_CONTENT_SCALE))
+        scaleControl.setScale(settings.getInt(PREF_CONTENT_SCALE), false)
 
         fullscreenControl.setEnabled(settings.getBoolean(PREF_FULLSCREEN_ENABLED))
     }
@@ -293,7 +291,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_FULLSCREEN_ENABLED ->
                     fullscreenControl.setEnabled(getBoolean(key))
                 PREF_CONTENT_SCALE ->
-                    scaleControl.setScale(getInt(key))
+                    scaleControl.setScale(getInt(key), true)
                 PREF_MUTED_BRIGHTNESS ->
                     brightnessControl.setMutedBrightness(getInt(key))
                 PREF_TICK_SOUND ->
