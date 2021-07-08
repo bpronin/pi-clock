@@ -6,7 +6,6 @@ import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.animation.CycleInterpolator
-import java.util.*
 
 /**
  * Convenience class to control time separators blinking.
@@ -44,24 +43,22 @@ internal class BlinkControl(
         }
     }
 
-    private fun resetAlpha() {
-        minutesSeparator.alpha = 1f
-        secondsSeparator.alpha = 1f
-    }
-
-    private fun toggleVisibility(view: View) {
-        view.visibility = if (view.visibility == INVISIBLE) VISIBLE else INVISIBLE
-    }
-
-    private fun toggleVisibility(time: Date) {
+    private fun toggleVisibility(halfTick: Int) {
         resetAlpha()
-        toggleVisibility(minutesSeparator)
+
+        val visible = halfTick % 2 == 0
+
+        minutesSeparator.visibility = if (visible) VISIBLE else INVISIBLE
         if (secondsEnabled) {
-            toggleVisibility(secondsSeparator)
+            secondsSeparator.visibility = if (visible) VISIBLE else INVISIBLE
         }
     }
 
-    private fun startAnimators(time: Date) {
+    private fun startAnimators(halfTick: Int) {
+        if (halfTick % 4 != 0) return
+
+        resetVisibility()
+
         minutesSeparatorAnimator.apply {
             end()
             start()
@@ -75,35 +72,42 @@ internal class BlinkControl(
         }
     }
 
-    fun onTimer(time: Date) {
+    fun onTimer(halfTick: Int) {
         if (!enabled) return
 
         if (animated) {
-            startAnimators(time)
+            startAnimators(halfTick)
         } else {
-            toggleVisibility(time)
+            toggleVisibility(halfTick)
         }
     }
 
-    fun setAnimated(animated: Boolean) {
-        if (this.animated != animated) {
-            this.animated = animated
-            resetAlpha()
-        }
+    fun setAnimated(value: Boolean) {
+        animated = value
     }
 
-    fun setEnabled(enabled: Boolean) {
-        if (this.enabled != enabled) {
-            this.enabled = enabled
+    fun setEnabled(value: Boolean) {
+        if (enabled != value) {
+            enabled = value
 
-            Log.d(_tag, "Enabled: $enabled")
+            Log.d(_tag, "Enabled: $value")
 
-            if (!this.enabled) {
+            if (!enabled) {
                 minutesSeparatorAnimator.end()
                 secondsSeparatorAnimator.end()
                 resetAlpha() /* because we are using Cycling interpolator */
             }
         }
+    }
+
+    private fun resetVisibility() {
+        minutesSeparator.visibility = VISIBLE
+        secondsSeparator.visibility = VISIBLE
+    }
+
+    private fun resetAlpha() {
+        minutesSeparator.alpha = 1f
+        secondsSeparator.alpha = 1f
     }
 
     fun setSecondsEnabled(enabled: Boolean) {

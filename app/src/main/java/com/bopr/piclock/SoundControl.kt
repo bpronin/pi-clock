@@ -16,7 +16,6 @@ import com.bopr.piclock.Settings.Companion.TICK_ACTIVE
 import com.bopr.piclock.Settings.Companion.TICK_FLOATING
 import com.bopr.piclock.Settings.Companion.TICK_INACTIVE
 import com.bopr.piclock.util.getResId
-import java.util.*
 
 /**
  * Convenience class to control app sounds.
@@ -163,7 +162,9 @@ internal class SoundControl(private val context: Context) {
         }
     }
 
-    fun onTimer(time: Date) {
+    fun onTimer(halfTick: Int) {
+        if (halfTick % 2 != 0) return
+
         if ((whenActive && mode == MODE_ACTIVE)
             || (whenInactive && (mode == MODE_INACTIVE || mode == MODE_EDITOR))
             || (whenFloating && viewFloating)

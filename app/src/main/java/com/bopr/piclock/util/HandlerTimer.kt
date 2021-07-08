@@ -39,7 +39,3 @@ class HandlerTimer(
     }
 
 }
-
-//fun isWholeSecond(time: Date) = time.time / 500 % 2 == 0L
-//
-//fun isOddSecond(time: Date) = time.time / 500 % 4 == 0L

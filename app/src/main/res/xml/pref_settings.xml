@@ -29,6 +29,18 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/time_separators">
+
+        <SwitchPreference
+            android:key="time_separators_visible"
+            android:title="@string/show_time_separators" />
+
+        <SwitchPreference
+            android:key="time_separators_blinking"
+            android:title="@string/blink_time_separators" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/user_interface">
 
         <!-- 'max' attribute here must be greater than preference value, otherwise it would be reset -->
@@ -42,10 +54,6 @@
             android:key="muted_brightness"
             android:max="10000"
             android:title="@string/brightness_level" />
-
-        <SwitchPreference
-            android:key="time_separators_visible"
-            android:title="@string/show_time_separators" />
 
         <com.bopr.piclock.util.ui.preference.LongListPreference
             android:entries="@array/content_float_interval_names"
@@ -72,9 +80,9 @@
     <PreferenceCategory android:title="@string/animation">
 
         <SwitchPreference
-            android:key="time_separators_blinking"
-            android:title="@string/blink_time_separators" />
-
+            android:key="animation_on"
+            android:title="@string/animation_enabled" />
+        
         <ListPreference
             android:entries="@array/digits_animation_names"
             android:entryValues="@array/digits_animation_values"

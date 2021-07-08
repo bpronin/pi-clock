@@ -79,8 +79,8 @@ class AnimatedTextView : FrameLayout {
             if (childAnimations.size != 2) throw IllegalArgumentException("Invalid animation set")
         }
 
+        textAnimator?.cancel()
         resetViews()
-
         textAnimator = animator?.apply {
             childAnimations[0].apply {
                 setTarget(view)
@@ -91,9 +91,7 @@ class AnimatedTextView : FrameLayout {
                 extendProperties()
             }
             doOnStart { shadowView.visibility = VISIBLE }
-            doOnEnd {
-                shadowView.visibility = GONE
-            }
+            doOnEnd { shadowView.visibility = GONE }
         }
     }
 
@@ -101,11 +99,13 @@ class AnimatedTextView : FrameLayout {
         setTextAnimator(if (resId > 0) loadAnimator(context, resId) as AnimatorSet else null)
     }
 
-    fun setTextAnimated(text: CharSequence) {
+    fun setText(text: CharSequence, animated: Boolean) {
         if (view.text != text) {
             shadowView.text = view.text
             view.text = text
-            textAnimator?.start()
+            if (animated) {
+                textAnimator?.start()
+            }
         }
     }
 

@@ -24,6 +24,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         context.apply {
             putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
             putBooleanOptional(PREF_TIME_SEPARATORS_BLINKING, true)
+            putBooleanOptional(PREF_ANIMATION_ON, true)
             putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
             putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
             putBooleanOptional(PREF_GESTURES_ENABLED, true)
@@ -142,21 +143,22 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_TOP_SETTING = "top_setting" /* internal */
         const val PREF_ABOUT = "about_app" /* internal, marker */
 
-        const val PREF_TIME_FORMAT = "time_format"
+        const val PREF_ANIMATION_ON = "animation_on"
         const val PREF_AUTO_INACTIVATE_DELAY = "auto_inactivate_delay"
         const val PREF_CONTENT_FLOAT_INTERVAL = "content_float_interval"
         const val PREF_CONTENT_LAYOUT = "content_layout"
         const val PREF_CONTENT_SCALE = "content_scale"
         const val PREF_DATE_FORMAT = "date_format"
+        const val PREF_DIGITS_ANIMATION = "digits_animation"
         const val PREF_FULLSCREEN_ENABLED = "fullscreen_enabled"
+        const val PREF_GESTURES_ENABLED = "gestures_enabled"
         const val PREF_MUTED_BRIGHTNESS = "muted_brightness"
         const val PREF_SECONDS_FORMAT = "seconds_format"
-        const val PREF_TICK_SOUND = "tick_sound"
         const val PREF_TICK_RULES = "tick_sound_mode"
+        const val PREF_TICK_SOUND = "tick_sound"
+        const val PREF_TIME_FORMAT = "time_format"
         const val PREF_TIME_SEPARATORS_BLINKING = "time_separators_blinking"
         const val PREF_TIME_SEPARATORS_VISIBLE = "time_separators_visible"
-        const val PREF_DIGITS_ANIMATION = "digits_animation"
-        const val PREF_GESTURES_ENABLED = "gestures_enabled"
     }
 
 }

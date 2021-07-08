@@ -15,8 +15,7 @@
     <string name="fullscreen">Fullscreen</string>
     <string name="brightness_level">Brightness level</string>
     <string name="muted_brightness_summary">Decreased brightness in inactive mode %d%%</string>
-    <string name="play_always">Play sound in any mode</string>
-    <string name="play_only_when_tapped">Play sound only in active mode</string>
+    <string name="tick_always">Always</string>
     <string name="scale">Scale</string>
     <string name="scale_summary">Scale factor %d%%</string>
     <string name="seconds_separator">Seconds separator</string>
@@ -41,7 +40,7 @@
     <string name="seconds_format">Seconds</string>
     <string name="hours_minutes_format">Hours and minutes</string>
     <string name="tick_sound_mode">Play tick sound when</string>
-    <string name="never_tick">Never</string>
+    <string name="tick_never">Never</string>
     <string name="animation">Animation</string>
     <string name="digits_animation">Digits animation</string>
     <string name="gestures">Gestures</string>
@@ -49,6 +48,10 @@
     <string name="gestures_disabled_summary">Gestures disabled</string>
     <string name="fullscreen_disabled_summary">Always show system bars</string>
     <string name="fullscreen_enabled_summary">Hide system bars in inactive mode</string>
+    <string name="time_separators">Time separators</string>
+    <string name="animation_enabled">Enable animation</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
 
     <string-array name="content_layout_names">
         <item>Digital simple</item>
@@ -124,7 +127,6 @@
         <item>Fade through</item>
         <item>Grow out</item>
         <item>Shrink out</item>
-        <item>Disabled</item>
     </string-array>
 
 </resources>

@@ -21,6 +21,7 @@ import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
 import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
@@ -55,10 +56,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val animations = Animations()
     private val handler = Handler(Looper.getMainLooper())
-    private val timerSecond = HandlerTimer(handler, 1000, this::onTimer)
+    private val timer = HandlerTimer(handler, 500, this::onTimer)
     private val amPmFormat = defaultDatetimeFormat("a")
     private val rootView get() = requireView() as ConstraintLayout
-    private var currentTime = Date()
+    private var halfTick = 0
 
     private lateinit var contentView: ViewGroup
     private lateinit var settingsContainer: View
@@ -158,7 +159,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                         settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING)
             )
             setSecondsEnabled(settings.getString(PREF_SECONDS_FORMAT).isNotEmpty())
-//            setAnimated(false)
+            setAnimated(settings.getBoolean(PREF_ANIMATION_ON))
         }
     }
 
@@ -254,7 +255,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onPause() {
-        timerSecond.enabled = false
+        timer.enabled = false
         autoInactivateControl.onPause()
         floatControl.onPause()
         super.onPause()
@@ -264,7 +265,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         super.onResume()
         floatControl.onResume()
         autoInactivateControl.onResume()
-        timerSecond.enabled = true
+        timer.enabled = true
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
@@ -288,6 +289,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     updateDateView()
                 PREF_DIGITS_ANIMATION ->
                     updateDigitsAnimation()
+                PREF_ANIMATION_ON ->
+                    enableAnimation(settings.getBoolean(key))
                 PREF_FULLSCREEN_ENABLED ->
                     fullscreenControl.setEnabled(getBoolean(key))
                 PREF_CONTENT_SCALE ->
@@ -311,6 +314,20 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             setMode(MODE_INACTIVE, true)
             true
         } else false
+    }
+
+    private fun onTimer() {
+        if (halfTick > 7) halfTick = 0
+        halfTick++
+
+        // Log.v(_tag, "On timer: $halfTick")
+
+        if (halfTick % 2 == 0) {
+            updateContentViewData()
+        }
+
+        blinkAnimator.onTimer(halfTick)
+        soundControl.onTimer(halfTick)
     }
 
     private fun setMode(@Mode newMode: Int, animate: Boolean) {
@@ -355,16 +372,19 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun updateContentViewData() {
-        hoursView.setTextAnimated(hoursFormat.format(currentTime))
-        minutesView.setTextAnimated(minutesFormat.format(currentTime))
+        val time = Date()
+        val animated = settings.getBoolean(PREF_ANIMATION_ON)
+
+        hoursView.setText(hoursFormat.format(time), animated)
+        minutesView.setText(minutesFormat.format(time), animated)
         if (secondsView.visibility == VISIBLE) {
-            secondsView.setTextAnimated(secondsFormat.format(currentTime))
+            secondsView.setText(secondsFormat.format(time), animated)
         }
         if (dateView.visibility == VISIBLE) {
-            dateView.setTextAnimated(dateFormat.format(currentTime))
+            dateView.setText(dateFormat.format(time), animated)
         }
         if (amPmMarkerView.visibility == VISIBLE) {
-            amPmMarkerView.text = amPmFormat.format(currentTime)
+            amPmMarkerView.text = amPmFormat.format(time)
         }
     }
 
@@ -421,15 +441,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         dateView.setTextAnimatorRes(resId)
     }
 
-    private fun onTimer() {
-//        currentTime = Date(currentTime.time + 10000) /* debug time */
-        currentTime = Date()
-
-//        Log.v(_tag, "On timer: $currentTime")
-
-        updateContentViewData()
-        blinkAnimator.onTimer(currentTime)
-        soundControl.onTimer(currentTime)
+    private fun enableAnimation(enable: Boolean) {
+        blinkAnimator.setAnimated(enable)
     }
 
     @IntDef(value = [MODE_ACTIVE, MODE_INACTIVE, MODE_EDITOR])

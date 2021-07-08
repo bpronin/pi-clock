@@ -12,6 +12,7 @@ import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ABOUT
+import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
@@ -25,8 +26,6 @@ import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_RULES
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
-import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TOP_SETTING
 import com.bopr.piclock.Settings.Companion.SHARED_PREFERENCES_NAME
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
@@ -98,10 +97,10 @@ class SettingsFragment : CustomPreferenceFragment(),
             PREF_TICK_SOUND -> updateTickSoundView()
             PREF_TICK_RULES -> updateTickModeView()
             PREF_TIME_FORMAT -> updateTimeFormatView()
-            PREF_TIME_SEPARATORS_VISIBLE -> updateSeparatorsViews()
             PREF_DIGITS_ANIMATION -> updateDigitsAnimationViews()
             PREF_GESTURES_ENABLED -> updateGesturesViews()
             PREF_FULLSCREEN_ENABLED -> updateFullscreenViews()
+            PREF_ANIMATION_ON -> updateAnimationOnView()
         }
     }
 
@@ -119,11 +118,6 @@ class SettingsFragment : CustomPreferenceFragment(),
             val value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
         }
-    }
-
-    private fun updateSeparatorsViews() {
-        requirePreference(PREF_TIME_SEPARATORS_BLINKING).isEnabled =
-            settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE)
     }
 
     private fun updateFloatIntervalView() {
@@ -151,14 +145,22 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateTickModeView() {
         (requirePreference(PREF_TICK_RULES) as MultiSelectListPreference).apply {
-            val titles = mutableListOf<String>()
-            for (item in settings.getStringSet(key)) {
-                titles.add(entries[entryValues.indexOf(item)].toString())
+            val items = settings.getStringSet(key)
+
+            summary = when (items.size) {
+                entries.size ->
+                    getString(R.string.tick_always)
+                0 ->
+                    getString(R.string.tick_never)
+                else -> {
+                    val titles = mutableListOf<String>()
+                    for (item in items) {
+                        titles.add(entries[entryValues.indexOf(item)].toString())
+                    }
+                    titles.sorted().joinToString(", ")
+                }
             }
-            summary = if (titles.isNotEmpty())
-                titles.sorted().joinToString(", ")
-            else
-                getString(R.string.never_tick)
+
         }
     }
 
@@ -259,6 +261,18 @@ class SettingsFragment : CustomPreferenceFragment(),
             )
         }
     }
+
+    private fun updateAnimationOnView() {
+        (requirePreference(PREF_ANIMATION_ON) as SwitchPreference).apply {
+            summary = getString(
+                if (settings.getBoolean(key))
+                    R.string.enabled
+                else
+                    R.string.disabled
+            )
+        }
+    }
+
 
     private inner class AboutPreferenceClickListener : OnPreferenceClickListener {
 
