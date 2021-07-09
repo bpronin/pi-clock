@@ -1,7 +1,7 @@
 package com.bopr.piclock
 
-import android.animation.Animator
 import android.animation.AnimatorInflater.loadAnimator
+import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Handler
 import android.util.Log
@@ -60,24 +60,22 @@ internal class FloatControl(private val view: View, private val handler: Handler
         }
 
     private val viewWrapper = ViewWrapper()
-    private lateinit var floatAnimator: Animator
-    private lateinit var homeAnimator: Animator
+    private lateinit var floatAnimator: AnimatorSet
+    private lateinit var homeAnimator: AnimatorSet
 
     lateinit var onBusy: (busy: Boolean) -> Unit
 
-    private fun Animator.setValues(endX: Float, endY: Float) {
-        /* NOTE: it is not possible to reach PropertyHolder's values initialized in XML so we use
-           property names as markers here */
+    private fun AnimatorSet.setValues(endX: Float, endY: Float) {
+        /* NOTE: it's not possible to reach PropertyHolder's values initialized in XML nor identify
+         animators with ids or tags so we use property names as markers here */
         forEachChild { child ->
             if (child is ObjectAnimator) {
                 child.apply {
                     when (propertyName) {
                         "xCurrentToEnd" -> setFloatValues(view.x, endX)
                         "yCurrentToEnd" -> setFloatValues(view.y, endY)
-                        "alphaCurrentTo00" -> setFloatValues(view.alpha, 0f)
-                        "alpha00ToCurrent" -> setFloatValues(0f, view.alpha)
-                        "alphaCurrentTo01" -> setFloatValues(view.alpha, 0.1f)
-                        "alpha01ToCurrent" -> setFloatValues(0.1f, view.alpha)
+                        "alphaCurrentToZero" -> setFloatValues(view.alpha, 0f)
+                        "alphaZeroToCurrent" -> setFloatValues(0f, view.alpha)
                     }
                 }
             }
@@ -192,8 +190,8 @@ internal class FloatControl(private val view: View, private val handler: Handler
     }
 
     fun setAnimator(resId: Int) {
-        floatAnimator = loadAnimator(view.context, resId)
-        homeAnimator = loadAnimator(view.context, R.animator.float_home)
+        floatAnimator = loadAnimator(view.context, resId) as AnimatorSet
+        homeAnimator = loadAnimator(view.context, R.animator.float_home) as AnimatorSet
     }
 
     fun setAnimated(value: Boolean) {
@@ -258,10 +256,8 @@ internal class FloatControl(private val view: View, private val handler: Handler
 
         var xCurrentToEnd by ::x
         var yCurrentToEnd by ::y
-        var alphaCurrentTo00 by ::alpha
-        var alpha00ToCurrent by ::alpha
-        var alphaCurrentTo01 by ::alpha
-        var alpha01ToCurrent by ::alpha
+        var alphaCurrentToZero by ::alpha
+        var alphaZeroToCurrent by ::alpha
 
     }
 }

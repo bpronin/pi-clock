@@ -17,12 +17,12 @@
         <objectAnimator
             android:duration="2000"
             android:interpolator="@android:anim/accelerate_interpolator"
-            android:propertyName="alphaCurrentTo00" />
+            android:propertyName="alphaCurrentToZero" />
 
         <objectAnimator
             android:duration="2000"
             android:interpolator="@android:anim/accelerate_interpolator"
-            android:propertyName="alpha00ToCurrent"
+            android:propertyName="alphaZeroToCurrent"
             android:startOffset="4000" />
     </set>
 

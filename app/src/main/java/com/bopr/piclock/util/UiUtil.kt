@@ -2,7 +2,6 @@ package com.bopr.piclock.util
 
 import android.animation.Animator
 import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.RectF
@@ -10,7 +9,6 @@ import android.text.InputType
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import androidx.core.view.forEach
 import com.bopr.piclock.R
 
 /**
@@ -18,15 +16,15 @@ import com.bopr.piclock.R
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-fun ViewGroup.forEachDeep(action: (view: View) -> Unit) {
-    forEach { view ->
-        if (view is ViewGroup) {
-            view.forEachDeep(action)
-        } else {
-            action(view)
-        }
-    }
-}
+//fun ViewGroup.forEachDeep(action: (view: View) -> Unit) {
+//    forEach { view ->
+//        if (view is ViewGroup) {
+//            view.forEachDeep(action)
+//        } else {
+//            action(view)
+//        }
+//    }
+//}
 
 fun RectF.scaled(factorX: Float, factorY: Float): RectF {
     if (factorX != 1f && factorY != 1f) {
@@ -68,48 +66,25 @@ fun Context.passwordBox(message: String, onPositiveClose: (String) -> Unit) {
     }.show()
 }
 
-fun AnimatorSet.findChildByProperty(propertyName: String): ObjectAnimator? {
+//fun AnimatorSet.findChildByProperty(propertyName: String): ObjectAnimator? {
+//    for (child in childAnimations) {
+//        if (child is AnimatorSet) {
+//            child.findChildByProperty(propertyName)?.run {
+//                return this
+//            }
+//        } else if (child is ObjectAnimator && child.propertyName == propertyName) {
+//            return child
+//        }
+//    }
+//    return null
+//}
+
+fun AnimatorSet.forEachChild(action: (Animator) -> Unit) {
     for (child in childAnimations) {
         if (child is AnimatorSet) {
-            child.findChildByProperty(propertyName)?.run {
-                return this
-            }
-        } else if (child is ObjectAnimator && child.propertyName == propertyName) {
-            return child
+            child.forEachChild(action)
+        } else {
+            action(child)
         }
     }
-    return null
-}
-
-fun Animator.forEachChild(action: (Animator) -> Unit) {
-    if (this is AnimatorSet) {
-        for (child in childAnimations) {
-            if (child is AnimatorSet) {
-                child.forEachChild(action)
-            } else {
-                action(child)
-            }
-        }
-    } else {
-        action(this)
-    }
-}
-
-fun AnimatorSet.collectChildrenByProperty(
-    propertyName: String,
-    list: MutableCollection<ObjectAnimator>
-) {
-    for (child in childAnimations) {
-        if (child is AnimatorSet) {
-            child.collectChildrenByProperty(propertyName, list)
-        } else if (child is ObjectAnimator && child.propertyName == propertyName) {
-            list.add(child)
-        }
-    }
-}
-
-fun AnimatorSet.findChildrenByProperty(propertyName: String): List<ObjectAnimator> {
-    val list = mutableListOf<ObjectAnimator>()
-    collectChildrenByProperty(propertyName, list)
-    return list
 }
