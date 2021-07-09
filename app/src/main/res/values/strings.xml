@@ -1,6 +1,6 @@
 <resources>
     <string name="about_label">About app</string>
-    <string name="about_summary">%s-%s</string>
+    <string name="about_summary">%1$s-%2$s</string>
     <string name="about_version">Version</string>
     <string name="animation">Animation</string>
     <string name="animation_enabled">Enable animation</string>
