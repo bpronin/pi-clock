@@ -89,6 +89,12 @@
             android:key="digits_animation"
             android:title="@string/digits_animation" />
 
+        <ListPreference
+            android:entries="@array/float_animation_names"
+            android:entryValues="@array/float_animation_values"
+            android:key="float_animation"
+            android:title="@string/float_animation" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/sound">

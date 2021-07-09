@@ -52,6 +52,7 @@
     <string name="animation_enabled">Enable animation</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
+    <string name="float_animation">Floating animation</string>
 
     <string-array name="content_layout_names">
         <item>Digital simple</item>
@@ -127,6 +128,11 @@
         <item>Fade through</item>
         <item>Grow out</item>
         <item>Shrink out</item>
+    </string-array>
+
+    <string-array name="float_animation_names">
+        <item>Move</item>
+        <item>Fade and move</item>
     </string-array>
 
 </resources>

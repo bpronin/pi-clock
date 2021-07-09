@@ -19,6 +19,7 @@ import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
+import com.bopr.piclock.Settings.Companion.PREF_FLOAT_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_GESTURES_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_MUTED_BRIGHTNESS
@@ -97,10 +98,11 @@ class SettingsFragment : CustomPreferenceFragment(),
             PREF_TICK_SOUND -> updateTickSoundView()
             PREF_TICK_RULES -> updateTickModeView()
             PREF_TIME_FORMAT -> updateTimeFormatView()
-            PREF_DIGITS_ANIMATION -> updateDigitsAnimationViews()
-            PREF_GESTURES_ENABLED -> updateGesturesViews()
-            PREF_FULLSCREEN_ENABLED -> updateFullscreenViews()
+            PREF_DIGITS_ANIMATION -> updateDigitsAnimationView()
+            PREF_GESTURES_ENABLED -> updateGesturesView()
+            PREF_FULLSCREEN_ENABLED -> updateFullscreenView()
             PREF_ANIMATION_ON -> updateAnimationOnView()
+            PREF_FLOAT_ANIMATION -> updateFloatAnimationView()
         }
     }
 
@@ -113,8 +115,15 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateDigitsAnimationViews() {
+    private fun updateDigitsAnimationView() {
         (requirePreference(PREF_DIGITS_ANIMATION) as ListPreference).apply {
+            val value = settings.getString(key)
+            summary = entries[findIndexOfValue(value)]
+        }
+    }
+
+    private fun updateFloatAnimationView() {
+        (requirePreference(PREF_FLOAT_ANIMATION) as ListPreference).apply {
             val value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
         }
@@ -240,7 +249,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateFullscreenViews() {
+    private fun updateFullscreenView() {
         (requirePreference(PREF_FULLSCREEN_ENABLED) as SwitchPreference).apply {
             summary = getString(
                 if (settings.getBoolean(key))
@@ -251,7 +260,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateGesturesViews() {
+    private fun updateGesturesView() {
         (requirePreference(PREF_GESTURES_ENABLED) as SwitchPreference).apply {
             summary = getString(
                 if (settings.getBoolean(key))
@@ -272,7 +281,6 @@ class SettingsFragment : CustomPreferenceFragment(),
             )
         }
     }
-
 
     private inner class AboutPreferenceClickListener : OnPreferenceClickListener {
 

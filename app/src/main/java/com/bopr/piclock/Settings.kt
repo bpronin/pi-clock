@@ -83,6 +83,12 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
                 getResName(R.animator.text_slide_vertical_bounce),
                 R.array.digits_animation_values
             )
+
+            putStringResourceOptional(
+                PREF_FLOAT_ANIMATION,
+                getResName(R.animator.float_move_fade),
+                R.array.float_animation_values
+            )
         }
     }
 
@@ -159,6 +165,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_TIME_FORMAT = "time_format"
         const val PREF_TIME_SEPARATORS_BLINKING = "time_separators_blinking"
         const val PREF_TIME_SEPARATORS_VISIBLE = "time_separators_visible"
+        const val PREF_FLOAT_ANIMATION = "float_animation"
     }
 
 }

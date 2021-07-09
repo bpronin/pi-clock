@@ -28,6 +28,7 @@ import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
+import com.bopr.piclock.Settings.Companion.PREF_FLOAT_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_GESTURES_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_MUTED_BRIGHTNESS
@@ -40,6 +41,7 @@ import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.HandlerTimer
 import com.bopr.piclock.util.defaultDatetimeFormat
+import com.bopr.piclock.util.getResAnimator
 import com.bopr.piclock.util.getResId
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.text.DateFormat
@@ -92,8 +94,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val floatControl by lazy {
         FloatControl(contentView, handler).apply {
             setInterval(settings.getLong(PREF_CONTENT_FLOAT_INTERVAL))
-//            setAnimator(R.animator.float_move)
-            setAnimator(R.animator.float_move_fade)
+            setAnimator(getResAnimator(settings.getString(PREF_FLOAT_ANIMATION)))
+            setAnimated(settings.getBoolean(PREF_ANIMATION_ON))
             onBusy = { busy ->
                 soundControl.onFloatView(busy)
             }
@@ -303,10 +305,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     soundControl.setSound(getString(key))
                 PREF_TICK_RULES ->
                     soundControl.setRules(getStringSet(key))
-                PREF_CONTENT_FLOAT_INTERVAL ->
-                    floatControl.setInterval(getLong(key))
                 PREF_AUTO_INACTIVATE_DELAY ->
                     autoInactivateControl.setDelay(getLong(key))
+                PREF_CONTENT_FLOAT_INTERVAL ->
+                    floatControl.setInterval(getLong(key))
+                PREF_FLOAT_ANIMATION ->
+                    floatControl.setAnimator(getResAnimator(getString(key)))
             }
         }
     }
@@ -435,7 +439,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun updateDigitsAnimation() {
-        val resId = getResId("animator", settings.getString(PREF_DIGITS_ANIMATION))
+        val resId = getResAnimator(settings.getString(PREF_DIGITS_ANIMATION))
 
         hoursView.setTextAnimator(resId)
         minutesView.setTextAnimator(resId)
@@ -445,6 +449,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun enableAnimation(enable: Boolean) {
         blinkAnimator.setAnimated(enable)
+        floatControl.setAnimated(enable)
     }
 
     @IntDef(value = [MODE_ACTIVE, MODE_INACTIVE, MODE_EDITOR])

@@ -1,6 +1,8 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:ordering="together">
 
+    <!--  NOTE: all 'valueTo' and 'valueFrom' set here for custom properties will be ignored -->
+
     <set android:ordering="together">
         <objectAnimator
             android:duration="8000"

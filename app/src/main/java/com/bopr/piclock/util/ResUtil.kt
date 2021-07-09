@@ -28,6 +28,10 @@ fun Fragment.getResId(defType: String, resName: String): Int {
     return requireContext().getResId(defType, resName)
 }
 
+fun Fragment.getResAnimator(resName: String): Int {
+    return getResId("animator", resName)
+}
+
 /**
  * Returns name of resource ID (short).
  */

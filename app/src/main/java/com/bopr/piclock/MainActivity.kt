@@ -43,8 +43,6 @@ class MainActivity : BaseActivity<MainFragment>(MainFragment::class.java) {
 
         intent.getStringExtra("target")?.also { target ->
             when (target) {
-                "settings" ->
-                    startActivity(Intent(this, SettingsActivity::class.java))
                 "debug" -> {
                     intent.getStringExtra("pwd")?.also { password ->
                         if (getString(R.string.debug_sha) == sha512(password)) {
