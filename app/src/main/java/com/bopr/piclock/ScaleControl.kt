@@ -27,7 +27,7 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
 
     private val _tag = "ScaleControl"
 
-    private val detector by lazy {
+    private val gestureDetector by lazy {
         ScaleGestureDetector(view.context, this)
     }
 
@@ -134,7 +134,7 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
      */
     fun onTouch(event: MotionEvent): Boolean {
         if (mode == MODE_ACTIVE || mode == MODE_INACTIVE) {
-            detector.onTouchEvent(event)
+            gestureDetector.onTouchEvent(event)
 
             /* this is to prevent of calling onClick if pinched */
             when (event.action) {

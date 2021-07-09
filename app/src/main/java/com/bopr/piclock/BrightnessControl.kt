@@ -33,7 +33,7 @@ internal class BrightnessControl : SimpleOnGestureListener() {
 
     private val _tag = "BrightnessControl"
 
-    private val detector by lazy {
+    private val gestureDetector by lazy {
         GestureDetectorCompat(view.context, this)
     }
 
@@ -46,10 +46,14 @@ internal class BrightnessControl : SimpleOnGestureListener() {
         }
     }
 
+    private var illuminanceDetector: IlluminanceDetector? = null
+
     private lateinit var view: View
     private var scaleFactor = 0f
     private var mutedAlpha = MIN_ALPHA
+    private var illuminance = MAX_ILLUMINANCE
     private var swiping = false
+    private var autoBrightness = false
 
     @Mode
     private var mode: Int = MODE_INACTIVE
@@ -109,10 +113,54 @@ internal class BrightnessControl : SimpleOnGestureListener() {
         }
     }
 
+    private fun computeMutedAlpha(): Float {
+        return mutedAlpha //todo: + illuminance
+    }
+
     private fun updateViewAlpha() {
-        view.alpha = if (mode == MODE_INACTIVE || mode == MODE_EDITOR) mutedAlpha else MAX_ALPHA
+        view.alpha = if (mode == MODE_INACTIVE || mode == MODE_EDITOR) {
+            computeMutedAlpha()
+        } else {
+            MAX_ALPHA
+        }
 
         Log.v(_tag, "View alpha set to: ${view.alpha}")
+    }
+
+    fun destroy() {
+        illuminanceDetector?.destroy()
+    }
+
+    fun setView(value: ViewGroup) {
+        view = value
+    }
+
+    fun setAutoBrightness(value: Boolean) {
+        autoBrightness = value
+
+        if (autoBrightness) {
+            illuminanceDetector = IlluminanceDetector(view.context).apply {
+                onIlluminanceChange = {
+                    illuminance = it
+                    updateViewAlpha()
+                }
+            }
+        } else {
+            illuminanceDetector?.destroy()
+            illuminanceDetector = null
+            illuminance = MAX_ILLUMINANCE
+        }
+
+        updateViewAlpha()
+
+        Log.v(_tag, "Auto-brightness set to: $autoBrightness")
+    }
+
+    fun setMutedBrightness(brightness: Int) {
+        mutedAlpha = toDecimal(brightness)
+        updateViewAlpha()
+
+        Log.v(_tag, "Muted alpha set to: $mutedAlpha")
     }
 
     /**
@@ -120,7 +168,7 @@ internal class BrightnessControl : SimpleOnGestureListener() {
      */
     fun onTouch(event: MotionEvent): Boolean {
         if (mode == MODE_INACTIVE || mode == MODE_ACTIVE) {
-            detector.onTouchEvent(event)
+            gestureDetector.onTouchEvent(event)
 
             /* this is to prevent of calling onClick if scrolled */
             when (event.action) {
@@ -136,10 +184,6 @@ internal class BrightnessControl : SimpleOnGestureListener() {
         return false
     }
 
-    fun setView(view: ViewGroup) {
-        this.view = view
-    }
-
     fun onModeChanged(@Mode mode: Int, animate: Boolean) {
         this.mode = mode
 
@@ -148,19 +192,11 @@ internal class BrightnessControl : SimpleOnGestureListener() {
                 MODE_ACTIVE ->
                     fade(MAX_ALPHA) { updateViewAlpha() }
                 MODE_INACTIVE, MODE_EDITOR ->
-                    fade(mutedAlpha) { updateViewAlpha() }
+                    fade(computeMutedAlpha()) { updateViewAlpha() }
             }
         } else {
             updateViewAlpha()
         }
-    }
-
-    fun setMutedBrightness(brightness: Int) {
-        mutedAlpha = toDecimal(brightness)
-
-        Log.d(_tag, "Muted alpha set to: $mutedAlpha")
-
-        updateViewAlpha()
     }
 
     companion object {
@@ -168,6 +204,8 @@ internal class BrightnessControl : SimpleOnGestureListener() {
         const val MIN_BRIGHTNESS = 10
         const val MAX_BRIGHTNESS = 100
 
+        private const val MIN_ILLUMINANCE = 0f
+        private const val MAX_ILLUMINANCE = 1f
         private val MIN_ALPHA = toDecimal(MIN_BRIGHTNESS)
         private val MAX_ALPHA = toDecimal(MAX_BRIGHTNESS)
     }

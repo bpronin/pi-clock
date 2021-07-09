@@ -22,6 +22,7 @@ import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
+import com.bopr.piclock.Settings.Companion.PREF_AUTO_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
@@ -234,11 +235,16 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         settings.registerOnSharedPreferenceChangeListener(this)
 
-        brightnessControl.setView(contentView)
-        brightnessControl.setMutedBrightness(settings.getInt(PREF_MUTED_BRIGHTNESS))
+        brightnessControl.apply {
+            setView(contentView)
+            setAutoBrightness(settings.getBoolean(PREF_AUTO_BRIGHTNESS))
+            setMutedBrightness(settings.getInt(PREF_MUTED_BRIGHTNESS))
+        }
 
-        scaleControl.setView(contentView)
-        scaleControl.setScale(settings.getInt(PREF_CONTENT_SCALE), false)
+        scaleControl.apply {
+            setView(contentView)
+            setScale(settings.getInt(PREF_CONTENT_SCALE), false)
+        }
 
         fullscreenControl.setEnabled(settings.getBoolean(PREF_FULLSCREEN_ENABLED))
     }
@@ -254,6 +260,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         settings.unregisterOnSharedPreferenceChangeListener(this)
         handler.removeCallbacksAndMessages(null)
         soundControl.stop()
+        brightnessControl.destroy()
         scaleControl.destroy()
         super.onDestroy()
     }
