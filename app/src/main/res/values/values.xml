@@ -82,6 +82,7 @@
 
     <string-array name="float_animation_values" translatable="false">
         <item>float_move</item>
+        <item>float_fade</item>
         <item>float_move_fade</item>
     </string-array>
 

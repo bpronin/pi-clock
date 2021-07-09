@@ -1,30 +1,24 @@
-<set xmlns:android="http://schemas.android.com/apk/res/android"
-    android:ordering="together">
+<set xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--  NOTE: all 'valueTo' and 'valueFrom' set here for custom properties will be ignored -->
 
-    <set android:ordering="together">
-        <objectAnimator
-            android:duration="8000"
-            android:propertyName="xCurrentToEnd" />
+    <objectAnimator
+        android:duration="8000"
+        android:propertyName="xCurrentToEnd" />
 
-        <objectAnimator
-            android:duration="8000"
-            android:propertyName="yCurrentToEnd" />
-    </set>
+    <objectAnimator
+        android:duration="8000"
+        android:propertyName="yCurrentToEnd" />
 
-    <set android:ordering="sequentially">
-        <objectAnimator
-            android:duration="2000"
-            android:interpolator="@android:anim/accelerate_interpolator"
-            android:propertyName="alphaCurrentToZero" />
+    <objectAnimator
+        android:duration="3000"
+        android:interpolator="@android:anim/accelerate_interpolator"
+        android:propertyName="alphaCurrentToZero" />
 
-        <objectAnimator
-            android:duration="2000"
-            android:interpolator="@android:anim/accelerate_interpolator"
-            android:propertyName="alphaZeroToCurrent"
-            android:startOffset="4000" />
-    </set>
-
+    <objectAnimator
+        android:duration="3000"
+        android:interpolator="@android:anim/accelerate_interpolator"
+        android:propertyName="alphaZeroToCurrent"
+        android:startOffset="5000" />
 
 </set>

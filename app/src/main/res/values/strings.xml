@@ -132,6 +132,7 @@
 
     <string-array name="float_animation_names">
         <item>Move</item>
+        <item>Fade</item>
         <item>Fade and move</item>
     </string-array>
 
