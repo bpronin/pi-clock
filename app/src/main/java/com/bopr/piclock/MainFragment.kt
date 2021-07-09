@@ -299,7 +299,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 PREF_ANIMATION_ON ->
                     enableAnimation(settings.getBoolean(key))
                 PREF_FULLSCREEN_ENABLED ->
-                    fullscreenControl.setEnabled(getBoolean(key))
+                    updateFullscreenControl(getBoolean(key))
                 PREF_CONTENT_SCALE ->
                     scaleControl.setScale(getInt(key), true)
                 PREF_MUTED_BRIGHTNESS ->
@@ -453,6 +453,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun enableAnimation(enable: Boolean) {
         blinkAnimator.setAnimated(enable)
         floatControl.setAnimated(enable)
+    }
+
+    private fun updateFullscreenControl(enabled: Boolean) {
+        fullscreenControl.setEnabled(enabled)
+        layoutControl.onFullscreenEnabled(enabled)
     }
 
     @IntDef(value = [MODE_ACTIVE, MODE_INACTIVE, MODE_EDITOR])

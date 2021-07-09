@@ -34,11 +34,12 @@ internal class LayoutControl(
 
     private val _tag = "LayoutControl"
 
-    private val fabMargin = rootView.resources.fabMargin
     private val screenOrientation get() = rootView.resources.configuration.orientation
     private val infoView get() = rootView.findViewById<View>(R.id.info_view)
     private val settingsButton get() = rootView.findViewById<View>(R.id.settings_button)
     private val settingsContainer get() = rootView.findViewById<View>(R.id.settings_container)
+    private val fabMargin = rootView.resources.fabMargin
+    private var wantRecreateActivity = false
 
     private val mainConstraints = createDefaultConstraints().apply {
         R.id.settings_button.let {
@@ -97,11 +98,16 @@ internal class LayoutControl(
                     .commit()
 
                 Log.d(_tag, "Removed settings fragment")
+
+                if (wantRecreateActivity) {
+                    wantRecreateActivity = false
+                    activity?.recreate()
+                }
             }
         }
+
     }
 
-    //todo: fix: does not work when fullscreen setting is disabled
     private fun adjustMargins(windowInsets: WindowInsetsCompat) {
         Log.d(_tag, "Adjusting margins")
 
@@ -148,6 +154,10 @@ internal class LayoutControl(
                 settingsContainer.visibility = VISIBLE
             }
         }
+    }
+
+    fun onFullscreenEnabled(enabled: Boolean) {
+        wantRecreateActivity = !enabled
     }
 
     companion object {
