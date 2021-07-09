@@ -42,8 +42,6 @@ import java.util.*
 class SettingsFragment : CustomPreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    //todo: add: tick sound dialog with preview
-
     private lateinit var settings: Settings
 
     override fun onCreate(savedInstanceState: Bundle?) {

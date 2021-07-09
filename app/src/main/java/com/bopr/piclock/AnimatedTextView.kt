@@ -51,7 +51,6 @@ class AnimatedTextView : FrameLayout {
     }
 
     private fun resetViews() {
-        // todo: should not the animators be responsible for it ?
         view.apply {
             alpha = 1f
             scaleX = 1f
@@ -78,7 +77,7 @@ class AnimatedTextView : FrameLayout {
     fun setTextAnimator(resId: Int) {
         val animator = if (resId > 0) loadAnimator(context, resId) as AnimatorSet else null
         animator?.apply {
-            if (childAnimations.size != 2) throw IllegalArgumentException("Invalid animation set")
+            if (childAnimations.size < 2) throw IllegalArgumentException("Invalid animation set")
         }
 
         textAnimator?.cancel()

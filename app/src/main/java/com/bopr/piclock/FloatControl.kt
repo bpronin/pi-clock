@@ -24,8 +24,7 @@ import java.lang.Math.random
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class FloatControl(private val view: View, private val handler: Handler) {
-    //todo: morf content a little when starting abd stopping (like it made of a jelly)
-    //todo: animatiol as if content is balloon and there is a fan at the bottom
+
     private val _tag = "FloatControl"
 
     private var interval = 0L
