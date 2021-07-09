@@ -56,7 +56,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val _tag = "MainFragment"
 
-    private val animations = Animations()
     private val handler = Handler(Looper.getMainLooper())
     private val timer = HandlerTimer(handler, 500, this::onTimer)
     private val amPmFormat = defaultDatetimeFormat("a")
@@ -112,7 +111,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             onSwipeStart = {
                 floatControl.pause()
                 setMode(MODE_INACTIVE, true)
-                animations.showInfo(infoView) //todo: replace with AnimatedText
+                infoView.fadeInShow()
             }
             onSwipe = { brightness ->
                 val resId = when (brightness) {
@@ -123,7 +122,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 infoView.text = getString(resId, brightness)
             }
             onSwipeEnd = { brightness ->
-                animations.hideInfo(infoView)
+                infoView.fadeOutHide()
                 floatControl.resume()
                 settings.update { putInt(PREF_MUTED_BRIGHTNESS, brightness) }
             }
@@ -134,7 +133,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         ScaleControl().apply {
             onPinchStart = {
                 floatControl.pause()
-                animations.showInfo(infoView)
+                infoView.fadeInShow()
             }
             onPinch = { scale ->
                 val resId = when (scale) {
@@ -145,7 +144,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 infoView.text = getString(resId, scale)
             }
             onPinchEnd = { scale ->
-                animations.hideInfo(infoView)
+                infoView.fadeOutHide()
                 floatControl.resume()
                 settings.update { putInt(PREF_CONTENT_SCALE, scale) }
             }
