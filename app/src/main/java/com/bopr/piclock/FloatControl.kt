@@ -237,42 +237,31 @@ internal class FloatControl(private val view: View, private val handler: Handler
 
     @Suppress("unused")
     private inner class ViewWrapper {
-        //todo: delegates ?
-        var xCurrentToEnd
+
+        var x
             get() = view.x
             set(value) {
                 view.x = value
             }
 
-        var yCurrentToEnd
+        var y
             get() = view.y
             set(value) {
                 view.y = value
             }
 
-        var alphaCurrentTo00
+        var alpha
             get() = view.alpha
             set(value) {
                 view.alpha = value
             }
 
-        var alpha00ToCurrent
-            get() = view.alpha
-            set(value) {
-                view.alpha = value
-            }
-
-        var alphaCurrentTo01
-            get() = view.alpha
-            set(value) {
-                view.alpha = value
-            }
-
-        var alpha01ToCurrent
-            get() = view.alpha
-            set(value) {
-                view.alpha = value
-            }
+        var xCurrentToEnd by ::x
+        var yCurrentToEnd by ::y
+        var alphaCurrentTo00 by ::alpha
+        var alpha00ToCurrent by ::alpha
+        var alphaCurrentTo01 by ::alpha
+        var alpha01ToCurrent by ::alpha
 
     }
 }
