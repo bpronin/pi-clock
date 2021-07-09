@@ -306,7 +306,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
                 context?.run {
                     passwordBox("Enter some secret code") {
-                        if (getString(R.string.debug_sha) == sha512(it)) {
+                        if (getString(R.string.developer_sha) == sha512(it)) {
                             startActivity(Intent(context, DebugActivity::class.java))
                         } else {
                             messageBox("Are you really trying to hack the clock app?")

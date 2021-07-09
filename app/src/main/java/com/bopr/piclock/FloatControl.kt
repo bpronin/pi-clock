@@ -24,22 +24,24 @@ import java.lang.Math.random
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class FloatControl(private val view: View, private val handler: Handler) {
-
+    //todo: morf content a little when starting abd stopping (like it made of a jelly)
     private val _tag = "FloatControl"
 
     private var interval = 0L
     private var animated: Boolean = true
-    private var busy = false
+    private var animating = false
         set(value) {
             if (field != value) {
                 field = value
-                onBusy(field)
+                onAnimate(field)
             }
         }
 
     private val floatTask = Runnable {
-        if (enabled) floatSomewhere {
-            scheduleTask(if (animated) 0 else 1000)
+        if (enabled && view.isLaidOut) {
+            floatSomewhere {
+                scheduleTask(if (isAnimationOn()) 0 else 1000)
+            }
         }
     }
 
@@ -50,40 +52,24 @@ internal class FloatControl(private val view: View, private val handler: Handler
                 if (field) {
                     Log.d(_tag, "Enabled")
 
-                    scheduleTask(1000) /* let a second to relayout if needed */
+                    scheduleTask(1000) /* let view a second to relayout if needed */
                 } else {
                     Log.d(_tag, "Disabled")
 
                     handler.removeCallbacks(floatTask)
-                    floatAnimator.cancel()
-                    homeAnimator.cancel()
+                    cancelAnimators()
                 }
             }
         }
 
-    private val viewWrapper = ViewWrapper()
-    private lateinit var floatAnimator: Animator
-    private lateinit var homeAnimator: Animator
+    private val viewWrapper by lazy { ViewWrapper() }
 
-    lateinit var onBusy: (busy: Boolean) -> Unit
+    private var floatAnimator: Animator? = null
+    private var homeAnimator: Animator? = null
 
-    private fun Animator.setValues(endX: Float, endY: Float, startAlpha: Float) {
-        /* NOTE: it's not possible to reach PropertyHolder's values initialized in XML nor identify
-         animators with ids or tags so we use property names as markers here */
-        forEachChild { child ->
-            if (child is ObjectAnimator) {
-                child.apply {
-                    when (propertyName) {
-                        "xCurrentToEnd" -> setFloatValues(view.x, endX)
-                        "yCurrentToEnd" -> setFloatValues(view.y, endY)
-                        "alphaCurrentToZero" -> setFloatValues(startAlpha, 0f)
-                        "alphaZeroToCurrent" -> setFloatValues(0f, startAlpha)
-                    }
-                }
-            }
-            setTarget(viewWrapper)
-        }
-    }
+    lateinit var onAnimate: (animating: Boolean) -> Unit
+
+    private fun isAnimationOn() = animated && floatAnimator != null && homeAnimator != null
 
     private fun scheduleTask(startDelay: Long = 0) {
         if (enabled) {
@@ -99,10 +85,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
     }
 
     private fun floatSomewhere(onEnd: () -> Unit) {
-        if (!view.isLaidOut) {
-            onEnd()
-            return
-        }
+        Log.v(_tag, "Moving somewhere")
 
         val alpha = view.alpha
         val pr = view.parentView.scaledRect
@@ -114,42 +97,11 @@ internal class FloatControl(private val view: View, private val handler: Handler
         val x = random().toFloat() * dw + dx
         val y = random().toFloat() * dh + dy
 
-        if (animated) {
-            homeAnimator.cancel()
-            floatAnimator.apply {
-                cancel()
-                removeAllListeners()
-
-                setValues(x, y, alpha)
-                doOnStart {
-                    Log.v(_tag, "Start moving somewhere")
-
-                    busy = true
-                }
-                doOnEnd {
-                    Log.v(_tag, "End moving somewhere")
-
-                    view.alpha = alpha /* restore if changed by animator */
-                    busy = false
-                    onEnd()
-                }
-
-                start()
-            }
-        } else {
-            Log.v(_tag, "Moved somewhere")
-
-            view.x = x
-            view.y = y
-            onEnd()
-        }
+        runAnimator(floatAnimator, x, y, alpha, onEnd)
     }
 
-    private fun floatHome(onEnd: () -> Unit = {}) {
-        if (!view.isLaidOut) {
-            onEnd()
-            return
-        }
+    private fun floatHome() {
+        Log.v(_tag, "Moving home")
 
         val alpha = view.alpha
         val pr = view.parentView.rect
@@ -157,52 +109,87 @@ internal class FloatControl(private val view: View, private val handler: Handler
         val x = (pr.width() - vr.width()) / 2
         val y = (pr.height() - vr.height()) / 2
 
-        if (x == view.x || y == view.y) {
+        runAnimator(homeAnimator, x, y, alpha, {})
+    }
+
+    private fun runAnimator(
+        animator: Animator?,
+        x: Float,
+        y: Float,
+        alpha: Float,
+        onEnd: () -> Unit
+    ) {
+        cancelAnimators()
+
+        if (x == view.x && y == view.y) {
             onEnd()
             return
         }
 
-        if (animated) {
-            floatAnimator.cancel()
-            homeAnimator.apply {
-                cancel()
+        if (isAnimationOn()) {
+            animator?.run {
+                /* NOTE: it's not possible to reach PropertyHolder's values initialized in XML nor identify
+                   animators with ids or tags so we use property names as markers here */
+                forEachChild { child ->
+                    if (child is ObjectAnimator) {
+                        child.apply {
+                            when (propertyName) {
+                                "xCurrentToEnd" -> setFloatValues(view.x, x)
+                                "yCurrentToEnd" -> setFloatValues(view.y, y)
+                                "alphaCurrentToZero" -> setFloatValues(view.alpha, 0f)
+                                "alphaZeroToCurrent" -> setFloatValues(0f, view.alpha)
+                            }
+                        }
+                    }
+                }
+
                 removeAllListeners()
-
-                setValues(x, y, alpha)
                 doOnStart {
-                    Log.v(_tag, "Start moving home")
+                    Log.v(_tag, "Start animation")
 
-                    busy = true
+                    animating = true
                 }
                 doOnEnd {
-                    Log.v(_tag, "End moving home")
+                    Log.v(_tag, "End animation")
 
-                    view.alpha = alpha /* restore if changed by animator */
-                    busy = false
+                    view.alpha = alpha /* restore if changed during animation */
+                    animating = false
                     onEnd()
                 }
 
+                setTarget(viewWrapper)
                 start()
             }
         } else {
-            Log.v(_tag, "Moved home")
-
             view.x = x
             view.y = y
+
+            Log.v(_tag, "Moved immediately")
+
             onEnd()
         }
     }
 
+    private fun cancelAnimators() {
+        floatAnimator?.cancel()
+        homeAnimator?.cancel()
+    }
+
     fun setAnimator(resId: Int) {
-        floatAnimator = loadAnimator(view.context, resId)
-        homeAnimator = loadAnimator(view.context, R.animator.float_home)
+        cancelAnimators()
+        if (resId > 0) {
+            floatAnimator = loadAnimator(view.context, resId)
+            homeAnimator = loadAnimator(view.context, R.animator.float_home)
+        } else {
+            floatAnimator = null
+            homeAnimator = null
+        }
     }
 
     fun setAnimated(value: Boolean) {
         animated = value
         if (!animated) {
-            floatAnimator.cancel()
-            homeAnimator.cancel()
+            cancelAnimators()
         }
     }
 

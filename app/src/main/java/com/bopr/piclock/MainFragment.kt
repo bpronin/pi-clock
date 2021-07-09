@@ -96,18 +96,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             setInterval(settings.getLong(PREF_CONTENT_FLOAT_INTERVAL))
             setAnimator(getResAnimator(settings.getString(PREF_FLOAT_ANIMATION)))
             setAnimated(settings.getBoolean(PREF_ANIMATION_ON))
-            onBusy = { busy ->
-                soundControl.onFloatView(busy)
-            }
+            onAnimate = { soundControl.onFloatView(it) }
         }
     }
 
     private val autoInactivateControl by lazy {
         AutoInactivateControl(handler).apply {
             setDelay(settings.getLong(PREF_AUTO_INACTIVATE_DELAY))
-            onInactivate = {
-                setMode(MODE_INACTIVE, true)
-            }
+            onInactivate = { setMode(MODE_INACTIVE, true) }
         }
     }
 

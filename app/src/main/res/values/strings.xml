@@ -2,57 +2,57 @@
     <string name="about_label">About app</string>
     <string name="about_summary">%s-%s</string>
     <string name="about_version">Version</string>
+    <string name="animation">Animation</string>
+    <string name="animation_enabled">Enable animation</string>
     <string name="app_name">Pi Clock</string>
-    <string name="formats">Formats</string>
     <string name="auto_inactivate">Auto-deactivation</string>
     <string name="auto_inactivate_never_summary">Disabled. Toggle active mode by touching screen</string>
     <string name="auto_inactivate_summary">Hide controls and decrease brightness after %s</string>
     <string name="blink_time_separators">Blink time separators</string>
-    <string name="layout">Layout</string>
+    <string name="brightness_info">Brightness %d%%</string>
+    <string name="brightness_info_max">Brightness %d%% (max)</string>
+    <string name="brightness_info_min">Brightness %d%% (min)</string>
+    <string name="brightness_level">Brightness level</string>
+    <string name="clock_always_moves_along_screen">Clock always moves along the screen</string>
+    <string name="clock_moves_along_screen">Clock moves along the screen every %s</string>
     <string name="date_format">Date</string>
     <string name="default_date_format">%s (system)</string>
+    <string name="digits_animation">Digits animation</string>
+    <string name="disabled">Disabled</string>
     <string name="do_not_show">Do not show</string>
-    <string name="fullscreen">Fullscreen</string>
-    <string name="brightness_level">Brightness level</string>
-    <string name="muted_brightness_summary">Decreased brightness in inactive mode %d%%</string>
-    <string name="tick_always">Always</string>
-    <string name="scale">Scale</string>
-    <string name="scale_summary">Scale factor %d%%</string>
-    <string name="seconds_separator">Seconds separator</string>
-    <string name="settings">Settings</string>
-    <string name="settings_button">Settings button</string>
-    <string name="sound">Sound</string>
-    <string name="tick_sound">Tick sound</string>
-    <string name="tick_sound_always">Tick always</string>
-    <string name="minutes_separator">Minutes separator</string>
-    <string name="user_interface">Interface</string>
-    <string name="clock_moves_along_screen">Clock moves along the screen every %s</string>
-    <string name="clock_always_moves_along_screen">Clock always moves along the screen</string>
-    <string name="keep_clock_view">Clock keeps its position on the screen</string>
+    <string name="enabled">Enabled</string>
+    <string name="float_animation">Floating animation</string>
     <string name="floating_interval">Floating</string>
-    <string name="brightness_info_min">Brightness %d%% (min)</string>
-    <string name="brightness_info_max">Brightness %d%% (max)</string>
-    <string name="brightness_info">Brightness %d%%</string>
+    <string name="formats">Formats</string>
+    <string name="fullscreen">Fullscreen</string>
+    <string name="fullscreen_disabled_summary">Always show system bars</string>
+    <string name="fullscreen_enabled_summary">Hide system bars in inactive mode</string>
+    <string name="gestures">Gestures</string>
+    <string name="gestures_disabled_summary">Gestures disabled</string>
+    <string name="gestures_enabled_summary">Adjust scale and brightness by swiping across the screen</string>
+    <string name="hours_minutes_format">Hours and minutes</string>
+    <string name="keep_clock_view">Clock keeps its position on the screen</string>
+    <string name="layout">Layout</string>
+    <string name="minutes_separator">Minutes separator</string>
+    <string name="muted_brightness_summary">Decreased brightness in inactive mode %d%%</string>
+    <string name="scale">Scale</string>
     <string name="scale_info">Scale %d%%</string>
     <string name="scale_info_max">Scale %d%% (max)</string>
     <string name="scale_info_min">Scale %d%% (min)</string>
-    <string name="show_time_separators">Time separators</string>
+    <string name="scale_summary">Scale factor %d%%</string>
     <string name="seconds_format">Seconds</string>
-    <string name="hours_minutes_format">Hours and minutes</string>
-    <string name="tick_sound_mode">Play tick sound when</string>
+    <string name="seconds_separator">Seconds separator</string>
+    <string name="settings">Settings</string>
+    <string name="settings_button">Settings button</string>
+    <string name="show_time_separators">Time separators</string>
+    <string name="sound">Sound</string>
+    <string name="tick_always">Always</string>
     <string name="tick_never">Never</string>
-    <string name="animation">Animation</string>
-    <string name="digits_animation">Digits animation</string>
-    <string name="gestures">Gestures</string>
-    <string name="gestures_enabled_summary">Adjust scale and brightness by swiping across the screen</string>
-    <string name="gestures_disabled_summary">Gestures disabled</string>
-    <string name="fullscreen_disabled_summary">Always show system bars</string>
-    <string name="fullscreen_enabled_summary">Hide system bars in inactive mode</string>
+    <string name="tick_sound">Tick sound</string>
+    <string name="tick_sound_always">Tick always</string>
+    <string name="tick_sound_mode">Play tick sound when</string>
     <string name="time_separators">Time separators</string>
-    <string name="animation_enabled">Enable animation</string>
-    <string name="enabled">Enabled</string>
-    <string name="disabled">Disabled</string>
-    <string name="float_animation">Floating animation</string>
+    <string name="user_interface">Interface</string>
 
     <string-array name="content_layout_names">
         <item>Digital simple</item>
@@ -128,12 +128,14 @@
         <item>Fade through</item>
         <item>Grow out</item>
         <item>Shrink out</item>
+        <item>Do not animate</item>
     </string-array>
 
     <string-array name="float_animation_names">
         <item>Move</item>
         <item>Fade</item>
         <item>Fade and move</item>
+        <item>Do not animate</item>
     </string-array>
 
 </resources>
