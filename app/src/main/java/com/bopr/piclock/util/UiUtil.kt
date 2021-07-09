@@ -79,12 +79,16 @@ fun Context.passwordBox(message: String, onPositiveClose: (String) -> Unit) {
 //    return null
 //}
 
-fun AnimatorSet.forEachChild(action: (Animator) -> Unit) {
-    for (child in childAnimations) {
-        if (child is AnimatorSet) {
-            child.forEachChild(action)
-        } else {
-            action(child)
+fun Animator.forEachChild(action: (Animator) -> Unit) {
+    if (this is AnimatorSet) {
+        for (child in childAnimations) {
+            if (child is AnimatorSet) {
+                child.forEachChild(action)
+            } else {
+                action(child)
+            }
         }
+    } else {
+        action(this)
     }
 }

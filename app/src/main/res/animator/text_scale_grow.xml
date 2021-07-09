@@ -1,6 +1,6 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- NOTE: relative_translationY is a custom property -->
+    <!-- NOTE: relativeTranslationY is a custom property -->
 
     <set>
         <objectAnimator

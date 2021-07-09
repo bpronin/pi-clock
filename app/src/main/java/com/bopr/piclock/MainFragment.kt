@@ -114,8 +114,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val brightnessControl by lazy {
         BrightnessControl().apply {
             onSwipeStart = {
+                floatControl.pause()
                 setMode(MODE_INACTIVE, true)
-                animations.showInfo(infoView)
+                animations.showInfo(infoView) //todo: replace with AnimatedText
             }
             onSwipe = { brightness ->
                 val resId = when (brightness) {
@@ -127,6 +128,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
             onSwipeEnd = { brightness ->
                 animations.hideInfo(infoView)
+                floatControl.resume()
                 settings.update { putInt(PREF_MUTED_BRIGHTNESS, brightness) }
             }
         }
@@ -135,6 +137,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val scaleControl by lazy {
         ScaleControl().apply {
             onPinchStart = {
+                floatControl.pause()
                 animations.showInfo(infoView)
             }
             onPinch = { scale ->
@@ -147,6 +150,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
             onPinchEnd = { scale ->
                 animations.hideInfo(infoView)
+                floatControl.resume()
                 settings.update { putInt(PREF_CONTENT_SCALE, scale) }
             }
         }
@@ -261,13 +265,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onPause() {
         timer.enabled = false
         autoInactivateControl.onPause()
-        floatControl.onPause()
+        floatControl.pause()
         super.onPause()
     }
 
     override fun onResume() {
         super.onResume()
-        floatControl.onResume()
+        floatControl.resume()
         autoInactivateControl.onResume()
         timer.enabled = true
     }

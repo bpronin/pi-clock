@@ -14,7 +14,7 @@ import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.util.*
-import com.bopr.piclock.util.property.ScaleProperty
+import com.bopr.piclock.util.property.SCALE_PROPERTY
 import kotlin.math.max
 import kotlin.math.min
 
@@ -32,7 +32,7 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
     }
 
     private val animator by lazy {
-        ObjectAnimator.ofFloat(view, ScaleProperty(), 0f).apply {
+        ObjectAnimator.ofFloat(view, SCALE_PROPERTY, 0f).apply {
             duration = 500
             interpolator = DecelerateInterpolator()
         }

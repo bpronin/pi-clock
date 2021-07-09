@@ -12,8 +12,9 @@ import androidx.annotation.StyleRes
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
-import com.bopr.piclock.util.property.RelativeTransitionXProperty
-import com.bopr.piclock.util.property.RelativeTransitionYProperty
+import com.bopr.piclock.util.forEachChild
+import com.bopr.piclock.util.property.RELATIVE_TRANSITION_X_PROPERTY
+import com.bopr.piclock.util.property.RELATIVE_TRANSITION_Y_PROPERTY
 
 /**
  * Text view with animated transitions.
@@ -83,7 +84,6 @@ class AnimatedTextView : FrameLayout {
         textAnimator?.cancel()
         resetViews()
         textAnimator = animator?.apply {
-            //todo: use findChildAnimator ?
             childAnimations[0].apply {
                 setTarget(view)
                 extendProperties()
@@ -108,10 +108,14 @@ class AnimatedTextView : FrameLayout {
     }
 
     private fun Animator.extendProperties() {
-        if (this is ObjectAnimator) {
-            when (propertyName) {
-                RelativeTransitionXProperty.NAME -> setProperty(RelativeTransitionXProperty())
-                RelativeTransitionYProperty.NAME -> setProperty(RelativeTransitionYProperty())
+        forEachChild { child ->
+            child.apply {
+                if (this is ObjectAnimator) {
+                    when (propertyName) {
+                        RELATIVE_TRANSITION_X_PROPERTY.name -> setProperty(RELATIVE_TRANSITION_X_PROPERTY)
+                        RELATIVE_TRANSITION_Y_PROPERTY.name -> setProperty(RELATIVE_TRANSITION_Y_PROPERTY)
+                    }
+                }
             }
         }
     }

@@ -1,7 +1,7 @@
 package com.bopr.piclock
 
+import android.animation.Animator
 import android.animation.AnimatorInflater.loadAnimator
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Handler
 import android.util.Log
@@ -55,17 +55,19 @@ internal class FloatControl(private val view: View, private val handler: Handler
                     Log.d(_tag, "Disabled")
 
                     handler.removeCallbacks(floatTask)
+                    floatAnimator.cancel()
+                    homeAnimator.cancel()
                 }
             }
         }
 
     private val viewWrapper = ViewWrapper()
-    private lateinit var floatAnimator: AnimatorSet
-    private lateinit var homeAnimator: AnimatorSet
+    private lateinit var floatAnimator: Animator
+    private lateinit var homeAnimator: Animator
 
     lateinit var onBusy: (busy: Boolean) -> Unit
 
-    private fun AnimatorSet.setValues(endX: Float, endY: Float) {
+    private fun Animator.setValues(endX: Float, endY: Float, startAlpha: Float) {
         /* NOTE: it's not possible to reach PropertyHolder's values initialized in XML nor identify
          animators with ids or tags so we use property names as markers here */
         forEachChild { child ->
@@ -74,8 +76,8 @@ internal class FloatControl(private val view: View, private val handler: Handler
                     when (propertyName) {
                         "xCurrentToEnd" -> setFloatValues(view.x, endX)
                         "yCurrentToEnd" -> setFloatValues(view.y, endY)
-                        "alphaCurrentToZero" -> setFloatValues(view.alpha, 0f)
-                        "alphaZeroToCurrent" -> setFloatValues(0f, view.alpha)
+                        "alphaCurrentToZero" -> setFloatValues(startAlpha, 0f)
+                        "alphaZeroToCurrent" -> setFloatValues(0f, startAlpha)
                     }
                 }
             }
@@ -102,6 +104,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
             return
         }
 
+        val alpha = view.alpha
         val pr = view.parentView.scaledRect
         val vr = view.scaledRect
         val dw = pr.width() - vr.width()
@@ -117,7 +120,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
                 cancel()
                 removeAllListeners()
 
-                setValues(x, y)
+                setValues(x, y, alpha)
                 doOnStart {
                     Log.v(_tag, "Start moving somewhere")
 
@@ -126,6 +129,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
                 doOnEnd {
                     Log.v(_tag, "End moving somewhere")
 
+                    view.alpha = alpha /* restore if changed by animator */
                     busy = false
                     onEnd()
                 }
@@ -133,11 +137,10 @@ internal class FloatControl(private val view: View, private val handler: Handler
                 start()
             }
         } else {
-            view.x = x
-            view.y = y
-
             Log.v(_tag, "Moved somewhere")
 
+            view.x = x
+            view.y = y
             onEnd()
         }
     }
@@ -148,6 +151,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
             return
         }
 
+        val alpha = view.alpha
         val pr = view.parentView.rect
         val vr = view.rect
         val x = (pr.width() - vr.width()) / 2
@@ -164,7 +168,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
                 cancel()
                 removeAllListeners()
 
-                setValues(x, y)
+                setValues(x, y, alpha)
                 doOnStart {
                     Log.v(_tag, "Start moving home")
 
@@ -173,6 +177,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
                 doOnEnd {
                     Log.v(_tag, "End moving home")
 
+                    view.alpha = alpha /* restore if changed by animator */
                     busy = false
                     onEnd()
                 }
@@ -180,18 +185,17 @@ internal class FloatControl(private val view: View, private val handler: Handler
                 start()
             }
         } else {
-            view.x = x
-            view.y = y
-
             Log.v(_tag, "Moved home")
 
+            view.x = x
+            view.y = y
             onEnd()
         }
     }
 
     fun setAnimator(resId: Int) {
-        floatAnimator = loadAnimator(view.context, resId) as AnimatorSet
-        homeAnimator = loadAnimator(view.context, R.animator.float_home) as AnimatorSet
+        floatAnimator = loadAnimator(view.context, resId)
+        homeAnimator = loadAnimator(view.context, R.animator.float_home)
     }
 
     fun setAnimated(value: Boolean) {
@@ -221,13 +225,13 @@ internal class FloatControl(private val view: View, private val handler: Handler
         }
     }
 
-    fun onPause() {
+    fun pause() {
         Log.v(_tag, "Pause")
 
         enabled = false
     }
 
-    fun onResume() {
+    fun resume() {
         Log.v(_tag, "Resume")
 
         enabled = true
