@@ -18,6 +18,7 @@ internal class IlluminanceDetector(context: Context) {
 
     private val _tag = "IlluminanceDetector"
 
+    private var currentValue = -1f
     private val sensorManager = context.getSystemService(SENSOR_SERVICE) as SensorManager
     private val sensor = sensorManager.getDefaultSensor(TYPE_LIGHT)
     private val sensorListener = object : SensorEventListener {
@@ -28,7 +29,11 @@ internal class IlluminanceDetector(context: Context) {
 
         override fun onSensorChanged(event: SensorEvent?) {
             event?.values?.also { values ->
-                onIlluminanceChange(values[0] / sensor.maximumRange)
+                val value = values[0]
+                if (currentValue != value) {
+                    currentValue = value
+                    onIlluminanceChange(currentValue / sensor.maximumRange)
+                }
             }
         }
 
