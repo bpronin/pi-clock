@@ -22,7 +22,6 @@ import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
-import com.bopr.piclock.Settings.Companion.PREF_AUTO_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
@@ -237,7 +236,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         brightnessControl.apply {
             setView(contentView)
-            setAutoBrightness(settings.getBoolean(PREF_AUTO_BRIGHTNESS))
             setMutedBrightness(settings.getInt(PREF_MUTED_BRIGHTNESS))
         }
 
@@ -260,7 +258,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         settings.unregisterOnSharedPreferenceChangeListener(this)
         handler.removeCallbacksAndMessages(null)
         soundControl.stop()
-        brightnessControl.destroy()
         scaleControl.destroy()
         super.onDestroy()
     }

@@ -18,7 +18,6 @@ class MainActivity : BaseActivity<MainFragment>(MainFragment::class.java) {
     //todo: option to make custom floating trajectory
     //todo: float animation duration should depend on distance
     //todo: если потрясти часы начинают болтаться внутри отскакивая от стенок и тикать
-    //todo: brightness controlled by external light
     //todo: start on power plug in
     //todo: fast changing battery indicator
     //todo: sound and vibration feedback when scaling and changing brightness

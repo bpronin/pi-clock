@@ -46,14 +46,10 @@ internal class BrightnessControl : SimpleOnGestureListener() {
         }
     }
 
-    private var illuminanceDetector: IlluminanceDetector? = null
-
     private lateinit var view: View
     private var scaleFactor = 0f
     private var mutedAlpha = MIN_ALPHA
-    private var illuminance = MAX_ILLUMINANCE
     private var swiping = false
-    private var autoBrightness = false
 
     @Mode
     private var mode: Int = MODE_INACTIVE
@@ -113,13 +109,9 @@ internal class BrightnessControl : SimpleOnGestureListener() {
         }
     }
 
-    private fun computeMutedAlpha(): Float {
-        return mutedAlpha //todo: + illuminance
-    }
-
     private fun updateViewAlpha() {
         view.alpha = if (mode == MODE_INACTIVE || mode == MODE_EDITOR) {
-            computeMutedAlpha()
+            mutedAlpha
         } else {
             MAX_ALPHA
         }
@@ -127,33 +119,8 @@ internal class BrightnessControl : SimpleOnGestureListener() {
         Log.v(_tag, "View alpha set to: ${view.alpha}")
     }
 
-    fun destroy() {
-        illuminanceDetector?.destroy()
-    }
-
     fun setView(value: ViewGroup) {
         view = value
-    }
-
-    fun setAutoBrightness(value: Boolean) {
-        autoBrightness = value
-
-        if (autoBrightness) {
-            illuminanceDetector = IlluminanceDetector(view.context).apply {
-                onIlluminanceChange = {
-                    illuminance = it
-                    updateViewAlpha()
-                }
-            }
-        } else {
-            illuminanceDetector?.destroy()
-            illuminanceDetector = null
-            illuminance = MAX_ILLUMINANCE
-        }
-
-        updateViewAlpha()
-
-        Log.v(_tag, "Auto-brightness set to: $autoBrightness")
     }
 
     fun setMutedBrightness(brightness: Int) {
@@ -192,7 +159,7 @@ internal class BrightnessControl : SimpleOnGestureListener() {
                 MODE_ACTIVE ->
                     fade(MAX_ALPHA) { updateViewAlpha() }
                 MODE_INACTIVE, MODE_EDITOR ->
-                    fade(computeMutedAlpha()) { updateViewAlpha() }
+                    fade(mutedAlpha) { updateViewAlpha() }
             }
         } else {
             updateViewAlpha()
@@ -204,8 +171,6 @@ internal class BrightnessControl : SimpleOnGestureListener() {
         const val MIN_BRIGHTNESS = 10
         const val MAX_BRIGHTNESS = 100
 
-        private const val MIN_ILLUMINANCE = 0f
-        private const val MAX_ILLUMINANCE = 1f
         private val MIN_ALPHA = toDecimal(MIN_BRIGHTNESS)
         private val MAX_ALPHA = toDecimal(MAX_BRIGHTNESS)
     }

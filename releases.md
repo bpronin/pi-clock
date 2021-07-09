@@ -1,4 +1,4 @@
 # pi-clock
-1.1.0
 * option to tick during float animation
 * restore scroll position of settings screen
+* wont fix: brightness controlled by external light - the system does it well
