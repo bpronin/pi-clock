@@ -92,8 +92,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val floatControl by lazy {
         FloatControl(contentView, handler).apply {
             setInterval(settings.getLong(PREF_CONTENT_FLOAT_INTERVAL))
-            setAnimatorRes(R.animator.float_slide)
-//            setAnimatorRes(R.animator.float_fade)
+//            setAnimator(R.animator.float_move)
+            setAnimator(R.animator.float_move_fade)
             onBusy = { busy ->
                 soundControl.onFloatView(busy)
             }
@@ -437,10 +437,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun updateDigitsAnimation() {
         val resId = getResId("animator", settings.getString(PREF_DIGITS_ANIMATION))
 
-        hoursView.setTextAnimatorRes(resId)
-        minutesView.setTextAnimatorRes(resId)
-        secondsView.setTextAnimatorRes(resId)
-        dateView.setTextAnimatorRes(resId)
+        hoursView.setTextAnimator(resId)
+        minutesView.setTextAnimator(resId)
+        secondsView.setTextAnimator(resId)
+        dateView.setTextAnimator(resId)
     }
 
     private fun enableAnimation(enable: Boolean) {

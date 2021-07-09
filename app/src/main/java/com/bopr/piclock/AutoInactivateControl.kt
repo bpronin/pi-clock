@@ -58,19 +58,19 @@ internal class AutoInactivateControl(private val handler: Handler) {
     }
 
     fun onPause() {
-        Log.v(_tag, "Pause")
+        Log.d(_tag, "Pause")
 
         enabled = false
     }
 
     fun onResume() {
-        Log.v(_tag, "Resume")
+        Log.d(_tag, "Resume")
 
         enabled = true
     }
 
     fun onTouch(event: MotionEvent): Boolean {
-        Log.v(_tag, "Processing touch: ${event.action}")
+//        Log.v(_tag, "Processing touch: ${event.action}")
 
         when (event.action) {
             ACTION_DOWN -> {

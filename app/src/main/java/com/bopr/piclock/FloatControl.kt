@@ -1,19 +1,18 @@
 package com.bopr.piclock
 
+import android.animation.Animator
 import android.animation.AnimatorInflater.loadAnimator
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.os.Handler
 import android.util.Log
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
+import com.bopr.piclock.util.forEachChild
 import com.bopr.piclock.util.parentView
 import com.bopr.piclock.util.rect
 import com.bopr.piclock.util.scaledRect
@@ -61,7 +60,29 @@ internal class FloatControl(private val view: View, private val handler: Handler
             }
         }
 
-    private lateinit var animator: AnimatorSet
+    private val viewWrapper = ViewWrapper()
+    private lateinit var somewhereAnimator: Animator
+    private lateinit var homeAnimator: Animator
+
+    private fun Animator.setup(endX: Float, endY: Float) {
+        /* NOTE: it is not possible to reach PropertyHolder values set in XML so we use
+           property names as markers */
+        forEachChild { animator ->
+            if (animator is ObjectAnimator) {
+                animator.apply {
+                    when (propertyName) {
+                        "xCurrentToEnd" -> setFloatValues(view.x, endX)
+                        "yCurrentToEnd" -> setFloatValues(view.y, endY)
+                        "alphaCurrentTo00" -> setFloatValues(view.alpha, 0f)
+                        "alpha00ToCurrent" -> setFloatValues(0f, view.alpha)
+                        "alphaCurrentTo01" -> setFloatValues(view.alpha, 0.1f)
+                        "alpha01ToCurrent" -> setFloatValues(0.1f, view.alpha)
+                    }
+                }
+            }
+        }
+        setTarget(viewWrapper)
+    }
 
     private fun scheduleTask(startDelay: Long = 0) {
         if (enabled) {
@@ -98,14 +119,12 @@ internal class FloatControl(private val view: View, private val handler: Handler
         val x = random().toFloat() * dw + dx
         val y = random().toFloat() * dh + dy
 
-        animator.apply {
+        homeAnimator.cancel()
+        somewhereAnimator.apply {
             cancel()
             removeAllListeners()
 
-            duration = 10000L
-            interpolator = AccelerateDecelerateInterpolator()
-            (childAnimations[0] as ObjectAnimator).setFloatValues(view.x, x)
-            (childAnimations[1] as ObjectAnimator).setFloatValues(view.y, y)
+            setup(x, y)
             doOnStart {
                 Log.v(_tag, "Start moving somewhere")
 
@@ -138,14 +157,12 @@ internal class FloatControl(private val view: View, private val handler: Handler
             return
         }
 
-        animator.apply {
+        somewhereAnimator.cancel()
+        homeAnimator.apply {
             cancel()
             removeAllListeners()
 
-            duration = 1000L
-            interpolator = DecelerateInterpolator()
-            (childAnimations[0] as ObjectAnimator).setFloatValues(view.x, x)
-            (childAnimations[1] as ObjectAnimator).setFloatValues(view.y, y)
+            setup(x, y)
             doOnStart {
                 Log.v(_tag, "Start moving home")
 
@@ -162,14 +179,9 @@ internal class FloatControl(private val view: View, private val handler: Handler
         }
     }
 
-    fun setAnimatorRes(resId: Int) {
-        setAnimator(loadAnimator(view.context, resId) as AnimatorSet)
-    }
-
-    fun setAnimator(value: AnimatorSet) {
-        if (value.childAnimations.size < 2) throw IllegalArgumentException("Invalid animation set")
-        animator = value
-        animator.setTarget(view)
+    fun setAnimator(resId: Int) {
+        somewhereAnimator = loadAnimator(view.context, resId)
+        homeAnimator = loadAnimator(view.context, R.animator.float_home)
     }
 
     fun setInterval(value: Long) {
@@ -203,4 +215,44 @@ internal class FloatControl(private val view: View, private val handler: Handler
         enabled = true
     }
 
+    @Suppress("unused")
+    private inner class ViewWrapper {
+
+        var xCurrentToEnd 
+            get() = view.x
+            set(value) {
+                view.x = value
+            }
+
+        var yCurrentToEnd
+            get() = view.y
+            set(value) {
+                view.y = value
+            }
+
+        var alphaCurrentTo00
+            get() = view.alpha
+            set(value) {
+                view.alpha = value
+            }
+
+        var alpha00ToCurrent
+            get() = view.alpha
+            set(value) {
+                view.alpha = value
+            }
+
+        var alphaCurrentTo01
+            get() = view.alpha
+            set(value) {
+                view.alpha = value
+            }
+
+        var alpha01ToCurrent
+            get() = view.alpha
+            set(value) {
+                view.alpha = value
+            }
+
+    }
 }

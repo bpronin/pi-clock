@@ -1,5 +1,8 @@
 package com.bopr.piclock.util
 
+import android.animation.Animator
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.RectF
@@ -63,4 +66,50 @@ fun Context.passwordBox(message: String, onPositiveClose: (String) -> Unit) {
             onPositiveClose(input.text.toString())
         }
     }.show()
+}
+
+fun AnimatorSet.findChildByProperty(propertyName: String): ObjectAnimator? {
+    for (child in childAnimations) {
+        if (child is AnimatorSet) {
+            child.findChildByProperty(propertyName)?.run {
+                return this
+            }
+        } else if (child is ObjectAnimator && child.propertyName == propertyName) {
+            return child
+        }
+    }
+    return null
+}
+
+fun Animator.forEachChild(action: (Animator) -> Unit) {
+    if (this is AnimatorSet) {
+        for (child in childAnimations) {
+            if (child is AnimatorSet) {
+                child.forEachChild(action)
+            } else {
+                action(child)
+            }
+        }
+    } else {
+        action(this)
+    }
+}
+
+fun AnimatorSet.collectChildrenByProperty(
+    propertyName: String,
+    list: MutableCollection<ObjectAnimator>
+) {
+    for (child in childAnimations) {
+        if (child is AnimatorSet) {
+            child.collectChildrenByProperty(propertyName, list)
+        } else if (child is ObjectAnimator && child.propertyName == propertyName) {
+            list.add(child)
+        }
+    }
+}
+
+fun AnimatorSet.findChildrenByProperty(propertyName: String): List<ObjectAnimator> {
+    val list = mutableListOf<ObjectAnimator>()
+    collectChildrenByProperty(propertyName, list)
+    return list
 }
