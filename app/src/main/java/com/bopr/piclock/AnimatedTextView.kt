@@ -105,8 +105,10 @@ class AnimatedTextView : FrameLayout {
             shadowView.text = view.text
             view.text = text
             if (animated) {
-                textAnimator?.end()
-                textAnimator?.start()
+                textAnimator?.run {
+                    end()
+                    start()
+                }
             }
         }
     }
