@@ -80,7 +80,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
             putStringResourceOptional(
                 PREF_DIGITS_ANIMATION,
-                getResName(R.animator.text_slide_vertical_bounce),
+                getResName(R.animator.text_fade_trough_linear),
                 R.array.digits_animation_values
             )
 

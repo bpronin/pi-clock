@@ -22,7 +22,7 @@ import com.bopr.piclock.util.property.RELATIVE_TRANSITION_Y_PROPERTY
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class AnimatedTextView : FrameLayout {
-
+     //todo: get rid of blinking of first symbol in fade-trough animation
     @Suppress("JoinDeclarationAndAssignment")
     private lateinit var view: AppCompatTextView
     private lateinit var shadowView: AppCompatTextView

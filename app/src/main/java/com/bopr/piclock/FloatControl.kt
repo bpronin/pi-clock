@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator
 import android.os.Handler
 import android.util.Log
 import android.view.View
+import androidx.annotation.Keep
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
@@ -62,7 +63,16 @@ internal class FloatControl(private val view: View, private val handler: Handler
             }
         }
 
-    private val viewWrapper by lazy { ViewWrapper() }
+    private val viewWrapper by lazy {
+        val wrapper = ViewWrapper()
+        Log.w(_tag, "Methods: ${wrapper.javaClass.methods.joinToString()}")
+//        "xCurrentToEnd" -> setFloatValues(view.x, x)
+//        "yCurrentToEnd" -> setFloatValues(view.y, y)
+//        "alphaCurrentToZero" -> setFloatValues(view.alpha, 0f)
+//        "alphaZeroToCurrent" -> setFloatValues(0f, view.alpha)
+
+        wrapper
+    }
 
     private var floatAnimator: Animator? = null
     private var homeAnimator: Animator? = null
@@ -145,7 +155,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
 
                 removeAllListeners()
                 doOnStart {
-                    Log.v(_tag, "Start animation")
+                    Log.v(_tag, "Start animation to x:$x y:$y")
 
                     animating = true
                 }
@@ -225,6 +235,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
     }
 
     @Suppress("unused")
+    @Keep
     private inner class ViewWrapper {
 
         var x
@@ -249,6 +260,5 @@ internal class FloatControl(private val view: View, private val handler: Handler
         var yCurrentToEnd by ::y
         var alphaCurrentToZero by ::alpha
         var alphaZeroToCurrent by ::alpha
-
     }
 }
