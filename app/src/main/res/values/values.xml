@@ -71,13 +71,16 @@
     </string-array>
 
     <string-array name="digits_animation_values" translatable="false">
+        <item>text_fade_trough_linear</item>
         <item>text_slide_vertical_linear</item>
         <item>text_slide_vertical_accelerate</item>
         <item>text_slide_vertical_bounce</item>
+        <item>text_slide_horizontal_linear</item>
+        <item>text_slide_horizontal_accelerate</item>
         <item>text_slide_horizontal_bounce</item>
-        <item>text_fade_trough_linear</item>
         <item>text_scale_grow</item>
         <item>text_scale_shrink</item>
+        <item>text_scale_grow_shrink</item>
         <item />
     </string-array>
 

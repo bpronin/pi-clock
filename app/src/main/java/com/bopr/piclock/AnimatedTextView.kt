@@ -43,8 +43,8 @@ class AnimatedTextView : FrameLayout {
         view = AppCompatTextView(context, attrs, defStyleAttr)
         shadowView = AppCompatTextView(context, attrs, defStyleAttr)
 
-        addView(shadowView, generateLayoutParams(attrs))
-        addView(view, generateLayoutParams(attrs))
+        addView(shadowView)
+        addView(view)
 
         resetViews()
     }
@@ -113,4 +113,7 @@ class AnimatedTextView : FrameLayout {
         }
     }
 
+    override fun getBaseline(): Int {
+        return view.baseline
+    }
 }

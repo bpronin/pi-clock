@@ -130,7 +130,7 @@ internal class LayoutControl(
     }
 
     fun onModeChanged(@Mode mode: Int, animated: Boolean) {
-        if (animated) {
+        if (animated) {                  //todo: fix does not animate on open
             TransitionManager.beginDelayedTransition(rootView)
         }
 

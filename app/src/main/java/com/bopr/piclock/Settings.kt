@@ -86,7 +86,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
             putStringResourceOptional(
                 PREF_FLOAT_ANIMATION,
-                getResName(R.animator.float_move_fade),
+                getResName(R.animator.float_move),
                 R.array.float_animation_values
             )
         }

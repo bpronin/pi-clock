@@ -121,13 +121,16 @@
     </string-array>
 
     <string-array name="digits_animation_names">
-        <item>Slide vertical (linear)</item>
-        <item>Slide vertical (accelerate)</item>
-        <item>Slide vertical (bounce)</item>
-        <item>Slide horizontal (bounce)</item>
         <item>Fade through</item>
-        <item>Grow out</item>
+        <item>Scroll</item>
+        <item>Fall</item>
+        <item>Fall and bounce</item>
+        <item>Cylinder</item>
+        <item>Slide</item>
+        <item>Slide and bounce</item>
+        <item>Grow in</item>
         <item>Shrink out</item>
+        <item>Grow in shrink out</item>
         <item>Do not animate</item>
     </string-array>
 
