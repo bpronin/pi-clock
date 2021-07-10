@@ -57,10 +57,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val _tag = "MainFragment"
 
     private val handler = Handler(Looper.getMainLooper())
-    private val timer = HandlerTimer(handler, 500, this::onTimer)
+    private val timer = HandlerTimer(handler, TIMER_INTERVAL, ::onTimer)
     private val amPmFormat = defaultDatetimeFormat("a")
     private val rootView get() = requireView() as ConstraintLayout
-    private var halfTick = 0
+    private var currentTime = Date()
+    private var currentTick = 0
 
     private lateinit var contentView: ViewGroup
     private lateinit var settingsContainer: View
@@ -241,6 +242,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
 
         fullscreenControl.setEnabled(settings.getBoolean(PREF_FULLSCREEN_ENABLED))
+
+        updateContentViewData()
+        updateDigitsAnimation()
     }
 
     override fun onSaveInstanceState(savedState: Bundle) {
@@ -323,17 +327,19 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun onTimer() {
-        if (halfTick > 7) halfTick = 0
-        halfTick++
+        currentTime = if (TIME_STEP == 0L)
+            Date()
+        else
+            Date(currentTime.time + TIME_STEP)
+
+        if (currentTick > 7) currentTick = 0
+        currentTick++
 
         // Log.v(_tag, "On timer: $halfTick")
 
-        if (halfTick % 2 == 0) {
-            updateContentViewData()
-        }
-
-        blinkAnimator.onTimer(halfTick)
-        soundControl.onTimer(halfTick)
+        updateContentViewData()
+        blinkAnimator.onTimer(currentTick)
+        soundControl.onTimer(currentTick)
     }
 
     private fun setMode(@Mode newMode: Int, animate: Boolean) {
@@ -371,26 +377,25 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         updateSecondsView()
         updateSeparatorsViews()
         updateDateView()
-        updateContentViewData()
-        updateDigitsAnimation() /* must be after updateContentData */
 
         Log.d(_tag, "Created content view")
     }
 
     private fun updateContentViewData() {
-        val time = Date()
+        if (currentTick % 2 != 0) return
+
         val animated = settings.getBoolean(PREF_ANIMATION_ON)
 
-        hoursView.setText(hoursFormat.format(time), animated)
-        minutesView.setText(minutesFormat.format(time), animated)
-        if (secondsView.visibility == VISIBLE) {
-            secondsView.setText(secondsFormat.format(time), animated)
-        }
+        hoursView.setText(hoursFormat.format(currentTime), animated)
+        minutesView.setText(minutesFormat.format(currentTime), animated)
         if (dateView.visibility == VISIBLE) {
-            dateView.setText(dateFormat.format(time), animated)
+            dateView.setText(dateFormat.format(currentTime), animated)
         }
         if (amPmMarkerView.visibility == VISIBLE) {
-            amPmMarkerView.text = amPmFormat.format(time)
+            amPmMarkerView.text = amPmFormat.format(currentTime)
+        }
+        if (secondsView.visibility == VISIBLE) {
+            secondsView.setText(secondsFormat.format(currentTime), animated)
         }
     }
 
@@ -467,6 +472,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         const val MODE_EDITOR = 2
 
         const val STATE_KEY_MODE = "mode"
+
+        const val TIMER_INTERVAL = 500L
+        const val TIME_STEP = 0L
+
+//        const val TIMER_INTERVAL = 10L
+//        const val TIME_STEP = 1000L
+//        const val TIME_STEP = 60 * 1000L
+//        const val TIME_STEP = 10 * 60 * 1000L
     }
 
 }

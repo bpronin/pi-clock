@@ -4,6 +4,8 @@ import android.animation.AnimatorInflater.loadAnimator
 import android.animation.AnimatorSet
 import android.content.Context
 import android.util.AttributeSet
+import android.view.Gravity.FILL
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
@@ -43,8 +45,8 @@ class AnimatedTextView : FrameLayout {
         view = AppCompatTextView(context, attrs, defStyleAttr)
         shadowView = AppCompatTextView(context, attrs, defStyleAttr)
 
-        addView(shadowView)
-        addView(view)
+        addView(shadowView, LayoutParams(WRAP_CONTENT, WRAP_CONTENT, FILL))
+        addView(view, LayoutParams(WRAP_CONTENT, WRAP_CONTENT, FILL))
 
         resetViews()
     }
