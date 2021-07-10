@@ -1,16 +1,14 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- NOTE: relativeTranslationY is a custom property -->
-
     <objectAnimator
-        android:duration="800"
+        android:duration="1000"
         android:interpolator="@android:anim/linear_interpolator"
         android:propertyName="relativeTranslationY"
         android:valueFrom="-1f"
         android:valueTo="0f" />
 
     <objectAnimator
-        android:duration="800"
+        android:duration="1000"
         android:interpolator="@android:anim/linear_interpolator"
         android:propertyName="relativeTranslationY"
         android:valueFrom="0f"

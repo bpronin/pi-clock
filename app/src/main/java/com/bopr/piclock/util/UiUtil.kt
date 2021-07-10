@@ -2,10 +2,12 @@ package com.bopr.piclock.util
 
 import android.animation.Animator
 import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.RectF
 import android.text.InputType
+import android.util.Property
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -90,5 +92,15 @@ fun Animator.forEachChild(action: (Animator) -> Unit) {
         }
     } else {
         action(this)
+    }
+}
+
+fun Animator.extendProperties(properties: Collection<Property<*, *>>) {
+    forEachChild { child ->
+        child.apply {
+            if (this is ObjectAnimator) {
+                properties.find { it.name == propertyName }?.also(::setProperty)
+            }
+        }
     }
 }

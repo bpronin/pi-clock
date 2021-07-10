@@ -22,13 +22,8 @@
         </activity>
 
         <activity
-            android:name=".SettingsActivity"
-            android:label="@string/settings"
-            android:parentActivityName=".MainActivity" />
-
-        <activity
             android:name=".DebugActivity"
-            android:parentActivityName=".SettingsActivity"
+            android:parentActivityName=".MainActivity"
             android:label="Debug" />
 
     </application>

@@ -170,10 +170,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private var mode = MODE_ACTIVE
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.w(_tag, "Creating fragment")
-
         super.onCreate(savedInstanceState)
-
         settings = Settings(requireContext())
     }
 

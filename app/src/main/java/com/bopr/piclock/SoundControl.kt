@@ -116,6 +116,7 @@ internal class SoundControl(private val context: Context) {
         if (prepared) {
             volumeAnimator.cancel()
             player.stop()
+            player.reset()
             player.release()
             prepared = false
 

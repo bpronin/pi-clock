@@ -6,17 +6,17 @@ import android.animation.ObjectAnimator
 import android.os.Handler
 import android.util.Log
 import android.view.View
-import androidx.annotation.Keep
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
-import com.bopr.piclock.util.forEachChild
-import com.bopr.piclock.util.parentView
-import com.bopr.piclock.util.rect
-import com.bopr.piclock.util.scaledRect
+import com.bopr.piclock.util.*
+import com.bopr.piclock.util.property.PROP_ALPHA_CURRENT_TO_ZERO
+import com.bopr.piclock.util.property.PROP_ALPHA_ZERO_TO_CURRENT
+import com.bopr.piclock.util.property.PROP_X_CURRENT_TO_END
+import com.bopr.piclock.util.property.PROP_Y_CURRENT_TO_END
 import java.lang.Math.random
 
 /**
@@ -63,23 +63,18 @@ internal class FloatControl(private val view: View, private val handler: Handler
             }
         }
 
-    private val viewWrapper by lazy {
-        val wrapper = ViewWrapper()
-        Log.w(_tag, "Methods: ${wrapper.javaClass.methods.joinToString()}")
-//        "xCurrentToEnd" -> setFloatValues(view.x, x)
-//        "yCurrentToEnd" -> setFloatValues(view.y, y)
-//        "alphaCurrentToZero" -> setFloatValues(view.alpha, 0f)
-//        "alphaZeroToCurrent" -> setFloatValues(0f, view.alpha)
-
-        wrapper
-    }
-
     private var floatAnimator: Animator? = null
     private var homeAnimator: Animator? = null
-
-    lateinit var onAnimate: (animating: Boolean) -> Unit
+    private val customProperties = setOf(
+        PROP_X_CURRENT_TO_END,
+        PROP_Y_CURRENT_TO_END,
+        PROP_ALPHA_CURRENT_TO_ZERO,
+        PROP_ALPHA_ZERO_TO_CURRENT
+    )
 
     private fun isAnimationOn() = animated && floatAnimator != null && homeAnimator != null
+
+    lateinit var onAnimate: (animating: Boolean) -> Unit
 
     private fun scheduleTask(startDelay: Long = 0) {
         if (enabled) {
@@ -144,10 +139,10 @@ internal class FloatControl(private val view: View, private val handler: Handler
                     if (child is ObjectAnimator) {
                         child.apply {
                             when (propertyName) {
-                                "xCurrentToEnd" -> setFloatValues(view.x, x)
-                                "yCurrentToEnd" -> setFloatValues(view.y, y)
-                                "alphaCurrentToZero" -> setFloatValues(view.alpha, 0f)
-                                "alphaZeroToCurrent" -> setFloatValues(0f, view.alpha)
+                                PROP_X_CURRENT_TO_END.name -> setFloatValues(view.x, x)
+                                PROP_Y_CURRENT_TO_END.name -> setFloatValues(view.y, y)
+                                PROP_ALPHA_CURRENT_TO_ZERO.name -> setFloatValues(view.alpha, 0f)
+                                PROP_ALPHA_ZERO_TO_CURRENT.name -> setFloatValues(0f, view.alpha)
                             }
                         }
                     }
@@ -167,7 +162,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
                     onEnd()
                 }
 
-                setTarget(viewWrapper)
+                setTarget(view)
                 start()
             }
         } else {
@@ -188,8 +183,12 @@ internal class FloatControl(private val view: View, private val handler: Handler
     fun setAnimator(resId: Int) {
         cancelAnimators()
         if (resId > 0) {
-            floatAnimator = loadAnimator(view.context, resId)
-            homeAnimator = loadAnimator(view.context, R.animator.float_home)
+            floatAnimator = loadAnimator(view.context, resId).apply {
+                extendProperties(customProperties)
+            }
+            homeAnimator = loadAnimator(view.context, R.animator.float_home).apply {
+                extendProperties(customProperties)
+            }
         } else {
             floatAnimator = null
             homeAnimator = null
@@ -234,31 +233,4 @@ internal class FloatControl(private val view: View, private val handler: Handler
         enabled = true
     }
 
-    @Suppress("unused")
-    @Keep
-    private inner class ViewWrapper {
-
-        var x
-            get() = view.x
-            set(value) {
-                view.x = value
-            }
-
-        var y
-            get() = view.y
-            set(value) {
-                view.y = value
-            }
-
-        var alpha
-            get() = view.alpha
-            set(value) {
-                view.alpha = value
-            }
-
-        var xCurrentToEnd by ::x
-        var yCurrentToEnd by ::y
-        var alphaCurrentToZero by ::alpha
-        var alphaZeroToCurrent by ::alpha
-    }
 }
