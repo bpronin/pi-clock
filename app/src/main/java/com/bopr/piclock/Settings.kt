@@ -28,7 +28,8 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
             putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
             putBooleanOptional(PREF_GESTURES_ENABLED, true)
-            putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)
+            putBooleanOptional(PREF_START_ON_POWER_PLUG, false)
+            putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)  /* 15 min */
             putIntOptional(PREF_CONTENT_SCALE, 100) {
                 getInt(PREF_CONTENT_SCALE) in MIN_SCALE..MAX_SCALE
             }
@@ -156,16 +157,17 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_CONTENT_SCALE = "content_scale"
         const val PREF_DATE_FORMAT = "date_format"
         const val PREF_DIGITS_ANIMATION = "digits_animation"
+        const val PREF_FLOAT_ANIMATION = "float_animation"
         const val PREF_FULLSCREEN_ENABLED = "fullscreen_enabled"
         const val PREF_GESTURES_ENABLED = "gestures_enabled"
         const val PREF_MUTED_BRIGHTNESS = "muted_brightness"
         const val PREF_SECONDS_FORMAT = "seconds_format"
+        const val PREF_START_ON_POWER_PLUG = "start_on_power_plug"
         const val PREF_TICK_RULES = "tick_sound_mode"
         const val PREF_TICK_SOUND = "tick_sound"
         const val PREF_TIME_FORMAT = "time_format"
         const val PREF_TIME_SEPARATORS_BLINKING = "time_separators_blinking"
         const val PREF_TIME_SEPARATORS_VISIBLE = "time_separators_visible"
-        const val PREF_FLOAT_ANIMATION = "float_animation"
     }
 
 }

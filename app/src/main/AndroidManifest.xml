@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bopr.piclock">
 
+    <permission
+        android:name="android.permission.REAL_GET_TASKS"
+        android:protectionLevel="signatureOrSystem" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -31,6 +35,12 @@
             android:name=".DebugActivity"
             android:label="Debug"
             android:parentActivityName=".MainActivity" />
+        <receiver android:name=".PowerConnectorReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
 
     </application>
 
