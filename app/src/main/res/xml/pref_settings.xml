@@ -82,7 +82,7 @@
         <SwitchPreference
             android:key="animation_on"
             android:title="@string/animation_enabled" />
-        
+
         <ListPreference
             android:entries="@array/digits_animation_names"
             android:entryValues="@array/digits_animation_values"
@@ -99,11 +99,13 @@
 
     <PreferenceCategory android:title="@string/sound">
 
-        <ListPreference
-            android:entries="@array/tick_sound_names"
-            android:entryValues="@array/tick_sound_values"
+        <Preference
             android:key="tick_sound"
-            android:title="@string/tick_sound" />
+            android:title="@string/tick_sound">
+            <intent
+                android:targetClass="com.bopr.piclock.BrowseSoundActivity"
+                android:targetPackage="com.bopr.piclock" />
+        </Preference>
 
         <MultiSelectListPreference
             android:entries="@array/tick_sound_mode_names"

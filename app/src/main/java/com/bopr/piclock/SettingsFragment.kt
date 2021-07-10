@@ -220,9 +220,10 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateTickSoundView() {
-        (requirePreference(PREF_TICK_SOUND) as ListPreference).apply {
+        requirePreference(PREF_TICK_SOUND).apply {
             val value = settings.getString(key)
-            summary = entries[findIndexOfValue(value)]
+            val index = getStringArray(R.array.tick_sound_values).indexOf(value)
+            summary = getStringArray(R.array.tick_sound_names)[index]
         }
     }
 
