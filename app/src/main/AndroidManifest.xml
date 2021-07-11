@@ -25,7 +25,7 @@
             android:name=".BrowseSoundActivity"
             android:parentActivityName=".MainActivity"
             android:label="@string/tick_sound"
-            android:theme="@style/AppTheme.ActionBar" />
+             />
 
         <activity
             android:name=".DebugActivity"

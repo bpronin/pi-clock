@@ -163,8 +163,8 @@ internal class SoundControl(private val context: Context) {
         }
     }
 
-    fun onTimer(halfTick: Int) {
-        if (halfTick % 2 != 0) return
+    fun onTimer(tick: Int) {
+        if (tick % 2 != 0) return
 
         if ((whenActive && mode == MODE_ACTIVE)
             || (whenInactive && (mode == MODE_INACTIVE || mode == MODE_EDITOR))

@@ -54,33 +54,29 @@ internal class AutoInactivateControl(private val handler: Handler) {
 
     fun onModeChanged(@Mode value: Int) {
         mode = value
-        enabled = (mode == MODE_ACTIVE)
-    }
-
-    fun onPause() {
-        Log.d(_tag, "Pause")
-
-        enabled = false
-    }
-
-    fun onResume() {
-        Log.d(_tag, "Resume")
-
-        enabled = true
+        resume()
     }
 
     fun onTouch(event: MotionEvent): Boolean {
 //        Log.v(_tag, "Processing touch: ${event.action}")
 
         when (event.action) {
-            ACTION_DOWN -> {
-                enabled = false
-            }
-            ACTION_UP -> {
-                onModeChanged(mode)
-            }
+            ACTION_DOWN -> pause()
+            ACTION_UP -> resume()
         }
         return false
+    }
+
+    fun pause() {
+        Log.d(_tag, "Pause")
+
+        enabled = false
+    }
+
+    fun resume() {
+        Log.d(_tag, "Resume")
+
+        enabled = (mode == MODE_ACTIVE)
     }
 
 }

@@ -5,9 +5,11 @@ import android.os.Handler
 class HandlerTimer(
     private val handler: Handler,
     private val interval: Long,
-    private val onTimer: () -> Unit,
+    private val ticksCount: Int,
+    private val onTimer: (tick: Int) -> Unit
 ) {
 
+    private var tick = 1
     private val task = Runnable(::executeTask)
 
     var enabled = false
@@ -15,6 +17,7 @@ class HandlerTimer(
             if (field != value) {
                 field = value
                 if (field) {
+                    tick = 1
                     handler.post(task)
                 } else {
                     handler.removeCallbacks(task)
@@ -24,7 +27,8 @@ class HandlerTimer(
 
     private fun executeTask() {
         if (enabled) {
-            onTimer()
+            onTimer(tick)
+            if (tick < ticksCount) tick++ else tick = 1
             handler.postDelayed(task, interval)
         }
     }

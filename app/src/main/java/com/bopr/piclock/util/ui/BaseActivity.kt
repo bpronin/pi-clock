@@ -1,6 +1,7 @@
 package com.bopr.piclock.util.ui
 
 import android.os.Bundle
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.R
@@ -10,7 +11,11 @@ import com.bopr.piclock.R
  *
  * @author Boris Pronin ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-abstract class BaseActivity<F : Fragment>(fragmentClass: Class<out F>) : AppCompatActivity() {
+abstract class BaseActivity<F : Fragment>(
+    fragmentClass: Class<out F>,
+    @LayoutRes private val layout: Int = R.layout.activity_default
+) :
+    AppCompatActivity() {
 
 /* NOTE: "To keep fragments self-contained, you SHOULD NOT have fragments communicate directly
    with other fragments or with its host activity." (i.e. do not use fragment listeners, references etc. ) */
@@ -19,11 +24,11 @@ abstract class BaseActivity<F : Fragment>(fragmentClass: Class<out F>) : AppComp
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_default)
+        setContentView(layout)
         supportFragmentManager.apply {
-            findFragmentByTag("fragment") ?: run {
+            findFragmentById(R.id.fragment) ?: run {
                 beginTransaction()
-                    .replace(R.id.content, fragment, "fragment")
+                    .replace(R.id.fragment, fragment)
                     .commit()
             }
         }

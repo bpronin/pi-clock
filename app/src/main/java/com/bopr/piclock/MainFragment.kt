@@ -57,11 +57,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val _tag = "MainFragment"
 
     private val handler = Handler(Looper.getMainLooper())
-    private val timer = HandlerTimer(handler, TIMER_INTERVAL, ::onTimer)
+    private val timer = HandlerTimer(handler, TIMER_INTERVAL, 4, ::onTimer)
     private val amPmFormat = defaultDatetimeFormat("a")
     private val rootView get() = requireView() as ConstraintLayout
     private var currentTime = Date()
-    private var currentTick = 0
 
     private lateinit var contentView: ViewGroup
     private lateinit var settingsContainer: View
@@ -264,7 +263,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     override fun onPause() {
         timer.enabled = false
-        autoInactivateControl.onPause()
+        autoInactivateControl.pause()
         floatControl.pause()
         super.onPause()
     }
@@ -272,7 +271,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onResume() {
         super.onResume()
         floatControl.resume()
-        autoInactivateControl.onResume()
+        autoInactivateControl.resume()
         timer.enabled = true
     }
 
@@ -326,20 +325,17 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         } else false
     }
 
-    private fun onTimer() {
+    private fun onTimer(tick: Int) {
+        // Log.v(_tag, "On timer: $halfTick")
+
         currentTime = if (TIME_STEP == 0L)
             Date()
         else
             Date(currentTime.time + TIME_STEP)
 
-        if (currentTick > 7) currentTick = 0
-        currentTick++
-
-        // Log.v(_tag, "On timer: $halfTick")
-
-        updateContentViewData()
-        blinkAnimator.onTimer(currentTick)
-        soundControl.onTimer(currentTick)
+        if (tick % 2 == 0) updateContentViewData()
+        blinkAnimator.onTimer(tick)
+        soundControl.onTimer(tick)
     }
 
     private fun setMode(@Mode newMode: Int, animate: Boolean) {
@@ -382,8 +378,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun updateContentViewData() {
-        if (currentTick % 2 != 0) return
-
         val animated = settings.getBoolean(PREF_ANIMATION_ON)
 
         hoursView.setText(hoursFormat.format(currentTime), animated)
