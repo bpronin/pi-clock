@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -7,112 +8,96 @@
     android:background="?attr/contentBackgroundColor"
     android:orientation="vertical">
 
-    <LinearLayout
+    <com.bopr.piclock.AnimatedTextView
+        android:id="@+id/hours_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:fontFamily="@font/comfortaa"
+        android:text="00"
+        android:textColor="?attr/contentTextColor"
+        android:textSize="72sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
 
-        <com.bopr.piclock.AnimatedTextView
-            android:id="@+id/hours_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/comfortaa"
-            android:includeFontPadding="false"
-            android:text="00"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="96sp"
-            tools:ignore="HardcodedText" />
+    <TextView
+        android:id="@+id/minutes_separator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0sp"
+        android:fontFamily="@font/comfortaa"
+        android:text=":"
+        android:textColor="?attr/contentTextColor"
+        android:textSize="72sp"
+        app:layout_constraintBaseline_toBaselineOf="@id/hours_view"
+        app:layout_constraintLeft_toRightOf="@id/hours_view"
+        tools:ignore="HardcodedText" />
 
-        <TextView
-            android:id="@+id/minutes_separator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-12sp"
-            android:fontFamily="@font/comfortaa"
-            android:includeFontPadding="false"
-            android:text=":"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="96sp"
-            tools:ignore="HardcodedText" />
+    <com.bopr.piclock.AnimatedTextView
+        android:id="@+id/minutes_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/comfortaa"
+        android:text="00"
+        android:textColor="?attr/contentTextColor"
+        android:textSize="72sp"
+        app:layout_constraintBaseline_toBaselineOf="@id/hours_view"
+        app:layout_constraintLeft_toRightOf="@id/minutes_separator"
+        tools:ignore="HardcodedText" />
 
-        <com.bopr.piclock.AnimatedTextView
-            android:id="@+id/minutes_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/comfortaa"
-            android:includeFontPadding="false"
-            android:text="00"
-            android:textColor="?attr/contentTextColor"
-            android:textSize="96sp"
-            tools:ignore="HardcodedText" />
+    <TextView
+        android:id="@+id/seconds_separator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0sp"
+        android:fontFamily="@font/comfortaa"
+        android:text=":"
+        android:textColor="?attr/contentTextColor"
+        android:textSize="28sp"
+        app:layout_constraintBaseline_toBaselineOf="@id/hours_view"
+        app:layout_constraintLeft_toRightOf="@id/minutes_view"
+        tools:ignore="HardcodedText" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+    <com.bopr.piclock.AnimatedTextView
+        android:id="@+id/seconds_view"
+        android:layout_width="40sp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/comfortaa"
+        android:text="01"
+        android:textColor="?attr/contentTextColor"
+        android:textSize="28sp"
+        app:layout_constraintBaseline_toBaselineOf="@id/hours_view"
+        app:layout_constraintLeft_toRightOf="@id/seconds_separator"
+        tools:ignore="HardcodedText" />
 
-            <TextView
-                android:id="@+id/am_pm_marker_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14sp"
-                android:fontFamily="@font/comfortaa"
-                android:gravity="top|center_horizontal"
-                android:includeFontPadding="false"
-                android:text="AM"
-                android:textColor="?attr/contentTextColor"
-                android:textSize="34sp"
-                tools:ignore="HardcodedText" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="-7sp"
-                android:layout_marginBottom="10sp"
-                android:gravity="bottom"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/seconds_separator"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="-4sp"
-                    android:layout_marginEnd="4sp"
-                    android:layout_marginBottom="6sp"
-                    android:fontFamily="@font/comfortaa"
-                    android:includeFontPadding="false"
-                    android:text=":"
-                    android:textColor="?attr/contentTextColor"
-                    android:textSize="42sp"
-                    tools:ignore="HardcodedText" />
-
-                <com.bopr.piclock.AnimatedTextView
-                    android:id="@+id/seconds_view"
-                    android:layout_width="64sp"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/comfortaa"
-                    android:includeFontPadding="false"
-                    android:text="01"
-                    android:textColor="?attr/contentTextColor"
-                    android:textSize="42sp"
-                    tools:ignore="HardcodedText" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </LinearLayout>
+    <!--  This view is opaque and overlapping seconds view to start animation
+      a little lower since there is no simple way to eliminate of TextView's top padding -->
+    <TextView
+        android:id="@+id/am_pm_marker_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22sp"
+        android:background="?attr/contentBackgroundColor"
+        android:fontFamily="@font/comfortaa"
+        android:text="AM"
+        android:textColor="?attr/contentTextColor"
+        android:textSize="26sp"
+        app:layout_constraintLeft_toLeftOf="@id/seconds_view"
+        app:layout_constraintTop_toTopOf="@id/hours_view"
+        tools:ignore="HardcodedText" />
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/date_view"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat"
-        android:includeFontPadding="false"
-        android:text="Someday, Month 00 "
         android:gravity="center"
+        android:text="Someday, Month 00 "
         android:textColor="?attr/contentTextColor"
-        android:textSize="18sp"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="@id/hours_view"
+        app:layout_constraintRight_toRightOf="@id/seconds_view"
+        app:layout_constraintTop_toBottomOf="@id/hours_view"
         tools:ignore="HardcodedText" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
