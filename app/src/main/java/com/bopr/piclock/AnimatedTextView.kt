@@ -4,8 +4,7 @@ import android.animation.AnimatorInflater.loadAnimator
 import android.animation.AnimatorSet
 import android.content.Context
 import android.util.AttributeSet
-import android.view.Gravity.FILL
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.FrameLayout
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
@@ -45,8 +44,13 @@ class AnimatedTextView : FrameLayout {
         view = AppCompatTextView(context, attrs, defStyleAttr)
         shadowView = AppCompatTextView(context, attrs, defStyleAttr)
 
-        addView(shadowView, LayoutParams(WRAP_CONTENT, WRAP_CONTENT, FILL))
-        addView(view, LayoutParams(WRAP_CONTENT, WRAP_CONTENT, FILL))
+        val lp = generateLayoutParams(attrs).apply {
+            if (width == 0) width = MATCH_PARENT
+            if (height == 0) height = MATCH_PARENT
+        }
+
+        addView(shadowView, lp)
+        addView(view, lp)
 
         resetViews()
     }

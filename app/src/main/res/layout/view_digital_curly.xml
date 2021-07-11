@@ -88,11 +88,11 @@
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/date_view"
-        android:layout_width="wrap_content"
+        android:layout_width="0sp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/comfortaa"
         android:gravity="center"
-        android:text="Someday, Month 00 "
+        android:text="Someday of the week, Month 00, 2021"
         android:textColor="?attr/contentTextColor"
         android:textSize="14sp"
         app:layout_constraintLeft_toLeftOf="@id/hours_view"

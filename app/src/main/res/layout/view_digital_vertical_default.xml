@@ -14,22 +14,21 @@
         android:layout_gravity="center"
         android:layout_marginBottom="-12sp"
         android:fontFamily="@font/gruppo"
-        android:includeFontPadding="false"
         android:text="AM"
         android:textColor="?attr/contentTextColor"
-        android:textSize="34sp"
+        android:textSize="26sp"
         tools:ignore="HardcodedText" />
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/hours_view"
-        android:layout_width="wrap_content"
+        android:layout_width="80sp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="@font/gruppo"
-        android:includeFontPadding="false"
-        android:text="21"
+        android:gravity="center"
+        android:text="44"
         android:textColor="?attr/contentTextColor"
-        android:textSize="96sp"
+        android:textSize="72sp"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -37,24 +36,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="-64sp"
-        android:layout_marginBottom="-34sp"
+        android:layout_marginTop="-48sp"
+        android:layout_marginBottom="-28sp"
         android:fontFamily="@font/gruppo"
         android:text="_"
         android:textColor="?attr/contentTextColor"
-        android:textSize="96sp"
+        android:textSize="72sp"
         tools:ignore="HardcodedText" />
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/minutes_view"
-        android:layout_width="wrap_content"
+        android:layout_width="80sp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="@font/gruppo"
-        android:includeFontPadding="false"
-        android:text="56"
+        android:gravity="center"
+        android:text="00"
         android:textColor="?attr/contentTextColor"
-        android:textSize="96sp"
+        android:textSize="72sp"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -62,39 +61,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="-32sp"
-        android:layout_marginBottom="-10sp"
+        android:layout_marginTop="-22sp"
+        android:layout_marginBottom="-8sp"
         android:fontFamily="@font/gruppo"
-        android:includeFontPadding="false"
         android:text="_"
         android:textColor="?attr/contentTextColor"
-        android:textSize="48sp"
+        android:textSize="28sp"
         tools:ignore="HardcodedText" />
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/seconds_view"
-        android:layout_width="wrap_content"
+        android:layout_width="30sp"
         android:layout_height="match_parent"
-        android:fontFamily="@font/gruppo"
         android:layout_gravity="center"
-        android:includeFontPadding="false"
-        android:text="04"
+        android:fontFamily="@font/gruppo"
+        android:gravity="center"
+        android:text="44"
         android:textColor="?attr/contentTextColor"
-        android:textSize="48sp"
+        android:textSize="28sp"
         tools:ignore="HardcodedText" />
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/date_view"
-        android:layout_width="wrap_content"
+        android:layout_width="148sp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="8sp"
-        android:layout_marginBottom="4sp"
         android:fontFamily="@font/comfortaa"
-        android:includeFontPadding="false"
-        android:text="Wednesday\nJanuary 13"
+        android:gravity="center"
+        android:text="Someday of the week, Month 00, 2021"
         android:textColor="?attr/contentTextColor"
-        android:textSize="18sp"
+        android:textSize="14sp"
         tools:ignore="HardcodedText" />
 
 </LinearLayout>

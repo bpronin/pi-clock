@@ -55,6 +55,7 @@ class DigitalClockControl(private val view: View, private val settings: Settings
 
     override fun setAnimated(value: Boolean) {
         animated = value
+        blinkAnimator.setAnimated(animated)
     }
 
     override fun onTimer(time: Date, tick: Int) {

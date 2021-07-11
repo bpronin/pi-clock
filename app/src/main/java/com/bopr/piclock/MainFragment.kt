@@ -341,16 +341,20 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         const val STATE_KEY_MODE = "mode"
 
-        private const val TIMER_INTERVAL = 500L
-//        private const val TIMER_INTERVAL = 10L
+        private const val TIMER_INTERVAL = 500L /* default */
+//        private const val TIMER_INTERVAL = 250L
+//        private const val TIMER_INTERVAL = 100L
 
-//        private var startTime = Date().time
+        private var debugTime = Date().time
 
         private fun getCurrentTime(): Date {
-//            return Date(startTime + 1000L)
-//            return Date(startTime + 60 * 1000L)
-//            return Date(startTime + 10 * 60 * 1000L)
-            return Date()
+//            debugTime += 24 * 60 * 60 * 1000L
+//            debugTime += 60 * 60 * 1000L
+            debugTime += 60 * TIMER_INTERVAL
+//            debugTime += 1000L
+            return Date(debugTime)
+
+//            return Date() /* default */
         }
 
     }

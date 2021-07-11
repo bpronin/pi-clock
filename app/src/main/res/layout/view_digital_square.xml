@@ -60,10 +60,10 @@
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/seconds_view"
-        android:layout_width="40sp"
+        android:layout_width="48sp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/orbitron"
-        android:text="01"
+        android:text="44"
         android:textColor="?attr/contentTextColor"
         android:textSize="28sp"
         app:layout_constraintBaseline_toBaselineOf="@id/hours_view"
@@ -88,13 +88,13 @@
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/date_view"
-        android:layout_width="wrap_content"
+        android:layout_width="0sp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat"
         android:gravity="center"
-        android:text="Someday, Month 00 "
+        android:text="Someday of the week, Month 00, 2021"
         android:textColor="?attr/contentTextColor"
-        android:textSize="14sp"
+        android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="@id/hours_view"
         app:layout_constraintRight_toRightOf="@id/seconds_view"
         app:layout_constraintTop_toBottomOf="@id/hours_view"

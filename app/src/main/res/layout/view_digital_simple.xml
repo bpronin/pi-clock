@@ -60,7 +60,7 @@
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/seconds_view"
-        android:layout_width="74sp"
+        android:layout_width="80sp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/gruppo"
         android:text="00"
@@ -86,7 +86,7 @@
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/date_view"
-        android:layout_width="wrap_content"
+        android:layout_width="0sp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/comfortaa"
         android:gravity="center"
@@ -94,7 +94,7 @@
         android:textColor="?attr/contentTextColor"
         android:textSize="14sp"
         app:layout_constraintLeft_toLeftOf="@id/hours_view"
-        app:layout_constraintRight_toRightOf="@id/seconds_view"
+        app:layout_constraintRight_toRightOf="@id/am_pm_marker_view"
         app:layout_constraintTop_toBottomOf="@id/hours_view"
         tools:ignore="HardcodedText" />
 
