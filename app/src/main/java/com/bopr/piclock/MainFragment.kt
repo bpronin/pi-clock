@@ -10,7 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.*
+import android.view.ViewGroup.GONE
 import android.widget.TextView
 import androidx.annotation.IntDef
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -18,33 +18,24 @@ import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
 import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
+import com.bopr.piclock.DigitalClockControl.Companion.isDigitalClockLayout
 import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
-import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
-import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_FLOAT_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_GESTURES_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_MUTED_BRIGHTNESS
-import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TICK_RULES
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
-import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
-import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
-import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.HandlerTimer
-import com.bopr.piclock.util.defaultDatetimeFormat
 import com.bopr.piclock.util.getResAnimator
 import com.bopr.piclock.util.getResId
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.text.DateFormat
 import java.util.*
 
 /**
@@ -58,26 +49,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val handler = Handler(Looper.getMainLooper())
     private val timer = HandlerTimer(handler, TIMER_INTERVAL, 4, ::onTimer)
-    private val amPmFormat = defaultDatetimeFormat("a")
     private val rootView get() = requireView() as ConstraintLayout
-    private var currentTime = Date()
 
-    private lateinit var contentView: ViewGroup
+    private lateinit var contentHolder: ViewGroup
     private lateinit var settingsContainer: View
     private lateinit var settingsButton: FloatingActionButton
-    private lateinit var hoursView: AnimatedTextView
-    private lateinit var minutesView: AnimatedTextView
-    private lateinit var secondsView: AnimatedTextView
-    private lateinit var dateView: AnimatedTextView
-    private lateinit var minutesSeparator: TextView
-    private lateinit var secondsSeparator: TextView
-    private lateinit var amPmMarkerView: TextView
     private lateinit var infoView: TextView
     private lateinit var settings: Settings
-    private lateinit var hoursFormat: DateFormat
-    private lateinit var minutesFormat: DateFormat
-    private lateinit var secondsFormat: DateFormat
-    private lateinit var dateFormat: DateFormat
+    private lateinit var contentControl: ContentControl
 
     private val fullscreenControl by lazy {
         FullscreenControl(requireActivity(), handler)
@@ -91,7 +70,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private val floatControl by lazy {
-        FloatControl(contentView, handler).apply {
+        FloatControl(contentHolder, handler).apply {
             setInterval(settings.getLong(PREF_CONTENT_FLOAT_INTERVAL))
             setAnimator(getResAnimator(settings.getString(PREF_FLOAT_ANIMATION)))
             setAnimated(settings.getBoolean(PREF_ANIMATION_ON))
@@ -155,17 +134,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         LayoutControl(rootView, parentFragmentManager)
     }
 
-    private val blinkAnimator by lazy {
-        BlinkControl(minutesSeparator, secondsSeparator).apply {
-            setEnabled(
-                settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE) &&
-                        settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING)
-            )
-            setSecondsEnabled(settings.getString(PREF_SECONDS_FORMAT).isNotEmpty())
-            setAnimated(settings.getBoolean(PREF_ANIMATION_ON))
-        }
-    }
-
     @Mode
     private var mode = MODE_ACTIVE
 
@@ -219,11 +187,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 visibility = GONE
             }
 
-            contentView = findViewById<ViewGroup>(R.id.content_view).apply {
+            contentHolder = findViewById<ViewGroup>(R.id.content_holder).apply {
                 setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
             }
 
-            createContentView()
+            createContentControl()
         }
     }
 
@@ -231,19 +199,18 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         settings.registerOnSharedPreferenceChangeListener(this)
 
         brightnessControl.apply {
-            setView(contentView)
+            setView(contentHolder)
             setMutedBrightness(settings.getInt(PREF_MUTED_BRIGHTNESS))
         }
 
         scaleControl.apply {
-            setView(contentView)
+            setView(contentHolder)
             setScale(settings.getInt(PREF_CONTENT_SCALE), false)
         }
 
         fullscreenControl.setEnabled(settings.getBoolean(PREF_FULLSCREEN_ENABLED))
 
-        updateContentViewData()
-        updateDigitsAnimation()
+        contentControl.setAnimated(settings.getBoolean(PREF_ANIMATION_ON))
     }
 
     override fun onSaveInstanceState(savedState: Bundle) {
@@ -275,27 +242,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         timer.enabled = true
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
         Log.d(_tag, "Setting: $key changed to: ${settings.all[key]}")
 
         settings.apply {
             when (key) {
                 PREF_CONTENT_LAYOUT ->
-                    createContentView()
-                PREF_TIME_FORMAT ->
-                    updateHoursMinutesViews()
-                PREF_SECONDS_FORMAT -> {
-                    updateSecondsView()
-                    updateSeparatorsViews()
-                }
-                PREF_TIME_SEPARATORS_VISIBLE ->
-                    updateSeparatorsViews()
-                PREF_TIME_SEPARATORS_BLINKING ->
-                    updateSeparatorsViews()
-                PREF_DATE_FORMAT ->
-                    updateDateView()
-                PREF_DIGITS_ANIMATION ->
-                    updateDigitsAnimation()
+                    createContentControl()
                 PREF_ANIMATION_ON ->
                     enableAnimation(settings.getBoolean(key))
                 PREF_FULLSCREEN_ENABLED ->
@@ -316,6 +269,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     floatControl.setAnimator(getResAnimator(getString(key)))
             }
         }
+
+        contentControl.onSettingChanged(key)
     }
 
     fun onBackPressed(): Boolean {
@@ -326,15 +281,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private fun onTimer(tick: Int) {
-        // Log.v(_tag, "On timer: $halfTick")
-
-        currentTime = if (TIME_STEP == 0L)
-            Date()
-        else
-            Date(currentTime.time + TIME_STEP)
-
-        if (tick % 2 == 0) updateContentViewData()
-        blinkAnimator.onTimer(tick)
+        val time = getCurrentTime()
+        contentControl.onTimer(time, tick)
         soundControl.onTimer(tick)
     }
 
@@ -354,100 +302,26 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    private fun createContentView() {
-        contentView.apply {
+    @SuppressLint("ClickableViewAccessibility")
+    private fun createContentControl() {
+        val layout = settings.getString(PREF_CONTENT_LAYOUT)
+        val view = layoutInflater.inflate(getResId("layout", layout), contentHolder, false)
+        contentHolder.apply {
             removeAllViews()
-            val resId = getResId("layout", settings.getString(PREF_CONTENT_LAYOUT))
-            addView(layoutInflater.inflate(resId, this, false).apply {
-                hoursView = findViewById(R.id.hours_view)
-                minutesView = findViewById(R.id.minutes_view)
-                secondsView = findViewById(R.id.seconds_view)
-                amPmMarkerView = findViewById(R.id.am_pm_marker_view)
-                dateView = findViewById(R.id.date_view)
-                minutesSeparator = findViewById(R.id.minutes_separator)
-                secondsSeparator = findViewById(R.id.seconds_separator)
-            })
+            addView(view)
         }
 
-        updateHoursMinutesViews()
-        updateSecondsView()
-        updateSeparatorsViews()
-        updateDateView()
-
-        Log.d(_tag, "Created content view")
-    }
-
-    private fun updateContentViewData() {
-        val animated = settings.getBoolean(PREF_ANIMATION_ON)
-
-        hoursView.setText(hoursFormat.format(currentTime), animated)
-        minutesView.setText(minutesFormat.format(currentTime), animated)
-        if (dateView.visibility == VISIBLE) {
-            dateView.setText(dateFormat.format(currentTime), animated)
-        }
-        if (amPmMarkerView.visibility == VISIBLE) {
-            amPmMarkerView.text = amPmFormat.format(currentTime)
-        }
-        if (secondsView.visibility == VISIBLE) {
-            secondsView.setText(secondsFormat.format(currentTime), animated)
-        }
-    }
-
-    private fun updateHoursMinutesViews() {
-        val patterns = settings.getString(PREF_TIME_FORMAT).split(":")
-        val hoursPattern = patterns[0]
-        val minutesPattern = patterns[1]
-
-        hoursFormat = defaultDatetimeFormat(hoursPattern)
-        minutesFormat = defaultDatetimeFormat(minutesPattern)
-        amPmMarkerView.visibility = if (hoursPattern.startsWith("h")) VISIBLE else GONE
-    }
-
-    private fun updateSecondsView() {
-        val pattern = settings.getString(PREF_SECONDS_FORMAT)
-        if (pattern.isNotEmpty()) {
-            secondsView.visibility = VISIBLE
-            secondsFormat = defaultDatetimeFormat(pattern)
+        if (isDigitalClockLayout(layout)) {
+            contentControl = DigitalClockControl(view, settings)
         } else {
-            secondsView.visibility = GONE
+            throw IllegalArgumentException("Unregistered content layout resource: $layout")
         }
-    }
 
-    private fun updateDateView() {
-        val pattern = settings.getString(PREF_DATE_FORMAT)
-
-        dateFormat =
-            if (pattern == SYSTEM_DEFAULT) DEFAULT_DATE_FORMAT else defaultDatetimeFormat(pattern)
-        dateView.visibility = if (pattern.isEmpty()) GONE else VISIBLE
-    }
-
-    private fun updateSeparatorsViews() {
-        if (settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE)) {
-            val secondsVisible = settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()
-            minutesSeparator.visibility = VISIBLE
-            secondsSeparator.visibility = if (secondsVisible) VISIBLE else INVISIBLE
-
-            blinkAnimator.setEnabled(settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING))
-            blinkAnimator.setSecondsEnabled(secondsVisible)
-        } else {
-            minutesSeparator.visibility = INVISIBLE
-            secondsSeparator.visibility = INVISIBLE
-
-            blinkAnimator.setEnabled(false)
-        }
-    }
-
-    private fun updateDigitsAnimation() {
-        val resId = getResAnimator(settings.getString(PREF_DIGITS_ANIMATION))
-
-        hoursView.setTextAnimator(resId)
-        minutesView.setTextAnimator(resId)
-        secondsView.setTextAnimator(resId)
-        dateView.setTextAnimator(resId)
+        Log.d(_tag, "Created content")
     }
 
     private fun enableAnimation(enable: Boolean) {
-        blinkAnimator.setAnimated(enable)
+        contentControl.setAnimated(enable)
         floatControl.setAnimated(enable)
     }
 
@@ -467,13 +341,18 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         const val STATE_KEY_MODE = "mode"
 
-        const val TIMER_INTERVAL = 500L
-        const val TIME_STEP = 0L
+        private const val TIMER_INTERVAL = 500L
+//        private const val TIMER_INTERVAL = 10L
 
-//        const val TIMER_INTERVAL = 10L
-//        const val TIME_STEP = 1000L
-//        const val TIME_STEP = 60 * 1000L
-//        const val TIME_STEP = 10 * 60 * 1000L
+//        private var startTime = Date().time
+
+        private fun getCurrentTime(): Date {
+//            return Date(startTime + 1000L)
+//            return Date(startTime + 60 * 1000L)
+//            return Date(startTime + 10 * 60 * 1000L)
+            return Date()
+        }
+
     }
 
 }
