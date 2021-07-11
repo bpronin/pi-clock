@@ -21,18 +21,9 @@ import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
 import com.bopr.piclock.DigitalClockControl.Companion.isDigitalClockLayout
 import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
-import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
-import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
-import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
-import com.bopr.piclock.Settings.Companion.PREF_FLOAT_ANIMATION
-import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_GESTURES_ENABLED
-import com.bopr.piclock.Settings.Companion.PREF_MUTED_BRIGHTNESS
-import com.bopr.piclock.Settings.Companion.PREF_TICK_RULES
-import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.util.HandlerTimer
-import com.bopr.piclock.util.getResAnimator
 import com.bopr.piclock.util.getResId
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
@@ -57,25 +48,21 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var contentControl: ContentControl
 
     private val settings by lazy {
-        Settings(requireContext())
-    }
-
-    private val fullscreenControl by lazy {
-        FullscreenControl(requireActivity(), handler)
-    }
-
-    private val soundControl by lazy {
-        SoundControl(requireContext()).apply {
-            setSound(settings.getString(PREF_TICK_SOUND))
-            setRules(settings.getStringSet(PREF_TICK_RULES))
+        Settings(requireContext()).apply {
+            registerOnSharedPreferenceChangeListener(this@MainFragment)
         }
     }
 
+    private val fullscreenControl by lazy {
+        FullscreenControl(requireActivity(), handler, settings)
+    }
+
+    private val soundControl by lazy {
+        SoundControl(requireContext(), settings)
+    }
+
     private val floatControl by lazy {
-        FloatControl(contentHolder, handler).apply {
-            setInterval(settings.getLong(PREF_CONTENT_FLOAT_INTERVAL))
-            setAnimator(getResAnimator(settings.getString(PREF_FLOAT_ANIMATION)))
-            setAnimated(settings.getBoolean(PREF_ANIMATION_ON))
+        FloatControl(contentHolder, handler, settings).apply {
             onFloat = { soundControl.onFloatView(it) }
         }
     }
@@ -87,7 +74,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private val brightnessControl by lazy {
-        BrightnessControl().apply {
+        BrightnessControl(contentHolder, settings).apply {
             onSwipeStart = {
                 floatControl.pause()
                 setMode(MODE_INACTIVE, true)
@@ -101,16 +88,15 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 }
                 infoView.text = getString(resId, brightness)
             }
-            onSwipeEnd = { brightness ->
+            onSwipeEnd = {
                 infoView.fadeOutHide()
                 floatControl.resume()
-                settings.update { putInt(PREF_MUTED_BRIGHTNESS, brightness) }
             }
         }
     }
 
     private val scaleControl by lazy {
-        ScaleControl().apply {
+        ScaleControl(contentHolder, settings).apply {
             onPinchStart = {
                 floatControl.pause()
                 infoView.fadeInShow()
@@ -123,16 +109,15 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 }
                 infoView.text = getString(resId, scale)
             }
-            onPinchEnd = { scale ->
+            onPinchEnd = {
                 infoView.fadeOutHide()
                 floatControl.resume()
-                settings.update { putInt(PREF_CONTENT_SCALE, scale) }
             }
         }
     }
 
     private val layoutControl by lazy {
-        LayoutControl(rootView, parentFragmentManager)
+        LayoutControl(rootView, parentFragmentManager, settings)
     }
 
     @Mode
@@ -191,24 +176,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        settings.registerOnSharedPreferenceChangeListener(this)
-
-        brightnessControl.apply {
-            setView(contentHolder)
-            setMutedBrightness(settings.getInt(PREF_MUTED_BRIGHTNESS))
-        }
-
-        scaleControl.apply {
-            setView(contentHolder)
-            setScale(settings.getInt(PREF_CONTENT_SCALE), false)
-        }
-
-        fullscreenControl.setEnabled(settings.getBoolean(PREF_FULLSCREEN_ENABLED))
-
-        contentControl.setAnimated(settings.getBoolean(PREF_ANIMATION_ON))
-    }
-
     override fun onSaveInstanceState(savedState: Bundle) {
         super.onSaveInstanceState(savedState)
         savedState.apply {
@@ -217,8 +184,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(this)
         handler.removeCallbacksAndMessages(null)
+        settings.unregisterOnSharedPreferenceChangeListener(this)
         soundControl.destroy()
         scaleControl.destroy()
         super.onDestroy()
@@ -241,29 +208,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
         Log.d(_tag, "Setting: $key changed to: ${settings.all[key]}")
 
-        settings.apply {
-            when (key) {
-                PREF_CONTENT_LAYOUT ->
-                    createContentControl()
-                PREF_ANIMATION_ON ->
-                    enableAnimation(settings.getBoolean(key))
-                PREF_FULLSCREEN_ENABLED ->
-                    updateFullscreenControl(getBoolean(key))
-                PREF_CONTENT_SCALE ->
-                    scaleControl.setScale(getInt(key), true)
-                PREF_MUTED_BRIGHTNESS ->
-                    brightnessControl.setMutedBrightness(getInt(key))
-                PREF_TICK_SOUND ->
-                    soundControl.setSound(getString(key))
-                PREF_TICK_RULES ->
-                    soundControl.setRules(getStringSet(key))
-                PREF_CONTENT_FLOAT_INTERVAL ->
-                    floatControl.setInterval(getLong(key))
-                PREF_FLOAT_ANIMATION ->
-                    floatControl.setAnimator(getResAnimator(getString(key)))
-            }
-        }
+        if (key == PREF_CONTENT_LAYOUT) createContentControl()
 
+        scaleControl.onSettingChanged(key)
+        brightnessControl.onSettingChanged(key)
+        layoutControl.onSettingChanged(key)
+        soundControl.onSettingChanged(key)
+        floatControl.onSettingChanged(key)
+        fullscreenControl.onSettingChanged(key)
         autoInactivateControl.onSettingChanged(key)
         contentControl.onSettingChanged(key)
     }
@@ -313,16 +265,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
 
         Log.d(_tag, "Created content")
-    }
-
-    private fun enableAnimation(enable: Boolean) {
-        contentControl.setAnimated(enable)
-        floatControl.setAnimated(enable)
-    }
-
-    private fun updateFullscreenControl(enabled: Boolean) {
-        fullscreenControl.setEnabled(enabled)
-        layoutControl.onFullscreenEnabled(enabled)
     }
 
     @IntDef(value = [MODE_ACTIVE, MODE_INACTIVE, MODE_EDITOR])

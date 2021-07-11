@@ -6,13 +6,14 @@ import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import android.view.ScaleGestureDetector
+import android.view.View
 import android.view.View.OnLayoutChangeListener
-import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
+import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.util.*
 import com.bopr.piclock.util.property.PROP_SCALE
 import kotlin.math.max
@@ -23,7 +24,8 @@ import kotlin.math.min
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
+internal class ScaleControl(private val view: View, private val settings: Settings) :
+    ScaleGestureDetector.OnScaleGestureListener {
 
     private val _tag = "ScaleControl"
 
@@ -55,7 +57,6 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
     @Mode
     var mode = MODE_INACTIVE
 
-    private lateinit var view: ViewGroup
     private val viewListener =
         OnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
@@ -67,7 +68,12 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
 
     lateinit var onPinchStart: () -> Unit
     lateinit var onPinch: (scalePercent: Int) -> Unit
-    lateinit var onPinchEnd: (scalePercent: Int) -> Unit
+    lateinit var onPinchEnd: () -> Unit
+
+    init {
+        view.addOnLayoutChangeListener(viewListener)
+        updateScale(false)
+    }
 
     override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
         Log.d(_tag, "Start pinching")
@@ -88,7 +94,10 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
         Log.d(_tag, "End pinching")
 
         defaultScale = viewScale
-        onPinchEnd(toPercents(defaultScale))
+        settings.update {
+            putInt(PREF_CONTENT_SCALE, toPercents(defaultScale))
+        }
+        onPinchEnd()
         animateTo(computeFitScale(defaultScale), true)
     }
 
@@ -129,6 +138,19 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
         }
     }
 
+    private fun updateScale(animated: Boolean) {
+        defaultScale = toDecimal(settings.getInt(PREF_CONTENT_SCALE))
+
+        /* show actual size first then shrink if needed */
+        animateTo(defaultScale, animated) {
+            animateTo(computeFitScale(defaultScale), animated)
+        }
+    }
+
+    fun onSettingChanged(key: String) {
+        if (key == PREF_CONTENT_SCALE) updateScale(true)
+    }
+
     /**
      * To be called in owner's onTouch.
      */
@@ -150,21 +172,6 @@ internal class ScaleControl : ScaleGestureDetector.OnScaleGestureListener {
 
     fun onModeChanged(value: Int) {
         mode = value
-    }
-
-    fun setView(value: ViewGroup) {
-        view = value.apply {
-            addOnLayoutChangeListener(viewListener)
-        }
-    }
-
-    fun setScale(valuePercent: Int, animated: Boolean) {
-        defaultScale = toDecimal(valuePercent)
-
-        /* show actual size first then shrink if needed */
-        animateTo(defaultScale, animated) {
-            animateTo(computeFitScale(defaultScale), animated)
-        }
     }
 
     fun destroy() {

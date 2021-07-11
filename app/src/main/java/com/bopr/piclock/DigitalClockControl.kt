@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup.*
 import android.widget.TextView
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
@@ -12,7 +13,7 @@ import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.defaultDatetimeFormat
-import com.bopr.piclock.util.getResId
+import com.bopr.piclock.util.getResAnimator
 import java.text.DateFormat
 import java.util.*
 
@@ -51,48 +52,13 @@ class DigitalClockControl(private val view: View, private val settings: Settings
         updateSeparatorsViews()
         updateDateView()
         updateDigitsAnimation()
+        updateAnimated()
+        updateViewsData(Date(), false)
     }
 
-    override fun setAnimated(value: Boolean) {
-        animated = value
+    private fun updateAnimated() {
+        animated = settings.getBoolean(PREF_ANIMATION_ON)
         blinkAnimator.setAnimated(animated)
-    }
-
-    override fun onTimer(time: Date, tick: Int) {
-        if (tick % 2 == 0) {
-            hoursView.setText(hoursFormat.format(time), animated)
-            minutesView.setText(minutesFormat.format(time), animated)
-            if (dateView.visibility == VISIBLE) {
-                dateView.setText(dateFormat.format(time), animated)
-            }
-            if (amPmMarkerView.visibility == VISIBLE) {
-                amPmMarkerView.text = amPmFormat.format(time)
-            }
-            if (secondsView.visibility == VISIBLE) {
-                secondsView.setText(secondsFormat.format(time), animated)
-            }
-        }
-
-        blinkAnimator.onTimer(tick)
-    }
-
-    override fun onSettingChanged(key: String) {
-        when (key) {
-            PREF_TIME_FORMAT ->
-                updateHoursMinutesViews()
-            PREF_SECONDS_FORMAT -> {
-                updateSecondsView()
-                updateSeparatorsViews()
-            }
-            PREF_TIME_SEPARATORS_VISIBLE ->
-                updateSeparatorsViews()
-            PREF_TIME_SEPARATORS_BLINKING ->
-                updateSeparatorsViews()
-            PREF_DATE_FORMAT ->
-                updateDateView()
-            PREF_DIGITS_ANIMATION ->
-                updateDigitsAnimation()
-        }
     }
 
     private fun updateHoursMinutesViews() {
@@ -144,12 +110,55 @@ class DigitalClockControl(private val view: View, private val settings: Settings
     }
 
     private fun updateDigitsAnimation() {
-        val resId = view.context.getResId("animator", settings.getString(PREF_DIGITS_ANIMATION))
+        val resId = view.context.getResAnimator(settings.getString(PREF_DIGITS_ANIMATION))
 
         hoursView.setTextAnimator(resId)
         minutesView.setTextAnimator(resId)
         secondsView.setTextAnimator(resId)
         dateView.setTextAnimator(resId)
+    }
+
+    private fun updateViewsData(time: Date, animated: Boolean) {
+        hoursView.setText(hoursFormat.format(time), animated)
+        minutesView.setText(minutesFormat.format(time), animated)
+        if (dateView.visibility == VISIBLE) {
+            dateView.setText(dateFormat.format(time), animated)
+        }
+        if (amPmMarkerView.visibility == VISIBLE) {
+            amPmMarkerView.text = amPmFormat.format(time)
+        }
+        if (secondsView.visibility == VISIBLE) {
+            secondsView.setText(secondsFormat.format(time), animated)
+        }
+    }
+
+    override fun onTimer(time: Date, tick: Int) {
+        if (tick % 2 == 0) {
+            updateViewsData(time, animated)
+        }
+
+        blinkAnimator.onTimer(tick)
+    }
+
+    override fun onSettingChanged(key: String) {
+        when (key) {
+            PREF_ANIMATION_ON ->
+                updateAnimated()
+            PREF_TIME_FORMAT ->
+                updateHoursMinutesViews()
+            PREF_SECONDS_FORMAT -> {
+                updateSecondsView()
+                updateSeparatorsViews()
+            }
+            PREF_TIME_SEPARATORS_VISIBLE ->
+                updateSeparatorsViews()
+            PREF_TIME_SEPARATORS_BLINKING ->
+                updateSeparatorsViews()
+            PREF_DATE_FORMAT ->
+                updateDateView()
+            PREF_DIGITS_ANIMATION ->
+                updateDigitsAnimation()
+        }
     }
 
     companion object {

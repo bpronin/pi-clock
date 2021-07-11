@@ -9,13 +9,18 @@ import android.view.WindowInsets.Type.systemBars
 import android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
+import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 
 /**
  * Convenience class to control system UI's visibility.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class FullscreenControl(private val activity: Activity, private val handler: Handler) {
+internal class FullscreenControl(
+    private val activity: Activity,
+    private val handler: Handler,
+    private val settings: Settings
+) {
 
     private val _tag = "FullscreenSupport"
 
@@ -91,13 +96,15 @@ internal class FullscreenControl(private val activity: Activity, private val han
         Log.d(_tag, "System UI hidden")
     }
 
-    fun setEnabled(value: Boolean) {
-        if (enabled != value) {
-            enabled = value
-            if (!enabled) {
-                fullscreen = false
-            }
+    fun init() {
+        enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
+        if (!enabled) {
+            fullscreen = false
         }
+    }
+
+    fun onSettingChanged(key: String) {
+        if (key == PREF_FULLSCREEN_ENABLED) init()
     }
 
     fun onModeChanged(@Mode mode: Int) {

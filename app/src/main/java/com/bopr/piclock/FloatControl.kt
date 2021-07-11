@@ -12,6 +12,9 @@ import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
+import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
+import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
+import com.bopr.piclock.Settings.Companion.PREF_FLOAT_ANIMATION
 import com.bopr.piclock.util.*
 import com.bopr.piclock.util.property.PROP_ALPHA_CURRENT_TO_ZERO
 import com.bopr.piclock.util.property.PROP_ALPHA_ZERO_TO_CURRENT
@@ -24,7 +27,11 @@ import java.lang.Math.random
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class FloatControl(private val view: View, private val handler: Handler) {
+internal class FloatControl(
+    private val view: View,
+    private val handler: Handler,
+    private val settings: Settings
+) {
 
     private val _tag = "FloatControl"
 
@@ -72,9 +79,15 @@ internal class FloatControl(private val view: View, private val handler: Handler
         PROP_ALPHA_ZERO_TO_CURRENT
     )
 
-    private fun isAnimationOn() = animated && floatAnimator != null && homeAnimator != null
-
     lateinit var onFloat: (animating: Boolean) -> Unit
+
+    init {
+        updateInterval()
+        updateAnimator()
+        updateAnimated()
+    }
+
+    private fun isAnimationOn() = animated && floatAnimator != null && homeAnimator != null
 
     private fun scheduleTask(startDelay: Long = 0) {
         if (enabled) {
@@ -182,8 +195,9 @@ internal class FloatControl(private val view: View, private val handler: Handler
         homeAnimator?.cancel()
     }
 
-    fun setAnimator(resId: Int) {
+    private fun updateAnimator() {
         cancelAnimators()
+        val resId = view.context.getResAnimator(settings.getString(PREF_FLOAT_ANIMATION))
         if (resId > 0) {
             floatAnimator = loadAnimator(view.context, resId).apply {
                 extendProperties(customProperties)
@@ -197,15 +211,26 @@ internal class FloatControl(private val view: View, private val handler: Handler
         }
     }
 
-    fun setAnimated(value: Boolean) {
-        animated = value
+    private fun updateInterval() {
+        interval = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
+    }
+
+    private fun updateAnimated() {
+        animated = settings.getBoolean(PREF_ANIMATION_ON)
         if (!animated) {
             cancelAnimators()
         }
     }
 
-    fun setInterval(value: Long) {
-        interval = value
+    fun onSettingChanged(key: String) {
+        when (key) {
+            PREF_CONTENT_FLOAT_INTERVAL ->
+                updateInterval()
+            PREF_FLOAT_ANIMATION ->
+                updateAnimator()
+            PREF_ANIMATION_ON ->
+                updateAnimated()
+        }
     }
 
     fun onModeChanged(@Mode mode: Int) {

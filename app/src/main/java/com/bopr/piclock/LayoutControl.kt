@@ -20,6 +20,7 @@ import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
+import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.util.fabMargin
 
 /**
@@ -29,7 +30,8 @@ import com.bopr.piclock.util.fabMargin
  */
 internal class LayoutControl(
     private val rootView: ConstraintLayout,
-    private val fragmentManager: FragmentManager
+    private val fragmentManager: FragmentManager,
+    private val settings: Settings
 ) {
 
     private val _tag = "LayoutControl"
@@ -105,7 +107,6 @@ internal class LayoutControl(
                 }
             }
         }
-
     }
 
     private fun adjustMargins(windowInsets: WindowInsetsCompat) {
@@ -126,6 +127,12 @@ internal class LayoutControl(
         settingsContainer.updateLayoutParams<MarginLayoutParams> {
             rightMargin = insets.right
             bottomMargin = insets.bottom
+        }
+    }
+
+    fun onSettingChanged(key: String) {
+        if (key == PREF_FULLSCREEN_ENABLED) {
+            wantRecreateActivity = !settings.getBoolean(PREF_FULLSCREEN_ENABLED)
         }
     }
 
@@ -154,10 +161,6 @@ internal class LayoutControl(
                 settingsContainer.visibility = VISIBLE
             }
         }
-    }
-
-    fun onFullscreenEnabled(enabled: Boolean) {
-        wantRecreateActivity = !enabled
     }
 
     companion object {

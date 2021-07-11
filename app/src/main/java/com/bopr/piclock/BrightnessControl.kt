@@ -10,13 +10,13 @@ import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import android.view.View.ALPHA
-import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import androidx.core.view.GestureDetectorCompat
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
+import com.bopr.piclock.Settings.Companion.PREF_MUTED_BRIGHTNESS
 import com.bopr.piclock.util.parentView
 import com.bopr.piclock.util.scaledRect
 import com.bopr.piclock.util.toDecimal
@@ -29,7 +29,8 @@ import kotlin.math.min
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class BrightnessControl : SimpleOnGestureListener() {
+internal class BrightnessControl(private val view: View, private val settings: Settings) :
+    SimpleOnGestureListener() {
 
     private val _tag = "BrightnessControl"
 
@@ -46,7 +47,6 @@ internal class BrightnessControl : SimpleOnGestureListener() {
         }
     }
 
-    private lateinit var view: View
     private var scaleFactor = 0f
     private var mutedAlpha = MIN_ALPHA
     private var swiping = false
@@ -56,7 +56,11 @@ internal class BrightnessControl : SimpleOnGestureListener() {
 
     lateinit var onSwipeStart: () -> Unit
     lateinit var onSwipe: (brightness: Int) -> Unit
-    lateinit var onSwipeEnd: (brightness: Int) -> Unit
+    lateinit var onSwipeEnd: () -> Unit
+
+    init {
+        updateMutedAlpha()
+    }
 
     override fun onScroll(
         e1: MotionEvent?,
@@ -119,12 +123,8 @@ internal class BrightnessControl : SimpleOnGestureListener() {
         Log.v(_tag, "View alpha set to: ${view.alpha}")
     }
 
-    fun setView(value: ViewGroup) {
-        view = value
-    }
-
-    fun setMutedBrightness(brightness: Int) {
-        mutedAlpha = toDecimal(brightness)
+    private fun updateMutedAlpha() {
+        mutedAlpha = toDecimal(settings.getInt(PREF_MUTED_BRIGHTNESS))
         updateViewAlpha()
 
         Log.v(_tag, "Muted alpha set to: $mutedAlpha")
@@ -142,7 +142,12 @@ internal class BrightnessControl : SimpleOnGestureListener() {
                 ACTION_DOWN ->
                     swiping = false
                 ACTION_UP -> {
-                    if (swiping) onSwipeEnd(toPercents(view.alpha))
+                    if (swiping) {
+                        settings.update {
+                            putInt(PREF_MUTED_BRIGHTNESS, toPercents(view.alpha))
+                        }
+                        onSwipeEnd()
+                    }
                     return swiping
                 }
             }
@@ -164,6 +169,10 @@ internal class BrightnessControl : SimpleOnGestureListener() {
         } else {
             updateViewAlpha()
         }
+    }
+
+    fun onSettingChanged(key: String) {
+        if (key == PREF_MUTED_BRIGHTNESS) updateMutedAlpha()
     }
 
     companion object {

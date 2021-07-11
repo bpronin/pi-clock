@@ -5,6 +5,8 @@ import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
+import com.bopr.piclock.Settings.Companion.PREF_TICK_RULES
+import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.TICK_ACTIVE
 import com.bopr.piclock.Settings.Companion.TICK_FLOATING
 import com.bopr.piclock.Settings.Companion.TICK_INACTIVE
@@ -14,7 +16,10 @@ import com.bopr.piclock.Settings.Companion.TICK_INACTIVE
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class SoundControl(context: Context) {
+internal class SoundControl(
+    context: Context,
+    private val settings: Settings
+) {
 
     private val _tag = "SoundControl"
 
@@ -28,10 +33,15 @@ internal class SoundControl(context: Context) {
     private var viewFloating = false
     private val fadeDuration = 4000L //todo: make it var
 
+    init {
+        updateSoundName()
+        updatePlayRules()
+    }
+
     fun onModeChanged(@Mode value: Int, animate: Boolean) {
         mode = value
         if (animate) {
-            when(mode) {
+            when (mode) {
                 MODE_EDITOR ->
                     player.stop()
                 MODE_ACTIVE ->
@@ -76,11 +86,12 @@ internal class SoundControl(context: Context) {
         ) player.play()
     }
 
-    fun setSound(name: String) {
-        player.setSound(name)
+    private fun updateSoundName() {
+        player.setSound(settings.getString(PREF_TICK_SOUND))
     }
 
-    fun setRules(rules: Set<String>) {
+    private fun updatePlayRules() {
+        val rules = settings.getStringSet(PREF_TICK_RULES)
         whenFloating = rules.contains(TICK_FLOATING)
         whenInactive = rules.contains(TICK_INACTIVE)
         whenActive = rules.contains(TICK_ACTIVE)
@@ -88,6 +99,13 @@ internal class SoundControl(context: Context) {
 
     fun destroy() {
         player.stop()
+    }
+
+    fun onSettingChanged(key: String) {
+        when (key) {
+            PREF_TICK_SOUND -> updateSoundName()
+            PREF_TICK_RULES -> updatePlayRules()
+        }
     }
 
 }
