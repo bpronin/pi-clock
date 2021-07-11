@@ -60,10 +60,10 @@
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/seconds_view"
-        android:layout_width="40sp"
+        android:layout_width="30sp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/gruppo"
-        android:text="01"
+        android:text="44"
         android:textColor="?attr/contentTextColor"
         android:textSize="28sp"
         app:layout_constraintBaseline_toBaselineOf="@id/hours_view"
