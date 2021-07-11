@@ -30,11 +30,11 @@ internal class FloatControl(private val view: View, private val handler: Handler
 
     private var interval = 0L
     private var animated: Boolean = true
-    private var animating = false
+    private var floating = false
         set(value) {
             if (field != value) {
                 field = value
-                onAnimate(field)
+                onFloat(field)
             }
         }
 
@@ -74,7 +74,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
 
     private fun isAnimationOn() = animated && floatAnimator != null && homeAnimator != null
 
-    lateinit var onAnimate: (animating: Boolean) -> Unit
+    lateinit var onFloat: (animating: Boolean) -> Unit
 
     private fun scheduleTask(startDelay: Long = 0) {
         if (enabled) {
@@ -102,7 +102,11 @@ internal class FloatControl(private val view: View, private val handler: Handler
         val x = random().toFloat() * dw + dx
         val y = random().toFloat() * dh + dy
 
-        runAnimator(floatAnimator, x, y, alpha, onEnd)
+        floating = true
+        runAnimator(floatAnimator, x, y, alpha) {
+            floating = false
+            onEnd()
+        }
     }
 
     private fun floatHome() {
@@ -114,6 +118,7 @@ internal class FloatControl(private val view: View, private val handler: Handler
         val x = (pr.width() - vr.width()) / 2
         val y = (pr.height() - vr.height()) / 2
 
+        floating = false
         runAnimator(homeAnimator, x, y, alpha, {})
     }
 
@@ -151,14 +156,11 @@ internal class FloatControl(private val view: View, private val handler: Handler
                 removeAllListeners()
                 doOnStart {
                     Log.v(_tag, "Start animation to x:$x y:$y")
-
-                    animating = true
                 }
                 doOnEnd {
                     Log.v(_tag, "End animation")
 
                     view.alpha = alpha /* restore if changed during animation */
-                    animating = false
                     onEnd()
                 }
 

@@ -7,7 +7,6 @@ import android.util.Log
 import android.util.Property
 import android.view.animation.LinearInterpolator
 import androidx.core.animation.doOnEnd
-import androidx.core.animation.doOnStart
 import com.bopr.piclock.util.getResId
 
 /**
@@ -40,14 +39,18 @@ internal class TickPlayer(private val context: Context) {
     private lateinit var soundName: String
     private var prepared = false
 
-    private fun prepare() {
-        val resId = context.getResId("raw", soundName)
-        if (resId != 0) {
-            player = MediaPlayer.create(context, resId)
-            resetVolume()
-            prepared = true
+    var changingVolume = false
 
-            Log.d(_tag, "Prepared")
+    private fun prepare() {
+        if (!prepared) {
+            val resId = context.getResId("raw", soundName)
+            if (resId != 0) {
+                player = MediaPlayer.create(context, resId)
+                setVolume(1f)
+                prepared = true
+
+                Log.d(_tag, "Prepared")
+            }
         }
     }
 
@@ -56,49 +59,42 @@ internal class TickPlayer(private val context: Context) {
         soundName = name
     }
 
-    fun resetVolume() {
+    fun setVolume(value: Float) {
         if (prepared) {
-            player.setVolume(1f, 1f)
+            player.setVolume(value, value)
 
-            Log.d(_tag, "Volume reset to max")
+            Log.d(_tag, "Volume reset to: $value")
         }
     }
 
-    fun fadeVolume(fadeDuration: Long, volumeFrom: Float, volumeTo: Float, onEnd: () -> Unit = {}) {
-        if (prepared) {
-            volumeAnimator.run {
-                if (isRunning) end()
-                removeAllListeners()
+    fun fadeVolume(fadeDuration: Long, vararg volumes: Float) {
+        prepare()
+        Log.d(_tag, "Start fading : ${volumes.joinToString()}")
 
-                target = player  /* player changes instance in prepare() ! */
-                duration = fadeDuration
-                setFloatValues(volumeFrom, volumeTo)
-                doOnStart {
-                    Log.d(_tag, "Start fading from: $volumeFrom to: $volumeTo")
-                }
-                doOnEnd {
-                    Log.d(_tag, "End fading")
+        changingVolume = true
+        volumeAnimator.run {
+            if (isRunning) end()
+            removeAllListeners()
 
-                    onEnd()
-                }
+            target = player  /* player reference changes in prepare() ! */
+            duration = fadeDuration
+            setFloatValues(*volumes)
+            doOnEnd {
+                Log.d(_tag, "End fading")
 
-                start()
+                changingVolume = false
             }
+
+            start()
         }
     }
 
     fun play() {
-        if (!prepared) {
-            prepare()
-        }
-
-        if (prepared) {
 //            Log.v(_tag, "Tik")
-
-            player.run {
-                seekTo(0)
-                start()
-            }
+        prepare()
+        player.run {
+            seekTo(0)
+            start()
         }
     }
 

@@ -3,12 +3,12 @@
     <!--  NOTE: all 'valueTo' and 'valueFrom' set here for custom properties will be ignored -->
 
     <objectAnimator
-        android:duration="500"
+        android:duration="1000"
         android:interpolator="@android:anim/accelerate_decelerate_interpolator"
         android:propertyName="xCurrentToEnd" />
 
     <objectAnimator
-        android:duration="500"
+        android:duration="1000"
         android:interpolator="@android:anim/accelerate_decelerate_interpolator"
         android:propertyName="yCurrentToEnd" />
 

@@ -73,7 +73,6 @@ class BrowseSoundFragment : Fragment() {
             player.apply {
                 play()
                 if (repeatsCounter == 0) {
-                    resetVolume()
                     fadeVolume(MAX_REPEATS * 1000L, 1f, 0f)
                 }
                 if (++repeatsCounter == MAX_REPEATS) {

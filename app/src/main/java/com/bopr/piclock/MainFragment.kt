@@ -95,7 +95,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             setInterval(settings.getLong(PREF_CONTENT_FLOAT_INTERVAL))
             setAnimator(getResAnimator(settings.getString(PREF_FLOAT_ANIMATION)))
             setAnimated(settings.getBoolean(PREF_ANIMATION_ON))
-            onAnimate = { soundControl.onFloatView(it) }
+            onFloat = { soundControl.onFloatView(it) }
         }
     }
 
@@ -256,7 +256,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onDestroy() {
         settings.unregisterOnSharedPreferenceChangeListener(this)
         handler.removeCallbacksAndMessages(null)
-        soundControl.stop()
+        soundControl.destroy()
         scaleControl.destroy()
         super.onDestroy()
     }
