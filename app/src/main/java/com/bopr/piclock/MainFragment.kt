@@ -22,7 +22,6 @@ import com.bopr.piclock.DigitalClockControl.Companion.isDigitalClockLayout
 import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
-import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
@@ -55,8 +54,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var settingsContainer: View
     private lateinit var settingsButton: FloatingActionButton
     private lateinit var infoView: TextView
-    private lateinit var settings: Settings
     private lateinit var contentControl: ContentControl
+
+    private val settings by lazy {
+        Settings(requireContext())
+    }
 
     private val fullscreenControl by lazy {
         FullscreenControl(requireActivity(), handler)
@@ -79,8 +81,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private val autoInactivateControl by lazy {
-        AutoInactivateControl(handler).apply {
-            setDelay(settings.getLong(PREF_AUTO_INACTIVATE_DELAY))
+        AutoInactivateControl(handler, settings).apply {
             onInactivate = { setMode(MODE_INACTIVE, true) }
         }
     }
@@ -136,11 +137,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     @Mode
     private var mode = MODE_ACTIVE
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        settings = Settings(requireContext())
-    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
@@ -261,8 +257,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                     soundControl.setSound(getString(key))
                 PREF_TICK_RULES ->
                     soundControl.setRules(getStringSet(key))
-                PREF_AUTO_INACTIVATE_DELAY ->
-                    autoInactivateControl.setDelay(getLong(key))
                 PREF_CONTENT_FLOAT_INTERVAL ->
                     floatControl.setInterval(getLong(key))
                 PREF_FLOAT_ANIMATION ->
@@ -270,6 +264,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
         }
 
+        autoInactivateControl.onSettingChanged(key)
         contentControl.onSettingChanged(key)
     }
 
@@ -345,16 +340,16 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 //        private const val TIMER_INTERVAL = 250L
 //        private const val TIMER_INTERVAL = 100L
 
-        private var debugTime = Date().time
+//        private var debugTime = Date().time
 
         private fun getCurrentTime(): Date {
 //            debugTime += 24 * 60 * 60 * 1000L
 //            debugTime += 60 * 60 * 1000L
-            debugTime += 60 * TIMER_INTERVAL
+//            debugTime += 60 * TIMER_INTERVAL
 //            debugTime += 1000L
-            return Date(debugTime)
+//            return Date(debugTime)
 
-//            return Date() /* default */
+            return Date() /* default */
         }
 
     }

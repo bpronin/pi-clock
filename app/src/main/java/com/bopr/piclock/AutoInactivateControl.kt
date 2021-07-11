@@ -8,13 +8,17 @@ import android.view.MotionEvent.ACTION_UP
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
+import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 
 /**
  * Convenience class for auto switching app into inactive mode after delay.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class AutoInactivateControl(private val handler: Handler) {
+internal class AutoInactivateControl(
+    private val handler: Handler,
+    private val settings: Settings
+) {
 
     private val _tag = "AutoInactivateControl"
 
@@ -48,8 +52,14 @@ internal class AutoInactivateControl(private val handler: Handler) {
 
     lateinit var onInactivate: () -> Unit
 
-    fun setDelay(value: Long) {
-        delay = value
+    init {
+        delay = settings.getLong(PREF_AUTO_INACTIVATE_DELAY)
+    }
+
+    fun onSettingChanged(key: String) {
+        if (key == PREF_AUTO_INACTIVATE_DELAY) {
+            delay = settings.getLong(key)
+        }
     }
 
     fun onModeChanged(@Mode value: Int) {
