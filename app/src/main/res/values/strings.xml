@@ -53,6 +53,7 @@
     <string name="tick_sound_mode">Play tick sound when</string>
     <string name="time_separators">Time separators</string>
     <string name="user_interface">Interface</string>
+    <string name="save">Save</string>
 
     <string-array name="content_layout_names">
         <item>Digital simple</item>

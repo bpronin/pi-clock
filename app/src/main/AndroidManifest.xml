@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Piclock">
+        android:theme="@style/AppTheme">
 
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"
@@ -23,7 +23,9 @@
 
         <activity
             android:name=".BrowseSoundActivity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:label="@string/tick_sound"
+            android:theme="@style/AppTheme.ActionBar" />
 
         <activity
             android:name=".DebugActivity"

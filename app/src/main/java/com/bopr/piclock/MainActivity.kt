@@ -18,6 +18,9 @@ class MainActivity : BaseActivity<MainFragment>(MainFragment::class.java) {
 
         intent.getStringExtra("target")?.also { target ->
             when (target) {
+                "browse-sound" -> {
+                    startActivity(Intent(this, BrowseSoundActivity::class.java))
+                }
                 "debug" -> {
                     intent.getStringExtra("pwd")?.also { password ->
                         if (getString(R.string.developer_sha) == sha512(password)) {

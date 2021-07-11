@@ -1,24 +1,21 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="Theme.Piclock" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/black</item>
         <item name="colorPrimaryDark">@color/eerie_black</item>
         <item name="colorOnPrimary">@color/white</item>
-        <!--        <item name="colorPrimaryVariant">@color/color_accent</item>-->
         <item name="colorAccent">@color/_3am_in_shibuya</item>
-
-        <!-- Secondary brand color. -->
-<!--        <item name="colorSecondary">@color/black_overlay</item>-->
-<!--        <item name="colorOnSecondary">@color/white_overlay</item>-->
         <item name="colorSecondary">@color/black_overlay</item>
         <item name="colorOnSecondary">@color/white_overlay</item>
-        <!--        <item name="colorSecondaryVariant">@color/color_accent_text</item>-->
 
         <item name="mainBackgroundColor">@color/black</item>
         <item name="contentBackgroundColor">@color/black</item>
         <item name="contentTextColor">@color/white</item>
         <item name="fabColor">@color/eerie_black</item>
+    </style>
+
+    <style name="AppTheme.ActionBar" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorAccent">@color/_3am_in_shibuya</item>
     </style>
 
 </resources>

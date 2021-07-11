@@ -126,7 +126,7 @@ internal class SoundControl(private val context: Context) {
 
     fun setSound(name: String) {
         stop()
-        this.soundName = name
+        soundName = name
     }
 
     fun setRules(rules: Set<String>) {
