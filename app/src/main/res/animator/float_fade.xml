@@ -10,12 +10,12 @@
     <objectAnimator
         android:duration="0"
         android:propertyName="xCurrentToEnd"
-        android:startOffset="2000" />
+        android:startOffset="4000" />
 
     <objectAnimator
         android:duration="0"
         android:propertyName="yCurrentToEnd"
-        android:startOffset="2000" />
+        android:startOffset="4000" />
 
     <objectAnimator
         android:duration="4000"

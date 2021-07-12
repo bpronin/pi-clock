@@ -244,6 +244,7 @@ internal class FloatControl(
             }
             MODE_EDITOR -> {
                 enabled = false
+                //todo: enable and move faster to show the chosen animation
             }
         }
     }
