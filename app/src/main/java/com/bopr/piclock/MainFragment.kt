@@ -24,7 +24,6 @@ import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.util.HandlerTimer
 import com.bopr.piclock.util.getResId
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
 
 /**
@@ -32,19 +31,26 @@ import java.util.*
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+@SuppressLint("ClickableViewAccessibility")
 class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val _tag = "MainFragment"
 
     private val handler = Handler(Looper.getMainLooper())
     private val timer = HandlerTimer(handler, TIMER_INTERVAL, 4, ::onTimer)
-    private val rootView get() = requireView() as ConstraintLayout
 
-    private lateinit var contentHolder: ViewGroup
-    private lateinit var settingsContainer: View
-    private lateinit var settingsButton: FloatingActionButton
-    private lateinit var infoView: TextView
+    private val rootView by lazy {
+        requireView() as ConstraintLayout
+    }
+
     private lateinit var contentControl: ContentControl
+    private lateinit var infoView: TextView
+
+    private val contentHolderView by lazy {
+        rootView.findViewById<ViewGroup>(R.id.content_holder).apply {
+            setOnTouchListener { _, _ -> false } /* translate all touches to parent */
+        }
+    }
 
     private val settings by lazy {
         Settings(requireContext())
@@ -59,7 +65,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private val floatControl by lazy {
-        FloatControl(contentHolder, handler, settings).apply {
+        FloatControl(contentHolderView, handler, settings).apply {
             onFloat = { soundControl.onFloatView(it) }
         }
     }
@@ -71,19 +77,20 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private val brightnessControl by lazy {
-        BrightnessControl(contentHolder, settings).apply {
+        BrightnessControl(contentHolderView, settings).apply {
             onSwipeStart = {
                 floatControl.pause()
                 setMode(MODE_INACTIVE, true)
                 infoView.fadeInShow()
             }
             onSwipe = { brightness ->
-                val resId = when (brightness) {
-                    MAX_BRIGHTNESS -> R.string.brightness_info_max
-                    MIN_BRIGHTNESS -> R.string.brightness_info_min
-                    else -> R.string.brightness_info
-                }
-                infoView.text = getString(resId, brightness)
+                infoView.text = getString(
+                    when (brightness) {
+                        MAX_BRIGHTNESS -> R.string.brightness_info_max
+                        MIN_BRIGHTNESS -> R.string.brightness_info_min
+                        else -> R.string.brightness_info
+                    }, brightness
+                )
             }
             onSwipeEnd = {
                 infoView.fadeOutHide()
@@ -93,7 +100,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     private val scaleControl by lazy {
-        ScaleControl(contentHolder, settings).apply {
+        ScaleControl(contentHolderView, settings).apply {
             onPinchStart = {
                 floatControl.pause()
                 infoView.fadeInShow()
@@ -125,26 +132,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         settings.registerOnSharedPreferenceChangeListener(this)
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedState: Bundle?
     ): View {
         return inflater.inflate(R.layout.fragment_main, container, false).apply {
-            setOnClickListener {
-                when (mode) {
-                    MODE_ACTIVE -> setMode(MODE_INACTIVE, true)
-                    MODE_INACTIVE -> setMode(MODE_ACTIVE, true)
-                }
-            }
-
-            setOnTouchListener { _, event ->
-                autoInactivateControl.onTouch(event)
-                        || brightnessControl.onTouch(event)
-                        || scaleControl.onTouch(event)
-            }
-
             doOnLayout {
                 savedState?.apply {
                     setMode(getInt(STATE_KEY_MODE), false)
@@ -153,30 +146,42 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 }
             }
 
-            settingsContainer = findViewById<View>(R.id.settings_container).apply {
+            setOnClickListener {
+                when (mode) {
+                    MODE_ACTIVE -> setMode(MODE_INACTIVE, true)
+                    MODE_INACTIVE -> setMode(MODE_ACTIVE, true)
+                }
+            }
+
+            setOnTouchListener { _, event ->
+                autoInactivateControl.onTouch(event) || brightnessControl.onTouch(event)
+                        || scaleControl.onTouch(event)
+            }
+
+            findViewById<View>(R.id.settings_container).apply {
                 visibility = GONE
             }
 
-            settingsButton = findViewById<FloatingActionButton>(R.id.settings_button).apply {
-                visibility = GONE
+            findViewById<View>(R.id.settings_button).apply {
                 setOnClickListener {
                     when (mode) {
-                        MODE_ACTIVE, MODE_INACTIVE -> setMode(MODE_EDITOR, true)
-                        MODE_EDITOR -> setMode(MODE_INACTIVE, true)
+                        MODE_ACTIVE, MODE_INACTIVE ->
+                            setMode(MODE_EDITOR, true)
+                        MODE_EDITOR ->
+                            setMode(MODE_INACTIVE, true)
                     }
                 }
+                visibility = GONE
             }
 
             infoView = findViewById<TextView>(R.id.info_view).apply {
                 visibility = GONE
             }
-
-            contentHolder = findViewById<ViewGroup>(R.id.content_holder).apply {
-                setOnTouchListener { _, _ -> false } /* translate onTouch to parent */
-            }
-
-            createContentControl()
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        createContentControl()
     }
 
     override fun onSaveInstanceState(savedState: Bundle) {
@@ -254,11 +259,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun createContentControl() {
         val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
-        val contentView = layoutInflater.inflate(getResId("layout", layoutName), contentHolder, false)
-        contentHolder.apply {
+        val contentView =
+            layoutInflater.inflate(getResId("layout", layoutName), contentHolderView, false)
+        contentHolderView.apply {
             removeAllViews()
             addView(contentView)
         }
