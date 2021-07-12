@@ -41,13 +41,17 @@ internal class TickPlayer(private val context: Context) {
     var changingVolume = false
 
     private fun prepare() {
-        val resId = context.getResId("raw", sourceName)
-        if (resId != 0) {
-            player = MediaPlayer.create(context, resId)
+        if (player == null) {
+            val resId = context.getResId("raw", sourceName)
+            if (resId != 0) {
+                player = MediaPlayer.create(context, resId)
 
-            Log.d(_tag, "Prepared")
-        } else {
-            player = null
+                Log.d(_tag, "Prepared")
+            } else {
+                player = null
+
+                Log.d(_tag, "Zero resource")
+            }
         }
     }
 
@@ -57,7 +61,7 @@ internal class TickPlayer(private val context: Context) {
     }
 
     fun fadeVolume(fadeDuration: Long, vararg volumes: Float) {
-        Log.d(_tag, "Start fading volume: ${volumes.joinToString()}")
+        Log.d(_tag, "Start fading volume: ${volumes.joinToString()} during: $fadeDuration")
 
         prepare()
         changingVolume = true
@@ -94,6 +98,7 @@ internal class TickPlayer(private val context: Context) {
             stop()
             reset()
             release()
+            player = null
         }
 
         Log.d(_tag, "Stopped")
