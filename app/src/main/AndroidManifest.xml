@@ -2,9 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bopr.piclock">
 
-    <permission
-        android:name="android.permission.REAL_GET_TASKS"
-        android:protectionLevel="signatureOrSystem" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -27,20 +25,15 @@
 
         <activity
             android:name=".BrowseSoundActivity"
-            android:parentActivityName=".MainActivity"
             android:label="@string/tick_sound"
-             />
+            android:parentActivityName=".MainActivity" />
 
         <activity
             android:name=".DebugActivity"
             android:label="Debug"
             android:parentActivityName=".MainActivity" />
-        <receiver android:name=".PowerConnectorReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
-            </intent-filter>
-        </receiver>
+
+        <service android:name=".PowerConnectionService" />
 
     </application>
 

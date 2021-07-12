@@ -115,6 +115,18 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/power_plug">
+
+        <SwitchPreference
+            android:key="start_on_power_connected"
+            android:title="@string/start_app_on_power_plug" />
+
+        <SwitchPreference
+            android:key="stop_on_power_disconnected"
+            android:title="@string/stop_app_on_power_unplug" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/about_label">
 
         <Preference

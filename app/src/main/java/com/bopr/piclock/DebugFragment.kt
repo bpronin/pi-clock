@@ -1,7 +1,9 @@
 package com.bopr.piclock
 
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
+import android.view.View
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import com.bopr.piclock.util.ui.preference.CustomPreferenceFragment
@@ -19,10 +21,9 @@ class DebugFragment : CustomPreferenceFragment(),
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         /* do not use fragment's context here. see: https://developer.android.com/guide/topics/ui/settings/programmatic-hierarchy*/
         preferenceScreen = preferenceManager.createPreferenceScreen(preferenceManager.context)
-
         addCategory(
             "Other",
-            createPreference("Crash", this::onCrash)
+            createPreference("Crash", ::onCrash),
         )
     }
 
@@ -35,6 +36,11 @@ class DebugFragment : CustomPreferenceFragment(),
     override fun onDestroy() {
         settings.unregisterOnSharedPreferenceChangeListener(this)
         super.onDestroy()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requireView().setBackgroundColor(Color.WHITE)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {

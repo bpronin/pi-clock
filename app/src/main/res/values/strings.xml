@@ -54,6 +54,11 @@
     <string name="time_separators">Time separators</string>
     <string name="user_interface">Interface</string>
     <string name="save">Save</string>
+    <string name="power_plug">External power cable</string>
+    <string name="start_app_on_power_plug">Start the app when connected</string>
+    <string name="stop_app_on_power_unplug">Close the app when removed</string>
+    <string name="status">Status</string>
+    <string name="service_running">Service running</string>
 
     <string-array name="content_layout_names">
         <item>Digital simple</item>
