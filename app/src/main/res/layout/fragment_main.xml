@@ -11,7 +11,7 @@
         android:id="@+id/content_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="?attr/mainBackgroundColor"
+        android:background="?attr/contentBackgroundColor"
         app:layout_constraintBottom_toTopOf="@id/settings_container"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -43,11 +43,12 @@
         android:id="@+id/settings_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="?android:attr/windowBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_percent="0.7"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/content_container"/>
+        app:layout_constraintTop_toBottomOf="@id/content_container" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/settings_button"

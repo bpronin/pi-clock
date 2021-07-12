@@ -168,7 +168,7 @@ internal class FloatControl(
 
                 removeAllListeners()
                 doOnStart {
-                    Log.v(_tag, "Start animation to x:$x y:$y")
+                    Log.d(_tag, "Start animation to x:$x y:$y")
                 }
                 doOnEnd {
                     Log.v(_tag, "End animation")
@@ -184,7 +184,7 @@ internal class FloatControl(
             view.x = x
             view.y = y
 
-            Log.v(_tag, "Moved immediately")
+            Log.d(_tag, "Instantly moved to x:$x y:$y")
 
             onEnd()
         }

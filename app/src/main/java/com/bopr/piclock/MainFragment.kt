@@ -14,7 +14,6 @@ import android.view.ViewGroup.GONE
 import android.widget.TextView
 import androidx.annotation.IntDef
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
 import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
@@ -138,14 +137,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         savedState: Bundle?
     ): View {
         return inflater.inflate(R.layout.fragment_main, container, false).apply {
-            doOnLayout {
-                savedState?.apply {
-                    setMode(getInt(STATE_KEY_MODE), false)
-                } ?: apply {
-                    setMode(MODE_INACTIVE, true)
-                }
-            }
-
             setOnClickListener {
                 when (mode) {
                     MODE_ACTIVE -> setMode(MODE_INACTIVE, true)
@@ -180,8 +171,15 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedState: Bundle?) {
         createContentControl()
+//        rootView.doOnLayout {
+        savedState?.apply {
+            setMode(getInt(STATE_KEY_MODE), false)
+        } ?: apply {
+            setMode(MODE_INACTIVE, true)
+        }
+//        }
     }
 
     override fun onSaveInstanceState(savedState: Bundle) {

@@ -35,42 +35,31 @@ internal class TickPlayer(private val context: Context) {
         }
     }
 
-    private lateinit var player: MediaPlayer
-    private lateinit var soundName: String
-    private var prepared = false
+    private var player: MediaPlayer? = null
+    private lateinit var sourceName: String
 
     var changingVolume = false
 
     private fun prepare() {
-        if (!prepared) {
-            val resId = context.getResId("raw", soundName)
-            if (resId != 0) {
-                player = MediaPlayer.create(context, resId)
-                setVolume(1f)
-                prepared = true
+        val resId = context.getResId("raw", sourceName)
+        if (resId != 0) {
+            player = MediaPlayer.create(context, resId)
 
-                Log.d(_tag, "Prepared")
-            }
+            Log.d(_tag, "Prepared")
+        } else {
+            player = null
         }
     }
 
-    fun setSound(name: String) {
+    fun setSource(name: String) {
         stop()
-        soundName = name
-    }
-
-    fun setVolume(value: Float) {
-        if (prepared) {
-            player.setVolume(value, value)
-
-            Log.d(_tag, "Volume reset to: $value")
-        }
+        sourceName = name
     }
 
     fun fadeVolume(fadeDuration: Long, vararg volumes: Float) {
-        prepare()
-        Log.d(_tag, "Start fading : ${volumes.joinToString()}")
+        Log.d(_tag, "Start fading volume: ${volumes.joinToString()}")
 
+        prepare()
         changingVolume = true
         volumeAnimator.run {
             if (isRunning) end()
@@ -80,7 +69,7 @@ internal class TickPlayer(private val context: Context) {
             duration = fadeDuration
             setFloatValues(*volumes)
             doOnEnd {
-                Log.d(_tag, "End fading")
+                Log.v(_tag, "End fading volume")
 
                 changingVolume = false
             }
@@ -90,24 +79,24 @@ internal class TickPlayer(private val context: Context) {
     }
 
     fun play() {
-//            Log.v(_tag, "Tik")
+//        Log.v(_tag, "Tick!")
+
         prepare()
-        player.run {
+        player?.run {
             seekTo(0)
             start()
         }
     }
 
     fun stop() {
-        if (prepared) {
-            prepared = false
-            volumeAnimator.cancel()
-            player.stop()
-            player.reset()
-            player.release()
-
-            Log.d(_tag, "Stopped")
+        volumeAnimator.cancel()
+        player?.apply {
+            stop()
+            reset()
+            release()
         }
+
+        Log.d(_tag, "Stopped")
     }
 
 }

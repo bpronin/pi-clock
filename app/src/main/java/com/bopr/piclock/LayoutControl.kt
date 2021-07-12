@@ -82,9 +82,9 @@ internal class LayoutControl(
 
     private fun createSettingsView() {
         fragmentManager.run {
-            findFragmentByTag(SETTINGS_FRAGMENT_TAG) ?: run {
+            findFragmentById(R.id.settings_container) ?: run {
                 beginTransaction()
-                    .replace(R.id.settings_container, SettingsFragment(), SETTINGS_FRAGMENT_TAG)
+                    .replace(R.id.settings_container, SettingsFragment())
                     .commit()
 
                 Log.d(_tag, "Added settings fragment")
@@ -94,7 +94,7 @@ internal class LayoutControl(
 
     private fun removeSettingsView() {
         fragmentManager.run {
-            findFragmentByTag(SETTINGS_FRAGMENT_TAG)?.run {
+            findFragmentById(R.id.settings_container)?.run {
                 beginTransaction()
                     .remove(this)
                     .commit()
@@ -102,6 +102,8 @@ internal class LayoutControl(
                 Log.d(_tag, "Removed settings fragment")
 
                 if (wantRecreateActivity) {
+                    Log.d(_tag, "Activity recreation required")
+
                     wantRecreateActivity = false
                     activity?.recreate()
                 }
@@ -137,7 +139,7 @@ internal class LayoutControl(
     }
 
     fun onModeChanged(@Mode mode: Int, animated: Boolean) {
-        if (animated) {                  //todo: fix does not animate on open
+        if (animated) {
             TransitionManager.beginDelayedTransition(rootView)
         }
 
@@ -163,9 +165,5 @@ internal class LayoutControl(
         }
     }
 
-    companion object {
-
-        private const val SETTINGS_FRAGMENT_TAG = "settings_fragment"
-    }
 }
 

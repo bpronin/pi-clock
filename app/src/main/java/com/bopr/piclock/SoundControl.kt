@@ -34,7 +34,7 @@ internal class SoundControl(
     private val fadeDuration = 4000L //todo: make it var
 
     init {
-        updateSoundName()
+        updateSource()
         updatePlayRules()
     }
 
@@ -86,15 +86,16 @@ internal class SoundControl(
         ) player.play()
     }
 
-    private fun updateSoundName() {
-        player.setSound(settings.getString(PREF_TICK_SOUND))
+    private fun updateSource() {
+        player.setSource(settings.getString(PREF_TICK_SOUND))
     }
 
     private fun updatePlayRules() {
-        val rules = settings.getStringSet(PREF_TICK_RULES)
-        whenFloating = rules.contains(TICK_FLOATING)
-        whenInactive = rules.contains(TICK_INACTIVE)
-        whenActive = rules.contains(TICK_ACTIVE)
+        settings.getStringSet(PREF_TICK_RULES).apply {
+            whenFloating = contains(TICK_FLOATING)
+            whenInactive = contains(TICK_INACTIVE)
+            whenActive = contains(TICK_ACTIVE)
+        }
     }
 
     fun destroy() {
@@ -103,7 +104,7 @@ internal class SoundControl(
 
     fun onSettingChanged(key: String) {
         when (key) {
-            PREF_TICK_SOUND -> updateSoundName()
+            PREF_TICK_SOUND -> updateSource()
             PREF_TICK_RULES -> updatePlayRules()
         }
     }

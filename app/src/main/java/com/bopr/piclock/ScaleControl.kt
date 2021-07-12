@@ -44,7 +44,7 @@ internal class ScaleControl(private val view: View, private val settings: Settin
     private var viewScale: Float
         get() = view.scaleX
         set(value) {
-//            Log.v(_tag, "Set view scale to: $value")
+            Log.d(_tag, "Set view scale to: $value")
 
             view.apply {
                 scaleX = value
@@ -62,9 +62,12 @@ internal class ScaleControl(private val view: View, private val settings: Settin
     private val viewListener =
         OnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
-                Log.v(_tag, "Layout changed")
+                val newScale = computeFitScale(defaultScale)
+                if (viewScale != newScale) {
+                    Log.v(_tag, "Layout changed")
 
-                animateTo(computeFitScale(defaultScale), true)
+                    animateTo(newScale, true)
+                }
             }
         }
 
@@ -79,7 +82,7 @@ internal class ScaleControl(private val view: View, private val settings: Settin
     }
 
     override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
-        Log.d(_tag, "Start pinching")
+        Log.v(_tag, "Start pinching")
 
         pinching = true
         onPinchStart()
@@ -94,7 +97,7 @@ internal class ScaleControl(private val view: View, private val settings: Settin
     }
 
     override fun onScaleEnd(detector: ScaleGestureDetector?) {
-        Log.d(_tag, "End pinching")
+        Log.v(_tag, "End pinching")
 
         defaultScale = viewScale
         settings.update {
@@ -121,7 +124,7 @@ internal class ScaleControl(private val view: View, private val settings: Settin
         if (viewScale == scale) return
 
         if (animated) {
-            Log.d(_tag, "Start animation")
+            Log.d(_tag, "Start animation to: $scale")
 
             animator.apply {
                 cancel()
@@ -129,7 +132,7 @@ internal class ScaleControl(private val view: View, private val settings: Settin
 
                 setFloatValues(viewScale, scale)
                 doOnEnd {
-                    Log.d(_tag, "End animation")
+                    Log.v(_tag, "End animation")
 
                     onEnd()
                 }
@@ -138,6 +141,8 @@ internal class ScaleControl(private val view: View, private val settings: Settin
             }
         } else {
             viewScale = scale
+
+            Log.d(_tag, "Instantly scaled to: $viewScale")
         }
     }
 

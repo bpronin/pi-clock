@@ -85,7 +85,7 @@ class BrowseSoundFragment : Fragment() {
     private fun startPlaySound() {
         stopPlaySound()
         repeatsCounter = 0
-        player.setSound(selectedItem)
+        player.setSource(selectedItem)
         timer.enabled = true
     }
 

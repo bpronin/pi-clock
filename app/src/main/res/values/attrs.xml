@@ -1,6 +1,5 @@
 <resources>
     <declare-styleable name="FullscreenAttrs">
-        <attr name="mainBackgroundColor" format="color" />
         <attr name="contentBackgroundColor" format="color" />
         <attr name="contentTextColor" format="color" />
         <attr name="fabColor" format="color" />

@@ -53,6 +53,16 @@ internal class FullscreenControl(
         }
 
     private var enabled = true
+        set(value) {
+            if (field != value) {
+                field = value
+                if (!field) {
+                    fullscreen = false
+                }
+
+                Log.d(_tag, "Enabled: $field")
+            }
+        }
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -61,6 +71,7 @@ internal class FullscreenControl(
                 insetsController?.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
         }
+        updateEnabled()
     }
 
     private fun showSystemUI() {
@@ -96,15 +107,12 @@ internal class FullscreenControl(
         Log.d(_tag, "System UI hidden")
     }
 
-    fun init() {
+    private fun updateEnabled() {
         enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
-        if (!enabled) {
-            fullscreen = false
-        }
     }
 
     fun onSettingChanged(key: String) {
-        if (key == PREF_FULLSCREEN_ENABLED) init()
+        if (key == PREF_FULLSCREEN_ENABLED) updateEnabled()
     }
 
     fun onModeChanged(@Mode mode: Int) {
