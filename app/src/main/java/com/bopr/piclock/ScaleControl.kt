@@ -6,13 +6,13 @@ import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import android.view.ScaleGestureDetector
+import android.view.ScaleGestureDetector.OnScaleGestureListener
 import android.view.View
 import android.view.View.OnLayoutChangeListener
 import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
-import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_GESTURES_ENABLED
 import com.bopr.piclock.util.*
@@ -25,40 +25,19 @@ import kotlin.math.min
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class ScaleControl(private val view: View, private val settings: Settings) :
-    ScaleGestureDetector.OnScaleGestureListener {
+internal class ScaleControl(private val view: View, settings: Settings) :
+    ContentControl(settings), OnScaleGestureListener {
 
     private val _tag = "ScaleControl"
-
     private val gestureDetector by lazy {
         ScaleGestureDetector(view.context, this)
     }
-
     private val animator by lazy {
         ObjectAnimator.ofFloat(view, PROP_SCALE, 0f).apply {
             duration = 500
             interpolator = DecelerateInterpolator()
         }
     }
-
-    private var viewScale: Float
-        get() = view.scaleX
-        set(value) {
-            Log.d(_tag, "Set view scale to: $value")
-
-            view.apply {
-                scaleX = value
-                scaleY = scaleX
-            }
-        }
-
-    private var pinching = false
-    private var gesturesEnabled = true
-    private var defaultScale = 1f
-
-    @Mode
-    var mode = MODE_INACTIVE
-
     private val viewListener =
         OnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
@@ -70,6 +49,20 @@ internal class ScaleControl(private val view: View, private val settings: Settin
                 }
             }
         }
+
+    private var viewScale: Float
+        get() = view.scaleX
+        set(value) {
+            Log.d(_tag, "Set view scale to: $value")
+
+            view.apply {
+                scaleX = value
+                scaleY = scaleX
+            }
+        }
+    private var pinching = false
+    private var gesturesEnabled = true
+    private var defaultScale = 1f
 
     lateinit var onPinchStart: () -> Unit
     lateinit var onPinch: (scalePercent: Int) -> Unit
@@ -159,7 +152,7 @@ internal class ScaleControl(private val view: View, private val settings: Settin
         }
     }
 
-    fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String) {
         when (key) {
             PREF_CONTENT_SCALE -> updateScale(true)
             PREF_GESTURES_ENABLED -> updateGesturesState()
@@ -183,10 +176,6 @@ internal class ScaleControl(private val view: View, private val settings: Settin
         }
 
         return false
-    }
-
-    fun onModeChanged(value: Int) {
-        mode = value
     }
 
     fun destroy() {

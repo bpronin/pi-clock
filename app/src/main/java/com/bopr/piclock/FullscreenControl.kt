@@ -19,21 +19,18 @@ import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 internal class FullscreenControl(
     private val activity: Activity,
     private val handler: Handler,
-    private val settings: Settings
-) {
+    settings: Settings
+) : ContentControl(settings) {
 
     private val _tag = "FullscreenSupport"
-
     /**
      * Some older devices needs a small delay between UI widget updates
      * and a change of the status and navigation bar.
      */
     private val startDelay = 300L
-
     private val turnOnTask = Runnable {
         showSystemUI()
     }
-
     private val turnOffTask = Runnable {
         hideSystemUI()
     }
@@ -51,7 +48,6 @@ internal class FullscreenControl(
                 Log.d(_tag, "Fullscreen: $field")
             }
         }
-
     private var enabled = true
         set(value) {
             if (field != value) {
@@ -111,13 +107,14 @@ internal class FullscreenControl(
         enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
     }
 
-    fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String) {
         if (key == PREF_FULLSCREEN_ENABLED) updateEnabled()
     }
 
-    fun onModeChanged(@Mode mode: Int) {
+    override fun onModeChanged(@Mode newMode: Int, animate: Boolean) {
+        super.onModeChanged(newMode, animate)
         if (enabled) {
-            fullscreen = (mode == MODE_INACTIVE)
+            fullscreen = (newMode == MODE_INACTIVE)
         }
     }
 

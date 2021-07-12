@@ -34,47 +34,35 @@ import java.util.*
 class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private val _tag = "MainFragment"
-
     private val handler = Handler(Looper.getMainLooper())
     private val timer = HandlerTimer(handler, TIMER_INTERVAL, 4, ::onTimer)
-
     private val rootView by lazy {
         requireView() as ConstraintLayout
     }
-
-    private lateinit var contentControl: ContentControl
-    private lateinit var infoView: TextView
-
     private val contentHolderView by lazy {
         rootView.findViewById<ViewGroup>(R.id.content_holder).apply {
             setOnTouchListener { _, _ -> false } /* translate all touches to parent */
         }
     }
-
     private val settings by lazy {
         Settings(requireContext())
     }
-
     private val fullscreenControl by lazy {
         FullscreenControl(requireActivity(), handler, settings)
     }
-
     private val soundControl by lazy {
         SoundControl(requireContext(), settings)
     }
-
     private val floatControl by lazy {
         FloatControl(contentHolderView, handler, settings).apply {
             onFloat = { soundControl.onFloatView(it) }
         }
     }
-
     private val autoInactivateControl by lazy {
         AutoInactivateControl(handler, settings).apply {
             onInactivate = { setMode(MODE_INACTIVE, true) }
         }
     }
-
     private val brightnessControl by lazy {
         BrightnessControl(contentHolderView, settings).apply {
             onSwipeStart = {
@@ -97,7 +85,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
         }
     }
-
     private val scaleControl by lazy {
         ScaleControl(contentHolderView, settings).apply {
             onPinchStart = {
@@ -118,10 +105,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
         }
     }
-
     private val layoutControl by lazy {
         LayoutControl(rootView, parentFragmentManager, settings)
     }
+
+    private lateinit var contentControl: ContentControl
+    private lateinit var infoView: TextView
 
     @Mode
     private var mode = MODE_ACTIVE
@@ -173,13 +162,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     override fun onViewCreated(view: View, savedState: Bundle?) {
         createContentControl()
-//        rootView.doOnLayout {
         savedState?.apply {
             setMode(getInt(STATE_KEY_MODE), false)
         } ?: apply {
             setMode(MODE_INACTIVE, true)
         }
-//        }
     }
 
     override fun onSaveInstanceState(savedState: Bundle) {
@@ -216,17 +203,17 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         if (key == PREF_CONTENT_LAYOUT) createContentControl()
 
-        scaleControl.onSettingChanged(key)
+        autoInactivateControl.onSettingChanged(key)
         brightnessControl.onSettingChanged(key)
-        layoutControl.onSettingChanged(key)
-        soundControl.onSettingChanged(key)
+        contentControl.onSettingChanged(key)
         floatControl.onSettingChanged(key)
         fullscreenControl.onSettingChanged(key)
-        autoInactivateControl.onSettingChanged(key)
-        contentControl.onSettingChanged(key)
+        layoutControl.onSettingChanged(key)
+        scaleControl.onSettingChanged(key)
+        soundControl.onSettingChanged(key)
     }
 
-    fun onBackPressed(): Boolean {
+    internal fun onBackPressed(): Boolean {
         return if (mode == MODE_EDITOR) {
             setMode(MODE_INACTIVE, true)
             true
@@ -238,20 +225,20 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun onTimer(tick: Int) {
         val time = getCurrentTime()
         contentControl.onTimer(time, tick)
-        soundControl.onTimer(tick)
+        soundControl.onTimer(time, tick)
     }
 
     private fun setMode(@Mode newMode: Int, animate: Boolean) {
         if (mode != newMode) {
             mode = newMode
 
-            autoInactivateControl.onModeChanged(mode)
-            floatControl.onModeChanged(mode)
-            fullscreenControl.onModeChanged(mode)
-            soundControl.onModeChanged(mode, animate)
-            layoutControl.onModeChanged(mode, animate)
+            autoInactivateControl.onModeChanged(mode, animate)
             brightnessControl.onModeChanged(mode, animate)
-            scaleControl.onModeChanged(mode)
+            floatControl.onModeChanged(mode, animate)
+            fullscreenControl.onModeChanged(mode, animate)
+            layoutControl.onModeChanged(mode, animate)
+            scaleControl.onModeChanged(mode, animate)
+            soundControl.onModeChanged(mode, animate)
 
             Log.d(_tag, "Mode set to: $mode")
         }
@@ -259,8 +246,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun createContentControl() {
         val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
-        val contentView =
-            layoutInflater.inflate(getResId("layout", layoutName), contentHolderView, false)
+        val contentView = layoutInflater.inflate(
+            requireContext().getResId("layout", layoutName),
+            contentHolderView, false
+        )
         contentHolderView.apply {
             removeAllViews()
             addView(contentView)

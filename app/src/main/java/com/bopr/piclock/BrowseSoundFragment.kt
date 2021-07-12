@@ -14,16 +14,22 @@ import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.util.HandlerTimer
 import com.bopr.piclock.util.getStringArray
 
+/**
+ * Fragment to browse sounds with preview.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ */
 class BrowseSoundFragment : Fragment() {
 
-    private lateinit var recycler: RecyclerView
-    private lateinit var selectedItem: String
     private val itemValues by lazy { getStringArray(R.array.tick_sound_values) }
     private val itemNames by lazy { getStringArray(R.array.tick_sound_names) }
     private val settings: Settings by lazy { Settings(requireContext()) }
     private val timer by lazy { HandlerTimer(Handler(Looper.getMainLooper()), 1000L, 1, ::onTimer) }
     private val player by lazy { TickPlayer(requireContext()) }
     private var repeatsCounter = 0
+
+    private lateinit var recycler: RecyclerView
+    private lateinit var selectedItem: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

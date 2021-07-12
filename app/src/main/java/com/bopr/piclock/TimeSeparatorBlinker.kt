@@ -8,21 +8,16 @@ import android.view.View.VISIBLE
 import android.view.animation.CycleInterpolator
 
 /**
- * Convenience class to control time separators blinking.
+ * Controls time separators blinking in digital clock.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class BlinkControl(
+internal class TimeSeparatorBlinker(
     private val minutesSeparator: View,
     private val secondsSeparator: View
 ) {
 
     private val _tag = "BlinkControl"
-
-    private var animated = true
-    private var enabled = true
-    private var secondsEnabled = true
-
     private val minutesSeparatorAnimator by lazy {
         ObjectAnimator().apply {
             setProperty(View.ALPHA)
@@ -32,7 +27,6 @@ internal class BlinkControl(
             interpolator = CycleInterpolator(1f)
         }
     }
-
     private val secondsSeparatorAnimator by lazy {
         ObjectAnimator().apply {
             setProperty(View.ALPHA)
@@ -42,6 +36,10 @@ internal class BlinkControl(
             interpolator = CycleInterpolator(1f)
         }
     }
+
+    private var animated = true
+    private var enabled = true
+    private var secondsEnabled = true
 
     private fun toggleVisibility(halfTick: Int) {
         resetAlpha()
@@ -72,13 +70,23 @@ internal class BlinkControl(
         }
     }
 
-    fun onTimer(halfTick: Int) {
+    private fun resetVisibility() {
+        minutesSeparator.visibility = VISIBLE
+        secondsSeparator.visibility = VISIBLE
+    }
+
+    private fun resetAlpha() {
+        minutesSeparator.alpha = 1f
+        secondsSeparator.alpha = 1f
+    }
+
+    fun onTimer(tick: Int) {
         if (!enabled) return
 
         if (animated) {
-            startAnimators(halfTick)
+            startAnimators(tick)
         } else {
-            toggleVisibility(halfTick)
+            toggleVisibility(tick)
         }
     }
 
@@ -98,16 +106,6 @@ internal class BlinkControl(
                 resetAlpha() /* because we are using Cycling interpolator */
             }
         }
-    }
-
-    private fun resetVisibility() {
-        minutesSeparator.visibility = VISIBLE
-        secondsSeparator.visibility = VISIBLE
-    }
-
-    private fun resetAlpha() {
-        minutesSeparator.alpha = 1f
-        secondsSeparator.alpha = 1f
     }
 
     fun setSecondsEnabled(enabled: Boolean) {

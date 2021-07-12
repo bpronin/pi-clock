@@ -6,14 +6,10 @@ import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup.MarginLayoutParams
 import androidx.collection.arrayMapOf
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.FragmentManager
 import androidx.transition.TransitionManager
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
@@ -31,25 +27,17 @@ import com.bopr.piclock.util.fabMargin
 internal class LayoutControl(
     private val rootView: ConstraintLayout,
     private val fragmentManager: FragmentManager,
-    private val settings: Settings
-) {
+    settings: Settings
+) : ContentControl(settings) {
 
     private val _tag = "LayoutControl"
-
-    private val screenOrientation get() = rootView.resources.configuration.orientation
-    private val infoView get() = rootView.findViewById<View>(R.id.info_view)
-    private val settingsButton get() = rootView.findViewById<View>(R.id.settings_button)
-    private val settingsContainer get() = rootView.findViewById<View>(R.id.settings_container)
     private val fabMargin = rootView.resources.fabMargin
-    private var wantRecreateActivity = false
-
     private val mainConstraints = createDefaultConstraints().apply {
         R.id.settings_button.let {
             connect(it, RIGHT, PARENT_ID, RIGHT, fabMargin)
             connect(it, BOTTOM, R.id.content_container, BOTTOM, fabMargin)
         }
     }
-
     private val editorConstraints = arrayMapOf(
         ORIENTATION_PORTRAIT to createDefaultConstraints().apply {
             R.id.settings_button.let {
@@ -65,13 +53,11 @@ internal class LayoutControl(
                 connect(it, RIGHT, R.id.content_container, RIGHT)
             }
         })
+    private val screenOrientation get() = rootView.resources.configuration.orientation
+    private val settingsButton get() = rootView.findViewById<View>(R.id.settings_button)
+    private val settingsContainer get() = rootView.findViewById<View>(R.id.settings_container)
 
-    init {
-        ViewCompat.setOnApplyWindowInsetsListener(rootView) { _, windowInsets ->
-            adjustMargins(windowInsets)
-            windowInsets
-        }
-    }
+    private var wantRecreateActivity = false
 
     private fun createDefaultConstraints() = ConstraintSet().apply {
         R.id.settings_button.let {
@@ -111,39 +97,17 @@ internal class LayoutControl(
         }
     }
 
-    private fun adjustMargins(windowInsets: WindowInsetsCompat) {
-        Log.d(_tag, "Adjusting margins")
-
-        val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-
-        TransitionManager.beginDelayedTransition(rootView)
-
-        infoView.updateLayoutParams<MarginLayoutParams> {
-            leftMargin = fabMargin + insets.left
-            topMargin = fabMargin + insets.top
-        }
-        settingsButton.updateLayoutParams<MarginLayoutParams> {
-            rightMargin = fabMargin + insets.right
-            bottomMargin = fabMargin + insets.bottom
-        }
-        settingsContainer.updateLayoutParams<MarginLayoutParams> {
-            rightMargin = insets.right
-            bottomMargin = insets.bottom
-        }
-    }
-
-    fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String) {
         if (key == PREF_FULLSCREEN_ENABLED) {
             wantRecreateActivity = !settings.getBoolean(PREF_FULLSCREEN_ENABLED)
         }
     }
 
-    fun onModeChanged(@Mode mode: Int, animated: Boolean) {
-        if (animated) {
+    override fun onModeChanged(@Mode newMode: Int, animate: Boolean) {
+        if (animate) {
             TransitionManager.beginDelayedTransition(rootView)
         }
-
-        when (mode) {
+        when (newMode) {
             MODE_ACTIVE -> {
                 mainConstraints.applyTo(rootView)
                 settingsButton.visibility = VISIBLE

@@ -4,41 +4,31 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.media.MediaPlayer
 import android.util.Log
-import android.util.Property
 import android.view.animation.LinearInterpolator
 import androidx.core.animation.doOnEnd
 import com.bopr.piclock.util.getResId
+import com.bopr.piclock.util.property.PROP_VOLUME
 
 /**
- * Convenience class play tick sound.
+ * Plays tick sounds.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class TickPlayer(private val context: Context) {
 
     private val _tag = "TickPlayer"
-
     private val volumeAnimator: ObjectAnimator by lazy {
-        val volumeProperty = object : Property<MediaPlayer, Float>(Float::class.java, "volume") {
-
-            override fun get(player: MediaPlayer): Float {
-                throw UnsupportedOperationException()
-            }
-
-            override fun set(player: MediaPlayer, value: Float) {
-                player.setVolume(value, value)
-            }
-        }
-
-        ObjectAnimator.ofFloat(player, volumeProperty, 0f).apply {
+        ObjectAnimator.ofFloat(player, PROP_VOLUME, 0f).apply {
             interpolator = LinearInterpolator()
         }
     }
 
-    private var player: MediaPlayer? = null
     private lateinit var sourceName: String
 
+    private var player: MediaPlayer? = null
+
     var changingVolume = false
+        private set
 
     private fun prepare() {
         if (player == null) {
@@ -69,7 +59,7 @@ internal class TickPlayer(private val context: Context) {
             if (isRunning) end()
             removeAllListeners()
 
-            target = player  /* player reference changes in prepare() ! */
+            target = player
             duration = fadeDuration
             setFloatValues(*volumes)
             doOnEnd {

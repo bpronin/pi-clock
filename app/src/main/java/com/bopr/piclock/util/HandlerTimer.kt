@@ -2,6 +2,11 @@ package com.bopr.piclock.util
 
 import android.os.Handler
 
+/**
+ * [Handler] based timer.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ */
 class HandlerTimer(
     private val handler: Handler,
     private val interval: Long,

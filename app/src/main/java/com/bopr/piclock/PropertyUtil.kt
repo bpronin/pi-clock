@@ -1,7 +1,14 @@
 package com.bopr.piclock.util.property
 
+import android.media.MediaPlayer
 import android.util.Property
 import android.view.View
+
+/**
+ * Custom properties used in animators.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ */
 
 val PROP_SCALE by lazy {
 
@@ -100,6 +107,20 @@ val PROP_ALPHA_ZERO_TO_CURRENT by lazy {
 
         override fun set(view: View, value: Float) {
             view.alpha = value
+        }
+    }
+}
+
+val PROP_VOLUME by lazy {
+
+    object : Property<MediaPlayer, Float>(Float::class.java, "volume") {
+
+        override fun get(player: MediaPlayer): Float {
+            throw UnsupportedOperationException()
+        }
+
+        override fun set(player: MediaPlayer, value: Float) {
+            player.setVolume(value, value)
         }
     }
 }

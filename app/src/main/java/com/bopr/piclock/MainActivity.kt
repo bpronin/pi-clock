@@ -6,7 +6,7 @@ import com.bopr.piclock.util.sha512
 import com.bopr.piclock.util.ui.BaseActivity
 
 /**
- * Main activity.
+ * Main application activity.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */

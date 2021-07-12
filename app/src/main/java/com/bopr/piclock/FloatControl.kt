@@ -11,7 +11,6 @@ import androidx.core.animation.doOnStart
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
-import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_FLOAT_ANIMATION
@@ -30,21 +29,10 @@ import java.lang.Math.random
 internal class FloatControl(
     private val view: View,
     private val handler: Handler,
-    private val settings: Settings
-) {
+    settings: Settings
+) : ContentControl(settings) {
 
     private val _tag = "FloatControl"
-
-    private var interval = 0L
-    private var animated: Boolean = true
-    private var floating = false
-        set(value) {
-            if (field != value) {
-                field = value
-                onFloat(field)
-            }
-        }
-
     private val floatTask = Runnable {
         if (enabled && view.isLaidOut) {
             floatSomewhere {
@@ -52,6 +40,12 @@ internal class FloatControl(
             }
         }
     }
+    private val customProperties = setOf(
+        PROP_X_CURRENT_TO_END,
+        PROP_Y_CURRENT_TO_END,
+        PROP_ALPHA_CURRENT_TO_ZERO,
+        PROP_ALPHA_ZERO_TO_CURRENT
+    )
 
     private var enabled = false
         set(value) {
@@ -69,15 +63,17 @@ internal class FloatControl(
                 }
             }
         }
-
     private var floatAnimator: Animator? = null
     private var homeAnimator: Animator? = null
-    private val customProperties = setOf(
-        PROP_X_CURRENT_TO_END,
-        PROP_Y_CURRENT_TO_END,
-        PROP_ALPHA_CURRENT_TO_ZERO,
-        PROP_ALPHA_ZERO_TO_CURRENT
-    )
+    private var interval = 0L
+    private var animated: Boolean = true
+    private var floating = false
+        set(value) {
+            if (field != value) {
+                field = value
+                onFloat(field)
+            }
+        }
 
     lateinit var onFloat: (animating: Boolean) -> Unit
 
@@ -197,7 +193,7 @@ internal class FloatControl(
 
     private fun updateAnimator() {
         cancelAnimators()
-        val resId = view.context.getResAnimator(settings.getString(PREF_FLOAT_ANIMATION))
+        val resId = view.context.getResId("animator", settings.getString(PREF_FLOAT_ANIMATION))
         if (resId > 0) {
             floatAnimator = loadAnimator(view.context, resId).apply {
                 extendProperties(customProperties)
@@ -222,19 +218,17 @@ internal class FloatControl(
         }
     }
 
-    fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String) {
         when (key) {
-            PREF_CONTENT_FLOAT_INTERVAL ->
-                updateInterval()
-            PREF_FLOAT_ANIMATION ->
-                updateAnimator()
-            PREF_ANIMATION_ON ->
-                updateAnimated()
+            PREF_CONTENT_FLOAT_INTERVAL -> updateInterval()
+            PREF_FLOAT_ANIMATION -> updateAnimator()
+            PREF_ANIMATION_ON -> updateAnimated()
         }
     }
 
-    fun onModeChanged(@Mode mode: Int) {
-        when (mode) {
+    override fun onModeChanged(newMode: Int, animate: Boolean) {
+        super.onModeChanged(newMode, animate)
+        when (newMode) {
             MODE_ACTIVE -> {
                 enabled = false
                 floatHome()

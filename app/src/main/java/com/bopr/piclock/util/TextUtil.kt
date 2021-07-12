@@ -2,6 +2,12 @@ package com.bopr.piclock.util
 
 import java.security.MessageDigest
 
+/**
+ * Miscellaneous text constants and utilities.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ */
+
 private val COMMA_ESCAPED = Regex("(?<!/),")  /* matches commas not preceded by slash symbol */
 
 fun Collection<*>.commaJoin(): String {

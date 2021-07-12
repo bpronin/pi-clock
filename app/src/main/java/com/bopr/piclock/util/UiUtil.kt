@@ -14,10 +14,11 @@ import android.widget.EditText
 import com.bopr.piclock.R
 
 /**
- * Miscellaneous UI and resources utilities.
+ * Miscellaneous UI utilities.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+
 //fun ViewGroup.forEachDeep(action: (view: View) -> Unit) {
 //    forEach { view ->
 //        if (view is ViewGroup) {
@@ -68,19 +69,6 @@ fun Context.passwordBox(message: String, onPositiveClose: (String) -> Unit) {
     }.show()
 }
 
-//fun AnimatorSet.findChildByProperty(propertyName: String): ObjectAnimator? {
-//    for (child in childAnimations) {
-//        if (child is AnimatorSet) {
-//            child.findChildByProperty(propertyName)?.run {
-//                return this
-//            }
-//        } else if (child is ObjectAnimator && child.propertyName == propertyName) {
-//            return child
-//        }
-//    }
-//    return null
-//}
-
 fun Animator.forEachChild(action: (Animator) -> Unit) {
     if (this is AnimatorSet) {
         for (child in childAnimations) {
@@ -95,6 +83,10 @@ fun Animator.forEachChild(action: (Animator) -> Unit) {
     }
 }
 
+/**
+ * Adds set of custom properties to the animator and its children if it is an animator set.
+ * Property names should be qualified before.
+ */
 fun Animator.extendProperties(properties: Collection<Property<*, *>>) {
     forEachChild { child ->
         child.apply {

@@ -30,14 +30,33 @@ import kotlin.math.min
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class BrightnessControl(private val view: View, private val settings: Settings) :
-    SimpleOnGestureListener() {
+internal class BrightnessControl(private val view: View, settings: Settings) :
+    ContentControl(settings) {
 
     private val _tag = "BrightnessControl"
     private val gestureDetector by lazy {
-        GestureDetectorCompat(view.context, this)
-    }
+        GestureDetectorCompat(view.context, object : SimpleOnGestureListener() {
 
+            override fun onScroll(
+                e1: MotionEvent?,
+                e2: MotionEvent?,
+                distanceX: Float,
+                distanceY: Float
+            ): Boolean {
+                if (!swiping) {
+                    scaleFactor =
+                        1.5f / view.parentView.scaledRect.height() /* to 2/3 of parents height */
+                    swiping = true
+                    onSwipeStart()
+                } else {
+                    val alpha = view.alpha + distanceY * scaleFactor
+                    view.alpha = min(MAX_ALPHA, max(alpha, MIN_ALPHA))
+                    onSwipe(toPercents(view.alpha))
+                }
+                return false
+            }
+        })
+    }
     private val fadeAnimator by lazy {
         ObjectAnimator().apply {
             target = view
@@ -52,9 +71,6 @@ internal class BrightnessControl(private val view: View, private val settings: S
     private var mutedAlpha = MIN_ALPHA
     private var swiping = false
 
-    @Mode
-    private var mode: Int = MODE_INACTIVE
-
     lateinit var onSwipeStart: () -> Unit
     lateinit var onSwipe: (brightness: Int) -> Unit
     lateinit var onSwipeEnd: () -> Unit
@@ -62,24 +78,6 @@ internal class BrightnessControl(private val view: View, private val settings: S
     init {
         updateGesturesState()
         updateMutedAlpha()
-    }
-
-    override fun onScroll(
-        e1: MotionEvent?,
-        e2: MotionEvent?,
-        distanceX: Float,
-        distanceY: Float
-    ): Boolean {
-        if (!swiping) {
-            scaleFactor = 1.5f / view.parentView.scaledRect.height() /* to 2/3 of parents height */
-            swiping = true
-            onSwipeStart()
-        } else {
-            val alpha = view.alpha + distanceY * scaleFactor
-            view.alpha = min(MAX_ALPHA, max(alpha, MIN_ALPHA))
-            onSwipe(toPercents(view.alpha))
-        }
-        return false
     }
 
     private fun fade(alpha: Float, onEnd: () -> Unit = {}) {
@@ -162,11 +160,17 @@ internal class BrightnessControl(private val view: View, private val settings: S
         return false
     }
 
-    fun onModeChanged(@Mode value: Int, animate: Boolean) {
-        mode = value
+    override fun onSettingChanged(key: String) {
+        when (key) {
+            PREF_MUTED_BRIGHTNESS -> updateMutedAlpha()
+            PREF_GESTURES_ENABLED -> updateGesturesState()
+        }
+    }
 
+    override fun onModeChanged(@Mode newMode: Int, animate: Boolean) {
+        super.onModeChanged(newMode, animate)
         if (animate) {
-            when (value) {
+            when (newMode) {
                 MODE_ACTIVE ->
                     fade(MAX_ALPHA) { updateViewAlpha() }
                 MODE_INACTIVE, MODE_EDITOR ->
@@ -174,13 +178,6 @@ internal class BrightnessControl(private val view: View, private val settings: S
             }
         } else {
             updateViewAlpha()
-        }
-    }
-
-    fun onSettingChanged(key: String) {
-        when (key) {
-            PREF_MUTED_BRIGHTNESS -> updateMutedAlpha()
-            PREF_GESTURES_ENABLED -> updateGesturesState()
         }
     }
 

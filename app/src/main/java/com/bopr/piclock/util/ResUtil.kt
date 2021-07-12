@@ -8,6 +8,12 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
+/**
+ * Miscellaneous resourceconstants and  utilities.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ */
+
 fun is24HourLocale(): Boolean {
     val pattern = (DateFormat.getTimeInstance() as SimpleDateFormat).toPattern()
     return !pattern.lowercase(Locale.ROOT).contains("a")
@@ -18,18 +24,9 @@ fun is24HourLocale(): Boolean {
  */
 fun Context.getResId(defType: String, resName: String): Int {
     if (resName.indexOf("/") != -1) {
-        /* Resource name must NOT be fully qualified */
-        return 0
+        throw IllegalArgumentException("Resource name must NOT be fully qualified")
     }
     return resources.getIdentifier(resName, defType, packageName)
-}
-
-fun Fragment.getResId(defType: String, resName: String): Int {
-    return requireContext().getResId(defType, resName)
-}
-
-fun Context.getResAnimator(resName: String): Int {
-    return getResId("animator", resName)
 }
 
 /**

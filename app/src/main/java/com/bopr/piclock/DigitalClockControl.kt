@@ -13,18 +13,19 @@ import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.defaultDatetimeFormat
-import com.bopr.piclock.util.getResAnimator
+import com.bopr.piclock.util.getResId
 import java.text.DateFormat
 import java.util.*
 
-class DigitalClockControl(private val view: View, private val settings: Settings) : ContentControl {
+/**
+ * Convenience class to control digital clock representation of the content view.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ */
+internal class DigitalClockControl(private val view: View, settings: Settings) :
+    ContentControl(settings) {
 
     private val amPmFormat = defaultDatetimeFormat("a")
-    private lateinit var hoursFormat: DateFormat
-    private lateinit var minutesFormat: DateFormat
-    private lateinit var secondsFormat: DateFormat
-    private lateinit var dateFormat: DateFormat
-
     private val hoursView: AnimatedTextView = view.findViewById(R.id.hours_view)
     private val minutesView: AnimatedTextView = view.findViewById(R.id.minutes_view)
     private val secondsView: AnimatedTextView = view.findViewById(R.id.seconds_view)
@@ -32,9 +33,8 @@ class DigitalClockControl(private val view: View, private val settings: Settings
     private val minutesSeparator: TextView = view.findViewById(R.id.minutes_separator)
     private val secondsSeparator: TextView = view.findViewById(R.id.seconds_separator)
     private val amPmMarkerView: TextView = view.findViewById(R.id.am_pm_marker_view)
-
-    private val blinkAnimator by lazy {
-        BlinkControl(minutesSeparator, secondsSeparator).apply {
+    private val blinker by lazy {
+        TimeSeparatorBlinker(minutesSeparator, secondsSeparator).apply {
             setEnabled(
                 settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE) &&
                         settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING)
@@ -43,6 +43,11 @@ class DigitalClockControl(private val view: View, private val settings: Settings
             setAnimated(animated)
         }
     }
+
+    private lateinit var hoursFormat: DateFormat
+    private lateinit var minutesFormat: DateFormat
+    private lateinit var secondsFormat: DateFormat
+    private lateinit var dateFormat: DateFormat
 
     private var animated: Boolean = true
 
@@ -58,7 +63,7 @@ class DigitalClockControl(private val view: View, private val settings: Settings
 
     private fun updateAnimated() {
         animated = settings.getBoolean(PREF_ANIMATION_ON)
-        blinkAnimator.setAnimated(animated)
+        blinker.setAnimated(animated)
     }
 
     private fun updateHoursMinutesViews() {
@@ -99,18 +104,18 @@ class DigitalClockControl(private val view: View, private val settings: Settings
             secondsSeparator.visibility =
                 if (secondsVisible) VISIBLE else INVISIBLE
 
-            blinkAnimator.setEnabled(settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING))
-            blinkAnimator.setSecondsEnabled(secondsVisible)
+            blinker.setEnabled(settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING))
+            blinker.setSecondsEnabled(secondsVisible)
         } else {
             minutesSeparator.visibility = INVISIBLE
             secondsSeparator.visibility = INVISIBLE
 
-            blinkAnimator.setEnabled(false)
+            blinker.setEnabled(false)
         }
     }
 
     private fun updateDigitsAnimation() {
-        val resId = view.context.getResAnimator(settings.getString(PREF_DIGITS_ANIMATION))
+        val resId = view.context.getResId("animator", settings.getString(PREF_DIGITS_ANIMATION))
 
         hoursView.setTextAnimator(resId)
         minutesView.setTextAnimator(resId)
@@ -137,7 +142,7 @@ class DigitalClockControl(private val view: View, private val settings: Settings
             updateViewsData(time, animated)
         }
 
-        blinkAnimator.onTimer(tick)
+        blinker.onTimer(tick)
     }
 
     override fun onSettingChanged(key: String) {
