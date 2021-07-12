@@ -14,6 +14,7 @@ import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
+import com.bopr.piclock.Settings.Companion.PREF_GESTURES_ENABLED
 import com.bopr.piclock.util.*
 import com.bopr.piclock.util.property.PROP_SCALE
 import kotlin.math.max
@@ -52,6 +53,7 @@ internal class ScaleControl(private val view: View, private val settings: Settin
         }
 
     private var pinching = false
+    private var gesturesEnabled = true
     private var defaultScale = 1f
 
     @Mode
@@ -73,6 +75,7 @@ internal class ScaleControl(private val view: View, private val settings: Settin
     init {
         view.addOnLayoutChangeListener(viewListener)
         updateScale(false)
+        updateGesturesState()
     }
 
     override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
@@ -138,6 +141,10 @@ internal class ScaleControl(private val view: View, private val settings: Settin
         }
     }
 
+    private fun updateGesturesState() {
+        gesturesEnabled = settings.getBoolean(PREF_GESTURES_ENABLED)
+    }
+
     private fun updateScale(animated: Boolean) {
         defaultScale = toDecimal(settings.getInt(PREF_CONTENT_SCALE))
 
@@ -148,14 +155,17 @@ internal class ScaleControl(private val view: View, private val settings: Settin
     }
 
     fun onSettingChanged(key: String) {
-        if (key == PREF_CONTENT_SCALE) updateScale(true)
+        when (key) {
+            PREF_CONTENT_SCALE -> updateScale(true)
+            PREF_GESTURES_ENABLED -> updateGesturesState()
+        }
     }
 
     /**
      * To be called in owner's onTouch.
      */
     fun onTouch(event: MotionEvent): Boolean {
-        if (mode == MODE_ACTIVE || mode == MODE_INACTIVE) {
+        if (gesturesEnabled && (mode == MODE_ACTIVE || mode == MODE_INACTIVE)) {
             gestureDetector.onTouchEvent(event)
 
             /* this is to prevent of calling onClick if pinched */

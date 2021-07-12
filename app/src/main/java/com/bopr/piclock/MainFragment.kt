@@ -22,7 +22,6 @@ import com.bopr.piclock.DigitalClockControl.Companion.isDigitalClockLayout
 import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
-import com.bopr.piclock.Settings.Companion.PREF_GESTURES_ENABLED
 import com.bopr.piclock.util.HandlerTimer
 import com.bopr.piclock.util.getResId
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -48,9 +47,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private lateinit var contentControl: ContentControl
 
     private val settings by lazy {
-        Settings(requireContext()).apply {
-            registerOnSharedPreferenceChangeListener(this@MainFragment)
-        }
+        Settings(requireContext())
     }
 
     private val fullscreenControl by lazy {
@@ -123,6 +120,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     @Mode
     private var mode = MODE_ACTIVE
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        settings.registerOnSharedPreferenceChangeListener(this)
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -138,8 +140,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
 
             setOnTouchListener { _, event ->
-                autoInactivateControl.onTouch(event) || (settings.getBoolean(PREF_GESTURES_ENABLED)
-                        && (brightnessControl.onTouch(event) || scaleControl.onTouch(event)))
+                autoInactivateControl.onTouch(event)
+                        || brightnessControl.onTouch(event)
+                        || scaleControl.onTouch(event)
             }
 
             doOnLayout {
@@ -224,7 +227,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         return if (mode == MODE_EDITOR) {
             setMode(MODE_INACTIVE, true)
             true
-        } else false
+        } else {
+            false
+        }
     }
 
     private fun onTimer(tick: Int) {
@@ -251,17 +256,17 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun createContentControl() {
-        val layout = settings.getString(PREF_CONTENT_LAYOUT)
-        val view = layoutInflater.inflate(getResId("layout", layout), contentHolder, false)
+        val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
+        val contentView = layoutInflater.inflate(getResId("layout", layoutName), contentHolder, false)
         contentHolder.apply {
             removeAllViews()
-            addView(view)
+            addView(contentView)
         }
 
-        if (isDigitalClockLayout(layout)) {
-            contentControl = DigitalClockControl(view, settings)
+        if (isDigitalClockLayout(layoutName)) {
+            contentControl = DigitalClockControl(contentView, settings)
         } else {
-            throw IllegalArgumentException("Unregistered content layout resource: $layout")
+            throw IllegalArgumentException("Unregistered content layout resource: $layoutName")
         }
 
         Log.d(_tag, "Created content")

@@ -16,6 +16,7 @@ import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
+import com.bopr.piclock.Settings.Companion.PREF_GESTURES_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_MUTED_BRIGHTNESS
 import com.bopr.piclock.util.parentView
 import com.bopr.piclock.util.scaledRect
@@ -33,7 +34,6 @@ internal class BrightnessControl(private val view: View, private val settings: S
     SimpleOnGestureListener() {
 
     private val _tag = "BrightnessControl"
-
     private val gestureDetector by lazy {
         GestureDetectorCompat(view.context, this)
     }
@@ -47,6 +47,7 @@ internal class BrightnessControl(private val view: View, private val settings: S
         }
     }
 
+    private var gesturesEnabled = true
     private var scaleFactor = 0f
     private var mutedAlpha = MIN_ALPHA
     private var swiping = false
@@ -59,6 +60,7 @@ internal class BrightnessControl(private val view: View, private val settings: S
     lateinit var onSwipeEnd: () -> Unit
 
     init {
+        updateGesturesState()
         updateMutedAlpha()
     }
 
@@ -123,6 +125,10 @@ internal class BrightnessControl(private val view: View, private val settings: S
         Log.v(_tag, "View alpha set to: ${view.alpha}")
     }
 
+    private fun updateGesturesState() {
+        gesturesEnabled = settings.getBoolean(PREF_GESTURES_ENABLED)
+    }
+
     private fun updateMutedAlpha() {
         mutedAlpha = toDecimal(settings.getInt(PREF_MUTED_BRIGHTNESS))
         updateViewAlpha()
@@ -134,7 +140,7 @@ internal class BrightnessControl(private val view: View, private val settings: S
      * To be called in owner's onTouch.
      */
     fun onTouch(event: MotionEvent): Boolean {
-        if (mode == MODE_INACTIVE || mode == MODE_ACTIVE) {
+        if (gesturesEnabled && (mode == MODE_INACTIVE || mode == MODE_ACTIVE)) {
             gestureDetector.onTouchEvent(event)
 
             /* this is to prevent of calling onClick if scrolled */
@@ -156,11 +162,11 @@ internal class BrightnessControl(private val view: View, private val settings: S
         return false
     }
 
-    fun onModeChanged(@Mode mode: Int, animate: Boolean) {
-        this.mode = mode
+    fun onModeChanged(@Mode value: Int, animate: Boolean) {
+        mode = value
 
         if (animate) {
-            when (mode) {
+            when (value) {
                 MODE_ACTIVE ->
                     fade(MAX_ALPHA) { updateViewAlpha() }
                 MODE_INACTIVE, MODE_EDITOR ->
@@ -172,7 +178,10 @@ internal class BrightnessControl(private val view: View, private val settings: S
     }
 
     fun onSettingChanged(key: String) {
-        if (key == PREF_MUTED_BRIGHTNESS) updateMutedAlpha()
+        when (key) {
+            PREF_MUTED_BRIGHTNESS -> updateMutedAlpha()
+            PREF_GESTURES_ENABLED -> updateGesturesState()
+        }
     }
 
     companion object {
