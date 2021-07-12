@@ -40,7 +40,7 @@ internal class FloatControl(
             }
         }
     }
-    private val customProperties = setOf(
+    private val customViewProperties = setOf(
         PROP_X_CURRENT_TO_END,
         PROP_Y_CURRENT_TO_END,
         PROP_ALPHA_CURRENT_TO_ZERO,
@@ -101,7 +101,6 @@ internal class FloatControl(
     private fun floatSomewhere(onEnd: () -> Unit) {
         Log.v(_tag, "Moving somewhere")
 
-        val alpha = view.alpha
         val pr = view.parentView.scaledRect
         val vr = view.scaledRect
         val dw = pr.width() - vr.width()
@@ -112,7 +111,7 @@ internal class FloatControl(
         val y = random().toFloat() * dh + dy
 
         floating = true
-        runAnimator(floatAnimator, x, y, alpha) {
+        runAnimator(floatAnimator, x, y) {
             floating = false
             onEnd()
         }
@@ -121,22 +120,20 @@ internal class FloatControl(
     private fun floatHome() {
         Log.v(_tag, "Moving home")
 
-        val alpha = view.alpha
         val pr = view.parentView.rect
         val vr = view.rect
         val x = (pr.width() - vr.width()) / 2
         val y = (pr.height() - vr.height()) / 2
 
         floating = false
-        runAnimator(homeAnimator, x, y, alpha, {})
+        runAnimator(homeAnimator, x, y)
     }
 
     private fun runAnimator(
         animator: Animator?,
         x: Float,
         y: Float,
-        alpha: Float,
-        onEnd: () -> Unit
+        onEnd: () -> Unit = {}
     ) {
         cancelAnimators()
 
@@ -169,7 +166,6 @@ internal class FloatControl(
                 doOnEnd {
                     Log.v(_tag, "End animation")
 
-                    view.alpha = alpha /* restore if changed during animation */
                     onEnd()
                 }
 
@@ -196,10 +192,10 @@ internal class FloatControl(
         val resId = view.context.getResId("animator", settings.getString(PREF_FLOAT_ANIMATION))
         if (resId > 0) {
             floatAnimator = loadAnimator(view.context, resId).apply {
-                extendProperties(customProperties)
+                extendProperties(customViewProperties)
             }
             homeAnimator = loadAnimator(view.context, R.animator.float_home).apply {
-                extendProperties(customProperties)
+                extendProperties(customViewProperties)
             }
         } else {
             floatAnimator = null

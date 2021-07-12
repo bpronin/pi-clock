@@ -28,8 +28,6 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
             putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
             putBooleanOptional(PREF_GESTURES_ENABLED, true)
-            putBooleanOptional(PREF_START_ON_POWER_CONNECTED, false)
-            putBooleanOptional(PREF_STOP_ON_POWER_DISCONNECTED, false)
             putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)  /* 15 min */
             putIntOptional(PREF_CONTENT_SCALE, 100) {
                 getInt(PREF_CONTENT_SCALE) in MIN_SCALE..MAX_SCALE
@@ -163,8 +161,6 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_GESTURES_ENABLED = "gestures_enabled"
         const val PREF_MUTED_BRIGHTNESS = "muted_brightness"
         const val PREF_SECONDS_FORMAT = "seconds_format"
-        const val PREF_START_ON_POWER_CONNECTED = "start_on_power_connected"
-        const val PREF_STOP_ON_POWER_DISCONNECTED = "stop_on_power_disconnected"
         const val PREF_TICK_RULES = "tick_sound_mode"
         const val PREF_TICK_SOUND = "tick_sound"
         const val PREF_TIME_FORMAT = "time_format"

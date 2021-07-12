@@ -95,7 +95,7 @@ internal class SoundControl(context: Context, settings: Settings) : ContentContr
         if ((whenActive && mode == MODE_ACTIVE)
             || (whenInactive && mode == MODE_INACTIVE)
             || (whenFloating && viewFloating)
-            || player.changingVolume
+            || player.fadingVolume
         ) player.play()
     }
 

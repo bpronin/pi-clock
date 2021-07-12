@@ -33,8 +33,6 @@
             android:label="Debug"
             android:parentActivityName=".MainActivity" />
 
-        <service android:name=".PowerConnectionService" />
-
     </application>
 
 </manifest>
