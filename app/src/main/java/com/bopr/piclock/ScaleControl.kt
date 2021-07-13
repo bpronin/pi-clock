@@ -2,11 +2,13 @@ package com.bopr.piclock
 
 import android.animation.ObjectAnimator
 import android.util.Log
+import android.view.GestureDetector
+import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import android.view.ScaleGestureDetector
-import android.view.ScaleGestureDetector.OnScaleGestureListener
+import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
 import android.view.View
 import android.view.View.OnLayoutChangeListener
 import android.view.animation.DecelerateInterpolator
@@ -25,19 +27,69 @@ import kotlin.math.min
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class ScaleControl(private val view: View, settings: Settings) :
-    ContentControl(settings), OnScaleGestureListener {
+internal class ScaleControl(private val view: View, settings: Settings) : ContentControl(settings) {
 
     private val _tag = "ScaleControl"
+
     private val gestureDetector by lazy {
-        ScaleGestureDetector(view.context, this)
+        GestureDetector(view.context, object : SimpleOnGestureListener() {
+
+            //            override fun onDown(e: MotionEvent?): Boolean {
+//                pinching = false
+//                return false
+//            }
+//
+//            override fun onSingleTapUp(e: MotionEvent?): Boolean {
+//                return pinching
+//            }
+//
+            override fun onDoubleTap(e: MotionEvent?): Boolean {
+                Log.v(_tag, "Double tap detected")
+
+                settings.update { putInt(PREF_CONTENT_SCALE, 100) }
+                return true
+            }
+        })
     }
+
+    private val scaleGestureDetector by lazy {
+        ScaleGestureDetector(view.context, object : SimpleOnScaleGestureListener() {
+
+            override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
+                Log.v(_tag, "Start pinching")
+
+                pinching = true
+                onPinchStart()
+                return true
+            }
+
+            override fun onScale(detector: ScaleGestureDetector): Boolean {
+                val scale = viewScale * detector.scaleFactor
+                viewScale = max(MIN_FACTOR, min(scale, MAX_FACTOR))
+                onPinch(toPercents(viewScale))
+                return true
+            }
+
+            override fun onScaleEnd(detector: ScaleGestureDetector?) {
+                Log.v(_tag, "End pinching")
+
+                defaultScale = viewScale
+                settings.update {
+                    putInt(PREF_CONTENT_SCALE, toPercents(defaultScale))
+                }
+                onPinchEnd()
+                animateTo(computeFitScale(defaultScale), true)
+            }
+        })
+    }
+
     private val animator by lazy {
         ObjectAnimator.ofFloat(view, PROP_SCALE, 0f).apply {
             duration = 500
             interpolator = DecelerateInterpolator()
         }
     }
+
     private val viewListener =
         OnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
@@ -72,32 +124,6 @@ internal class ScaleControl(private val view: View, settings: Settings) :
         view.addOnLayoutChangeListener(viewListener)
         updateScale(false)
         updateGesturesState()
-    }
-
-    override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
-        Log.v(_tag, "Start pinching")
-
-        pinching = true
-        onPinchStart()
-        return true
-    }
-
-    override fun onScale(detector: ScaleGestureDetector): Boolean {
-        val scale = viewScale * detector.scaleFactor
-        viewScale = max(MIN_FACTOR, min(scale, MAX_FACTOR))
-        onPinch(toPercents(viewScale))
-        return true
-    }
-
-    override fun onScaleEnd(detector: ScaleGestureDetector?) {
-        Log.v(_tag, "End pinching")
-
-        defaultScale = viewScale
-        settings.update {
-            putInt(PREF_CONTENT_SCALE, toPercents(defaultScale))
-        }
-        onPinchEnd()
-        animateTo(computeFitScale(defaultScale), true)
     }
 
     private fun computeFitScale(scale: Float): Float {
@@ -164,7 +190,9 @@ internal class ScaleControl(private val view: View, settings: Settings) :
      */
     fun onTouch(event: MotionEvent): Boolean {
         if (gesturesEnabled && (mode == MODE_ACTIVE || mode == MODE_INACTIVE)) {
-            gestureDetector.onTouchEvent(event)
+            if (gestureDetector.onTouchEvent(event)) return true
+            
+            scaleGestureDetector.onTouchEvent(event)
 
             /* this is to prevent of calling onClick if pinched */
             when (event.action) {
