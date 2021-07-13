@@ -70,6 +70,7 @@
         <item>Digital default</item>
         <item>Digital simple</item>
         <item>Digital vertical default</item>
+        <item>Analog default</item>
         <item>Digital vertical simple</item>
     </string-array>
 

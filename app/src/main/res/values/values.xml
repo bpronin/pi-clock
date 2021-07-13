@@ -5,6 +5,7 @@
         <item>view_digital_default</item>
         <item>view_digital_simple</item>
         <item>view_digital_vertical_default</item>
+        <item>view_analog_default</item>
         <item>view_digital_vertical_simple</item>
     </string-array>
 
