@@ -2,7 +2,7 @@ package com.bopr.piclock.util
 
 import android.content.Context
 import android.content.res.Resources
-import androidx.fragment.app.Fragment
+import androidx.annotation.IdRes
 import com.bopr.piclock.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -30,9 +30,20 @@ fun Context.getResId(defType: String, resName: String): Int {
 }
 
 /**
+ * Returns ID of resource by its name or throws an exception when resource does not exist.
+ */
+fun Context.requireResId(defType: String, resName: String): Int {
+    val resId = getResId(defType, resName)
+    if (resId == 0) {
+        throw IllegalArgumentException("Resource does not exist: $defType/$resName")
+    }
+    return resId
+}
+
+/**
  * Returns name of resource ID (short).
  */
-fun Context.getResName(resId: Int): String {
+fun Context.getResName(@IdRes resId: Int): String {
     resources.getResourceName(resId).run {
         return substring(lastIndexOf("/") + 1)
     }
@@ -80,11 +91,10 @@ fun <C : Collection<*>> Context.ensureAllResExists(arrayResId: Int, values: C): 
     }
 }
 
+/**
+ * Convenience function. Returns context's resource array.
+ */
 fun Context.getStringArray(resId: Int): Array<out String> {
-    return resources.getStringArray(resId)
-}
-
-fun Fragment.getStringArray(resId: Int): Array<out String> {
     return resources.getStringArray(resId)
 }
 

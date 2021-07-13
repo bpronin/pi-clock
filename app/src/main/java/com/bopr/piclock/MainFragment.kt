@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.annotation.IntDef
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import com.bopr.piclock.AnalogClockControl.Companion.isAnalogClockLayout
 import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
 import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
 import com.bopr.piclock.DigitalClockControl.Companion.isDigitalClockLayout
@@ -22,7 +23,7 @@ import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.util.HandlerTimer
-import com.bopr.piclock.util.getResId
+import com.bopr.piclock.util.requireResId
 import java.util.*
 
 /**
@@ -247,7 +248,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private fun createContentControl() {
         val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
         val contentView = layoutInflater.inflate(
-            requireContext().getResId("layout", layoutName),
+            requireContext().requireResId("layout", layoutName),
             contentHolderView, false
         )
         contentHolderView.apply {
@@ -255,10 +256,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             addView(contentView)
         }
 
-        if (isDigitalClockLayout(layoutName)) {
-            contentControl = DigitalClockControl(contentView, settings)
-        } else {
-            throw IllegalArgumentException("Unregistered content layout resource: $layoutName")
+        contentControl = when {
+            isDigitalClockLayout(layoutName) -> DigitalClockControl(contentView, settings)
+            isAnalogClockLayout(layoutName) -> AnalogClockControl(contentView, settings)
+            else -> throw IllegalArgumentException("Unregistered content layout resource: $layoutName")
         }
 
         Log.d(_tag, "Created content")

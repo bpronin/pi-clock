@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:background="?attr/contentBackgroundColor"
+    android:orientation="horizontal">
+
+    <com.bopr.piclock.AnimatedTextView
+        android:id="@+id/date_view"
+        android:layout_width="20sp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/comfortaa"
+        android:rotation="90"
+        android:text="Someday of the week, Month 00, 2021"
+        android:textColor="?attr/contentTextColor"
+        android:textSize="14sp"
+        tools:ignore="HardcodedText" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/am_pm_marker_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="-12sp"
+            android:fontFamily="@font/gruppo"
+            android:text="AM"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="26sp"
+            tools:ignore="HardcodedText" />
+
+        <com.bopr.piclock.AnimatedTextView
+            android:id="@+id/hours_view"
+            android:layout_width="80sp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/gruppo"
+            android:gravity="center"
+            android:text="44"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="72sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/minutes_separator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="-48sp"
+            android:layout_marginBottom="-28sp"
+            android:fontFamily="@font/gruppo"
+            android:text="_"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="72sp"
+            tools:ignore="HardcodedText" />
+
+        <com.bopr.piclock.AnimatedTextView
+            android:id="@+id/minutes_view"
+            android:layout_width="80sp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/gruppo"
+            android:gravity="center"
+            android:text="00"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="72sp"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/seconds_separator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="-22sp"
+            android:layout_marginBottom="-8sp"
+            android:fontFamily="@font/gruppo"
+            android:text="_"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="28sp"
+            tools:ignore="HardcodedText" />
+
+        <com.bopr.piclock.AnimatedTextView
+            android:id="@+id/seconds_view"
+            android:layout_width="30sp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:fontFamily="@font/gruppo"
+            android:gravity="center"
+            android:text="44"
+            android:textColor="?attr/contentTextColor"
+            android:textSize="28sp"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+</LinearLayout>

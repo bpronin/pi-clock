@@ -21,8 +21,8 @@ import com.bopr.piclock.util.getStringArray
  */
 class BrowseSoundFragment : Fragment() {
 
-    private val itemValues by lazy { getStringArray(R.array.tick_sound_values) }
-    private val itemNames by lazy { getStringArray(R.array.tick_sound_names) }
+    private val itemValues by lazy { requireContext().getStringArray(R.array.tick_sound_values) }
+    private val itemNames by lazy { requireContext().getStringArray(R.array.tick_sound_names) }
     private val settings: Settings by lazy { Settings(requireContext()) }
     private val timer by lazy { HandlerTimer(Handler(Looper.getMainLooper()), 1000L, 1, ::onTimer) }
     private val player by lazy { TickPlayer(requireContext()) }

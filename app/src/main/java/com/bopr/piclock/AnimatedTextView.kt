@@ -14,6 +14,7 @@ import androidx.core.animation.doOnStart
 import com.bopr.piclock.util.extendProperties
 import com.bopr.piclock.util.property.PROP_RELATIVE_TRANSITION_X
 import com.bopr.piclock.util.property.PROP_RELATIVE_TRANSITION_Y
+import com.bopr.piclock.util.resetRenderParams
 
 /**
  * Text view with animated transitions.
@@ -43,33 +44,24 @@ class AnimatedTextView : FrameLayout {
     ) : super(context, attrs, defStyleAttr, defStyleRes) {
         view = AppCompatTextView(context, attrs, defStyleAttr)
         shadowView = AppCompatTextView(context, attrs, defStyleAttr)
+        resetViews()
 
-        val lp = generateLayoutParams(attrs).apply {
+        val layoutParams = generateLayoutParams(attrs)
+        layoutParams.apply {
             if (width == 0) width = MATCH_PARENT
             if (height == 0) height = MATCH_PARENT
         }
-
-        addView(shadowView, lp)
-        addView(view, lp)
-
-        resetViews()
+        addView(shadowView, layoutParams)
+        addView(view, layoutParams)
     }
 
     private fun resetViews() {
         view.apply {
-            alpha = 1f
-            scaleX = 1f
-            scaleY = 1f
-            translationY = 0f
-            translationX = 0f
+            resetRenderParams()
             visibility = VISIBLE
         }
         shadowView.apply {
-            alpha = 1f
-            scaleX = 1f
-            scaleY = 1f
-            translationY = 0f
-            translationX = 0f
+            resetRenderParams()
             visibility = GONE
         }
 

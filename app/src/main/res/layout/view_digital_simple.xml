@@ -24,12 +24,12 @@
         android:id="@+id/minutes_separator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="0sp"
+        android:layout_marginBottom="6sp"
         android:fontFamily="@font/gruppo"
         android:text=":"
         android:textColor="?attr/contentTextColor"
         android:textSize="72sp"
-        app:layout_constraintBaseline_toBaselineOf="@id/hours_view"
+        app:layout_constraintBottom_toBottomOf="@id/hours_view"
         app:layout_constraintLeft_toRightOf="@id/hours_view"
         tools:ignore="HardcodedText" />
 
@@ -49,12 +49,12 @@
         android:id="@+id/seconds_separator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="0sp"
+        android:layout_marginBottom="6sp"
         android:fontFamily="@font/gruppo"
         android:text=":"
         android:textColor="?attr/contentTextColor"
         android:textSize="72sp"
-        app:layout_constraintBaseline_toBaselineOf="@id/hours_view"
+        app:layout_constraintBottom_toBottomOf="@id/hours_view"
         app:layout_constraintLeft_toRightOf="@id/minutes_view"
         tools:ignore="HardcodedText" />
 

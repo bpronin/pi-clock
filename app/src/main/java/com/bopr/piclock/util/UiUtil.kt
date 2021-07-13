@@ -46,6 +46,18 @@ val View.scaledRect get() = rect.scaled(scaleX, scaleY)
 
 val View.parentView get() = (parent as ViewGroup)
 
+fun View.resetRenderParams() = apply {
+    alpha = 1f
+    scaleX = 1f
+    scaleY = 1f
+    translationZ = 0f
+    translationY = 0f
+    translationX = 0f
+    rotation = 0f
+    rotationY = 0f
+    rotationX = 0f
+}
+
 fun Context.messageBox(text: String) {
     AlertDialog.Builder(this).apply {
         setTitle(R.string.app_name)

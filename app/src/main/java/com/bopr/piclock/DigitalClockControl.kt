@@ -13,7 +13,7 @@ import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.defaultDatetimeFormat
-import com.bopr.piclock.util.getResId
+import com.bopr.piclock.util.requireResId
 import java.text.DateFormat
 import java.util.*
 
@@ -115,7 +115,7 @@ internal class DigitalClockControl(private val view: View, settings: Settings) :
     }
 
     private fun updateDigitsAnimation() {
-        val resId = view.context.getResId("animator", settings.getString(PREF_DIGITS_ANIMATION))
+        val resId = view.context.requireResId("animator", settings.getString(PREF_DIGITS_ANIMATION))
 
         hoursView.setTextAnimator(resId)
         minutesView.setTextAnimator(resId)

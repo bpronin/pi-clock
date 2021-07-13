@@ -5,8 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
-    android:background="?attr/contentBackgroundColor"
-    android:orientation="vertical">
+    android:background="?attr/contentBackgroundColor">
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/hours_view"

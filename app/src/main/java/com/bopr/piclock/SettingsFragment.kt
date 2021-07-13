@@ -6,8 +6,10 @@ import android.os.Bundle
 import androidx.preference.*
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bopr.piclock.AnalogClockControl.Companion.isAnalogClockLayout
 import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
 import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
+import com.bopr.piclock.DigitalClockControl.Companion.isDigitalClockLayout
 import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
@@ -41,13 +43,12 @@ import java.util.*
 class SettingsFragment : CustomPreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private lateinit var settings: Settings
+    private val settings by lazy { Settings(requireContext()) }
+    private var layoutSpecificPrefResId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         preferenceManager.sharedPreferencesName = SHARED_PREFERENCES_NAME
-
-        settings = Settings(requireContext())
         settings.registerOnSharedPreferenceChangeListener(this)
     }
 
@@ -57,20 +58,14 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        addPreferencesFromResource(R.xml.pref_settings)
-        loadLayoutSpecificPreferences()
+        addPreferencesFromResource(R.xml.pref_main)
+        loadLayoutSpecificPreferences(settings.getString(PREF_CONTENT_LAYOUT))
     }
 
     override fun onStart() {
         super.onStart()
-
         updateAboutView()
-
-        /* force update preference views at startup */
-        for (key in settings.all.keys) {
-            onSharedPreferenceChanged(settings, key)
-        }
-
+        refreshPreferences()
         /* restore last scroll position */
         listView.scrollToPosition(settings.getInt(PREF_TOP_SETTING, 0))
     }
@@ -88,7 +83,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         when (key) {
             PREF_AUTO_INACTIVATE_DELAY -> updateAutoInactivateView()
             PREF_CONTENT_FLOAT_INTERVAL -> updateFloatIntervalView()
-            PREF_CONTENT_LAYOUT -> updateClockLayoutView()
+            PREF_CONTENT_LAYOUT -> updateLayoutView()
             PREF_CONTENT_SCALE -> updateScaleView()
             PREF_DATE_FORMAT -> updateDateFormatView()
             PREF_MUTED_BRIGHTNESS -> updateMutedBrightnessView()
@@ -104,29 +99,44 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun loadLayoutSpecificPreferences() {
-        val holder = requirePreference<PreferenceGroup>("layout_specific_holder")
+    /** Forces update preference views */
+    private fun refreshPreferences() {
+        for (key in settings.all.keys) {
+            onSharedPreferenceChanged(settings, key)
+        }
+    }
 
-        for (preference in holder) {
-            if (preference.key != PREF_CONTENT_LAYOUT) {
-                holder.removePreference(preference)
-            } else {
-                preference.order = -1 /* make it always first */
+    private fun loadLayoutSpecificPreferences(layout: String) {
+        val contentPrefResId = when {
+            isDigitalClockLayout(layout) -> R.xml.pref_digital_layout
+            isAnalogClockLayout(layout) -> R.xml.pref_analog_layout
+            else -> throw IllegalArgumentException("No preferences xml for layout:$layout")
+        }
+
+        if (contentPrefResId == layoutSpecificPrefResId) return
+        layoutSpecificPrefResId = contentPrefResId
+
+        val layoutPref = requirePreference<Preference>(PREF_CONTENT_LAYOUT).apply {
+            order = -1 /* keep it first */
+        }
+        val holderPref = requirePreference<PreferenceGroup>("layout_specific_holder").apply {
+            removeAll()
+            addPreference(layoutPref)
+        }
+
+        addPreferencesFromResource(contentPrefResId)
+        val contentPref = requirePreference<PreferenceGroup>("layout_specific_content")
+        preferenceScreen.removePreference(contentPref) /* we do not need it anymore */
+        while (contentPref.isNotEmpty()) {
+            contentPref[0].apply {
+                contentPref.removePreference(this)
+                holderPref.addPreference(this)
             }
         }
-
-        addPreferencesFromResource(R.xml.pref_settings_digital)
-        val tempContent = requirePreference<PreferenceGroup>("layout_specific_content")
-        while (tempContent.preferenceCount > 0) {
-            val preference = tempContent[0]
-            tempContent.removePreference(preference)
-            holder.addPreference(preference)
-        }
-        preferenceScreen.removePreference(tempContent)
     }
 
     private fun updateAboutView() {
-        requirePreference<Preference>("about").apply {
+        requirePreference<Preference>("about_app").apply {
             val info = ReleaseInfo.get(requireContext())
             summary =
                 getString(R.string.about_summary, info.versionName, info.buildNumber)
@@ -185,18 +195,23 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateClockLayoutView() {
+    private fun updateLayoutView() {
         requirePreference<ListPreference>(PREF_CONTENT_LAYOUT).apply {
             val value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
+            setOnPreferenceChangeListener { _, newValue ->
+                loadLayoutSpecificPreferences(newValue as String)
+                refreshPreferences()
+                true
+            }
         }
     }
 
     private fun updateTickSoundView() {
         requirePreference<Preference>(PREF_TICK_SOUND).apply {
             val value = settings.getString(key)
-            val index = getStringArray(R.array.tick_sound_values).indexOf(value)
-            summary = getStringArray(R.array.tick_sound_names)[index]
+            val index = context.getStringArray(R.array.tick_sound_values).indexOf(value)
+            summary = context.getStringArray(R.array.tick_sound_names)[index]
         }
     }
 
@@ -258,7 +273,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         findPreference<ListPreference>(PREF_TIME_FORMAT)?.apply {
             val value = settings.getString(key)
             val ix = findIndexOfValue(value)
-            val hint = getStringArray(R.array.time_format_hints)[ix]
+            val hint = context.getStringArray(R.array.time_format_hints)[ix]
             summary = "${entries[ix]} $hint"
         }
     }
@@ -267,7 +282,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         findPreference<ListPreference>(PREF_SECONDS_FORMAT)?.apply {
             val value = settings.getString(key)
             val ix = findIndexOfValue(value)
-            val hint = getStringArray(R.array.seconds_format_hints)[ix]
+            val hint = context.getStringArray(R.array.seconds_format_hints)[ix]
             summary = "${entries[ix]} $hint"
         }
     }
@@ -276,7 +291,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         findPreference<ListPreference>(PREF_DATE_FORMAT)?.apply {
 
             val date = Date()
-            val patterns = getStringArray(R.array.date_format_values)
+            val patterns = context.getStringArray(R.array.date_format_values)
             val entryNames = arrayOfNulls<String>(patterns.size)
             for (i in entryNames.indices) {
                 val pattern = patterns[i]
