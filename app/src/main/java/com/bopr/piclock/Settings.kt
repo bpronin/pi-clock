@@ -80,6 +80,22 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         putIntOptional(PREF_MUTED_BRIGHTNESS, 20) {
             it in MIN_BRIGHTNESS..MAX_BRIGHTNESS
         }
+        /* NOTE: clearing settings here will have no effect */
+        context.apply {
+            putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
+            putBooleanOptional(PREF_TIME_SEPARATORS_BLINKING, true)
+            putBooleanOptional(PREF_ANIMATION_ON, true)
+            putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
+            putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
+            putBooleanOptional(PREF_GESTURES_ENABLED, true)
+            putBooleanOptional(PREF_SECOND_HAND_VISIBLE, true)
+            putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)  /* 15 min */
+            putIntOptional(PREF_CONTENT_SCALE, 100) {
+                getInt(PREF_CONTENT_SCALE) in MIN_SCALE..MAX_SCALE
+            }
+            putIntOptional(PREF_MUTED_BRIGHTNESS, 20) {
+                getInt(PREF_MUTED_BRIGHTNESS) in MIN_BRIGHTNESS..MAX_BRIGHTNESS
+            }
 
         putStringSetResourceOptional(
             PREF_TICK_RULES,
@@ -184,6 +200,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_GESTURES_ENABLED = "gestures_enabled"
         const val PREF_MUTED_BRIGHTNESS = "muted_brightness"
         const val PREF_SECONDS_FORMAT = "seconds_format"
+        const val PREF_SECOND_HAND_VISIBLE = "second_hand_visible"
         const val PREF_TICK_RULES = "tick_sound_mode"
         const val PREF_TICK_SOUND = "tick_sound"
         const val PREF_TIME_FORMAT = "time_format"
