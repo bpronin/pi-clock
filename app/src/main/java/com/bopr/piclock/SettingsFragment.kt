@@ -11,7 +11,6 @@ import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
 import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_ABOUT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
@@ -59,6 +58,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_settings)
+        loadLayoutSpecificPreferences()
     }
 
     override fun onStart() {
@@ -104,8 +104,29 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
+    private fun loadLayoutSpecificPreferences() {
+        val holder = requirePreference<PreferenceGroup>("layout_specific_holder")
+
+        for (preference in holder) {
+            if (preference.key != PREF_CONTENT_LAYOUT) {
+                holder.removePreference(preference)
+            } else {
+                preference.order = -1 /* make it always first */
+            }
+        }
+
+        addPreferencesFromResource(R.xml.pref_settings_digital)
+        val tempContent = requirePreference<PreferenceGroup>("layout_specific_content")
+        while (tempContent.preferenceCount > 0) {
+            val preference = tempContent[0]
+            tempContent.removePreference(preference)
+            holder.addPreference(preference)
+        }
+        preferenceScreen.removePreference(tempContent)
+    }
+
     private fun updateAboutView() {
-        requirePreference(PREF_ABOUT).apply {
+        requirePreference<Preference>("about").apply {
             val info = ReleaseInfo.get(requireContext())
             summary =
                 getString(R.string.about_summary, info.versionName, info.buildNumber)
@@ -113,22 +134,15 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateDigitsAnimationView() {
-        (requirePreference(PREF_DIGITS_ANIMATION) as ListPreference).apply {
-            val value = settings.getString(key)
-            summary = entries[findIndexOfValue(value)]
-        }
-    }
-
     private fun updateFloatAnimationView() {
-        (requirePreference(PREF_FLOAT_ANIMATION) as ListPreference).apply {
+        requirePreference<ListPreference>(PREF_FLOAT_ANIMATION).apply {
             val value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
         }
     }
 
     private fun updateFloatIntervalView() {
-        (requirePreference(PREF_CONTENT_FLOAT_INTERVAL) as ListPreference).apply {
+        requirePreference<ListPreference>(PREF_CONTENT_FLOAT_INTERVAL).apply {
             val value = settings.getLong(key)
             summary = when (value) {
                 0L -> getString(R.string.clock_always_moves_along_screen)
@@ -142,7 +156,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateScaleView() {
-        (requirePreference(PREF_CONTENT_SCALE) as SeekBarPreference).apply {
+        requirePreference<SeekBarPreference>(PREF_CONTENT_SCALE).apply {
             min = MIN_SCALE
             max = MAX_SCALE
             value = settings.getInt(key)
@@ -151,7 +165,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateTickModeView() {
-        (requirePreference(PREF_TICK_RULES) as MultiSelectListPreference).apply {
+        requirePreference<MultiSelectListPreference>(PREF_TICK_RULES).apply {
             val items = settings.getStringSet(key)
 
             summary = when (items.size) {
@@ -171,56 +185,15 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateDateFormatView() {
-        val patterns = getStringArray(R.array.date_format_values)
-        val date = Date()
-
-        val entryNames = arrayOfNulls<String>(patterns.size)
-        for (i in entryNames.indices) {
-            val pattern = patterns[i]
-            entryNames[i] = when {
-                pattern.isEmpty() ->
-                    getString(R.string.do_not_show)
-                pattern == SYSTEM_DEFAULT ->
-                    getString(R.string.default_date_format, DEFAULT_DATE_FORMAT.format(date))
-                else ->
-                    defaultDatetimeFormat(pattern).format(date)
-            }
-        }
-
-        (requirePreference(PREF_DATE_FORMAT) as ListPreference).apply {
-            entries = entryNames
-            summary = entryNames[findIndexOfValue(settings.getString(key))]
-        }
-    }
-
-    private fun updateTimeFormatView() {
-        (requirePreference(PREF_TIME_FORMAT) as ListPreference).apply {
-            val value = settings.getString(key)
-            val ix = findIndexOfValue(value)
-            val hint = getStringArray(R.array.time_format_hints)[ix]
-            summary = "${entries[ix]} $hint"
-        }
-    }
-
-    private fun updateSecondsFormatView() {
-        (requirePreference(PREF_SECONDS_FORMAT) as ListPreference).apply {
-            val value = settings.getString(key)
-            val ix = findIndexOfValue(value)
-            val hint = getStringArray(R.array.seconds_format_hints)[ix]
-            summary = "${entries[ix]} $hint"
-        }
-    }
-
     private fun updateClockLayoutView() {
-        (requirePreference(PREF_CONTENT_LAYOUT) as ListPreference).apply {
+        requirePreference<ListPreference>(PREF_CONTENT_LAYOUT).apply {
             val value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
         }
     }
 
     private fun updateTickSoundView() {
-        requirePreference(PREF_TICK_SOUND).apply {
+        requirePreference<Preference>(PREF_TICK_SOUND).apply {
             val value = settings.getString(key)
             val index = getStringArray(R.array.tick_sound_values).indexOf(value)
             summary = getStringArray(R.array.tick_sound_names)[index]
@@ -228,7 +201,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateAutoInactivateView() {
-        (requirePreference(PREF_AUTO_INACTIVATE_DELAY) as ListPreference).apply {
+        requirePreference<ListPreference>(PREF_AUTO_INACTIVATE_DELAY).apply {
             val value = settings.getLong(key)
             summary = if (value > 0) {
                 val index = findIndexOfValue(value.toString())
@@ -240,7 +213,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateMutedBrightnessView() {
-        (requirePreference(PREF_MUTED_BRIGHTNESS) as SeekBarPreference).apply {
+        requirePreference<SeekBarPreference>(PREF_MUTED_BRIGHTNESS).apply {
             min = MIN_BRIGHTNESS
             max = MAX_BRIGHTNESS
             value = settings.getInt(key)
@@ -249,7 +222,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateFullscreenView() {
-        (requirePreference(PREF_FULLSCREEN_ENABLED) as SwitchPreference).apply {
+        requirePreference<SwitchPreferenceCompat>(PREF_FULLSCREEN_ENABLED).apply {
             summary = getString(
                 if (settings.getBoolean(key))
                     R.string.fullscreen_enabled_summary
@@ -260,7 +233,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateGesturesView() {
-        (requirePreference(PREF_GESTURES_ENABLED) as SwitchPreference).apply {
+        requirePreference<SwitchPreferenceCompat>(PREF_GESTURES_ENABLED).apply {
             summary = getString(
                 if (settings.getBoolean(key))
                     R.string.gestures_enabled_summary
@@ -271,13 +244,61 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateAnimationOnView() {
-        (requirePreference(PREF_ANIMATION_ON) as SwitchPreference).apply {
+        requirePreference<SwitchPreferenceCompat>(PREF_ANIMATION_ON).apply {
             summary = getString(
                 if (settings.getBoolean(key))
                     R.string.enabled
                 else
                     R.string.disabled
             )
+        }
+    }
+
+    private fun updateTimeFormatView() {
+        findPreference<ListPreference>(PREF_TIME_FORMAT)?.apply {
+            val value = settings.getString(key)
+            val ix = findIndexOfValue(value)
+            val hint = getStringArray(R.array.time_format_hints)[ix]
+            summary = "${entries[ix]} $hint"
+        }
+    }
+
+    private fun updateSecondsFormatView() {
+        findPreference<ListPreference>(PREF_SECONDS_FORMAT)?.apply {
+            val value = settings.getString(key)
+            val ix = findIndexOfValue(value)
+            val hint = getStringArray(R.array.seconds_format_hints)[ix]
+            summary = "${entries[ix]} $hint"
+        }
+    }
+
+    private fun updateDateFormatView() {
+        findPreference<ListPreference>(PREF_DATE_FORMAT)?.apply {
+
+            val date = Date()
+            val patterns = getStringArray(R.array.date_format_values)
+            val entryNames = arrayOfNulls<String>(patterns.size)
+            for (i in entryNames.indices) {
+                val pattern = patterns[i]
+                entryNames[i] = when {
+                    pattern.isEmpty() ->
+                        getString(R.string.do_not_show)
+                    pattern == SYSTEM_DEFAULT ->
+                        getString(R.string.default_date_format, DEFAULT_DATE_FORMAT.format(date))
+                    else ->
+                        defaultDatetimeFormat(pattern).format(date)
+                }
+            }
+
+            entries = entryNames
+            summary = entryNames[findIndexOfValue(settings.getString(key))]
+        }
+    }
+
+    private fun updateDigitsAnimationView() {
+        findPreference<ListPreference>(PREF_DIGITS_ANIMATION)?.apply {
+            val value = settings.getString(key)
+            summary = entries[findIndexOfValue(value)]
         }
     }
 

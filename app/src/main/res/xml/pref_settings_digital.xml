@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:key="layout_specific_content">
+
+        <PreferenceCategory android:title="@string/formats">
+
+            <ListPreference
+                android:entries="@array/time_format_names"
+                android:entryValues="@array/time_format_values"
+                android:key="time_format"
+                android:title="@string/hours_minutes_format" />
+
+            <ListPreference
+                android:entries="@array/seconds_format_names"
+                android:entryValues="@array/seconds_format_values"
+                android:key="seconds_format"
+                android:title="@string/seconds_format" />
+
+            <ListPreference
+                android:entryValues="@array/date_format_values"
+                android:key="date_format"
+                android:title="@string/date_format" >
+
+                <!-- entries for 'date_format' are build dynamically in code -->
+
+            </ListPreference>
+
+        </PreferenceCategory>
+
+        <PreferenceCategory android:title="@string/time_separators">
+
+            <SwitchPreference
+                android:key="time_separators_visible"
+                android:title="@string/show_time_separators" />
+
+            <SwitchPreference
+                android:key="time_separators_blinking"
+                android:title="@string/blink_time_separators" />
+
+        </PreferenceCategory>
+
+        <ListPreference
+            android:entries="@array/digits_animation_names"
+            android:entryValues="@array/digits_animation_values"
+            android:key="digits_animation"
+            android:title="@string/digits_animation" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

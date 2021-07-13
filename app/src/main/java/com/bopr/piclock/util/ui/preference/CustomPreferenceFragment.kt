@@ -23,7 +23,7 @@ abstract class CustomPreferenceFragment : PreferenceFragmentCompat() {
         }
     }
 
-    protected fun requirePreference(key: CharSequence): Preference {
+    protected fun <T : Preference> requirePreference(key: CharSequence): T {
         return findPreference(key) ?: throw IllegalStateException("Preference $key does not exist")
     }
 

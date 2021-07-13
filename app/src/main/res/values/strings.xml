@@ -3,7 +3,7 @@
     <string name="about_summary">%1$s-%2$s</string>
     <string name="about_version">Version</string>
     <string name="animation">Animation</string>
-    <string name="animation_enabled">Enable animation</string>
+    <string name="animation_enabled">Animation</string>
     <string name="app_name">Pi Clock</string>
     <string name="auto_inactivate">Auto-deactivation</string>
     <string name="auto_inactivate_never_summary">Disabled. Toggle active mode by touching screen</string>
@@ -17,12 +17,12 @@
     <string name="clock_moves_along_screen">Clock moves along the screen every %s</string>
     <string name="date_format">Date</string>
     <string name="default_date_format">%s (system)</string>
-    <string name="digits_animation">Digits animation</string>
+    <string name="digits_animation">Digits animation type</string>
     <string name="disabled">Disabled</string>
     <string name="do_not_show">Do not show</string>
     <string name="enabled">Enabled</string>
-    <string name="float_animation">Floating animation</string>
-    <string name="floating_interval">Floating</string>
+    <string name="float_animation">Floating animation type</string>
+    <string name="floating_interval">Floting interval</string>
     <string name="formats">Formats</string>
     <string name="fullscreen">Fullscreen</string>
     <string name="fullscreen_disabled_summary">Always show system bars</string>
@@ -44,7 +44,7 @@
     <string name="seconds_separator">Seconds separator</string>
     <string name="settings">Settings</string>
     <string name="settings_button">Settings button</string>
-    <string name="show_time_separators">Time separators</string>
+    <string name="show_time_separators">Show time sepatators</string>
     <string name="sound">Sound</string>
     <string name="tick_always">Always</string>
     <string name="tick_never">Never</string>
@@ -59,6 +59,10 @@
     <string name="stop_app_on_power_unplug">Close the app when removed</string>
     <string name="status">Status</string>
     <string name="service_running">Service running</string>
+    <string name="floating">Floating</string>
+    <string name="layout_type">Layout type</string>
+    <string name="layout_specific">Layout specific</string>
+    <string name="digital_clock">Digital clock</string>
 
     <string-array name="content_layout_names">
         <item>Digital simple</item>

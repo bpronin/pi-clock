@@ -147,7 +147,6 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
         const val PREF_SETTINGS_VERSION = "settings_version" /* internal */
         const val PREF_TOP_SETTING = "top_setting" /* internal */
-        const val PREF_ABOUT = "about_app" /* internal, marker */
 
         const val PREF_ANIMATION_ON = "animation_on"
         const val PREF_AUTO_INACTIVATE_DELAY = "auto_inactivate_delay"
