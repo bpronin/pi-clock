@@ -13,7 +13,10 @@ import com.bopr.piclock.util.ui.BaseActivity
  */
 class MainActivity : BaseActivity<MainFragment>(MainFragment::class.java) {
     //todo: если "схватить" движущиеся часы пальцем они начинают "вырываться"
-    //todo: joke settings "show nanoseconds"
+    //todo: joke: settings "show nanoseconds"
+    //todo: joke: release notes: seconds view moved 1px right and 2px up
+    //todo: option to save different layouts for landscape and portrait orientation
+
     private val settings by lazy { Settings(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {

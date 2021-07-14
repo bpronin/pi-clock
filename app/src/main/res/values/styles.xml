@@ -1,56 +1,86 @@
 <resources>
 
     <style name="Content.Digital.Default" parent="AppTheme">
-        <item name="contentFont">@font/gruppo</item>
+        <item name="contentAmPmTextMarginTop">16sp</item>
+        <item name="contentAmPmTextSize">30sp</item>
         <item name="contentDateFont">@font/comfortaa</item>
-        <item name="contentTextSize">96sp</item>
-        <item name="contentSecondsTextSize">48sp</item>
-        <item name="contentAmPmTextSize">28sp</item>
-        <item name="contentDateTextSize">18sp</item>
-        <item name="contentSecondsWidth">50sp</item>
-        <item name="contentAmPmTextMarginTop">14sp</item>
-        <item name="contentTimeSeparatorMarginBottom">6sp</item>
-        <item name="contentSecondsMarginTop">-8sp</item>
-        <item name="contentSecondsSeparatorMarginBottom">0sp</item>
-        <item name="contentSecondsMarginBottom">-2sp</item>
         <item name="contentDateMarginTop">-8sp</item>
+        <item name="contentDateTextSize">18sp</item>
+        <item name="contentFont">@font/gruppo</item>
+        <item name="contentSecondsMarginBottom">-2sp</item>
+        <item name="contentSecondsMarginStart">2sp</item>
+        <item name="contentSecondsMarginTop">-8sp</item>
+        <item name="contentSecondsSeparatorMarginBottom">8sp</item>
+        <item name="contentSecondsTextSize">48sp</item>
+        <item name="contentSecondsWidth">50sp</item>
+        <item name="contentTextSize">96sp</item>
+        <item name="contentTimeSeparatorMarginBottom">6sp</item>
     </style>
 
     <style name="Content.Digital.Curly" parent="Content.Digital.Default">
-        <item name="contentFont">@font/fraunces</item>
-        <item name="contentDateFont">@font/comfortaa</item>
-        <item name="contentTextSize">88sp</item>
-        <item name="contentAmPmTextSize">32sp</item>
-        <item name="contentSecondsTextSize">42sp</item>
         <item name="contentAmPmTextMarginTop">24sp</item>
-        <item name="contentTimeSeparatorMarginBottom">14sp</item>
-        <item name="contentSecondsSeparatorMarginBottom">8sp</item>
-        <item name="contentSecondsMarginTop">-1sp</item>
-        <item name="contentSecondsMarginBottom">-8sp</item>
+        <item name="contentAmPmTextSize">32sp</item>
+        <item name="contentDateFont">@font/fraunces</item>
         <item name="contentDateMarginTop">-6sp</item>
+        <item name="contentDateTextSize">22sp</item>
+        <item name="contentFont">@font/fraunces</item>
+        <item name="contentSecondsMarginBottom">-8sp</item>
+        <item name="contentSecondsMarginStart">2sp</item>
+        <item name="contentSecondsMarginTop">-10sp</item>
+        <item name="contentSecondsSeparatorMarginBottom">22sp</item>
+        <item name="contentSecondsTextSize">42sp</item>
+        <item name="contentTextSize">88sp</item>
+        <item name="contentTimeSeparatorMarginBottom">14sp</item>
     </style>
 
     <style name="Content.Digital.Round" parent="Content.Digital.Default">
-        <item name="contentFont">@font/comfortaa</item>
+        <item name="contentAmPmTextMarginTop">26sp</item>
+        <item name="contentAmPmTextSize">32sp</item>
         <item name="contentDateFont">@font/montserrat</item>
-<!--        <item name="contentTextSize">72sp</item>-->
-<!--        <item name="contentSecondaryTextSize">18sp</item>-->
+        <item name="contentDateMarginTop">-6sp</item>
+        <item name="contentFont">@font/comfortaa</item>
+        <item name="contentSecondsMarginBottom">-8sp</item>
+        <item name="contentSecondsMarginStart">2sp</item>
+        <item name="contentSecondsMarginTop">-10sp</item>
+        <item name="contentSecondsSeparatorMarginBottom">20sp</item>
+        <item name="contentSecondsTextSize">42sp</item>
+        <item name="contentSecondsWidth">56sp</item>
+        <item name="contentTextSize">88sp</item>
+        <item name="contentTimeSeparatorMarginBottom">12sp</item>
     </style>
 
     <style name="Content.Digital.Square" parent="Content.Digital.Default">
+        <item name="contentAmPmTextMarginTop">12sp</item>
+        <item name="contentAmPmTextSize">30sp</item>
+        <item name="contentDateFont">@font/orbitron</item>
+        <item name="contentDateMarginTop">-4sp</item>
         <item name="contentFont">@font/orbitron</item>
-        <item name="contentDateFont">@font/montserrat</item>
-<!--        <item name="contentTextSize">72sp</item>-->
-<!--        <item name="contentSecondaryTextSize">18sp</item>-->
+        <item name="contentSecondsMarginBottom">-4sp</item>
+        <item name="contentSecondsMarginStart">1sp</item>
+        <item name="contentSecondsMarginTop">-8sp</item>
+        <item name="contentSecondsSeparatorMarginBottom">10sp</item>
+        <item name="contentSecondsTextSize">36sp</item>
+        <item name="contentSecondsWidth">60sp</item>
+        <item name="contentTextSize">72sp</item>
+        <item name="contentTimeSeparatorMarginBottom">5sp</item>
     </style>
 
     <style name="Content.Digital.Thick" parent="Content.Digital.Default">
+        <item name="contentAmPmTextMarginTop">26sp</item>
+        <item name="contentAmPmTextSize">32sp</item>
+        <item name="contentDateFont">@font/kanit</item>
+        <item name="contentDateMarginTop">-6sp</item>
+        <item name="contentDateTextSize">20sp</item>
         <item name="contentFont">@font/kanit</item>
-        <item name="contentDateFont">@font/montserrat</item>
-<!--        <item name="contentTextSize">72sp</item>-->
-<!--        <item name="contentSecondaryTextSize">18sp</item>-->
+        <item name="contentSecondsMarginBottom">-8sp</item>
+        <item name="contentSecondsMarginStart">1sp</item>
+        <item name="contentSecondsMarginTop">-12sp</item>
+        <item name="contentSecondsSeparatorMarginBottom">24sp</item>
+        <item name="contentSecondsTextSize">42sp</item>
+        <item name="contentSecondsWidth">56sp</item>
+        <item name="contentTextSize">88sp</item>
+        <item name="contentTimeSeparatorMarginBottom">10sp</item>
     </style>
-
 
 
 </resources>

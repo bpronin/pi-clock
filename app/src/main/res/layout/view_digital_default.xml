@@ -53,7 +53,7 @@
         android:text=":"
         android:textColor="?attr/contentTextColor"
         android:textSize="?attr/contentSecondsTextSize"
-        app:layout_constraintBottom_toBottomOf="@id/minutes_separator"
+        app:layout_constraintBottom_toBottomOf="@id/minutes_view"
         app:layout_constraintLeft_toRightOf="@id/minutes_view"
         tools:ignore="HardcodedText" />
 
@@ -61,6 +61,7 @@
         android:id="@+id/seconds_view"
         android:layout_width="?attr/contentSecondsWidth"
         android:layout_height="wrap_content"
+        android:layout_marginStart="?attr/contentSecondsMarginStart"
         android:layout_marginTop="?attr/contentSecondsMarginTop"
         android:layout_marginBottom="?attr/contentSecondsMarginBottom"
         android:fontFamily="?attr/contentFont"
