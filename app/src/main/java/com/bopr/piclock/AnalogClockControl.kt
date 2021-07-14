@@ -22,7 +22,7 @@ import java.util.Calendar.*
 internal class AnalogClockControl(private val view: View, settings: Settings) :
     ContentControl(settings) {
 
-// todo: stub. implement class
+// todo:  часы наизнанку - стрелки прикреплены к ободу а не к центру
 
     //    private val amPmMarkerView: TextView = view.findViewById(R.id.am_pm_marker_view)
     //    private val amPmFormat = defaultDatetimeFormat("a")
@@ -30,7 +30,17 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
     private val hourHandView: ImageView = view.findViewById(R.id.hour_hand_view)
     private val secondHandView: ImageView = view.findViewById(R.id.second_hand_view)
     private val minuteHandView: ImageView = view.findViewById(R.id.minute_hand_view)
-    private val dateView: AnimatedTextView = view.findViewById(R.id.date_view)
+
+    //    private val dateView: AnimatedTextView = view.findViewById(R.id.date_view)
+    private val weekViews = arrayOf<ImageView>(
+        view.findViewById(R.id.sun_view),
+        view.findViewById(R.id.mon_view),
+        view.findViewById(R.id.tue_view),
+        view.findViewById(R.id.wed_view),
+        view.findViewById(R.id.thu_view),
+        view.findViewById(R.id.fri_view),
+        view.findViewById(R.id.sat_view)
+    )
 
     private lateinit var dateFormat: DateFormat
 
@@ -53,7 +63,7 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
             DEFAULT_DATE_FORMAT
         else
             defaultDatetimeFormat(pattern)
-        dateView.setGone(pattern.isEmpty())
+//        dateView.setGone(pattern.isEmpty())
     }
 
     private fun updateViewsData(time: Date, animated: Boolean) {
@@ -64,11 +74,16 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
             if (secondHandView.isVisible) {
                 secondHandView.rotation = get(SECOND) * 6f
             }
+
+            val today = get(DAY_OF_WEEK) - 1
+            weekViews.forEachIndexed { index, view ->
+                if (index == today) view.scaleY = 1f else view.scaleY = 0.5f
+            }
         }
 
-        if (dateView.isVisible) {
-            dateView.setText(dateFormat.format(time), animated)
-        }
+//        if (dateView.isVisible) {
+//            dateView.setText(dateFormat.format(time), animated)
+//        }
     }
 
     private fun updateSecondHandView() {
