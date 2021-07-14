@@ -127,7 +127,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         container: ViewGroup?,
         savedState: Bundle?
     ): View {
-
         return inflater.inflate(R.layout.fragment_main, container, false).apply {
             setOnClickListener {
                 when (mode) {

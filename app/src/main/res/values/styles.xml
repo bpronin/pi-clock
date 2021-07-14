@@ -16,6 +16,20 @@
         <item name="contentDateMarginTop">-8sp</item>
     </style>
 
+    <style name="Content.Digital.Curly" parent="Content.Digital.Default">
+        <item name="contentFont">@font/fraunces</item>
+        <item name="contentDateFont">@font/comfortaa</item>
+        <item name="contentTextSize">88sp</item>
+        <item name="contentAmPmTextSize">32sp</item>
+        <item name="contentSecondsTextSize">42sp</item>
+        <item name="contentAmPmTextMarginTop">24sp</item>
+        <item name="contentTimeSeparatorMarginBottom">14sp</item>
+        <item name="contentSecondsSeparatorMarginBottom">8sp</item>
+        <item name="contentSecondsMarginTop">-1sp</item>
+        <item name="contentSecondsMarginBottom">-8sp</item>
+        <item name="contentDateMarginTop">-6sp</item>
+    </style>
+
     <style name="Content.Digital.Round" parent="Content.Digital.Default">
         <item name="contentFont">@font/comfortaa</item>
         <item name="contentDateFont">@font/montserrat</item>
@@ -37,11 +51,6 @@
 <!--        <item name="contentSecondaryTextSize">18sp</item>-->
     </style>
 
-    <style name="Content.Digital.Curly" parent="Content.Digital.Default">
-        <item name="contentFont">@font/fraunces</item>
-        <item name="contentDateFont">@font/montserrat</item>
-<!--        <item name="contentTextSize">72sp</item>-->
-<!--        <item name="contentSecondaryTextSize">18sp</item>-->
-    </style>
+
 
 </resources>

@@ -13,6 +13,7 @@ import com.bopr.piclock.util.ui.BaseActivity
  */
 class MainActivity : BaseActivity<MainFragment>(MainFragment::class.java) {
     //todo: если "схватить" движущиеся часы пальцем они начинают "вырываться"
+    //todo: joke settings "show nanoseconds"
     private val settings by lazy { Settings(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
