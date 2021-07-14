@@ -15,7 +15,6 @@ import android.widget.TextView
 import androidx.annotation.IntDef
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
-import com.bopr.piclock.AnalogClockControl.Companion.isAnalogClockLayout
 import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
 import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
 import com.bopr.piclock.DigitalClockControl.Companion.isDigitalClockLayout
@@ -258,7 +257,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
         contentControl = when {
             isDigitalClockLayout(layoutName) -> DigitalClockControl(contentView, settings)
-            isAnalogClockLayout(layoutName) -> AnalogClockControl(contentView, settings)
             else -> throw IllegalArgumentException("Unregistered content layout resource: $layoutName")
         }
 
