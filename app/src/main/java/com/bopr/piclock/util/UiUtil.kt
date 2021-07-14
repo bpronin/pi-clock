@@ -8,9 +8,13 @@ import android.content.Context
 import android.graphics.RectF
 import android.text.InputType
 import android.util.Property
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.annotation.LayoutRes
+import androidx.annotation.StyleRes
+import androidx.appcompat.view.ContextThemeWrapper
 import com.bopr.piclock.R
 
 /**
@@ -79,6 +83,18 @@ fun Context.passwordBox(message: String, onPositiveClose: (String) -> Unit) {
             onPositiveClose(input.text.toString())
         }
     }.show()
+}
+
+fun LayoutInflater.inflateWithTheme(
+    @LayoutRes layoutRes: Int, root: ViewGroup?, attachToRoot: Boolean, @StyleRes styleRes: Int
+): View {
+    return cloneInContext(
+        ContextThemeWrapper(context, styleRes)
+    ).inflate(
+        layoutRes,
+        root,
+        attachToRoot
+    )
 }
 
 fun Animator.forEachChild(action: (Animator) -> Unit) {

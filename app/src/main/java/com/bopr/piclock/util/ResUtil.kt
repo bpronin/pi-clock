@@ -2,7 +2,6 @@ package com.bopr.piclock.util
 
 import android.content.Context
 import android.content.res.Resources
-import androidx.annotation.IdRes
 import com.bopr.piclock.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -43,7 +42,7 @@ fun Context.requireResId(defType: String, resName: String): Int {
 /**
  * Returns name of resource ID (short).
  */
-fun Context.getResName(@IdRes resId: Int): String {
+fun Context.getResName(resId: Int): String {
     resources.getResourceName(resId).run {
         return substring(lastIndexOf("/") + 1)
     }
@@ -96,6 +95,14 @@ fun <C : Collection<*>> Context.ensureAllResExists(arrayResId: Int, values: C): 
  */
 fun Context.getStringArray(resId: Int): Array<out String> {
     return resources.getStringArray(resId)
+}
+
+fun Context.getStyleValuesRes(layoutRes: Int): Int {
+    return getResId("array", getResName(layoutRes) + "_style_values")
+}
+
+fun Context.getStyleNamesRes(layoutRes: Int): Int {
+    return getResId("array", getResName(layoutRes) + "_style_names")
 }
 
 fun defaultDatetimeFormat(pattern: String) = SimpleDateFormat(pattern, Locale.getDefault())

@@ -73,6 +73,12 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             )
 
             putStringResourceOptional(
+                PREF_CONTENT_STYLE,
+                getResName(R.style.Content_Digital_Default),
+                getStyleValuesRes(R.layout.view_digital_default)
+            )
+
+            putStringResourceOptional(
                 PREF_TICK_SOUND,
                 getResName(R.raw.alarm_clock),
                 R.array.tick_sound_values
@@ -152,6 +158,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_AUTO_INACTIVATE_DELAY = "auto_inactivate_delay"
         const val PREF_CONTENT_FLOAT_INTERVAL = "content_float_interval"
         const val PREF_CONTENT_LAYOUT = "content_layout"
+        const val PREF_CONTENT_STYLE = "content_style"
         const val PREF_CONTENT_SCALE = "content_scale"
         const val PREF_DATE_FORMAT = "date_format"
         const val PREF_DIGITS_ANIMATION = "digits_animation"

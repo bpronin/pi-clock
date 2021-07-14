@@ -17,6 +17,7 @@ import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
+import com.bopr.piclock.Settings.Companion.PREF_CONTENT_STYLE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_FLOAT_ANIMATION
@@ -43,7 +44,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private val settings by lazy { Settings(requireContext()) }
-    private var layoutSpecificPrefResId = 0
+    private var layoutPrefsResId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +59,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_main)
-        loadLayoutSpecificPreferences(settings.getString(PREF_CONTENT_LAYOUT))
+        updateLayoutPreferences(settings.getString(PREF_CONTENT_LAYOUT))
     }
 
     override fun onStart() {
@@ -83,6 +84,7 @@ class SettingsFragment : CustomPreferenceFragment(),
             PREF_AUTO_INACTIVATE_DELAY -> updateAutoInactivateView()
             PREF_CONTENT_FLOAT_INTERVAL -> updateFloatIntervalView()
             PREF_CONTENT_LAYOUT -> updateLayoutView()
+            PREF_CONTENT_STYLE -> updateStyleView()
             PREF_CONTENT_SCALE -> updateScaleView()
             PREF_DATE_FORMAT -> updateDateFormatView()
             PREF_MUTED_BRIGHTNESS -> updateMutedBrightnessView()
@@ -105,24 +107,51 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun loadLayoutSpecificPreferences(layout: String) {
-        val contentPrefResId = when {
+    private fun updateLayoutPreferences(layout: String) {
+        updateLayoutStyles(layout)
+        addLayoutPreferences(layout)
+    }
+
+    private fun updateLayoutStyles(layout: String) {
+        context?.apply {
+            val layoutResId = getResId("layout", layout)
+            val valuesRes = getStyleValuesRes(layoutResId)
+            val namesRes = getStyleNamesRes(layoutResId)
+            requirePreference<ListPreference>(PREF_CONTENT_STYLE).apply {
+                isVisible = valuesRes != 0
+                if (isVisible) {
+                    setEntryValues(valuesRes)
+                    setEntries(namesRes)
+                } else {
+                    entryValues = null
+                    entries = null
+                }
+            }
+        }
+    }
+
+    private fun addLayoutPreferences(layout: String) {
+        val contentPrefsResId = when {
             isDigitalClockLayout(layout) -> R.xml.pref_digital_layout
             else -> throw IllegalArgumentException("No preferences xml for layout:$layout")
         }
 
-        if (contentPrefResId == layoutSpecificPrefResId) return
-        layoutSpecificPrefResId = contentPrefResId
+        if (contentPrefsResId == layoutPrefsResId) return
+        layoutPrefsResId = contentPrefsResId
 
         val layoutPref = requirePreference<Preference>(PREF_CONTENT_LAYOUT).apply {
-            order = -1 /* keep it first */
+            order = -2 /* keep first */
+        }
+        val stylePref = requirePreference<ListPreference>(PREF_CONTENT_STYLE).apply {
+            order = -1 /* keep second */
         }
         val holderPref = requirePreference<PreferenceGroup>("layout_specific_holder").apply {
             removeAll()
             addPreference(layoutPref)
+            addPreference(stylePref)
         }
 
-        addPreferencesFromResource(contentPrefResId)
+        addPreferencesFromResource(contentPrefsResId)
         val contentPref = requirePreference<PreferenceGroup>("layout_specific_content")
         preferenceScreen.removePreference(contentPref) /* we do not need it anymore */
         while (contentPref.isNotEmpty()) {
@@ -198,9 +227,18 @@ class SettingsFragment : CustomPreferenceFragment(),
             val value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
             setOnPreferenceChangeListener { _, newValue ->
-                loadLayoutSpecificPreferences(newValue as String)
+                updateLayoutPreferences(newValue as String)
                 refreshPreferences()
                 true
+            }
+        }
+    }
+
+    private fun updateStyleView() {
+        requirePreference<ListPreference>(PREF_CONTENT_STYLE).apply {
+            entries?.apply{
+                val value = settings.getString(key)
+                summary = this[findIndexOfValue(value)]
             }
         }
     }

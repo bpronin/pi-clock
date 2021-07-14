@@ -12,7 +12,12 @@
             android:key="content_layout"
             android:title="@string/layout_type" />
 
-        <!-- dynamic content here -->
+        <!-- entries for 'content_style' are set dynamically -->
+        <ListPreference
+            android:key="content_style"
+            android:title="@string/style" />
+
+        <!-- dynamic preferences here -->
 
     </PreferenceCategory>
 

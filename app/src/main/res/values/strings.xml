@@ -34,7 +34,7 @@
     <string name="keep_clock_view">Clock keeps its position on the screen</string>
     <string name="layout">Layout</string>
     <string name="minutes_separator">Minutes separator</string>
-    <string name="muted_brightness_summary">Decreased brightness in inactive mode %d%%</string>
+    <string name="muted_brightness_summary">Muted brightness in inactive mode %d%%</string>
     <string name="scale">Scale</string>
     <string name="scale_info">Scale %d%%</string>
     <string name="scale_info_max">Scale %d%% (max)</string>
@@ -63,16 +63,21 @@
     <string name="layout_type">Layout type</string>
     <string name="layout_specific">Layout specific</string>
     <string name="digital_clock">Digital clock</string>
+    <string name="style">Style</string>
 
     <string-array name="content_layout_names">
-        <item>Digital simple</item>
         <item>Digital default</item>
-        <item>Digital round</item>
-        <item>Digital square</item>
-        <item>Digital curly</item>
-        <item>Digital thick</item>
-        <item>Digital vertical simple</item>
+        <item>Digital simple</item>
         <item>Digital vertical default</item>
+        <item>Digital vertical simple</item>
+    </string-array>
+
+    <string-array name="view_digital_default_style_names">
+        <item>Default</item>
+        <item>Round</item>
+        <item>Square</item>
+        <item>Curly</item>
+        <item>Thick</item>
     </string-array>
 
     <string-array name="tick_sound_names">

@@ -12,7 +12,7 @@ import com.bopr.piclock.util.ui.BaseActivity
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class MainActivity : BaseActivity<MainFragment>(MainFragment::class.java) {
-
+    //todo: если "схватить" движущиеся часы пальцем они начинают "вырываться"
     private val settings by lazy { Settings(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -2,6 +2,19 @@
     <declare-styleable name="FullscreenAttrs">
         <attr name="contentBackgroundColor" format="color" />
         <attr name="contentTextColor" format="color" />
+        <attr name="contentTextSize" format="dimension" />
+        <attr name="contentSecondsTextSize" format="dimension" />
+        <attr name="contentAmPmTextSize" format="dimension" />
+        <attr name="contentSecondsWidth" format="dimension" />
+        <attr name="contentAmPmTextMarginTop" format="dimension" />
+        <attr name="contentTimeSeparatorMarginBottom" format="dimension" />
+        <attr name="contentSecondsSeparatorMarginBottom" format="dimension" />
+        <attr name="contentSecondsMarginTop" format="dimension" />
+        <attr name="contentDateMarginTop" format="dimension" />
+        <attr name="contentSecondsMarginBottom" format="dimension" />
+        <attr name="contentDateTextSize" format="dimension" />
+        <attr name="contentFont" format="reference" />
+        <attr name="contentDateFont" format="reference" />
         <attr name="fabColor" format="color" />
         <attr name="hoursFontSize" format="dimension" />
         <attr name="secondsFontSize" format="dimension" />

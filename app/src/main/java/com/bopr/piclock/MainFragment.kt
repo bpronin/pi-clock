@@ -21,7 +21,9 @@ import com.bopr.piclock.DigitalClockControl.Companion.isDigitalClockLayout
 import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
+import com.bopr.piclock.Settings.Companion.PREF_CONTENT_STYLE
 import com.bopr.piclock.util.HandlerTimer
+import com.bopr.piclock.util.inflateWithTheme
 import com.bopr.piclock.util.requireResId
 import java.util.*
 
@@ -125,6 +127,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         container: ViewGroup?,
         savedState: Bundle?
     ): View {
+
         return inflater.inflate(R.layout.fragment_main, container, false).apply {
             setOnClickListener {
                 when (mode) {
@@ -201,7 +204,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
         Log.d(_tag, "Setting: $key changed to: ${settings.all[key]}")
 
-        if (key == PREF_CONTENT_LAYOUT) createContentControl()
+        when (key) {
+            PREF_CONTENT_LAYOUT, PREF_CONTENT_STYLE -> createContentControl()
+        }
 
         autoInactivateControl.onSettingChanged(key)
         brightnessControl.onSettingChanged(key)
@@ -246,10 +251,15 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun createContentControl() {
         val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
-        val contentView = layoutInflater.inflate(
+        val styleName = settings.getString(PREF_CONTENT_STYLE)
+
+        val contentView = layoutInflater.inflateWithTheme(
             requireContext().requireResId("layout", layoutName),
-            contentHolderView, false
+            contentHolderView,
+            false,
+            requireContext().requireResId("style", styleName)
         )
+
         contentHolderView.apply {
             removeAllViews()
             addView(contentView)
