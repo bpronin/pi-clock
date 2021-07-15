@@ -53,14 +53,14 @@ fun Contextual.getResName(resId: Int): String {
  * Returns true if resource array contains specified value.
  */
 fun <T> Contextual.isResArrayContains(arrayResId: Int, value: T): Boolean {
-    return requireContext().resources.getStringArray(arrayResId).contains(value.toString())
+    return getStringArray(arrayResId).contains(value.toString())
 }
 
 /**
  * Returns true if resource array contains all specified values.
  */
 fun <V, C : Collection<V>> Contextual.isResArrayContainsAll(arrayResId: Int, values: C): Boolean {
-    val array = requireContext().resources.getStringArray(arrayResId)
+    val array = getStringArray(arrayResId)
     for (value in values) {
         if (!array.contains(value.toString())) {
             return false

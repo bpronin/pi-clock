@@ -26,13 +26,10 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
     }
 
     private fun EditorWrapper.putLongResourceOptional(key: String, value: Long, valuesRes: Int) {
-        context.apply {
-            putLongOptional(
-                key,
-                ensureResArrayContains(valuesRes, value)
-            ) {
-                isResArrayContains(valuesRes, getLong(key))
-            }
+        putLongOptional(
+            key, ensureResArrayContains(valuesRes, value)
+        ) {
+            isResArrayContains(valuesRes, it)
         }
     }
 
@@ -41,13 +38,10 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         value: String,
         valuesRes: Int
     ) {
-        context.apply {
-            putStringOptional(
-                key,
-                ensureResArrayContains(valuesRes, value)
-            ) {
-                isResArrayContains(valuesRes, getString(key))
-            }
+        putStringOptional(
+            key, ensureResArrayContains(valuesRes, value)
+        ) {
+            isResArrayContains(valuesRes, it)
         }
     }
 
@@ -56,101 +50,96 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         value: Set<String>,
         valuesRes: Int
     ) {
-        context.apply {
-            putStringSetOptional(
-                key,
-                ensureAllResExists(valuesRes, value)
-            ) {
-                isResArrayContainsAll(valuesRes, getStringSet(key))
-            }
+        putStringSetOptional(
+            key, ensureAllResExists(valuesRes, value)
+        ) {
+            isResArrayContainsAll(valuesRes, it)
         }
     }
 
     fun validate() = update {
-        /* NOTE: clearing settings here will have no effect */
-        context.apply {
-            putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
-            putBooleanOptional(PREF_TIME_SEPARATORS_BLINKING, true)
-            putBooleanOptional(PREF_ANIMATION_ON, true)
-            putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
-            putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
-            putBooleanOptional(PREF_GESTURES_ENABLED, true)
-            putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)  /* 15 min */
-            putIntOptional(PREF_CONTENT_SCALE, 100) {
-                getInt(PREF_CONTENT_SCALE) in MIN_SCALE..MAX_SCALE
-            }
-            putIntOptional(PREF_MUTED_BRIGHTNESS, 20) {
-                getInt(PREF_MUTED_BRIGHTNESS) in MIN_BRIGHTNESS..MAX_BRIGHTNESS
-            }
-
-            putStringSetResourceOptional(
-                PREF_TICK_RULES,
-                setOf(TICK_ACTIVE),
-                R.array.tick_sound_mode_values
-            )
-
-            putStringResourceOptional(
-                PREF_TIME_FORMAT,
-                if (is24HourLocale()) "HH:mm" else "h:mm",
-                R.array.time_format_values
-            )
-
-            putStringResourceOptional(
-                PREF_SECONDS_FORMAT,
-                "ss",
-                R.array.seconds_format_values
-            )
-
-            putStringResourceOptional(
-                PREF_DATE_FORMAT,
-                SYSTEM_DEFAULT,
-                R.array.date_format_values
-            )
-
-            putLongResourceOptional(
-                PREF_AUTO_INACTIVATE_DELAY,
-                5000,
-                R.array.auto_inactivate_delay_values
-            )
-
-            putStringOptional(
-                PREF_CONTENT_LAYOUT,
-                ensureResArrayContains(
-                    R.array.content_layout_values,
-                    getResName(R.layout.view_digital_default)
-                ),
-                isOldValueValid = { oldLayoutName ->
-                    if (isResArrayContains(R.array.content_layout_values, oldLayoutName)) {
-                        val oldStyleName = getString(PREF_CONTENT_STYLE, null)
-                        getLayoutStyles(oldLayoutName)?.contains(oldStyleName) ?: false
-                    } else
-                        false
-                },
-                onPut = { newLayoutName ->
-                    getLayoutStyles(newLayoutName!!)?.apply {
-                        putString(PREF_CONTENT_STYLE, get(0))
-                    }
-                }
-            )
-
-            putStringResourceOptional(
-                PREF_TICK_SOUND,
-                getResName(R.raw.alarm_clock),
-                R.array.tick_sound_values
-            )
-
-            putStringResourceOptional(
-                PREF_DIGITS_ANIMATION,
-                getResName(R.animator.text_fade_trough_linear),
-                R.array.digits_animation_values
-            )
-
-            putStringResourceOptional(
-                PREF_FLOAT_ANIMATION,
-                getResName(R.animator.float_move),
-                R.array.float_animation_values
-            )
+        /* NOTE: clearing settings here will have no effect. it should be done in separate update */
+        putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
+        putBooleanOptional(PREF_TIME_SEPARATORS_BLINKING, true)
+        putBooleanOptional(PREF_ANIMATION_ON, true)
+        putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
+        putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
+        putBooleanOptional(PREF_GESTURES_ENABLED, true)
+        putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)  /* 15 min */
+        putIntOptional(PREF_CONTENT_SCALE, 100) {
+            getInt(PREF_CONTENT_SCALE) in MIN_SCALE..MAX_SCALE
         }
+        putIntOptional(PREF_MUTED_BRIGHTNESS, 20) {
+            getInt(PREF_MUTED_BRIGHTNESS) in MIN_BRIGHTNESS..MAX_BRIGHTNESS
+        }
+
+        putStringSetResourceOptional(
+            PREF_TICK_RULES,
+            setOf(TICK_ACTIVE),
+            R.array.tick_sound_mode_values
+        )
+
+        putStringResourceOptional(
+            PREF_TIME_FORMAT,
+            if (is24HourLocale()) "HH:mm" else "h:mm",
+            R.array.time_format_values
+        )
+
+        putStringResourceOptional(
+            PREF_SECONDS_FORMAT,
+            "ss",
+            R.array.seconds_format_values
+        )
+
+        putStringResourceOptional(
+            PREF_DATE_FORMAT,
+            SYSTEM_DEFAULT,
+            R.array.date_format_values
+        )
+
+        putLongResourceOptional(
+            PREF_AUTO_INACTIVATE_DELAY,
+            5000,
+            R.array.auto_inactivate_delay_values
+        )
+
+        putStringOptional(
+            PREF_CONTENT_LAYOUT,
+            ensureResArrayContains(
+                R.array.content_layout_values,
+                getResName(R.layout.view_digital_default)
+            ),
+            isOldValueValid = { oldLayoutName ->
+                if (isResArrayContains(R.array.content_layout_values, oldLayoutName)) {
+                    val oldStyleName = getString(PREF_CONTENT_STYLE, null)
+                    getLayoutStyles(oldLayoutName)?.contains(oldStyleName) ?: false
+                } else
+                    false
+            },
+            onPut = { newLayoutName ->
+                getLayoutStyles(newLayoutName!!)?.apply {
+                    putString(PREF_CONTENT_STYLE, get(0))
+                }
+            }
+        )
+
+        putStringResourceOptional(
+            PREF_TICK_SOUND,
+            getResName(R.raw.alarm_clock),
+            R.array.tick_sound_values
+        )
+
+        putStringResourceOptional(
+            PREF_DIGITS_ANIMATION,
+            getResName(R.animator.text_fade_trough_linear),
+            R.array.digits_animation_values
+        )
+
+        putStringResourceOptional(
+            PREF_FLOAT_ANIMATION,
+            getResName(R.animator.float_move),
+            R.array.float_animation_values
+        )
     }
 
     companion object {

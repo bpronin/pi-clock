@@ -21,9 +21,8 @@ class MainActivity : BaseActivity<MainFragment>(MainFragment::class.java) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        settings.validate()
         handleDebugIntent()
+        settings.validate()
     }
 
     override fun onBackPressed() {
@@ -31,17 +30,20 @@ class MainActivity : BaseActivity<MainFragment>(MainFragment::class.java) {
     }
 
     private fun handleDebugIntent() {
+        intent.getStringExtra("pwd")?.also {
+            if (sha512(it) != getString(R.string.developer_sha)) return
+        } ?: return
+
         intent.getStringExtra("target")?.also { target ->
             when (target) {
+                "clear-settings" -> {
+                    settings.update { clear() }
+                }
                 "browse-sound" -> {
                     startActivity(Intent(this, BrowseSoundActivity::class.java))
                 }
                 "debug" -> {
-                    intent.getStringExtra("pwd")?.also { password ->
-                        if (getString(R.string.developer_sha) == sha512(password)) {
-                            startActivity(Intent(this, DebugActivity::class.java))
-                        }
-                    }
+                    startActivity(Intent(this, DebugActivity::class.java))
                 }
                 else ->
                     throw IllegalArgumentException("Invalid target: $target")

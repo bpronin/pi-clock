@@ -1,12 +1,10 @@
-@file:Suppress("MemberVisibilityCanBePrivate")
-
 package com.bopr.piclock.util
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 
 /* Must be subclass of SharedPreferences! Otherwise it leads to unpredictable results */
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 open class SharedPreferencesWrapper(private val wrapped: SharedPreferences) :
     SharedPreferences {
 
@@ -161,15 +159,29 @@ open class SharedPreferencesWrapper(private val wrapped: SharedPreferences) :
             wrappedEditor.apply()
         }
 
-        fun putStringArray(key: String, value: Array<String>?): EditorWrapper {
-            putString(key, value?.let { value.commaJoin() })
-            return this
-        }
-
         private inline fun <reified V> putNullable(
             key: String, value: V?, put: (String, V) -> Unit
         ): EditorWrapper {
             value?.apply { put(key, this) } ?: apply { remove(key) }
+            return this
+        }
+
+        private inline fun <reified V : Any> putOptional(
+            key: String, value: V?,
+            put: (String, V?) -> Unit,
+            onPut: (V?) -> Unit,
+            isOldValueValid: (V) -> Boolean
+        ): EditorWrapper {
+            val oldValue = all[key]
+            if (oldValue == null || oldValue !is V || !isOldValueValid(oldValue)) {
+                put(key, value)
+                onPut(value)
+            }
+            return this
+        }
+
+        fun putStringArray(key: String, value: Array<String>?): EditorWrapper {
+            putString(key, value?.let { value.commaJoin() })
             return this
         }
 
@@ -185,61 +197,47 @@ open class SharedPreferencesWrapper(private val wrapped: SharedPreferences) :
         fun putFloat(key: String, value: Float?): EditorWrapper =
             putNullable(key, value, ::putFloat)
 
-        private inline fun <reified V : Any> putOptional(
-            key: String, value: V?,
-            isOldValueValid: (V) -> Boolean,
-            put: (String, V?) -> Unit,
-            onPut: (V?) -> Unit
-        ): EditorWrapper {
-            val oldValue = all[key]
-            if (oldValue == null || oldValue !is V || !isOldValueValid(oldValue)) {
-                put(key, value)
-                onPut(value)
-            }
-            return this
-        }
-
         fun putStringOptional(
             key: String, value: String?,
-            isOldValueValid: (String) -> Boolean = { true },
-            onPut: (String?) -> Unit = {}
-        ): EditorWrapper = putOptional(key, value, isOldValueValid, ::putString, onPut)
+            onPut: (String?) -> Unit = {},
+            isOldValueValid: (String) -> Boolean = { true }
+        ): EditorWrapper = putOptional(key, value, ::putString, onPut, isOldValueValid)
 
         fun putStringSetOptional(
             key: String, values: Set<String>?,
-            isOldValueValid: (Set<String>) -> Boolean = { true },
-            onPut: (Set<String>?) -> Unit = {}
-        ): EditorWrapper = putOptional(key, values, isOldValueValid, ::putStringSet, onPut)
+            onPut: (Set<String>?) -> Unit = {},
+            isOldValueValid: (Set<String>) -> Boolean = { true }
+        ): EditorWrapper = putOptional(key, values, ::putStringSet, onPut, isOldValueValid)
 
         fun putStringArrayOptional(
             key: String, values: Array<String>?,
-            isOldValueValid: (Array<String>) -> Boolean = { true },
-            onPut: (Array<String>?) -> Unit = {}
-        ): EditorWrapper = putOptional(key, values, isOldValueValid, ::putStringArray, onPut)
+            onPut: (Array<String>?) -> Unit = {},
+            isOldValueValid: (Array<String>) -> Boolean = { true }
+        ): EditorWrapper = putOptional(key, values, ::putStringArray, onPut, isOldValueValid)
 
         fun putBooleanOptional(
             key: String, value: Boolean,
-            isOldValueValid: (Boolean) -> Boolean = { true },
-            onPut: (Boolean?) -> Unit = {}
-        ): EditorWrapper = putOptional(key, value, isOldValueValid, ::putBoolean, onPut)
+            onPut: (Boolean?) -> Unit = {},
+            isOldValueValid: (Boolean) -> Boolean = { true }
+        ): EditorWrapper = putOptional(key, value, ::putBoolean, onPut, isOldValueValid)
 
         fun putIntOptional(
             key: String, value: Int,
-            isOldValueValid: (Int) -> Boolean = { true },
-            onPut: (Int?) -> Unit = {}
-        ): EditorWrapper = putOptional(key, value, isOldValueValid, ::putInt, onPut)
+            onPut: (Int?) -> Unit = {},
+            isOldValueValid: (Int) -> Boolean = { true }
+        ): EditorWrapper = putOptional(key, value, ::putInt, onPut, isOldValueValid)
 
         fun putLongOptional(
             key: String, value: Long,
-            isOldValueValid: (Long) -> Boolean = { true },
-            onPut: (Long?) -> Unit = {}
-        ): EditorWrapper = putOptional(key, value, isOldValueValid, ::putLong, onPut)
+            onPut: (Long?) -> Unit = {},
+            isOldValueValid: (Long) -> Boolean = { true }
+        ): EditorWrapper = putOptional(key, value, ::putLong, onPut, isOldValueValid)
 
         fun putFloatOptional(
             key: String, value: Float,
-            isOldValueValid: (Float) -> Boolean = { true },
-            onPut: (Float?) -> Unit = {}
-        ): EditorWrapper = putOptional(key, value, isOldValueValid, ::putFloat, onPut)
+            onPut: (Float?) -> Unit = {},
+            isOldValueValid: (Float) -> Boolean = { true }
+        ): EditorWrapper = putOptional(key, value, ::putFloat, onPut, isOldValueValid)
 
     }
 
