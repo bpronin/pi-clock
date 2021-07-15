@@ -17,7 +17,7 @@
         <item name="contentTimeSeparatorMarginBottom">6sp</item>
     </style>
 
-    <style name="Content.Digital.Curly" parent="Content.Digital.Default">
+    <style name="Content.Digital.Default.Curly" parent="Content.Digital.Default">
         <item name="contentAmPmTextMarginTop">24sp</item>
         <item name="contentAmPmTextSize">32sp</item>
         <item name="contentDateFont">@font/fraunces</item>
@@ -33,7 +33,7 @@
         <item name="contentTimeSeparatorMarginBottom">14sp</item>
     </style>
 
-    <style name="Content.Digital.Round" parent="Content.Digital.Default">
+    <style name="Content.Digital.Default.Round" parent="Content.Digital.Default">
         <item name="contentAmPmTextMarginTop">26sp</item>
         <item name="contentAmPmTextSize">32sp</item>
         <item name="contentDateFont">@font/montserrat</item>
@@ -49,7 +49,7 @@
         <item name="contentTimeSeparatorMarginBottom">12sp</item>
     </style>
 
-    <style name="Content.Digital.Square" parent="Content.Digital.Default">
+    <style name="Content.Digital.Default.Square" parent="Content.Digital.Default">
         <item name="contentAmPmTextMarginTop">12sp</item>
         <item name="contentAmPmTextSize">30sp</item>
         <item name="contentDateFont">@font/orbitron</item>
@@ -65,7 +65,7 @@
         <item name="contentTimeSeparatorMarginBottom">5sp</item>
     </style>
 
-    <style name="Content.Digital.Thick" parent="Content.Digital.Default">
+    <style name="Content.Digital.Default.Thick" parent="Content.Digital.Default">
         <item name="contentAmPmTextMarginTop">26sp</item>
         <item name="contentAmPmTextSize">32sp</item>
         <item name="contentDateFont">@font/kanit</item>
@@ -82,5 +82,9 @@
         <item name="contentTimeSeparatorMarginBottom">10sp</item>
     </style>
 
+    <style name="Content.Digital.Simple" parent="Content.Digital.Default">
+        <item name="contentSecondsWidth">100sp</item>
+        <item name="contentTextSize">88sp</item>
+    </style>
 
 </resources>

@@ -97,12 +97,20 @@ fun Context.getStringArray(resId: Int): Array<out String> {
     return resources.getStringArray(resId)
 }
 
-fun Context.getStyleValuesRes(layoutRes: Int): Int {
-    return getResId("array", getResName(layoutRes) + "_style_values")
+fun Context.getStyleValuesResId(layoutResId: Int): Int {
+    return getResId("array", getResName(layoutResId) + "_style_values")
 }
 
-fun Context.getStyleNamesRes(layoutRes: Int): Int {
-    return getResId("array", getResName(layoutRes) + "_style_names")
+fun Context.getStyleTitlesResId(layoutResId: Int): Int {
+    return requireResId("array", getResName(layoutResId) + "_style_titles")
+}
+
+fun Context.getLayoutStyles(layoutName: String): Array<out String>? {
+    val stylesResId = getStyleValuesResId(getResId("layout", layoutName))
+    return if (stylesResId == 0)
+        null /* layout has styles */
+    else
+        getStringArray(stylesResId)
 }
 
 fun defaultDatetimeFormat(pattern: String) = SimpleDateFormat(pattern, Locale.getDefault())

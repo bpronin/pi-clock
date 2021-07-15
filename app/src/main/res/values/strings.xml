@@ -64,15 +64,16 @@
     <string name="layout_specific">Layout specific</string>
     <string name="digital_clock">Digital clock</string>
     <string name="style">Style</string>
+    <string name="layout_has_no_styles">Layout has no styles</string>
 
-    <string-array name="content_layout_names">
+    <string-array name="content_layout_titles">
         <item>Digital default</item>
         <item>Digital simple</item>
         <item>Digital vertical default</item>
         <item>Digital vertical simple</item>
     </string-array>
 
-    <string-array name="view_digital_default_style_names">
+    <string-array name="view_digital_default_style_titles">
         <item>Default</item>
         <item>Round</item>
         <item>Square</item>
@@ -80,7 +81,15 @@
         <item>Thick</item>
     </string-array>
 
-    <string-array name="tick_sound_names">
+    <string-array name="view_digital_simple_style_titles">
+        <item>Default</item>
+<!--        <item>Round</item>-->
+<!--        <item>Square</item>-->
+<!--        <item>Curly</item>-->
+<!--        <item>Thick</item>-->
+    </string-array>
+
+    <string-array name="tick_sound_titles">
         <item>Alarm clock</item>
         <item>Tick-tick</item>
         <item>Mantle clock</item>
@@ -88,14 +97,14 @@
         <item>Wrist watch</item>
     </string-array>
 
-    <string-array name="auto_inactivate_delay_names">
+    <string-array name="auto_inactivate_delay_titles">
         <item>2 second</item>
         <item>5 seconds</item>
         <item>10 seconds</item>
         <item>Disabled</item>
     </string-array>
 
-    <string-array name="content_float_interval_names">
+    <string-array name="content_float_interval_titles">
         <item>Always</item>
         <item>10 second</item>
         <item>1 minute</item>
@@ -103,7 +112,7 @@
         <item>Never</item>
     </string-array>
 
-    <string-array name="time_format_names">
+    <string-array name="time_format_titles">
         <item>24-hour trailing zeroes</item>
         <item>24-hour no trailing zeroes</item>
         <item>12-hour trailing zeroes</item>
@@ -117,7 +126,7 @@
         <item> (7:07 AM)</item>
     </string-array>
 
-    <string-array name="seconds_format_names">
+    <string-array name="seconds_format_titles">
         <item>Trailing zeroes</item>
         <item>No trailing zeroes</item>
         <item>Do not show</item>
@@ -129,13 +138,13 @@
         <item />
     </string-array>
 
-    <string-array name="tick_sound_mode_names">
+    <string-array name="tick_sound_mode_titles">
         <item>Active</item>
         <item>Inactive</item>
         <item>Floating</item>
     </string-array>
 
-    <string-array name="digits_animation_names">
+    <string-array name="digits_animation_titles">
         <item>Fade through</item>
         <item>Scroll</item>
         <item>Fall</item>
@@ -149,7 +158,7 @@
         <item>Do not animate</item>
     </string-array>
 
-    <string-array name="float_animation_names">
+    <string-array name="float_animation_titles">
         <item>Move</item>
         <item>Fade</item>
         <item>Fade and move</item>

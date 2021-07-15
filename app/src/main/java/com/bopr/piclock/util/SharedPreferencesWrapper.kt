@@ -17,6 +17,10 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         return wrappedPreferences.getString(key, defValue)
     }
 
+    override fun getBoolean(key: String, defValue: Boolean): Boolean {
+        return wrappedPreferences.getBoolean(key, defValue)
+    }
+
     override fun getInt(key: String, defValue: Int): Int {
         return wrappedPreferences.getInt(key, defValue)
     }
@@ -25,17 +29,19 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         return wrappedPreferences.getLong(key, defValue)
     }
 
-    override fun getFloat(key: String?, defValue: Float): Float {
+    override fun getFloat(key: String, defValue: Float): Float {
         return wrappedPreferences.getFloat(key, defValue)
     }
 
-    override fun getStringSet(key: String?, defValues: MutableSet<String>?): MutableSet<String>? {
+    override fun getStringSet(key: String, defValue: MutableSet<String>?): MutableSet<String>? {
         /* should be a copy of values set. see: https://stackoverflow.com/questions/17469583/setstring-in-android-sharedpreferences-does-not-save-on-force-close */
-        return wrappedPreferences.getStringSet(key, null)?.toMutableSet() ?: defValues
+        return wrappedPreferences.getStringSet(key, null)?.toMutableSet() ?: defValue
     }
 
-    override fun getBoolean(key: String, defValue: Boolean): Boolean {
-        return wrappedPreferences.getBoolean(key, defValue)
+    fun getStringArray(key: String, defValue: Array<String>?): Array<String>? {
+        return wrappedPreferences.getString(key, null)?.let {
+            commaSplit(it).toTypedArray()
+        } ?: defValue
     }
 
     fun getString(key: String): String {
@@ -68,9 +74,9 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         return getStringSet(key, mutableSetOf())!!
     }
 
-    fun getStringList(key: String): MutableList<String> {
+    fun getStringArray(key: String): Array<String> {
         checkKeyExists(key)
-        return commaSplit(getString(key)).toMutableList()
+        return getStringArray(key, arrayOf())!!
     }
 
     override fun contains(key: String): Boolean {
@@ -119,7 +125,7 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
             return this
         }
 
-        fun putStringList(key: String, value: Collection<String>?): EditorWrapper {
+        fun putStringAarray(key: String, value: Array<String>?): EditorWrapper {
             putString(key, value?.let { value.commaJoin() })
             return this
         }
@@ -147,10 +153,10 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         private fun putOptional(
             key: String,
             valueClass: KClass<*>,
-            isExistentValid: () -> Boolean,
+            isExistentValueValid: () -> Boolean,
             put: () -> Unit
         ): EditorWrapper {
-            if (!contains(key, valueClass) || !isExistentValid()) {
+            if (!contains(key, valueClass) || !isExistentValueValid()) {
                 put()
             }
             return this
@@ -158,9 +164,13 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
 
         fun putStringOptional(
             key: String, value: String?,
-            isExistentValid: () -> Boolean = { true }
+            isExistentValid: () -> Boolean = { true },
+            onPut: (String?) -> Unit = {}
         ): EditorWrapper {
-            return putOptional(key, String::class, isExistentValid) { putString(key, value) }
+            return putOptional(key, String::class, isExistentValid) {
+                putString(key, value)
+                onPut(value)
+            }
         }
 
         fun putStringSetOptional(
@@ -169,6 +179,15 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
             isExistentValid: () -> Boolean = { true }
         ): EditorWrapper {
             return putOptional(key, Set::class, isExistentValid) { putStringSet(key, values) }
+        }
+
+        fun putStringArrayOptional(
+            key: String, values: Array<String>?,
+            isExistentValid: () -> Boolean = { true }
+        ): EditorWrapper {
+            return putOptional(key, Array<String>::class, isExistentValid) {
+                putStringAarray(key, values)
+            }
         }
 
         fun putBooleanOptional(

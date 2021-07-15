@@ -23,6 +23,7 @@ import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_STYLE
 import com.bopr.piclock.util.HandlerTimer
+import com.bopr.piclock.util.getLayoutStyles
 import com.bopr.piclock.util.inflateWithTheme
 import com.bopr.piclock.util.requireResId
 import java.util.*
@@ -38,11 +39,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     private val _tag = "MainFragment"
     private val handler = Handler(Looper.getMainLooper())
     private val timer = HandlerTimer(handler, TIMER_INTERVAL, 4, ::onTimer)
-    private val rootView by lazy {
+    private val fragmentView by lazy {
         requireView() as ConstraintLayout
     }
     private val contentHolderView by lazy {
-        rootView.findViewById<ViewGroup>(R.id.content_holder).apply {
+        fragmentView.findViewById<ViewGroup>(R.id.content_holder).apply {
             setOnTouchListener { _, _ -> false } /* translate all touches to parent */
         }
     }
@@ -108,7 +109,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
     }
     private val layoutControl by lazy {
-        LayoutControl(rootView, parentFragmentManager, settings)
+        LayoutControl(fragmentView, parentFragmentManager, settings)
     }
 
     private lateinit var contentControl: ContentControl
@@ -250,14 +251,27 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun createContentControl() {
         val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
-        val styleName = settings.getString(PREF_CONTENT_STYLE)
+        val styles = requireContext().getLayoutStyles(layoutName)
 
-        val contentView = layoutInflater.inflateWithTheme(
-            requireContext().requireResId("layout", layoutName),
-            contentHolderView,
-            false,
-            requireContext().requireResId("style", styleName)
-        )
+        val contentView = if (styles.isNullOrEmpty()) {
+            layoutInflater.inflate(
+                requireContext().requireResId("layout", layoutName),
+                contentHolderView,
+                false
+            )
+        } else {
+            val styleName = settings.getString(PREF_CONTENT_STYLE)
+
+            if (!styles.contains(styleName))
+                throw IllegalStateException("Unregistered style: $styleName for layout: $layoutName")
+
+            layoutInflater.inflateWithTheme(
+                requireContext().requireResId("layout", layoutName),
+                contentHolderView,
+                false,
+                requireContext().requireResId("style", styleName)
+            )
+        }
 
         contentHolderView.apply {
             removeAllViews()

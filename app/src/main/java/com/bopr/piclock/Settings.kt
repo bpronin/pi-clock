@@ -66,16 +66,25 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
                 R.array.auto_inactivate_delay_values
             )
 
-            putStringResourceOptional(
+            putStringOptional(
                 PREF_CONTENT_LAYOUT,
-                getResName(R.layout.view_digital_default),
-                R.array.content_layout_values
-            )
-
-            putStringResourceOptional(
-                PREF_CONTENT_STYLE,
-                getResName(R.style.Content_Digital_Default),
-                getStyleValuesRes(R.layout.view_digital_default)
+                ensureResArrayContains(
+                    R.array.content_layout_values,
+                    getResName(R.layout.view_digital_default)
+                ),
+                isExistentValid = {    //todo: add currentValue parameter
+                    val currentLayoutName = getString(PREF_CONTENT_LAYOUT)
+                    if (isResArrayContains(R.array.content_layout_values, currentLayoutName)) {
+                        val currentStyleName = getString(PREF_CONTENT_STYLE, null)
+                        getLayoutStyles(currentLayoutName)?.contains(currentStyleName) ?: false
+                    } else
+                        false
+                },
+                onPut = { newLayoutName ->
+                    getLayoutStyles(newLayoutName!!)?.apply {
+                        putString(PREF_CONTENT_STYLE, get(0))
+                    }
+                }
             )
 
             putStringResourceOptional(

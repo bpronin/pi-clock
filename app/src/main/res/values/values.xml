@@ -10,10 +10,18 @@
 
     <string-array name="view_digital_default_style_values" translatable="false">
         <item>Content.Digital.Default</item>
-        <item>Content.Digital.Round</item>
-        <item>Content.Digital.Square</item>
-        <item>Content.Digital.Curly</item>
-        <item>Content.Digital.Thick</item>
+        <item>Content.Digital.Default.Round</item>
+        <item>Content.Digital.Default.Square</item>
+        <item>Content.Digital.Default.Curly</item>
+        <item>Content.Digital.Default.Thick</item>
+    </string-array>
+
+    <string-array name="view_digital_simple_style_values" translatable="false">
+        <item>Content.Digital.Simple</item>
+<!--        <item>Content.Digital.Simple.Round</item>-->
+<!--        <item>Content.Digital.Simple.Square</item>-->
+<!--        <item>Content.Digital.Simple.Curly</item>-->
+<!--        <item>Content.Digital.Simple.Thick</item>-->
     </string-array>
 
     <string-array name="time_format_values" translatable="false">

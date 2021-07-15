@@ -7,7 +7,7 @@
         android:title="@string/layout">
 
         <ListPreference
-            android:entries="@array/content_layout_names"
+            android:entries="@array/content_layout_titles"
             android:entryValues="@array/content_layout_values"
             android:key="content_layout"
             android:title="@string/layout_type" />
@@ -44,7 +44,7 @@
             android:title="@string/fullscreen" />
 
         <com.bopr.piclock.util.ui.preference.LongListPreference
-            android:entries="@array/auto_inactivate_delay_names"
+            android:entries="@array/auto_inactivate_delay_titles"
             android:entryValues="@array/auto_inactivate_delay_values"
             android:key="auto_inactivate_delay"
             android:title="@string/auto_inactivate" />
@@ -58,13 +58,13 @@
     <PreferenceCategory android:title="@string/floating">
 
         <com.bopr.piclock.util.ui.preference.LongListPreference
-            android:entries="@array/content_float_interval_names"
+            android:entries="@array/content_float_interval_titles"
             android:entryValues="@array/content_float_interval_values"
             android:key="content_float_interval"
             android:title="@string/floating_interval" />
 
         <ListPreference
-            android:entries="@array/float_animation_names"
+            android:entries="@array/float_animation_titles"
             android:entryValues="@array/float_animation_values"
             android:key="float_animation"
             android:title="@string/float_animation" />
@@ -82,7 +82,7 @@
         </Preference>
 
         <MultiSelectListPreference
-            android:entries="@array/tick_sound_mode_names"
+            android:entries="@array/tick_sound_mode_titles"
             android:entryValues="@array/tick_sound_mode_values"
             android:key="tick_sound_mode"
             android:title="@string/tick_sound_mode" />

@@ -80,10 +80,18 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        /* NOTE!: do not use preferenceView's value field in updateXXXView methods to check
+            current setting state. The value field changes later than we need */
         when (key) {
             PREF_AUTO_INACTIVATE_DELAY -> updateAutoInactivateView()
             PREF_CONTENT_FLOAT_INTERVAL -> updateFloatIntervalView()
-            PREF_CONTENT_LAYOUT -> updateLayoutView()
+            PREF_CONTENT_LAYOUT -> {
+                val layoutName = settings.getString(key)
+                updateLayoutView()
+                updateStyleViewEntries(layoutName)
+                validateSelectedStyle(layoutName)
+//                updateLayoutPreferences(settings.getString(key))
+            }
             PREF_CONTENT_STYLE -> updateStyleView()
             PREF_CONTENT_SCALE -> updateScaleView()
             PREF_DATE_FORMAT -> updateDateFormatView()
@@ -107,27 +115,9 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateLayoutPreferences(layout: String) {
-        updateLayoutStyles(layout)
-        addLayoutPreferences(layout)
-    }
-
-    private fun updateLayoutStyles(layout: String) {
-        context?.apply {
-            val layoutResId = getResId("layout", layout)
-            val valuesRes = getStyleValuesRes(layoutResId)
-            val namesRes = getStyleNamesRes(layoutResId)
-            requirePreference<ListPreference>(PREF_CONTENT_STYLE).apply {
-                isVisible = valuesRes != 0
-                if (isVisible) {
-                    setEntryValues(valuesRes)
-                    setEntries(namesRes)
-                } else {
-                    entryValues = null
-                    entries = null
-                }
-            }
-        }
+    private fun updateLayoutPreferences(layoutName: String) {
+//        updateLayoutStyles(layoutName)
+        addLayoutPreferences(layoutName)
     }
 
     private fun addLayoutPreferences(layout: String) {
@@ -194,9 +184,9 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateScaleView() {
         requirePreference<SeekBarPreference>(PREF_CONTENT_SCALE).apply {
+            val value = settings.getInt(key)
             min = MIN_SCALE
             max = MAX_SCALE
-            value = settings.getInt(key)
             summary = getString(R.string.scale_summary, value)
         }
     }
@@ -226,20 +216,47 @@ class SettingsFragment : CustomPreferenceFragment(),
         requirePreference<ListPreference>(PREF_CONTENT_LAYOUT).apply {
             val value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
-            setOnPreferenceChangeListener { _, newValue ->
-                updateLayoutPreferences(newValue as String)
-                refreshPreferences()
-                true
-            }
         }
     }
 
     private fun updateStyleView() {
         requirePreference<ListPreference>(PREF_CONTENT_STYLE).apply {
-            entries?.apply{
+            entries?.apply {
                 val value = settings.getString(key)
-                summary = this[findIndexOfValue(value)]
+                summary = entries[findIndexOfValue(value)]
+                isEnabled = true
+            } ?: apply {
+                summary = getString(R.string.layout_has_no_styles)
+                isEnabled = false
             }
+        }
+    }
+
+    private fun updateStyleViewEntries(layoutName: String) {
+        requireContext().apply {
+            val layoutResId = getResId("layout", layoutName)
+            val valuesResId = getStyleValuesResId(layoutResId)
+            requirePreference<ListPreference>(PREF_CONTENT_STYLE).apply {
+                if (valuesResId != 0) {
+                    setEntryValues(valuesResId)
+                    setEntries(getStyleTitlesResId(layoutResId))
+                } else {
+                    entryValues = null
+                    entries = null
+                }
+            }
+        }
+    }
+
+    private fun validateSelectedStyle(layoutName: String) {
+        requireContext().getLayoutStyles(layoutName)?.apply {
+            val styleName = settings.getString(PREF_CONTENT_STYLE, null)
+            if (!contains(styleName)) {
+                settings.update { putString(PREF_CONTENT_STYLE, get(0)) }
+            }
+            /* else the style is OK, do not touch settings */
+        } ?: apply {
+            settings.update { putString(PREF_CONTENT_STYLE, null) }
         }
     }
 
@@ -247,7 +264,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         requirePreference<Preference>(PREF_TICK_SOUND).apply {
             val value = settings.getString(key)
             val index = context.getStringArray(R.array.tick_sound_values).indexOf(value)
-            summary = context.getStringArray(R.array.tick_sound_names)[index]
+            summary = context.getStringArray(R.array.tick_sound_titles)[index]
         }
     }
 
@@ -265,9 +282,10 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateMutedBrightnessView() {
         requirePreference<SeekBarPreference>(PREF_MUTED_BRIGHTNESS).apply {
+            val value = settings.getInt(key)
+//            value = settings.getInt(key)
             min = MIN_BRIGHTNESS
             max = MAX_BRIGHTNESS
-            value = settings.getInt(key)
             summary = getString(R.string.muted_brightness_summary, value)
         }
     }
