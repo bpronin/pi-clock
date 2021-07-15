@@ -111,8 +111,8 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             ),
             isOldValueValid = { oldLayoutName ->
                 if (isResArrayContains(R.array.content_layout_values, oldLayoutName)) {
-                    val oldStyleName = getString(PREF_CONTENT_STYLE, null)
-                    getLayoutStyles(oldLayoutName)?.contains(oldStyleName) ?: false
+                    getLayoutStyles(oldLayoutName)?.contains(getString(PREF_CONTENT_STYLE, null))
+                        ?: true
                 } else
                     false
             },
