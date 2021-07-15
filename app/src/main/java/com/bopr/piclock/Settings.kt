@@ -119,11 +119,10 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
                     R.array.content_layout_values,
                     getResName(R.layout.view_digital_default)
                 ),
-                isExistentValid = {    //todo: add currentValue parameter
-                    val currentLayoutName = getString(PREF_CONTENT_LAYOUT)
-                    if (isResArrayContains(R.array.content_layout_values, currentLayoutName)) {
-                        val currentStyleName = getString(PREF_CONTENT_STYLE, null)
-                        getLayoutStyles(currentLayoutName)?.contains(currentStyleName) ?: false
+                isOldValueValid = { oldLayoutName ->
+                    if (isResArrayContains(R.array.content_layout_values, oldLayoutName)) {
+                        val oldStyleName = getString(PREF_CONTENT_STYLE, null)
+                        getLayoutStyles(oldLayoutName)?.contains(oldStyleName) ?: false
                     } else
                         false
                 },

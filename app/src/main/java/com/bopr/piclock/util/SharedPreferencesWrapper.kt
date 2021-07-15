@@ -1,96 +1,101 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package com.bopr.piclock.util
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import kotlin.reflect.KClass
 
 /* Must be subclass of SharedPreferences! Otherwise it leads to unpredictable results */
 @Suppress("unused")
-open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPreferences) :
+open class SharedPreferencesWrapper(private val wrapped: SharedPreferences) :
     SharedPreferences {
 
-    override fun getAll(): MutableMap<String, *> {
-        return wrappedPreferences.all
+    override fun getAll(): Map<String, *> {
+        return wrapped.all
     }
 
     override fun getString(key: String, defValue: String?): String? {
-        return wrappedPreferences.getString(key, defValue)
+        return wrapped.getString(key, defValue)
     }
 
     override fun getBoolean(key: String, defValue: Boolean): Boolean {
-        return wrappedPreferences.getBoolean(key, defValue)
+        return wrapped.getBoolean(key, defValue)
     }
 
     override fun getInt(key: String, defValue: Int): Int {
-        return wrappedPreferences.getInt(key, defValue)
+        return wrapped.getInt(key, defValue)
     }
 
     override fun getLong(key: String, defValue: Long): Long {
-        return wrappedPreferences.getLong(key, defValue)
+        return wrapped.getLong(key, defValue)
     }
 
     override fun getFloat(key: String, defValue: Float): Float {
-        return wrappedPreferences.getFloat(key, defValue)
+        return wrapped.getFloat(key, defValue)
     }
 
-    override fun getStringSet(key: String, defValue: MutableSet<String>?): MutableSet<String>? {
+    override fun getStringSet(key: String, defValue: Set<String>?): Set<String>? {
         /* should be a copy of values set. see: https://stackoverflow.com/questions/17469583/setstring-in-android-sharedpreferences-does-not-save-on-force-close */
-        return wrappedPreferences.getStringSet(key, null)?.toMutableSet() ?: defValue
+        return wrapped.getStringSet(key, null)?.toSet() ?: defValue
+    }
+
+    override fun contains(key: String): Boolean {
+        return wrapped.contains(key)
+    }
+
+    override fun edit(): EditorWrapper {
+        return EditorWrapper(wrapped.edit())
+    }
+
+    override fun registerOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) {
+        wrapped.registerOnSharedPreferenceChangeListener(listener)
+    }
+
+    override fun unregisterOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) {
+        wrapped.unregisterOnSharedPreferenceChangeListener(listener)
+    }
+
+    private inline fun <reified V> getNullable(key: String, defValue: V?): V? {
+        return all.get(key)?.let {
+            if (it is V) it
+            else throw ClassCastException(
+                "Invalid ${V::class.java} getter for setting: $key, expected: ${it::class.java}"
+            )
+        } ?: defValue
+    }
+
+    private inline fun <reified V> getSafe(key: String): V {
+        return getNullable<V?>(key, null)
+            ?: throw IllegalArgumentException("Setting does not exist: $key")
     }
 
     fun getStringArray(key: String, defValue: Array<String>?): Array<String>? {
-        return wrappedPreferences.getString(key, null)?.let {
+        return wrapped.getString(key, null)?.let {
             commaSplit(it).toTypedArray()
         } ?: defValue
     }
 
-    fun getString(key: String): String {
-        checkKeyExists(key)
-        return getString(key, "")!!
-    }
+    fun getBoolean(key: String, defValue: Boolean?): Boolean? = getNullable(key, defValue)
 
-    fun getInt(key: String): Int {
-        checkKeyExists(key)
-        return getInt(key, 0)
-    }
+    fun getInt(key: String, defValue: Int?): Int? = getNullable(key, defValue)
 
-    fun getLong(key: String): Long {
-        checkKeyExists(key)
-        return getLong(key, 0)
-    }
+    fun getLong(key: String, defValue: Long?): Long? = getNullable(key, defValue)
 
-    fun getFloat(key: String): Float {
-        checkKeyExists(key)
-        return getFloat(key, 0f)
-    }
+    fun getFloat(key: String, defValue: Float?): Float? = getNullable(key, defValue)
 
-    fun getBoolean(key: String): Boolean {
-        checkKeyExists(key)
-        return getBoolean(key, false)
-    }
+    fun getString(key: String): String = getSafe(key)
 
-    fun getStringSet(key: String): MutableSet<String> {
-        checkKeyExists(key)
-        return getStringSet(key, mutableSetOf())!!
-    }
+    fun getInt(key: String): Int = getSafe(key)
 
-    fun getStringArray(key: String): Array<String> {
-        checkKeyExists(key)
-        return getStringArray(key, arrayOf())!!
-    }
+    fun getLong(key: String): Long = getSafe(key)
 
-    override fun contains(key: String): Boolean {
-        return wrappedPreferences.contains(key)
-    }
+    fun getFloat(key: String): Float = getSafe(key)
 
-    fun contains(key: String, valueClass: KClass<*>): Boolean {
-        val value = wrappedPreferences.all.get(key)
-        return value != null && valueClass.isInstance(value)
-    }
+    fun getBoolean(key: String): Boolean = getSafe(key)
 
-    override fun edit(): EditorWrapper {
-        return EditorWrapper(wrappedPreferences.edit())
-    }
+    fun getStringSet(key: String): Set<String> = getSafe(key)
+
+    fun getStringArray(key: String): Array<String> = getSafe(key)
 
     inline fun update(action: EditorWrapper.() -> Unit) {
         edit().apply {
@@ -98,21 +103,13 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         }.apply()
     }
 
-    private fun checkKeyExists(key: String) {
-        if (!contains(key)) {
-            throw IllegalArgumentException("Setting does not exists: $key")
-        }
-    }
+    fun addListener(listener: OnSharedPreferenceChangeListener) =
+        registerOnSharedPreferenceChangeListener(listener)
 
-    override fun registerOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) {
-        wrappedPreferences.registerOnSharedPreferenceChangeListener(listener)
-    }
+    fun removeListener(listener: OnSharedPreferenceChangeListener) =
+        unregisterOnSharedPreferenceChangeListener(listener)
 
-    override fun unregisterOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) {
-        wrappedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
-    }
-
-    open inner class EditorWrapper(private val wrappedEditor: SharedPreferences.Editor) :
+    inner class EditorWrapper(private val wrappedEditor: SharedPreferences.Editor) :
         SharedPreferences.Editor {
 
         override fun putString(key: String, value: String?): EditorWrapper {
@@ -122,11 +119,6 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
 
         override fun putStringSet(key: String, values: Set<String>?): EditorWrapper {
             wrappedEditor.putStringSet(key, values)
-            return this
-        }
-
-        fun putStringAarray(key: String, value: Array<String>?): EditorWrapper {
-            putString(key, value?.let { value.commaJoin() })
             return this
         }
 
@@ -150,74 +142,6 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
             return this
         }
 
-        private fun putOptional(
-            key: String,
-            valueClass: KClass<*>,
-            isExistentValueValid: () -> Boolean,
-            put: () -> Unit
-        ): EditorWrapper {
-            if (!contains(key, valueClass) || !isExistentValueValid()) {
-                put()
-            }
-            return this
-        }
-
-        fun putStringOptional(
-            key: String, value: String?,
-            isExistentValid: () -> Boolean = { true },
-            onPut: (String?) -> Unit = {}
-        ): EditorWrapper {
-            return putOptional(key, String::class, isExistentValid) {
-                putString(key, value)
-                onPut(value)
-            }
-        }
-
-        fun putStringSetOptional(
-            key: String,
-            values: Set<String>?,
-            isExistentValid: () -> Boolean = { true }
-        ): EditorWrapper {
-            return putOptional(key, Set::class, isExistentValid) { putStringSet(key, values) }
-        }
-
-        fun putStringArrayOptional(
-            key: String, values: Array<String>?,
-            isExistentValid: () -> Boolean = { true }
-        ): EditorWrapper {
-            return putOptional(key, Array<String>::class, isExistentValid) {
-                putStringAarray(key, values)
-            }
-        }
-
-        fun putBooleanOptional(
-            key: String, value: Boolean,
-            isExistentValid: () -> Boolean = { true }
-        ): EditorWrapper {
-            return putOptional(key, Boolean::class, isExistentValid) { putBoolean(key, value) }
-        }
-
-        fun putIntOptional(
-            key: String, value: Int,
-            isExistentValid: () -> Boolean = { true }
-        ): EditorWrapper {
-            return putOptional(key, Int::class, isExistentValid) { putInt(key, value) }
-        }
-
-        fun putLongOptional(
-            key: String, value: Long,
-            isExistentValid: () -> Boolean = { true }
-        ): EditorWrapper {
-            return putOptional(key, Long::class, isExistentValid) { putLong(key, value) }
-        }
-
-        fun putFloatOptional(
-            key: String, value: Float,
-            isExistentValid: () -> Boolean = { true }
-        ): EditorWrapper {
-            return putOptional(key, Float::class, isExistentValid) { putFloat(key, value) }
-        }
-
         override fun remove(key: String): EditorWrapper {
             wrappedEditor.remove(key)
             return this
@@ -235,6 +159,86 @@ open class SharedPreferencesWrapper(private val wrappedPreferences: SharedPrefer
         override fun apply() {
             wrappedEditor.apply()
         }
+
+        fun putStringAarray(key: String, value: Array<String>?): EditorWrapper {
+            putString(key, value?.let { value.commaJoin() })
+            return this
+        }
+
+        private inline fun <reified V> putNullable(
+            key: String, value: V?, put: (String, V) -> Unit
+        ): EditorWrapper {
+            value?.apply { put(key, this) } ?: apply { remove(key) }
+            return this
+        }
+
+        fun putBoolean(key: String, value: Boolean?): EditorWrapper =
+            putNullable(key, value, ::putBoolean)
+
+        fun putInt(key: String, value: Int?): EditorWrapper =
+            putNullable(key, value, ::putInt)
+
+        fun putLong(key: String, value: Long?): EditorWrapper =
+            putNullable(key, value, ::putLong)
+
+        fun putFloat(key: String, value: Float?): EditorWrapper =
+            putNullable(key, value, ::putFloat)
+
+        private inline fun <reified V : Any> putOptional(
+            key: String, value: V?,
+            isOldValueValid: (V) -> Boolean,
+            put: (String, V?) -> Unit,
+            onPut: (V?) -> Unit
+        ): EditorWrapper {
+            val oldValue = all.get(key)
+            if (oldValue == null || oldValue !is V || !isOldValueValid(oldValue)) {
+                put(key, value)
+                onPut(value)
+            }
+            return this
+        }
+
+        fun putStringOptional(
+            key: String, value: String?,
+            isOldValueValid: (String) -> Boolean = { true },
+            onPut: (String?) -> Unit = {}
+        ): EditorWrapper = putOptional(key, value, isOldValueValid, ::putString, onPut)
+
+        fun putStringSetOptional(
+            key: String, values: Set<String>?,
+            isOldValueValid: (Set<String>) -> Boolean = { true } ,
+            onPut: (Set<String>?) -> Unit = {}
+        ): EditorWrapper = putOptional(key, values, isOldValueValid, ::putStringSet, onPut)
+
+        fun putStringArrayOptional(
+            key: String, values: Array<String>?,
+            isOldValueValid: (Array<String>) -> Boolean = { true }  ,
+            onPut: (Array<String>?) -> Unit = {}
+        ): EditorWrapper = putOptional(key, values, isOldValueValid, ::putStringAarray, onPut)
+
+        fun putBooleanOptional(
+            key: String, value: Boolean,
+            isOldValueValid: (Boolean) -> Boolean = { true }  ,
+            onPut: (Boolean?) -> Unit = {}
+        ): EditorWrapper = putOptional(key, value, isOldValueValid, ::putBoolean, onPut)
+
+        fun putIntOptional(
+            key: String, value: Int,
+            isOldValueValid: (Int) -> Boolean = { true } ,
+            onPut: (Int?) -> Unit = {}
+        ): EditorWrapper = putOptional(key, value, isOldValueValid, ::putInt, onPut)
+
+        fun putLongOptional(
+            key: String, value: Long,
+            isOldValueValid: (Long) -> Boolean = { true } ,
+            onPut: (Long?) -> Unit = {}
+        ): EditorWrapper = putOptional(key, value, isOldValueValid, ::putLong, onPut)
+
+        fun putFloatOptional(
+            key: String, value: Float,
+            isOldValueValid: (Float) -> Boolean = { true },
+            onPut: (Float?) -> Unit = {}
+        ): EditorWrapper = putOptional(key, value, isOldValueValid, ::putFloat, onPut)
 
     }
 
