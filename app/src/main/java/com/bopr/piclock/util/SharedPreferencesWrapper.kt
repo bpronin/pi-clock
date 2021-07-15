@@ -11,6 +11,7 @@ open class SharedPreferencesWrapper(private val wrapped: SharedPreferences) :
     SharedPreferences {
 
     override fun getAll(): Map<String, *> {
+        /* "Note that you MUST NOT modify the collection returned by this method." see Javadoc*/
         return wrapped.all
     }
 
@@ -56,7 +57,7 @@ open class SharedPreferencesWrapper(private val wrapped: SharedPreferences) :
     }
 
     private inline fun <reified V> getNullable(key: String, defValue: V?): V? {
-        return all.get(key)?.let {
+        return all[key]?.let {
             if (it is V) it
             else throw ClassCastException(
                 "Invalid ${V::class.java} getter for setting: $key, expected: ${it::class.java}"
@@ -160,7 +161,7 @@ open class SharedPreferencesWrapper(private val wrapped: SharedPreferences) :
             wrappedEditor.apply()
         }
 
-        fun putStringAarray(key: String, value: Array<String>?): EditorWrapper {
+        fun putStringArray(key: String, value: Array<String>?): EditorWrapper {
             putString(key, value?.let { value.commaJoin() })
             return this
         }
@@ -190,7 +191,7 @@ open class SharedPreferencesWrapper(private val wrapped: SharedPreferences) :
             put: (String, V?) -> Unit,
             onPut: (V?) -> Unit
         ): EditorWrapper {
-            val oldValue = all.get(key)
+            val oldValue = all[key]
             if (oldValue == null || oldValue !is V || !isOldValueValid(oldValue)) {
                 put(key, value)
                 onPut(value)
@@ -214,7 +215,7 @@ open class SharedPreferencesWrapper(private val wrapped: SharedPreferences) :
             key: String, values: Array<String>?,
             isOldValueValid: (Array<String>) -> Boolean = { true }  ,
             onPut: (Array<String>?) -> Unit = {}
-        ): EditorWrapper = putOptional(key, values, isOldValueValid, ::putStringAarray, onPut)
+        ): EditorWrapper = putOptional(key, values, isOldValueValid, ::putStringArray, onPut)
 
         fun putBooleanOptional(
             key: String, value: Boolean,
