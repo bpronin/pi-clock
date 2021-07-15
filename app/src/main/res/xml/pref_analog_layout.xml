@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="layout_specific_content">
 
-    <PreferenceCategory android:key="layout_specific_content">
+    <PreferenceCategory android:key="layout_specific_preferences">
 
         <PreferenceCategory android:title="@string/formats">
 

@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.preference.*
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bopr.piclock.AnalogClockControl.Companion.isAnalogClockLayout
 import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
 import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
 import com.bopr.piclock.DigitalClockControl.Companion.isDigitalClockLayout
@@ -126,8 +127,8 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
 
         val layoutPrefsResId = when {
-            isDigitalClockLayout(layoutName) ->
-                R.xml.pref_digital_layout
+            isDigitalClockLayout(layoutName) -> R.xml.pref_digital_layout
+            isAnalogClockLayout(layoutName) -> R.xml.pref_analog_layout
             else ->
                 throw IllegalArgumentException("No preferences resource for layout:$layoutName")
         }
