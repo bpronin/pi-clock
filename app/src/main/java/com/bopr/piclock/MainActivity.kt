@@ -36,6 +36,12 @@ class MainActivity : BaseActivity<MainFragment>(MainFragment::class) {
 
         intent.getStringExtra("target")?.also {
             when (it) {
+                "timer" -> {
+                    fragment.setTimeParams(
+                        intent.getLongExtra("interval", 500L),
+                        intent.getLongExtra("increment", 0L)
+                    )
+                }
                 "clear-settings" -> {
                     settings.update { clear() }
                 }

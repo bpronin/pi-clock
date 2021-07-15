@@ -9,7 +9,7 @@ import android.os.Handler
  */
 class HandlerTimer(
     private val handler: Handler,
-    private val interval: Long,
+    var interval: Long,
     private val ticksCount: Int,
     private val onTimer: (tick: Int) -> Unit
 ) {

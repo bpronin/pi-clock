@@ -18,10 +18,10 @@
 
     <string-array name="view_digital_simple_style_values" translatable="false">
         <item>Content.Digital.Simple</item>
-<!--        <item>Content.Digital.Simple.Round</item>-->
-<!--        <item>Content.Digital.Simple.Square</item>-->
-<!--        <item>Content.Digital.Simple.Curly</item>-->
-<!--        <item>Content.Digital.Simple.Thick</item>-->
+        <item>Content.Digital.Simple.Round</item>
+        <item>Content.Digital.Simple.Square</item>
+        <item>Content.Digital.Simple.Curly</item>
+        <item>Content.Digital.Simple.Thick</item>
     </string-array>
 
     <string-array name="time_format_values" translatable="false">

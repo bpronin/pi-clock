@@ -84,10 +84,10 @@
 
     <string-array name="view_digital_simple_style_titles">
         <item>Default</item>
-<!--        <item>Round</item>-->
-<!--        <item>Square</item>-->
-<!--        <item>Curly</item>-->
-<!--        <item>Thick</item>-->
+        <item>Round</item>
+        <item>Square</item>
+        <item>Curly</item>
+        <item>Thick</item>
     </string-array>
 
     <string-array name="tick_sound_titles">

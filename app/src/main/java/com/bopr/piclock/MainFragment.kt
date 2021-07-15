@@ -23,6 +23,7 @@ import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_STYLE
 import com.bopr.piclock.util.*
+import java.lang.System.currentTimeMillis
 import java.util.*
 
 /**
@@ -35,7 +36,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
     private val _tag = "MainFragment"
     private val handler = Handler(Looper.getMainLooper())
-    private val timer = HandlerTimer(handler, TIMER_INTERVAL, 4, ::onTimer)
+    private val timer = HandlerTimer(handler, 500L, 4, ::onTimer)
     private val settings by lazy { Settings(this) }
 
     private val fragmentView by lazy {
@@ -121,6 +122,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
     @Mode
     private var mode = MODE_ACTIVE
+    private var startTime: Long = currentTimeMillis()
+    private var timeIncrement = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -236,7 +239,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
     }
 
     private fun onTimer(tick: Int) {
-        val time = getCurrentTime()
+        val time = if (timeIncrement == 0L) {
+            Date()
+        } else {
+            startTime += timeIncrement
+            Date(startTime)
+        }
         contentControl.onTimer(time, tick)
         soundControl.onTimer(time, tick)
     }
@@ -296,6 +304,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         Log.d(_tag, "Created content")
     }
 
+    /**
+     * Only for debug purposes.
+     */
+    internal fun setTimeParams(interval: Long, increment: Long) {
+        timer.interval = interval
+        timeIncrement = increment
+    }
+
     @IntDef(value = [MODE_ACTIVE, MODE_INACTIVE, MODE_EDITOR])
     annotation class Mode
 
@@ -306,20 +322,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         const val MODE_EDITOR = 2
 
         const val STATE_KEY_MODE = "mode"
-
-        private const val TIMER_INTERVAL = 500L /* default */
-        private fun getCurrentTime() = Date()  /* default */
-
-//        private const val TIMER_INTERVAL = 250L
-//        private const val TIMER_INTERVAL = 100L
-//        private var debugTime = Date().time
-//        private fun getCurrentTime(): Date {
-//            debugTime += 24 * 60 * 60 * 1000L
-//            debugTime += 60 * 60 * 1000L
-//            debugTime += 60 * TIMER_INTERVAL
-//            debugTime += 1000L
-//            return Date(debugTime)
-//        }
 
     }
 
