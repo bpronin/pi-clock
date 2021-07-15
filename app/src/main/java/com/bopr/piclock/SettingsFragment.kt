@@ -49,11 +49,11 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         preferenceManager.sharedPreferencesName = SHARED_PREFERENCES_NAME
-        settings.registerOnSharedPreferenceChangeListener(this)
+        settings.addListener(this)
     }
 
     override fun onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(this)
+        settings.removeListener(this)
         super.onDestroy()
     }
 

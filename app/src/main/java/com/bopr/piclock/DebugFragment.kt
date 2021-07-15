@@ -30,11 +30,11 @@ class DebugFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         settings = Settings(this)
-        settings.registerOnSharedPreferenceChangeListener(this)
+        settings.addListener(this)
     }
 
     override fun onDestroy() {
-        settings.unregisterOnSharedPreferenceChangeListener(this)
+        settings.removeListener(this)
         super.onDestroy()
     }
 

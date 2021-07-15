@@ -34,8 +34,8 @@ class MainActivity : BaseActivity<MainFragment>(MainFragment::class) {
             if (sha512(it) != getString(R.string.developer_sha)) return
         } ?: return
 
-        intent.getStringExtra("target")?.also { target ->
-            when (target) {
+        intent.getStringExtra("target")?.also {
+            when (it) {
                 "clear-settings" -> {
                     settings.update { clear() }
                 }
@@ -46,7 +46,7 @@ class MainActivity : BaseActivity<MainFragment>(MainFragment::class) {
                     startActivity(Intent(this, DebugActivity::class.java))
                 }
                 else ->
-                    throw IllegalArgumentException("Invalid target: $target")
+                    throw IllegalArgumentException("Invalid target: $it")
             }
         }
     }

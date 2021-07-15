@@ -63,7 +63,7 @@ open class SharedPreferencesWrapper(private val wrapped: SharedPreferences) :
         } ?: defValue
     }
 
-    private inline fun <reified V> getSafe(key: String): V {
+    private inline fun <reified V> require(key: String): V {
         return getNullable<V?>(key, null)
             ?: throw IllegalArgumentException("Setting does not exist: $key")
     }
@@ -82,19 +82,19 @@ open class SharedPreferencesWrapper(private val wrapped: SharedPreferences) :
 
     fun getFloat(key: String, defValue: Float?): Float? = getNullable(key, defValue)
 
-    fun getString(key: String): String = getSafe(key)
+    fun getString(key: String): String = require(key)
 
-    fun getInt(key: String): Int = getSafe(key)
+    fun getInt(key: String): Int = require(key)
 
-    fun getLong(key: String): Long = getSafe(key)
+    fun getLong(key: String): Long = require(key)
 
-    fun getFloat(key: String): Float = getSafe(key)
+    fun getFloat(key: String): Float = require(key)
 
-    fun getBoolean(key: String): Boolean = getSafe(key)
+    fun getBoolean(key: String): Boolean = require(key)
 
-    fun getStringSet(key: String): Set<String> = getSafe(key)
+    fun getStringSet(key: String): Set<String> = require(key)
 
-    fun getStringArray(key: String): Array<String> = getSafe(key)
+    fun getStringArray(key: String): Array<String> = require(key)
 
     inline fun update(action: EditorWrapper.() -> Unit) {
         edit().apply {

@@ -124,7 +124,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settings.registerOnSharedPreferenceChangeListener(this)
+        settings.addListener(this)
     }
 
     override fun onCreateView(
@@ -185,7 +185,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
     override fun onDestroy() {
         handler.removeCallbacksAndMessages(null)
-        settings.unregisterOnSharedPreferenceChangeListener(this)
+        settings.removeListener(this)
         soundControl.destroy()
         scaleControl.destroy()
         super.onDestroy()
