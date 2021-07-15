@@ -207,31 +207,31 @@ open class SharedPreferencesWrapper(private val wrapped: SharedPreferences) :
 
         fun putStringSetOptional(
             key: String, values: Set<String>?,
-            isOldValueValid: (Set<String>) -> Boolean = { true } ,
+            isOldValueValid: (Set<String>) -> Boolean = { true },
             onPut: (Set<String>?) -> Unit = {}
         ): EditorWrapper = putOptional(key, values, isOldValueValid, ::putStringSet, onPut)
 
         fun putStringArrayOptional(
             key: String, values: Array<String>?,
-            isOldValueValid: (Array<String>) -> Boolean = { true }  ,
+            isOldValueValid: (Array<String>) -> Boolean = { true },
             onPut: (Array<String>?) -> Unit = {}
         ): EditorWrapper = putOptional(key, values, isOldValueValid, ::putStringArray, onPut)
 
         fun putBooleanOptional(
             key: String, value: Boolean,
-            isOldValueValid: (Boolean) -> Boolean = { true }  ,
+            isOldValueValid: (Boolean) -> Boolean = { true },
             onPut: (Boolean?) -> Unit = {}
         ): EditorWrapper = putOptional(key, value, isOldValueValid, ::putBoolean, onPut)
 
         fun putIntOptional(
             key: String, value: Int,
-            isOldValueValid: (Int) -> Boolean = { true } ,
+            isOldValueValid: (Int) -> Boolean = { true },
             onPut: (Int?) -> Unit = {}
         ): EditorWrapper = putOptional(key, value, isOldValueValid, ::putInt, onPut)
 
         fun putLongOptional(
             key: String, value: Long,
-            isOldValueValid: (Long) -> Boolean = { true } ,
+            isOldValueValid: (Long) -> Boolean = { true },
             onPut: (Long?) -> Unit = {}
         ): EditorWrapper = putOptional(key, value, isOldValueValid, ::putLong, onPut)
 
