@@ -2,6 +2,7 @@ package com.bopr.piclock
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import androidx.preference.*
 import androidx.preference.Preference.OnPreferenceClickListener
@@ -40,11 +41,10 @@ import java.util.*
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class SettingsFragment : CustomPreferenceFragment(),
-    SharedPreferences.OnSharedPreferenceChangeListener {
+class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeListener {
 
-    private val settings by lazy { Settings(requireContext()) }
-    private var layoutPrefsResId = 0
+    private val settings by lazy { Settings(this) }
+    private var currentLayoutPrefsResId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +59,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.pref_main)
-        updateLayoutPreferences(settings.getString(PREF_CONTENT_LAYOUT))
+        updateLayoutPreferences()
     }
 
     override fun onStart() {
@@ -71,8 +71,8 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     override fun onStop() {
-        /* save last scroll position */
         (listView.layoutManager as LinearLayoutManager).apply {
+            /* save last scroll position */
             settings.update { putInt(PREF_TOP_SETTING, findFirstCompletelyVisibleItemPosition()) }
         }
 
@@ -83,15 +83,14 @@ class SettingsFragment : CustomPreferenceFragment(),
         /* NOTE!: do not use preferenceView's value field in updateXXXView methods to check
             current setting state. The value field changes later than we need */
         when (key) {
+            PREF_CONTENT_LAYOUT -> {
+                updateLayoutView()
+                updateLayoutPreferences()
+                updateStyleViewEntries()
+                validateSelectedStyle()
+            }
             PREF_AUTO_INACTIVATE_DELAY -> updateAutoInactivateView()
             PREF_CONTENT_FLOAT_INTERVAL -> updateFloatIntervalView()
-            PREF_CONTENT_LAYOUT -> {
-                val layoutName = settings.getString(key)
-                updateLayoutView()
-                updateStyleViewEntries(layoutName)
-                validateSelectedStyle(layoutName)
-//                updateLayoutPreferences(settings.getString(key))
-            }
             PREF_CONTENT_STYLE -> updateStyleView()
             PREF_CONTENT_SCALE -> updateScaleView()
             PREF_DATE_FORMAT -> updateDateFormatView()
@@ -115,19 +114,20 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateLayoutPreferences(layoutName: String) {
-//        updateLayoutStyles(layoutName)
-        addLayoutPreferences(layoutName)
-    }
+    private fun updateLayoutPreferences() {
+        val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
 
-    private fun addLayoutPreferences(layout: String) {
-        val contentPrefsResId = when {
-            isDigitalClockLayout(layout) -> R.xml.pref_digital_layout
-            else -> throw IllegalArgumentException("No preferences xml for layout:$layout")
+        val layoutPrefsResId = when {
+            isDigitalClockLayout(layoutName) ->
+                R.xml.pref_digital_layout
+            else ->
+                throw IllegalArgumentException("No preferences resource for layout:$layoutName")
         }
 
-        if (contentPrefsResId == layoutPrefsResId) return
-        layoutPrefsResId = contentPrefsResId
+        if (layoutPrefsResId == currentLayoutPrefsResId)
+            return
+        else
+            currentLayoutPrefsResId = layoutPrefsResId
 
         val layoutPref = requirePreference<Preference>(PREF_CONTENT_LAYOUT).apply {
             order = -2 /* keep first */
@@ -135,14 +135,14 @@ class SettingsFragment : CustomPreferenceFragment(),
         val stylePref = requirePreference<ListPreference>(PREF_CONTENT_STYLE).apply {
             order = -1 /* keep second */
         }
-        val holderPref = requirePreference<PreferenceGroup>("layout_specific_holder").apply {
+        val holderPref = requirePreference<PreferenceGroup>(PREF_APPEARANCE).apply {
             removeAll()
             addPreference(layoutPref)
             addPreference(stylePref)
         }
 
-        addPreferencesFromResource(contentPrefsResId)
-        val contentPref = requirePreference<PreferenceGroup>("layout_specific_content")
+        addPreferencesFromResource(layoutPrefsResId)
+        val contentPref = requirePreference<PreferenceGroup>(PREF_LAYOUT_PREFERENCES)
         preferenceScreen.removePreference(contentPref) /* we do not need it anymore */
         while (contentPref.isNotEmpty()) {
             contentPref[0].apply {
@@ -153,7 +153,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     }
 
     private fun updateAboutView() {
-        requirePreference<Preference>("about_app").apply {
+        requirePreference<Preference>(PREF_ABOUT_APP).apply {
             val info = ReleaseInfo.get(requireContext())
             summary =
                 getString(R.string.about_summary, info.versionName, info.buildNumber)
@@ -163,7 +163,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateFloatAnimationView() {
         requirePreference<ListPreference>(PREF_FLOAT_ANIMATION).apply {
-            val value = settings.getString(key)
+            value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
         }
     }
@@ -184,7 +184,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateScaleView() {
         requirePreference<SeekBarPreference>(PREF_CONTENT_SCALE).apply {
-            val value = settings.getInt(key)
+            value = settings.getInt(key)
             min = MIN_SCALE
             max = MAX_SCALE
             summary = getString(R.string.scale_summary, value)
@@ -214,7 +214,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateLayoutView() {
         requirePreference<ListPreference>(PREF_CONTENT_LAYOUT).apply {
-            val value = settings.getString(key)
+            value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
         }
     }
@@ -222,7 +222,7 @@ class SettingsFragment : CustomPreferenceFragment(),
     private fun updateStyleView() {
         requirePreference<ListPreference>(PREF_CONTENT_STYLE).apply {
             entries?.apply {
-                val value = settings.getString(key)
+                value = settings.getString(key)
                 summary = entries[findIndexOfValue(value)]
                 isEnabled = true
             } ?: apply {
@@ -232,8 +232,9 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun updateStyleViewEntries(layoutName: String) {
+    private fun updateStyleViewEntries() {
         requireContext().apply {
+            val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
             val layoutResId = getResId("layout", layoutName)
             val valuesResId = getStyleValuesResId(layoutResId)
             requirePreference<ListPreference>(PREF_CONTENT_STYLE).apply {
@@ -248,13 +249,15 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
-    private fun validateSelectedStyle(layoutName: String) {
-        requireContext().getLayoutStyles(layoutName)?.apply {
+    private fun validateSelectedStyle() {
+        val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
+        getLayoutStyles(layoutName)?.apply {
             val styleName = settings.getString(PREF_CONTENT_STYLE, null)
-            if (!contains(styleName)) {
+            if (contains(styleName)) {
+                /* the style is OK, do not touch settings */
+            } else {
                 settings.update { putString(PREF_CONTENT_STYLE, get(0)) }
             }
-            /* else the style is OK, do not touch settings */
         } ?: apply {
             settings.update { putString(PREF_CONTENT_STYLE, null) }
         }
@@ -263,8 +266,8 @@ class SettingsFragment : CustomPreferenceFragment(),
     private fun updateTickSoundView() {
         requirePreference<Preference>(PREF_TICK_SOUND).apply {
             val value = settings.getString(key)
-            val index = context.getStringArray(R.array.tick_sound_values).indexOf(value)
-            summary = context.getStringArray(R.array.tick_sound_titles)[index]
+            val index = getStringArray(R.array.tick_sound_values).indexOf(value)
+            summary = getStringArray(R.array.tick_sound_titles)[index]
         }
     }
 
@@ -282,8 +285,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateMutedBrightnessView() {
         requirePreference<SeekBarPreference>(PREF_MUTED_BRIGHTNESS).apply {
-            val value = settings.getInt(key)
-//            value = settings.getInt(key)
+            value = settings.getInt(key)
             min = MIN_BRIGHTNESS
             max = MAX_BRIGHTNESS
             summary = getString(R.string.muted_brightness_summary, value)
@@ -325,18 +327,18 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateTimeFormatView() {
         findPreference<ListPreference>(PREF_TIME_FORMAT)?.apply {
-            val value = settings.getString(key)
+            value = settings.getString(key)
             val ix = findIndexOfValue(value)
-            val hint = context.getStringArray(R.array.time_format_hints)[ix]
+            val hint = getStringArray(R.array.time_format_hints)[ix]
             summary = "${entries[ix]} $hint"
         }
     }
 
     private fun updateSecondsFormatView() {
         findPreference<ListPreference>(PREF_SECONDS_FORMAT)?.apply {
-            val value = settings.getString(key)
+            value = settings.getString(key)
             val ix = findIndexOfValue(value)
-            val hint = context.getStringArray(R.array.seconds_format_hints)[ix]
+            val hint = getStringArray(R.array.seconds_format_hints)[ix]
             summary = "${entries[ix]} $hint"
         }
     }
@@ -345,7 +347,7 @@ class SettingsFragment : CustomPreferenceFragment(),
         findPreference<ListPreference>(PREF_DATE_FORMAT)?.apply {
 
             val date = Date()
-            val patterns = context.getStringArray(R.array.date_format_values)
+            val patterns = getStringArray(R.array.date_format_values)
             val entryNames = arrayOfNulls<String>(patterns.size)
             for (i in entryNames.indices) {
                 val pattern = patterns[i]
@@ -366,7 +368,7 @@ class SettingsFragment : CustomPreferenceFragment(),
 
     private fun updateDigitsAnimationView() {
         findPreference<ListPreference>(PREF_DIGITS_ANIMATION)?.apply {
-            val value = settings.getString(key)
+            value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
         }
     }
@@ -393,13 +395,11 @@ class SettingsFragment : CustomPreferenceFragment(),
             if (++clicksCount == 4) {
                 clicksCount = 0
 
-                context?.run {
-                    passwordBox("Enter some secret code") {
-                        if (getString(R.string.developer_sha) == sha512(it)) {
-                            startActivity(Intent(context, DebugActivity::class.java))
-                        } else {
-                            messageBox("Are you really trying to hack the clock app?")
-                        }
+                passwordBox("Enter some secret code") {
+                    if (getString(R.string.developer_sha) == sha512(it)) {
+                        startActivity(Intent(context, DebugActivity::class.java))
+                    } else {
+                        messageBox("Are you really trying to hack the clock app?")
                     }
                 }
 /*
@@ -420,4 +420,11 @@ class SettingsFragment : CustomPreferenceFragment(),
         }
     }
 
+    companion object {
+
+        /* dummy settings to refer to preference views */
+        private const val PREF_ABOUT_APP = "about_app"
+        private const val PREF_APPEARANCE = "appearance"
+        private const val PREF_LAYOUT_PREFERENCES = "layout_specific_preferences"
+    }
 }

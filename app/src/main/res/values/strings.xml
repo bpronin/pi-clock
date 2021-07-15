@@ -65,6 +65,7 @@
     <string name="digital_clock">Digital clock</string>
     <string name="style">Style</string>
     <string name="layout_has_no_styles">Layout has no styles</string>
+    <string name="appearance">Appearance</string>
 
     <string-array name="content_layout_titles">
         <item>Digital default</item>

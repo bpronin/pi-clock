@@ -32,7 +32,7 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
     private val _tag = "ScaleControl"
 
     private val gestureDetector by lazy {
-        GestureDetector(view.context, object : SimpleOnGestureListener() {
+        GestureDetector(requireContext(), object : SimpleOnGestureListener() {
 
             //            override fun onDown(e: MotionEvent?): Boolean {
 //                pinching = false
@@ -53,7 +53,7 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
     }
 
     private val scaleGestureDetector by lazy {
-        ScaleGestureDetector(view.context, object : SimpleOnScaleGestureListener() {
+        ScaleGestureDetector(requireContext(), object : SimpleOnScaleGestureListener() {
 
             override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
                 Log.v(_tag, "Start pinching")

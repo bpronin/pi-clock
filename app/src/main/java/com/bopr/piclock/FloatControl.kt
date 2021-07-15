@@ -189,12 +189,12 @@ internal class FloatControl(
 
     private fun updateAnimator() {
         cancelAnimators()
-        val resId = view.context.getResId("animator", settings.getString(PREF_FLOAT_ANIMATION))
+        val resId = getResId("animator", settings.getString(PREF_FLOAT_ANIMATION))
         if (resId > 0) {
-            floatAnimator = loadAnimator(view.context, resId).apply {
+            floatAnimator = loadAnimator(requireContext(), resId).apply {
                 extendProperties(customViewProperties)
             }
-            homeAnimator = loadAnimator(view.context, R.animator.float_home).apply {
+            homeAnimator = loadAnimator(requireContext(), R.animator.float_home).apply {
                 extendProperties(customViewProperties)
             }
         } else {

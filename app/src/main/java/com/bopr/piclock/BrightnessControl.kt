@@ -35,7 +35,7 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
 
     private val _tag = "BrightnessControl"
     private val gestureDetector by lazy {
-        GestureDetectorCompat(view.context, object : SimpleOnGestureListener() {
+        GestureDetectorCompat(requireContext(), object : SimpleOnGestureListener() {
 
             override fun onScroll(
                 e1: MotionEvent?,

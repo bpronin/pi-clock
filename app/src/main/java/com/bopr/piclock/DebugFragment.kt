@@ -1,6 +1,7 @@
 package com.bopr.piclock
 
 import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -13,8 +14,7 @@ import com.bopr.piclock.util.ui.preference.CustomPreferenceFragment
  *
  *  @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class DebugFragment : CustomPreferenceFragment(),
-    SharedPreferences.OnSharedPreferenceChangeListener {
+class DebugFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeListener {
 
     lateinit var settings: Settings
 
@@ -29,7 +29,7 @@ class DebugFragment : CustomPreferenceFragment(),
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        settings = Settings(requireContext())
+        settings = Settings(this)
         settings.registerOnSharedPreferenceChangeListener(this)
     }
 

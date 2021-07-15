@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
+import com.bopr.piclock.util.Contextual
 import com.bopr.piclock.util.HandlerTimer
 import com.bopr.piclock.util.getStringArray
 
@@ -19,11 +20,11 @@ import com.bopr.piclock.util.getStringArray
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class BrowseSoundFragment : Fragment() {
+class BrowseSoundFragment : Fragment(), Contextual {
 
-    private val itemValues by lazy { requireContext().getStringArray(R.array.tick_sound_values) }
-    private val itemNames by lazy { requireContext().getStringArray(R.array.tick_sound_titles) }
-    private val settings: Settings by lazy { Settings(requireContext()) }
+    private val itemValues by lazy { getStringArray(R.array.tick_sound_values) }
+    private val itemNames by lazy { getStringArray(R.array.tick_sound_titles) }
+    private val settings: Settings by lazy { Settings(this) }
     private val timer by lazy { HandlerTimer(Handler(Looper.getMainLooper()), 1000L, 1, ::onTimer) }
     private val player by lazy { TickPlayer(requireContext()) }
     private var repeatsCounter = 0

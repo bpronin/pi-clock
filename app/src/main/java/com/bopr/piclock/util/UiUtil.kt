@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.app.AlertDialog
-import android.content.Context
 import android.graphics.RectF
 import android.text.InputType
 import android.util.Property
@@ -62,16 +61,16 @@ fun View.resetRenderParams() = apply {
     rotationX = 0f
 }
 
-fun Context.messageBox(text: String) {
-    AlertDialog.Builder(this).apply {
+fun Contextual.messageBox(text: String) {
+    AlertDialog.Builder(requireContext()).apply {
         setTitle(R.string.app_name)
         setMessage(text)
         setPositiveButton(android.R.string.ok, null)
     }.show()
 }
 
-fun Context.passwordBox(message: String, onPositiveClose: (String) -> Unit) {
-    AlertDialog.Builder(this).apply {
+fun Contextual.passwordBox(message: String, onPositiveClose: (String) -> Unit) {
+    AlertDialog.Builder(requireContext()).apply {
         val input = EditText(context).apply {
             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
         }

@@ -1,6 +1,5 @@
 package com.bopr.piclock.util
 
-import android.content.Context
 import android.content.res.Resources
 import com.bopr.piclock.R
 import java.text.DateFormat
@@ -21,17 +20,19 @@ fun is24HourLocale(): Boolean {
 /**
  * Returns ID of resource by its name.
  */
-fun Context.getResId(defType: String, resName: String): Int {
+fun Contextual.getResId(defType: String, resName: String): Int {
     if (resName.indexOf("/") != -1) {
         throw IllegalArgumentException("Resource name must NOT be fully qualified")
     }
-    return resources.getIdentifier(resName, defType, packageName)
+    return requireContext().run {
+        resources.getIdentifier(resName, defType, packageName)
+    }
 }
 
 /**
  * Returns ID of resource by its name or throws an exception when resource does not exist.
  */
-fun Context.requireResId(defType: String, resName: String): Int {
+fun Contextual.requireResId(defType: String, resName: String): Int {
     val resId = getResId(defType, resName)
     if (resId == 0) {
         throw IllegalArgumentException("Resource does not exist: $defType/$resName")
@@ -42,8 +43,8 @@ fun Context.requireResId(defType: String, resName: String): Int {
 /**
  * Returns name of resource ID (short).
  */
-fun Context.getResName(resId: Int): String {
-    resources.getResourceName(resId).run {
+fun Contextual.getResName(resId: Int): String {
+    requireContext().resources.getResourceName(resId).run {
         return substring(lastIndexOf("/") + 1)
     }
 }
@@ -51,15 +52,15 @@ fun Context.getResName(resId: Int): String {
 /**
  * Returns true if resource array contains specified value.
  */
-fun <T> Context.isResArrayContains(arrayResId: Int, value: T): Boolean {
-    return resources.getStringArray(arrayResId).contains(value.toString())
+fun <T> Contextual.isResArrayContains(arrayResId: Int, value: T): Boolean {
+    return requireContext().resources.getStringArray(arrayResId).contains(value.toString())
 }
 
 /**
  * Returns true if resource array contains all specified values.
  */
-fun <V, C : Collection<V>> Context.isResArrayContainsAll(arrayResId: Int, values: C): Boolean {
-    val array = resources.getStringArray(arrayResId)
+fun <V, C : Collection<V>> Contextual.isResArrayContainsAll(arrayResId: Int, values: C): Boolean {
+    val array = requireContext().resources.getStringArray(arrayResId)
     for (value in values) {
         if (!array.contains(value.toString())) {
             return false
@@ -71,7 +72,7 @@ fun <V, C : Collection<V>> Context.isResArrayContainsAll(arrayResId: Int, values
 /**
  * Throws an exception if resource array does not contain specified value.
  */
-fun <T> Context.ensureResArrayContains(arrayResId: Int, value: T): T {
+fun <T> Contextual.ensureResArrayContains(arrayResId: Int, value: T): T {
     if (!isResArrayContains(arrayResId, value)) {
         throw Error("Resource array: ${getResName(arrayResId)} does not contain value: $value")
     } else {
@@ -82,7 +83,7 @@ fun <T> Context.ensureResArrayContains(arrayResId: Int, value: T): T {
 /**
  * Throws an exception if resource array does not contain all specified values.
  */
-fun <C : Collection<*>> Context.ensureAllResExists(arrayResId: Int, values: C): C {
+fun <C : Collection<*>> Contextual.ensureAllResExists(arrayResId: Int, values: C): C {
     if (!isResArrayContainsAll(arrayResId, values)) {
         throw Error("Resource array: ${getResName(arrayResId)} does not contain values: $values")
     } else {
@@ -93,19 +94,19 @@ fun <C : Collection<*>> Context.ensureAllResExists(arrayResId: Int, values: C): 
 /**
  * Convenience function. Returns context's resource array.
  */
-fun Context.getStringArray(resId: Int): Array<out String> {
-    return resources.getStringArray(resId)
+fun Contextual.getStringArray(resId: Int): Array<out String> {
+    return requireContext().resources.getStringArray(resId)
 }
 
-fun Context.getStyleValuesResId(layoutResId: Int): Int {
+fun Contextual.getStyleValuesResId(layoutResId: Int): Int {
     return getResId("array", getResName(layoutResId) + "_style_values")
 }
 
-fun Context.getStyleTitlesResId(layoutResId: Int): Int {
+fun Contextual.getStyleTitlesResId(layoutResId: Int): Int {
     return requireResId("array", getResName(layoutResId) + "_style_titles")
 }
 
-fun Context.getLayoutStyles(layoutName: String): Array<out String>? {
+fun Contextual.getLayoutStyles(layoutName: String): Array<out String>? {
     val stylesResId = getStyleValuesResId(getResId("layout", layoutName))
     return if (stylesResId == 0)
         null /* layout has styles */

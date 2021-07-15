@@ -17,7 +17,54 @@ import java.text.DateFormat.FULL
  */
 class Settings(private val context: Context) : SharedPreferencesWrapper(
     context.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE)
-) {
+), Contextual {
+
+    constructor(owner: Contextual) : this(owner.requireContext())
+
+    override fun requireContext(): Context {
+        return context
+    }
+
+    private fun EditorWrapper.putLongResourceOptional(key: String, value: Long, valuesRes: Int) {
+        context.apply {
+            putLongOptional(
+                key,
+                ensureResArrayContains(valuesRes, value)
+            ) {
+                isResArrayContains(valuesRes, getLong(key))
+            }
+        }
+    }
+
+    private fun EditorWrapper.putStringResourceOptional(
+        key: String,
+        value: String,
+        valuesRes: Int
+    ) {
+        context.apply {
+            putStringOptional(
+                key,
+                ensureResArrayContains(valuesRes, value)
+            ) {
+                isResArrayContains(valuesRes, getString(key))
+            }
+        }
+    }
+
+    private fun EditorWrapper.putStringSetResourceOptional(
+        key: String,
+        value: Set<String>,
+        valuesRes: Int
+    ) {
+        context.apply {
+            putStringSetOptional(
+                key,
+                ensureAllResExists(valuesRes, value)
+            ) {
+                isResArrayContainsAll(valuesRes, getStringSet(key))
+            }
+        }
+    }
 
     fun validate() = update {
         /* NOTE: clearing settings here will have no effect */
@@ -104,47 +151,6 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
                 getResName(R.animator.float_move),
                 R.array.float_animation_values
             )
-        }
-    }
-
-    private fun EditorWrapper.putLongResourceOptional(key: String, value: Long, valuesRes: Int) {
-        context.apply {
-            putLongOptional(
-                key,
-                ensureResArrayContains(valuesRes, value)
-            ) {
-                isResArrayContains(valuesRes, getLong(key))
-            }
-        }
-    }
-
-    private fun EditorWrapper.putStringResourceOptional(
-        key: String,
-        value: String,
-        valuesRes: Int
-    ) {
-        context.apply {
-            putStringOptional(
-                key,
-                ensureResArrayContains(valuesRes, value)
-            ) {
-                isResArrayContains(valuesRes, getString(key))
-            }
-        }
-    }
-
-    private fun EditorWrapper.putStringSetResourceOptional(
-        key: String,
-        value: Set<String>,
-        valuesRes: Int
-    ) {
-        context.apply {
-            putStringSetOptional(
-                key,
-                ensureAllResExists(valuesRes, value)
-            ) {
-                isResArrayContainsAll(valuesRes, getStringSet(key))
-            }
         }
     }
 

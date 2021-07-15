@@ -6,6 +6,7 @@ import android.media.MediaPlayer
 import android.util.Log
 import android.view.animation.AccelerateInterpolator
 import androidx.core.animation.doOnEnd
+import com.bopr.piclock.util.Contextual
 import com.bopr.piclock.util.getResId
 import com.bopr.piclock.util.property.PROP_VOLUME
 
@@ -14,7 +15,7 @@ import com.bopr.piclock.util.property.PROP_VOLUME
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class TickPlayer(private val context: Context) {
+internal class TickPlayer(private val context: Context):Contextual {
 
     private val _tag = "TickPlayer"
     private val volumeAnimator by lazy {
@@ -31,9 +32,13 @@ internal class TickPlayer(private val context: Context) {
     var fadingVolume = false
         private set
 
+    override fun requireContext(): Context {
+        return context
+    }
+
     private fun prepare() {
         if (player == null) {
-            val resId = context.getResId("raw", sourceName)
+            val resId = getResId("raw", sourceName)
             if (resId != 0) {
                 player = MediaPlayer.create(context, resId)
 

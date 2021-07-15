@@ -22,10 +22,7 @@ import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_STYLE
-import com.bopr.piclock.util.HandlerTimer
-import com.bopr.piclock.util.getLayoutStyles
-import com.bopr.piclock.util.inflateWithTheme
-import com.bopr.piclock.util.requireResId
+import com.bopr.piclock.util.*
 import java.util.*
 
 /**
@@ -34,38 +31,43 @@ import java.util.*
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @SuppressLint("ClickableViewAccessibility")
-class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
+class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
     private val _tag = "MainFragment"
     private val handler = Handler(Looper.getMainLooper())
     private val timer = HandlerTimer(handler, TIMER_INTERVAL, 4, ::onTimer)
+    private val settings by lazy { Settings(this) }
+
     private val fragmentView by lazy {
         requireView() as ConstraintLayout
     }
+
     private val contentHolderView by lazy {
         fragmentView.findViewById<ViewGroup>(R.id.content_holder).apply {
             setOnTouchListener { _, _ -> false } /* translate all touches to parent */
         }
     }
-    private val settings by lazy {
-        Settings(requireContext())
-    }
+
     private val fullscreenControl by lazy {
         FullscreenControl(requireActivity(), handler, settings)
     }
+
     private val soundControl by lazy {
         SoundControl(requireContext(), settings)
     }
+
     private val floatControl by lazy {
         FloatControl(contentHolderView, handler, settings).apply {
             onFloat = { soundControl.onFloatView(it) }
         }
     }
+
     private val autoInactivateControl by lazy {
         AutoInactivateControl(handler, settings).apply {
             onInactivate = { setMode(MODE_INACTIVE, true) }
         }
     }
+
     private val brightnessControl by lazy {
         BrightnessControl(contentHolderView, settings).apply {
             onSwipeStart = {
@@ -88,6 +90,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
         }
     }
+
     private val scaleControl by lazy {
         ScaleControl(contentHolderView, settings).apply {
             onPinchStart = {
@@ -108,6 +111,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
             }
         }
     }
+
     private val layoutControl by lazy {
         LayoutControl(fragmentView, parentFragmentManager, settings)
     }
@@ -202,10 +206,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
-        Log.d(_tag, "Setting: $key changed to: ${settings.all[key]}")
+        Log.d(_tag, "Setting: $key has changed to: ${settings.all[key]}")
 
         when (key) {
-            PREF_CONTENT_LAYOUT, PREF_CONTENT_STYLE -> createContentControl()
+            PREF_CONTENT_LAYOUT -> {
+                /* do nothing on changes of layout itself. wait style */
+            }
+            PREF_CONTENT_STYLE ->
+                createContentControl()
         }
 
         autoInactivateControl.onSettingChanged(key)
@@ -251,11 +259,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
 
     private fun createContentControl() {
         val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
-        val styles = requireContext().getLayoutStyles(layoutName)
+        val styles = getLayoutStyles(layoutName)
 
         val contentView = if (styles.isNullOrEmpty()) {
             layoutInflater.inflate(
-                requireContext().requireResId("layout", layoutName),
+                requireResId("layout", layoutName),
                 contentHolderView,
                 false
             )
@@ -266,10 +274,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
                 throw IllegalStateException("Unregistered style: $styleName for layout: $layoutName")
 
             layoutInflater.inflateWithTheme(
-                requireContext().requireResId("layout", layoutName),
+                requireResId("layout", layoutName),
                 contentHolderView,
                 false,
-                requireContext().requireResId("style", styleName)
+                requireResId("style", styleName)
             )
         }
 
@@ -279,8 +287,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener {
         }
 
         contentControl = when {
-            isDigitalClockLayout(layoutName) -> DigitalClockControl(contentView, settings)
-            else -> throw IllegalArgumentException("Unregistered content layout resource: $layoutName")
+            isDigitalClockLayout(layoutName) ->
+                DigitalClockControl(contentView, settings)
+            else ->
+                throw IllegalArgumentException("Unregistered content layout resource: $layoutName")
         }
 
         Log.d(_tag, "Created content")

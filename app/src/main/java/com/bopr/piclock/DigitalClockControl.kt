@@ -18,12 +18,11 @@ import java.text.DateFormat
 import java.util.*
 
 /**
- * Convenience class to control digital clock representation of the content view.
+ * Controls digital clock representation of the content view.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class DigitalClockControl(private val view: View, settings: Settings) :
-    ContentControl(settings) {
+internal class DigitalClockControl(view: View, settings: Settings) : ContentControl(settings) {
 
     private val amPmFormat = defaultDatetimeFormat("a")
     private val hoursView: AnimatedTextView = view.findViewById(R.id.hours_view)
@@ -115,7 +114,7 @@ internal class DigitalClockControl(private val view: View, settings: Settings) :
     }
 
     private fun updateDigitsAnimation() {
-        val resId = view.context.requireResId("animator", settings.getString(PREF_DIGITS_ANIMATION))
+        val resId = requireResId("animator", settings.getString(PREF_DIGITS_ANIMATION))
 
         hoursView.setTextAnimator(resId)
         minutesView.setTextAnimator(resId)
