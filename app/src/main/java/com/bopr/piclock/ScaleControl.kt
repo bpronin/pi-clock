@@ -5,8 +5,6 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
-import android.view.MotionEvent.ACTION_DOWN
-import android.view.MotionEvent.ACTION_UP
 import android.view.ScaleGestureDetector
 import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
 import android.view.View
@@ -34,15 +32,11 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
     private val gestureDetector by lazy {
         GestureDetector(requireContext(), object : SimpleOnGestureListener() {
 
-            //            override fun onDown(e: MotionEvent?): Boolean {
-//                pinching = false
-//                return false
-//            }
-//
-//            override fun onSingleTapUp(e: MotionEvent?): Boolean {
-//                return pinching
-//            }
-//
+            override fun onDown(e: MotionEvent?): Boolean {
+                pinching = false
+                return false
+            }
+
             override fun onDoubleTap(e: MotionEvent?): Boolean {
                 Log.v(_tag, "Double tap detected")
 
@@ -190,19 +184,13 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
      */
     fun onTouch(event: MotionEvent): Boolean {
         if (gesturesEnabled && (mode == MODE_ACTIVE || mode == MODE_INACTIVE)) {
-            if (gestureDetector.onTouchEvent(event)) return true
-            
-            scaleGestureDetector.onTouchEvent(event)
-
-            /* this is to prevent of calling onClick if pinched */
-            when (event.action) {
-                ACTION_DOWN ->
-                    pinching = false
-                ACTION_UP ->
-                    return pinching
+            return if (gestureDetector.onTouchEvent(event)) {
+                true
+            } else {
+                scaleGestureDetector.onTouchEvent(event)
+                pinching
             }
         }
-
         return false
     }
 
