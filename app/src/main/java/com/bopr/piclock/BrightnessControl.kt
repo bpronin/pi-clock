@@ -76,7 +76,7 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
     lateinit var onSwipeEnd: () -> Unit
 
     init {
-        updateGesturesState()
+        loadGesturesState()
         loadBrightness()
     }
 
@@ -123,7 +123,7 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
         Log.v(TAG, "View alpha set to: ${view.alpha}")
     }
 
-    private fun updateGesturesState() {
+    private fun loadGesturesState() {
         gesturesEnabled = settings.getBoolean(PREF_GESTURES_ENABLED)
     }
 
@@ -166,7 +166,7 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
     override fun onSettingChanged(key: String) {
         when (key) {
             PREF_MUTED_BRIGHTNESS -> loadBrightness()
-            PREF_GESTURES_ENABLED -> updateGesturesState()
+            PREF_GESTURES_ENABLED -> loadGesturesState()
         }
     }
 

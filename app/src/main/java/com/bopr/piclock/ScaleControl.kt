@@ -27,7 +27,8 @@ import kotlin.math.min
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class ScaleControl(private val view: View, settings: Settings) : ContentControl(settings) {
+internal class ScaleControl(private val view: View, settings: Settings) : ContentControl(settings),
+    Destroyable {
 
     private val gestureDetector by lazy {
         GestureDetector(requireContext(), object : SimpleOnGestureListener() {
@@ -35,7 +36,8 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
             override fun onDoubleTap(e: MotionEvent?): Boolean {
                 Log.v(TAG, "Double tap detected")
 
-                settings.update { putInt(PREF_CONTENT_SCALE, 100) }
+                viewScale = 1f
+                saveScale()
                 return true
             }
         })
@@ -62,10 +64,9 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
             override fun onScaleEnd(detector: ScaleGestureDetector?) {
                 Log.v(TAG, "End pinching")
 
-                savedScale = viewScale
-                settings.update { putInt(PREF_CONTENT_SCALE, toPercents(savedScale)) }
+                saveScale()
                 onPinchEnd()
-                animateTo(computeFitScale(savedScale), true)
+                animateTo(computeFitScale(savedScale))
             }
         })
     }
@@ -84,7 +85,7 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
                 if (viewScale != newScale) {
                     Log.v(TAG, "Layout changed")
 
-                    animateTo(newScale, true)
+                    animateTo(newScale)
                 }
             }
         }
@@ -108,9 +109,13 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
     lateinit var onPinchEnd: () -> Unit
 
     init {
+        loadScale(false)
+        loadGesturesState()
         view.addOnLayoutChangeListener(viewListener)
-        updateScale(false)
-        updateGesturesState()
+    }
+
+    override fun destroy() {
+        view.removeOnLayoutChangeListener(viewListener)
     }
 
     private fun computeFitScale(scale: Float): Float {
@@ -126,49 +131,53 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
         }
     }
 
-    private fun animateTo(scale: Float, animated: Boolean, onEnd: () -> Unit = {}) {
+    private fun animateTo(scale: Float, onEnd: () -> Unit = {}) {
         if (viewScale == scale) return
 
+        Log.d(TAG, "Start animation to: $scale")
+
+        animator.apply {
+            cancel()
+            removeAllListeners()
+
+            setFloatValues(viewScale, scale)
+            doOnEnd {
+                Log.v(TAG, "End animation")
+
+                onEnd()
+            }
+
+            start()
+        }
+    }
+
+    private fun loadGesturesState() {
+        gesturesEnabled = settings.getBoolean(PREF_GESTURES_ENABLED)
+    }
+
+    private fun loadScale(animated: Boolean) {
+        savedScale = toDecimal(settings.getInt(PREF_CONTENT_SCALE))
+
         if (animated) {
-            Log.d(TAG, "Start animation to: $scale")
-
-            animator.apply {
-                cancel()
-                removeAllListeners()
-
-                setFloatValues(viewScale, scale)
-                doOnEnd {
-                    Log.v(TAG, "End animation")
-
-                    onEnd()
-                }
-
-                start()
+            animateTo(savedScale) { /* first show actual size*/
+                animateTo(computeFitScale(savedScale)) /* then fit into screen */
             }
         } else {
-            viewScale = scale
+            viewScale = savedScale
 
             Log.d(TAG, "Instantly scaled to: $viewScale")
         }
     }
 
-    private fun updateGesturesState() {
-        gesturesEnabled = settings.getBoolean(PREF_GESTURES_ENABLED)
-    }
-
-    private fun updateScale(animated: Boolean) {
-        savedScale = toDecimal(settings.getInt(PREF_CONTENT_SCALE))
-
-        /* show actual size first then shrink if needed */
-        animateTo(savedScale, animated) {
-            animateTo(computeFitScale(savedScale), animated)
-        }
+    private fun saveScale() {
+        savedScale = viewScale
+        settings.update { putInt(PREF_CONTENT_SCALE, toPercents(savedScale)) }
     }
 
     override fun onSettingChanged(key: String) {
         when (key) {
-            PREF_CONTENT_SCALE -> updateScale(true)
-            PREF_GESTURES_ENABLED -> updateGesturesState()
+            PREF_CONTENT_SCALE -> loadScale(true)
+            PREF_GESTURES_ENABLED -> loadGesturesState()
         }
     }
 
@@ -188,10 +197,6 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
         }
 
         return false
-    }
-
-    fun destroy() {
-        view.removeOnLayoutChangeListener(viewListener)
     }
 
     companion object {
