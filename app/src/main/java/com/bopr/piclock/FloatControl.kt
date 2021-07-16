@@ -32,7 +32,6 @@ internal class FloatControl(
     settings: Settings
 ) : ContentControl(settings) {
 
-    private val _tag = "FloatControl"
     private val floatTask = Runnable {
         if (enabled && view.isLaidOut) {
             floatSomewhere {
@@ -52,11 +51,11 @@ internal class FloatControl(
             if (field != value) {
                 field = value
                 if (field) {
-                    Log.d(_tag, "Enabled")
+                    Log.d(TAG, "Enabled")
 
                     scheduleTask(1000) /* let view a second to relayout if needed */
                 } else {
-                    Log.d(_tag, "Disabled")
+                    Log.d(TAG, "Disabled")
 
                     handler.removeCallbacks(floatTask)
                     cancelAnimators()
@@ -91,15 +90,15 @@ internal class FloatControl(
                 val delay = interval + startDelay
                 handler.postDelayed(floatTask, delay)
 
-                Log.d(_tag, "Task scheduled after: $delay")
+                Log.d(TAG, "Task scheduled after: $delay")
             } else {
-                Log.w(_tag, "Task not scheduled. Interval is negative")
+                Log.w(TAG, "Task not scheduled. Interval is negative")
             }
         }
     }
 
     private fun floatSomewhere(onEnd: () -> Unit) {
-        Log.v(_tag, "Moving somewhere")
+        Log.v(TAG, "Moving somewhere")
 
         val pr = view.parentView.scaledRect
         val vr = view.scaledRect
@@ -118,7 +117,7 @@ internal class FloatControl(
     }
 
     private fun floatHome() {
-        Log.v(_tag, "Moving home")
+        Log.v(TAG, "Moving home")
 
         val pr = view.parentView.rect
         val vr = view.rect
@@ -161,10 +160,10 @@ internal class FloatControl(
 
                 removeAllListeners()
                 doOnStart {
-                    Log.d(_tag, "Start animation to x:$x y:$y")
+                    Log.d(TAG, "Start animation to x:$x y:$y")
                 }
                 doOnEnd {
-                    Log.v(_tag, "End animation")
+                    Log.v(TAG, "End animation")
 
                     onEnd()
                 }
@@ -176,7 +175,7 @@ internal class FloatControl(
             view.x = x
             view.y = y
 
-            Log.d(_tag, "Instantly moved to x:$x y:$y")
+            Log.d(TAG, "Instantly moved to x:$x y:$y")
 
             onEnd()
         }
@@ -240,15 +239,19 @@ internal class FloatControl(
     }
 
     fun pause() {
-        Log.v(_tag, "Pause")
+        Log.v(TAG, "Pause")
 
         enabled = false
     }
 
     fun resume() {
-        Log.v(_tag, "Resume")
+        Log.v(TAG, "Resume")
 
         enabled = true
     }
 
+    companion object {
+
+        private const val TAG = "FloatControl"
+    }
 }

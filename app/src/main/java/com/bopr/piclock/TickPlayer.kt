@@ -4,7 +4,7 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.media.MediaPlayer
 import android.util.Log
-import android.view.animation.AccelerateInterpolator
+import android.view.animation.LinearInterpolator
 import androidx.core.animation.doOnEnd
 import com.bopr.piclock.util.Contextual
 import com.bopr.piclock.util.getResId
@@ -15,13 +15,11 @@ import com.bopr.piclock.util.property.PROP_VOLUME
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class TickPlayer(private val context: Context):Contextual {
+internal class TickPlayer(private val context: Context) : Contextual {
 
-    private val _tag = "TickPlayer"
     private val volumeAnimator by lazy {
         ObjectAnimator.ofFloat(player, PROP_VOLUME, 0f).apply {
-//            interpolator = LinearInterpolator()
-            interpolator = AccelerateInterpolator()
+            interpolator = LinearInterpolator()
         }
     }
 
@@ -42,11 +40,11 @@ internal class TickPlayer(private val context: Context):Contextual {
             if (resId != 0) {
                 player = MediaPlayer.create(context, resId)
 
-                Log.d(_tag, "Prepared")
+                Log.d(TAG, "Prepared")
             } else {
                 player = null
 
-                Log.d(_tag, "Zero resource")
+                Log.d(TAG, "Zero resource")
             }
         }
     }
@@ -57,7 +55,7 @@ internal class TickPlayer(private val context: Context):Contextual {
     }
 
     fun fadeVolume(fadeDuration: Long, vararg volumes: Float) {
-        Log.d(_tag, "Start fading volume: ${volumes.joinToString()} during: $fadeDuration")
+        Log.d(TAG, "Start fading volume: ${volumes.joinToString()} during: $fadeDuration")
 
         player?.run {
             fadingVolume = true
@@ -69,7 +67,7 @@ internal class TickPlayer(private val context: Context):Contextual {
                 duration = fadeDuration
                 setFloatValues(*volumes)
                 doOnEnd {
-                    Log.v(_tag, "End fading volume")
+                    Log.v(TAG, "End fading volume")
 
                     fadingVolume = false
                 }
@@ -82,10 +80,10 @@ internal class TickPlayer(private val context: Context):Contextual {
     fun play() {
         prepare()
         player?.run {
-            seekTo(0, )
+            seekTo(0)
             start()
 
-//        Log.v(_tag, "Tick!")
+//        Log.v(TAG, "Tick!")
         }
     }
 
@@ -98,7 +96,11 @@ internal class TickPlayer(private val context: Context):Contextual {
             null
         }
 
-        Log.d(_tag, "Stopped")
+        Log.d(TAG, "Stopped")
     }
 
+    companion object {
+
+        private const val TAG = "TickPlayer"
+    }
 }

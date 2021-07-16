@@ -30,7 +30,6 @@ internal class LayoutControl(
     settings: Settings
 ) : ContentControl(settings) {
 
-    private val _tag = "LayoutControl"
     private val fabMargin = rootView.resources.fabMargin
     private val mainConstraints = createDefaultConstraints().apply {
         R.id.settings_button.let {
@@ -73,7 +72,7 @@ internal class LayoutControl(
                     .replace(R.id.settings_container, SettingsFragment())
                     .commit()
 
-                Log.d(_tag, "Added settings fragment")
+                Log.d(TAG, "Added settings fragment")
             }
         }
     }
@@ -85,10 +84,10 @@ internal class LayoutControl(
                     .remove(this)
                     .commit()
 
-                Log.d(_tag, "Removed settings fragment")
+                Log.d(TAG, "Removed settings fragment")
 
                 if (wantRecreateActivity) {
-                    Log.d(_tag, "Activity recreation required")
+                    Log.d(TAG, "Activity recreation required")
 
                     wantRecreateActivity = false
                     activity?.recreate()
@@ -127,6 +126,11 @@ internal class LayoutControl(
                 settingsContainer.visibility = VISIBLE
             }
         }
+    }
+
+    companion object {
+
+        private const val TAG = "LayoutControl"
     }
 
 }

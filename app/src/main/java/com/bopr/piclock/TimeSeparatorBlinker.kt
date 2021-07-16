@@ -17,7 +17,6 @@ internal class TimeSeparatorBlinker(
     private val secondsSeparator: View
 ) {
 
-    private val _tag = "BlinkControl"
     private val minutesSeparatorAnimator by lazy {
         ObjectAnimator().apply {
             setProperty(View.ALPHA)
@@ -98,7 +97,7 @@ internal class TimeSeparatorBlinker(
         if (enabled != value) {
             enabled = value
 
-            Log.d(_tag, "Enabled: $value")
+            Log.d(TAG, "Enabled: $value")
 
             if (!enabled) {
                 minutesSeparatorAnimator.end()
@@ -112,11 +111,16 @@ internal class TimeSeparatorBlinker(
         if (secondsEnabled != enabled) {
             secondsEnabled = enabled
 
-            Log.d(_tag, "Seconds enabled: $secondsEnabled")
+            Log.d(TAG, "Seconds enabled: $secondsEnabled")
 
             if (!secondsEnabled) {
                 secondsSeparatorAnimator.end()
             }
         }
+    }
+
+    companion object {
+
+        private const val TAG = "TimeSeparatorBlinker"
     }
 }

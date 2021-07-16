@@ -22,7 +22,6 @@ internal class FullscreenControl(
     settings: Settings
 ) : ContentControl(settings) {
 
-    private val _tag = "FullscreenSupport"
     /**
      * Some older devices needs a small delay between UI widget updates
      * and a change of the status and navigation bar.
@@ -45,7 +44,7 @@ internal class FullscreenControl(
                 val task = if (field) turnOffTask else turnOnTask
                 handler.postDelayed(task, startDelay)
 
-                Log.d(_tag, "Fullscreen: $field")
+                Log.d(TAG, "Fullscreen: $field")
             }
         }
     private var enabled = true
@@ -56,7 +55,7 @@ internal class FullscreenControl(
                     fullscreen = false
                 }
 
-                Log.d(_tag, "Enabled: $field")
+                Log.d(TAG, "Enabled: $field")
             }
         }
 
@@ -82,7 +81,7 @@ internal class FullscreenControl(
             }
         }
 
-        Log.d(_tag, "System UI shown")
+        Log.d(TAG, "System UI shown")
     }
 
     private fun hideSystemUI() {
@@ -100,7 +99,7 @@ internal class FullscreenControl(
             }
         }
 
-        Log.d(_tag, "System UI hidden")
+        Log.d(TAG, "System UI hidden")
     }
 
     private fun updateEnabled() {
@@ -118,4 +117,8 @@ internal class FullscreenControl(
         }
     }
 
+    companion object {
+
+        private const val TAG = "FullscreenControl"
+    }
 }

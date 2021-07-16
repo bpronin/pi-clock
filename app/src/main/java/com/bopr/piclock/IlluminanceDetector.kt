@@ -16,8 +16,6 @@ import android.hardware.SensorManager.SENSOR_DELAY_NORMAL
  */
 internal class IlluminanceDetector(context: Context) {
 
-    private val _tag = "IlluminanceDetector"
-
     private var currentValue = -1f
     private val sensorManager = context.getSystemService(SENSOR_SERVICE) as SensorManager
     private val sensor = sensorManager.getDefaultSensor(TYPE_LIGHT)

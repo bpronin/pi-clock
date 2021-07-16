@@ -34,7 +34,6 @@ import java.util.*
 @SuppressLint("ClickableViewAccessibility")
 class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
-    private val _tag = "MainFragment"
     private val handler = Handler(Looper.getMainLooper())
     private val timer = HandlerTimer(handler, 500L, 4, ::onTimer)
     private val settings by lazy { Settings(this) }
@@ -209,7 +208,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
-        Log.d(_tag, "Setting: $key has changed to: ${settings.all[key]}")
+        Log.d(TAG, "Setting: $key has changed to: ${settings.all[key]}")
 
         when (key) {
             PREF_CONTENT_LAYOUT -> {
@@ -261,7 +260,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
             scaleControl.onModeChanged(mode, animate)
             soundControl.onModeChanged(mode, animate)
 
-            Log.d(_tag, "Mode set to: $mode")
+            Log.d(TAG, "Mode set to: $mode")
         }
     }
 
@@ -301,7 +300,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
                 throw IllegalArgumentException("Unregistered content layout resource: $layoutName")
         }
 
-        Log.d(_tag, "Created content")
+        Log.d(TAG, "Created content")
     }
 
     /**
@@ -317,11 +316,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
     companion object {
 
+        private const val TAG = "MainFragment"
+        private const val STATE_KEY_MODE = "mode"
+
         const val MODE_INACTIVE = 0
         const val MODE_ACTIVE = 1
         const val MODE_EDITOR = 2
-
-        const val STATE_KEY_MODE = "mode"
 
     }
 

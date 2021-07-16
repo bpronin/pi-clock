@@ -5,6 +5,8 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
+import android.view.MotionEvent.ACTION_DOWN
+import android.view.MotionEvent.ACTION_UP
 import android.view.ScaleGestureDetector
 import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener
 import android.view.View
@@ -27,18 +29,11 @@ import kotlin.math.min
  */
 internal class ScaleControl(private val view: View, settings: Settings) : ContentControl(settings) {
 
-    private val _tag = "ScaleControl"
-
     private val gestureDetector by lazy {
         GestureDetector(requireContext(), object : SimpleOnGestureListener() {
 
-            override fun onDown(e: MotionEvent?): Boolean {
-                pinching = false
-                return false
-            }
-
             override fun onDoubleTap(e: MotionEvent?): Boolean {
-                Log.v(_tag, "Double tap detected")
+                Log.v(TAG, "Double tap detected")
 
                 settings.update { putInt(PREF_CONTENT_SCALE, 100) }
                 return true
@@ -50,9 +45,9 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
         ScaleGestureDetector(requireContext(), object : SimpleOnScaleGestureListener() {
 
             override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
-                Log.v(_tag, "Start pinching")
+                Log.v(TAG, "Start pinching")
 
-                pinching = true
+                pinched = true
                 onPinchStart()
                 return true
             }
@@ -65,14 +60,12 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
             }
 
             override fun onScaleEnd(detector: ScaleGestureDetector?) {
-                Log.v(_tag, "End pinching")
+                Log.v(TAG, "End pinching")
 
-                defaultScale = viewScale
-                settings.update {
-                    putInt(PREF_CONTENT_SCALE, toPercents(defaultScale))
-                }
+                savedScale = viewScale
+                settings.update { putInt(PREF_CONTENT_SCALE, toPercents(savedScale)) }
                 onPinchEnd()
-                animateTo(computeFitScale(defaultScale), true)
+                animateTo(computeFitScale(savedScale), true)
             }
         })
     }
@@ -87,9 +80,9 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
     private val viewListener =
         OnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
-                val newScale = computeFitScale(defaultScale)
+                val newScale = computeFitScale(savedScale)
                 if (viewScale != newScale) {
-                    Log.v(_tag, "Layout changed")
+                    Log.v(TAG, "Layout changed")
 
                     animateTo(newScale, true)
                 }
@@ -99,16 +92,16 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
     private var viewScale: Float
         get() = view.scaleX
         set(value) {
-            Log.d(_tag, "Set view scale to: $value")
+            Log.d(TAG, "Set view scale to: $value")
 
             view.apply {
                 scaleX = value
                 scaleY = scaleX
             }
         }
-    private var pinching = false
+    private var pinched = false
     private var gesturesEnabled = true
-    private var defaultScale = 1f
+    private var savedScale = 1f
 
     lateinit var onPinchStart: () -> Unit
     lateinit var onPinch: (scalePercent: Int) -> Unit
@@ -137,7 +130,7 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
         if (viewScale == scale) return
 
         if (animated) {
-            Log.d(_tag, "Start animation to: $scale")
+            Log.d(TAG, "Start animation to: $scale")
 
             animator.apply {
                 cancel()
@@ -145,7 +138,7 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
 
                 setFloatValues(viewScale, scale)
                 doOnEnd {
-                    Log.v(_tag, "End animation")
+                    Log.v(TAG, "End animation")
 
                     onEnd()
                 }
@@ -155,7 +148,7 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
         } else {
             viewScale = scale
 
-            Log.d(_tag, "Instantly scaled to: $viewScale")
+            Log.d(TAG, "Instantly scaled to: $viewScale")
         }
     }
 
@@ -164,11 +157,11 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
     }
 
     private fun updateScale(animated: Boolean) {
-        defaultScale = toDecimal(settings.getInt(PREF_CONTENT_SCALE))
+        savedScale = toDecimal(settings.getInt(PREF_CONTENT_SCALE))
 
         /* show actual size first then shrink if needed */
-        animateTo(defaultScale, animated) {
-            animateTo(computeFitScale(defaultScale), animated)
+        animateTo(savedScale, animated) {
+            animateTo(computeFitScale(savedScale), animated)
         }
     }
 
@@ -184,13 +177,16 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
      */
     fun onTouch(event: MotionEvent): Boolean {
         if (gesturesEnabled && (mode == MODE_ACTIVE || mode == MODE_INACTIVE)) {
-            return if (gestureDetector.onTouchEvent(event)) {
-                true
-            } else {
-                scaleGestureDetector.onTouchEvent(event)
-                pinching
+            if (gestureDetector.onTouchEvent(event)) return true
+
+            /* this prevents from calling onClick when pinched */
+            scaleGestureDetector.onTouchEvent(event)
+            when (event.action) {
+                ACTION_DOWN -> pinched = false
+                ACTION_UP -> return pinched
             }
         }
+
         return false
     }
 
@@ -199,6 +195,8 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
     }
 
     companion object {
+
+        private const val TAG = "ScaleControl"
 
         const val MIN_SCALE = 25
         const val MAX_SCALE = 500

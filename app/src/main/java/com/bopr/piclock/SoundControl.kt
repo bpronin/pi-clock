@@ -20,7 +20,6 @@ import java.util.*
  */
 internal class SoundControl(context: Context, settings: Settings) : ContentControl(settings) {
 
-    private val _tag = "SoundControl"
     private val player = TickPlayer(context)
     private val fadeDuration = 4000L //todo: make it var
 
@@ -38,7 +37,7 @@ internal class SoundControl(context: Context, settings: Settings) : ContentContr
         val resName = settings.getString(PREF_TICK_SOUND)
         player.setSource(resName)
 
-        Log.v(_tag, "Source set to: $resName")
+        Log.v(TAG, "Source set to: $resName")
     }
 
     private fun updatePlayRules() {
@@ -48,7 +47,7 @@ internal class SoundControl(context: Context, settings: Settings) : ContentContr
             whenActive = contains(TICK_ACTIVE)
         }
 
-        Log.v(_tag, "Rules changed")
+        Log.v(TAG, "Rules changed")
     }
 
     override fun onSettingChanged(key: String) {
@@ -110,4 +109,8 @@ internal class SoundControl(context: Context, settings: Settings) : ContentContr
         player.stop()
     }
 
+    companion object {
+
+        private const val TAG = "SoundControl"
+    }
 }

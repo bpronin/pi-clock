@@ -19,10 +19,9 @@ internal class AutoInactivateControl(
     settings: Settings
 ) : ContentControl(settings) {
 
-    private val _tag = "AutoInactivateControl"
     private val task = Runnable {
         if (enabled) {
-            Log.d(_tag, "Inactivating")
+            Log.d(TAG, "Inactivating")
 
             onInactivate()
         }
@@ -33,11 +32,11 @@ internal class AutoInactivateControl(
             if (field != value && delay > 0) {
                 field = value
                 if (field) {
-                    Log.d(_tag, "Enabled")
+                    Log.d(TAG, "Enabled")
 
                     handler.postDelayed(task, delay)
                 } else {
-                    Log.d(_tag, "Disabled")
+                    Log.d(TAG, "Disabled")
 
                     handler.removeCallbacks(task)
                 }
@@ -65,7 +64,7 @@ internal class AutoInactivateControl(
     }
 
     fun onTouch(event: MotionEvent): Boolean {
-//        Log.v(_tag, "Processing touch: ${event.action}")
+//        Log.v(TAG, "Processing touch: ${event.action}")
 
         when (event.action) {
             ACTION_DOWN -> pause()
@@ -75,15 +74,19 @@ internal class AutoInactivateControl(
     }
 
     fun pause() {
-        Log.d(_tag, "Pause")
+        Log.d(TAG, "Pause")
 
         enabled = false
     }
 
     fun resume() {
-        Log.d(_tag, "Resume")
+        Log.d(TAG, "Resume")
 
         enabled = (mode == MODE_ACTIVE)
     }
 
+    companion object {
+
+        private const val TAG = "AutoInactivateControl"
+    }
 }

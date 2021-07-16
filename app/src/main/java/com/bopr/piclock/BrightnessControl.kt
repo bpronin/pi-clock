@@ -33,7 +33,6 @@ import kotlin.math.min
 internal class BrightnessControl(private val view: View, settings: Settings) :
     ContentControl(settings) {
 
-    private val _tag = "BrightnessControl"
     private val gestureDetector by lazy {
         GestureDetectorCompat(requireContext(), object : SimpleOnGestureListener() {
 
@@ -43,20 +42,21 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
-                if (!swiping) {
+                if (!swiped) {
                     scaleFactor =
                         1.5f / view.parentView.scaledRect.height() /* to 2/3 of parents height */
-                    swiping = true
+                    swiped = true
                     onSwipeStart()
                 } else {
                     val alpha = view.alpha + distanceY * scaleFactor
                     view.alpha = min(MAX_ALPHA, max(alpha, MIN_ALPHA))
                     onSwipe(toPercents(view.alpha))
                 }
-                return false
+                return true
             }
         })
     }
+
     private val fadeAnimator by lazy {
         ObjectAnimator().apply {
             target = view
@@ -67,9 +67,9 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
     }
 
     private var gesturesEnabled = true
+    private var swiped = false
     private var scaleFactor = 0f
-    private var mutedAlpha = MIN_ALPHA
-    private var swiping = false
+    private var savedAlpha = MIN_ALPHA
 
     lateinit var onSwipeStart: () -> Unit
     lateinit var onSwipe: (brightness: Int) -> Unit
@@ -77,13 +77,13 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
 
     init {
         updateGesturesState()
-        updateMutedAlpha()
+        loadBrightness()
     }
 
     private fun fade(alpha: Float, onEnd: () -> Unit = {}) {
         if (view.alpha == alpha) return
 
-        Log.v(_tag, "Start fade to: $alpha")
+        Log.v(TAG, "Start fade to: $alpha")
 
         fadeAnimator.apply {
             cancel()
@@ -93,7 +93,7 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
                 var canceled = false
 
                 override fun onAnimationCancel(animation: Animator?) {
-                    Log.v(_tag, "Canceled fade")
+                    Log.v(TAG, "Canceled fade")
 
                     canceled = true
                 }
@@ -101,7 +101,7 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
                 override fun onAnimationEnd(animation: Animator?) {
                     if (canceled) return
 
-                    Log.v(_tag, "End fade")
+                    Log.v(TAG, "End fade")
 
                     onEnd()
                 }
@@ -115,23 +115,28 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
 
     private fun updateViewAlpha() {
         view.alpha = if (mode == MODE_INACTIVE || mode == MODE_EDITOR) {
-            mutedAlpha
+            savedAlpha
         } else {
             MAX_ALPHA
         }
 
-        Log.v(_tag, "View alpha set to: ${view.alpha}")
+        Log.v(TAG, "View alpha set to: ${view.alpha}")
     }
 
     private fun updateGesturesState() {
         gesturesEnabled = settings.getBoolean(PREF_GESTURES_ENABLED)
     }
 
-    private fun updateMutedAlpha() {
-        mutedAlpha = toDecimal(settings.getInt(PREF_MUTED_BRIGHTNESS))
+    private fun loadBrightness() {
+        savedAlpha = toDecimal(settings.getInt(PREF_MUTED_BRIGHTNESS))
         updateViewAlpha()
 
-        Log.v(_tag, "Muted alpha set to: $mutedAlpha")
+        Log.v(TAG, "Muted alpha set to: $savedAlpha")
+    }
+
+    private fun saveBrightness() {
+        savedAlpha = view.alpha
+        settings.update { putInt(PREF_MUTED_BRIGHTNESS, toPercents(savedAlpha)) }
     }
 
     /**
@@ -139,20 +144,18 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
      */
     fun onTouch(event: MotionEvent): Boolean {
         if (gesturesEnabled && (mode == MODE_INACTIVE || mode == MODE_ACTIVE)) {
-            gestureDetector.onTouchEvent(event)
 
-            /* this is to prevent of calling onClick if scrolled */
+            /* this prevents from calling onClick when swiped */
+            gestureDetector.onTouchEvent(event)
             when (event.action) {
                 ACTION_DOWN ->
-                    swiping = false
+                    swiped = false
                 ACTION_UP -> {
-                    if (swiping) {
-                        settings.update {
-                            putInt(PREF_MUTED_BRIGHTNESS, toPercents(view.alpha))
-                        }
+                    if (swiped) {
+                        saveBrightness()
                         onSwipeEnd()
+                        return true
                     }
-                    return swiping
                 }
             }
         }
@@ -162,7 +165,7 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
 
     override fun onSettingChanged(key: String) {
         when (key) {
-            PREF_MUTED_BRIGHTNESS -> updateMutedAlpha()
+            PREF_MUTED_BRIGHTNESS -> loadBrightness()
             PREF_GESTURES_ENABLED -> updateGesturesState()
         }
     }
@@ -171,10 +174,9 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
         super.onModeChanged(newMode, animate)
         if (animate) {
             when (newMode) {
-                MODE_ACTIVE ->
-                    fade(MAX_ALPHA) { updateViewAlpha() }
-                MODE_INACTIVE, MODE_EDITOR ->
-                    fade(mutedAlpha) { updateViewAlpha() }
+                MODE_ACTIVE -> fade(MAX_ALPHA) { updateViewAlpha() }
+                MODE_INACTIVE,
+                MODE_EDITOR -> fade(savedAlpha) { updateViewAlpha() }
             }
         } else {
             updateViewAlpha()
@@ -182,6 +184,8 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
     }
 
     companion object {
+
+        private const val TAG = "BrightnessControl"
 
         const val MIN_BRIGHTNESS = 10
         const val MAX_BRIGHTNESS = 100
