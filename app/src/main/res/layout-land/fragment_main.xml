@@ -13,8 +13,8 @@
         android:layout_height="0dp"
         android:background="?attr/contentBackgroundColor"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/settings_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/settings_container"
         app:layout_constraintTop_toTopOf="parent">
 
         <FrameLayout
@@ -45,8 +45,8 @@
         android:layout_height="0dp"
         android:background="?android:attr/windowBackground"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/content_container"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toEndOf="@id/content_container"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.6" />
 

@@ -1,7 +1,5 @@
 package com.bopr.piclock.util
 
-import android.content.res.Resources
-import com.bopr.piclock.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -115,5 +113,3 @@ fun Contextual.getLayoutStyles(layoutName: String): Array<out String>? {
 }
 
 fun defaultDatetimeFormat(pattern: String) = SimpleDateFormat(pattern, Locale.getDefault())
-
-val Resources.fabMargin get() = getDimension(R.dimen.fab_margin).toInt()

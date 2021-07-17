@@ -93,7 +93,7 @@ internal class ScaleControl(private val view: View, settings: Settings) : Conten
     private var viewScale: Float
         get() = view.scaleX
         set(value) {
-            Log.d(TAG, "Set view scale to: $value")
+//            Log.v(TAG, "Set view scale to: $value")
 
             view.apply {
                 scaleX = value

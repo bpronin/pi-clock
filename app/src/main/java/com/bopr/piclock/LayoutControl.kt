@@ -1,15 +1,14 @@
 package com.bopr.piclock
 
-import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import androidx.collection.arrayMapOf
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.constraintlayout.widget.ConstraintSet.*
+import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
+import androidx.constraintlayout.widget.ConstraintSet.UNSET
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.FragmentManager
 import androidx.transition.TransitionManager
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
@@ -17,7 +16,6 @@ import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
-import com.bopr.piclock.util.fabMargin
 
 /**
  * Convenience class to control content view layouts.
@@ -30,40 +28,11 @@ internal class LayoutControl(
     settings: Settings
 ) : ContentControl(settings) {
 
-    private val fabMargin = rootView.resources.fabMargin
-    private val mainConstraints = createDefaultConstraints().apply {
-        R.id.settings_button.let {
-            connect(it, RIGHT, PARENT_ID, RIGHT, fabMargin)
-            connect(it, BOTTOM, R.id.content_container, BOTTOM, fabMargin)
-        }
-    }
-    private val editorConstraints = arrayMapOf(
-        ORIENTATION_PORTRAIT to createDefaultConstraints().apply {
-            R.id.settings_button.let {
-                connect(it, RIGHT, PARENT_ID, RIGHT, fabMargin)
-                connect(it, BOTTOM, R.id.content_container, BOTTOM)
-                connect(it, TOP, R.id.content_container, BOTTOM)
-            }
-        },
-        ORIENTATION_LANDSCAPE to createDefaultConstraints().apply {
-            R.id.settings_button.let {
-                connect(it, BOTTOM, PARENT_ID, BOTTOM, fabMargin)
-                connect(it, LEFT, R.id.content_container, RIGHT)
-                connect(it, RIGHT, R.id.content_container, RIGHT)
-            }
-        })
     private val screenOrientation get() = rootView.resources.configuration.orientation
     private val settingsButton get() = rootView.findViewById<View>(R.id.settings_button)
     private val settingsContainer get() = rootView.findViewById<View>(R.id.settings_container)
 
     private var wantRecreateActivity = false
-
-    private fun createDefaultConstraints() = ConstraintSet().apply {
-        R.id.settings_button.let {
-            constrainWidth(it, WRAP_CONTENT)
-            constrainHeight(it, WRAP_CONTENT)
-        }
-    }
 
     private fun createSettingsView() {
         fragmentManager.run {
@@ -108,22 +77,34 @@ internal class LayoutControl(
         }
         when (newMode) {
             MODE_ACTIVE -> {
-                mainConstraints.applyTo(rootView)
+                settingsButton.updateLayoutParams<LayoutParams> {
+                    topToBottom = UNSET
+                    startToEnd = UNSET
+                }
                 settingsButton.visibility = VISIBLE
                 settingsContainer.visibility = GONE
                 removeSettingsView()
             }
             MODE_INACTIVE -> {
-                mainConstraints.applyTo(rootView)
+                settingsButton.updateLayoutParams<LayoutParams> {
+                    topToBottom = UNSET
+                    startToEnd = UNSET
+                }
                 settingsButton.visibility = GONE
                 settingsContainer.visibility = GONE
                 removeSettingsView()
             }
             MODE_EDITOR -> {
-                createSettingsView()
-                editorConstraints[screenOrientation]?.applyTo(rootView)
+                settingsButton.updateLayoutParams<LayoutParams> {
+                    if (screenOrientation == ORIENTATION_PORTRAIT) {
+                        topToBottom = R.id.content_container
+                    } else {
+                        startToEnd = R.id.content_container
+                    }
+                }
                 settingsButton.visibility = VISIBLE
                 settingsContainer.visibility = VISIBLE
+                createSettingsView()
             }
         }
     }
