@@ -5,6 +5,7 @@ import android.animation.AnimatorSet
 import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
@@ -44,15 +45,18 @@ class AnimatedTextView : FrameLayout {
     ) : super(context, attrs, defStyleAttr, defStyleRes) {
         view = AppCompatTextView(context, attrs, defStyleAttr)
         shadowView = AppCompatTextView(context, attrs, defStyleAttr)
+
         resetViews()
 
-        val layoutParams = generateLayoutParams(attrs)
-        layoutParams.apply {
-            if (width == 0) width = MATCH_PARENT
-            if (height == 0) height = MATCH_PARENT
+        generateLayoutParams(attrs).apply {   /* do not use here layout's layoutParams */
+            val w = if (width == WRAP_CONTENT) WRAP_CONTENT else MATCH_PARENT
+            val h = if (height == WRAP_CONTENT) WRAP_CONTENT else MATCH_PARENT
+            view.layoutParams = LayoutParams(w, h)
+            shadowView.layoutParams = LayoutParams(w, h)
         }
-        addView(shadowView, layoutParams)
-        addView(view, layoutParams)
+
+        addView(shadowView)
+        addView(view)
     }
 
     private fun resetViews() {
