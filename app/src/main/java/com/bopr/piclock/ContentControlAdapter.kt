@@ -20,6 +20,7 @@ internal abstract class ContentControlAdapter(val settings: Settings) : ContentC
 
     final override fun onModeChanged(@Mode newMode: Int, animate: Boolean) {
         mode = newMode
+        onModeChanged(animate)
     }
 
     override fun requireContext(): Context {
