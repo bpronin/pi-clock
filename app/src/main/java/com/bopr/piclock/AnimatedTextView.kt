@@ -75,11 +75,6 @@ class AnimatedTextView : FrameLayout {
 */
     }
 
-    private val customProperties = setOf(
-        PROP_RELATIVE_TRANSITION_X,
-        PROP_RELATIVE_TRANSITION_Y
-    )
-
     fun setTextAnimator(resId: Int) {
         val animator = if (resId > 0) loadAnimator(context, resId) as AnimatorSet else null
         animator?.apply {
@@ -90,11 +85,11 @@ class AnimatedTextView : FrameLayout {
         resetViews()
         textAnimator = animator?.apply {
             childAnimations[0].apply {
-                extendProperties(customProperties)
+                extendProperties(CUSTOM_PROPERTIES)
                 setTarget(view)
             }
             childAnimations[1].apply {
-                extendProperties(customProperties)
+                extendProperties(CUSTOM_PROPERTIES)
                 setTarget(shadowView)
             }
             doOnStart { shadowView.visibility = VISIBLE }
@@ -117,5 +112,13 @@ class AnimatedTextView : FrameLayout {
 
     override fun getBaseline(): Int {
         return view.baseline
+    }
+
+    companion object {
+
+        private val CUSTOM_PROPERTIES = setOf(
+            PROP_RELATIVE_TRANSITION_X,
+            PROP_RELATIVE_TRANSITION_Y
+        )
     }
 }
