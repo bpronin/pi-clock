@@ -8,7 +8,6 @@ import android.view.View.*
 import android.view.WindowInsets.Type.systemBars
 import android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
-import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 
 /**
@@ -110,10 +109,9 @@ internal class FullscreenControl(
         if (key == PREF_FULLSCREEN_ENABLED) updateEnabled()
     }
 
-    override fun onModeChanged(@Mode newMode: Int, animate: Boolean) {
-        super.onModeChanged(newMode, animate)
+    override fun onModeChanged(animate: Boolean) {
         if (enabled) {
-            fullscreen = (newMode == MODE_INACTIVE)
+            fullscreen = (mode == MODE_INACTIVE)
         }
     }
 

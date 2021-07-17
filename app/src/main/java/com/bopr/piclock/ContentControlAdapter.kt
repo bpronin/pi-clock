@@ -18,6 +18,10 @@ internal abstract class ContentControlAdapter(val settings: Settings) : ContentC
     protected var mode = MODE_ACTIVE
         private set
 
+    final override fun onModeChanged(@Mode newMode: Int, animate: Boolean) {
+        mode = newMode
+    }
+
     override fun requireContext(): Context {
         return settings.requireContext()
     }
@@ -30,7 +34,7 @@ internal abstract class ContentControlAdapter(val settings: Settings) : ContentC
         /* does nothing by default */
     }
 
-    override fun onModeChanged(@Mode newMode: Int, animate: Boolean) {
-        mode = newMode
+    open fun onModeChanged(animate: Boolean) {
+        /* does nothing by default */
     }
 }

@@ -15,7 +15,6 @@ import androidx.core.view.GestureDetectorCompat
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
-import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.Settings.Companion.PREF_GESTURES_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_MUTED_BRIGHTNESS
 import com.bopr.piclock.util.parentView
@@ -146,10 +145,9 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
         }
     }
 
-    override fun onModeChanged(@Mode newMode: Int, animate: Boolean) {
-        super.onModeChanged(newMode, animate)
+    override fun onModeChanged(animate: Boolean) {
         if (animate) {
-            when (newMode) {
+            when (mode) {
                 MODE_ACTIVE -> fade(MAX_ALPHA) { updateViewAlpha() }
                 MODE_INACTIVE,
                 MODE_EDITOR -> fade(savedAlpha) { updateViewAlpha() }

@@ -14,7 +14,6 @@ import androidx.transition.TransitionManager
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
-import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 
 /**
@@ -71,11 +70,11 @@ internal class LayoutControl(
         }
     }
 
-    override fun onModeChanged(@Mode newMode: Int, animate: Boolean) {
+    override fun onModeChanged(animate: Boolean) {
         if (animate) {
             TransitionManager.beginDelayedTransition(rootView)
         }
-        when (newMode) {
+        when (mode) {
             MODE_ACTIVE -> {
                 settingsButton.updateLayoutParams<LayoutParams> {
                     topToBottom = UNSET

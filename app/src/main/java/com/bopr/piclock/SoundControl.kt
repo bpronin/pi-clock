@@ -5,7 +5,6 @@ import android.util.Log
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
-import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.Settings.Companion.PREF_TICK_RULES
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.TICK_ACTIVE
@@ -63,8 +62,7 @@ internal class SoundControl(context: Context, settings: Settings) : ContentContr
         }
     }
 
-    override fun onModeChanged(@Mode newMode: Int, animate: Boolean) {
-        super.onModeChanged(newMode, animate)
+    override fun onModeChanged(animate: Boolean) {
         if (animate) {
             when (mode) {
                 MODE_EDITOR ->

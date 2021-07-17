@@ -6,7 +6,6 @@ import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
-import com.bopr.piclock.MainFragment.Mode
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 
 /**
@@ -58,8 +57,7 @@ internal class AutoInactivateControl(
         if (key == PREF_AUTO_INACTIVATE_DELAY) updateDelay()
     }
 
-    override fun onModeChanged(@Mode newMode: Int, animate: Boolean) {
-        super.onModeChanged(newMode, animate)
+    override fun onModeChanged(animate: Boolean) {
         resume()
     }
 

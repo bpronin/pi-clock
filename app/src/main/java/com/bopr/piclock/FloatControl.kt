@@ -217,9 +217,8 @@ internal class FloatControl(
         }
     }
 
-    override fun onModeChanged(newMode: Int, animate: Boolean) {
-        super.onModeChanged(newMode, animate)
-        when (newMode) {
+    override fun onModeChanged(animate: Boolean) {
+        when (mode) {
             MODE_ACTIVE -> {
                 enabled = false
                 floatHome()
