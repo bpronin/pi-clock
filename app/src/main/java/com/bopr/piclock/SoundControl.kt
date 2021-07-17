@@ -19,7 +19,7 @@ import java.util.*
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class SoundControl(context: Context, settings: Settings) : ContentControl(settings),
+internal class SoundControl(context: Context, settings: Settings) : ContentControlAdapter(settings),
     Destroyable {
 
     private val player = TickPlayer(context)
@@ -104,7 +104,7 @@ internal class SoundControl(context: Context, settings: Settings) : ContentContr
         ) player.play()
     }
 
-    fun onFloatView(floating: Boolean) {
+    fun onViewFloating(floating: Boolean) {
         viewFloating = floating
         if (viewFloating && whenFloating && !whenInactive) {
             player.fadeVolume(fadeDuration * 2, 0f, 1f, 0f)

@@ -31,7 +31,7 @@ import kotlin.math.min
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class BrightnessControl(private val view: View, settings: Settings) :
-    ContentControl(settings) {
+    ContentControlAdapter(settings) {
 
     private val gestureDetector by lazy {
         GestureDetectorCompat(requireContext(), object : SimpleOnGestureListener() {
@@ -139,6 +139,26 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
         settings.update { putInt(PREF_MUTED_BRIGHTNESS, toPercents(savedAlpha)) }
     }
 
+    override fun onSettingChanged(key: String) {
+        when (key) {
+            PREF_MUTED_BRIGHTNESS -> loadBrightness()
+            PREF_GESTURES_ENABLED -> loadGesturesState()
+        }
+    }
+
+    override fun onModeChanged(@Mode newMode: Int, animate: Boolean) {
+        super.onModeChanged(newMode, animate)
+        if (animate) {
+            when (newMode) {
+                MODE_ACTIVE -> fade(MAX_ALPHA) { updateViewAlpha() }
+                MODE_INACTIVE,
+                MODE_EDITOR -> fade(savedAlpha) { updateViewAlpha() }
+            }
+        } else {
+            updateViewAlpha()
+        }
+    }
+
     /**
      * To be called in owner's onTouch.
      */
@@ -161,26 +181,6 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
         }
 
         return false
-    }
-
-    override fun onSettingChanged(key: String) {
-        when (key) {
-            PREF_MUTED_BRIGHTNESS -> loadBrightness()
-            PREF_GESTURES_ENABLED -> loadGesturesState()
-        }
-    }
-
-    override fun onModeChanged(@Mode newMode: Int, animate: Boolean) {
-        super.onModeChanged(newMode, animate)
-        if (animate) {
-            when (newMode) {
-                MODE_ACTIVE -> fade(MAX_ALPHA) { updateViewAlpha() }
-                MODE_INACTIVE,
-                MODE_EDITOR -> fade(savedAlpha) { updateViewAlpha() }
-            }
-        } else {
-            updateViewAlpha()
-        }
     }
 
     companion object {

@@ -22,7 +22,7 @@ import java.util.*
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class DigitalClockControl(view: View, settings: Settings) : ContentControl(settings) {
+internal class DigitalClockControl(view: View, settings: Settings) : ContentControlAdapter(settings) {
 
     private val amPmFormat = defaultDatetimeFormat("a")
     private val hoursView: AnimatedTextView = view.findViewById(R.id.hours_view)

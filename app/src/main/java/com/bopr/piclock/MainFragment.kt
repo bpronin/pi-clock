@@ -48,6 +48,19 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         }
     }
 
+    private val controlSet by lazy {
+        setOf(
+            fullscreenControl,
+            soundControl,
+            floatControl,
+            autoInactivateControl,
+            brightnessControl,
+            scaleControl,
+            layoutControl,
+            contentControl
+        )
+    }
+
     private val fullscreenControl by lazy {
         FullscreenControl(requireActivity(), handler, settings)
     }
@@ -58,7 +71,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
     private val floatControl by lazy {
         FloatControl(contentHolderView, handler, settings).apply {
-            onFloat = { soundControl.onFloatView(it) }
+            onFloat = { soundControl.onViewFloating(it) }
         }
     }
 
@@ -116,7 +129,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         LayoutControl(fragmentView, parentFragmentManager, settings)
     }
 
-    private lateinit var contentControl: ContentControl
+    private val contentControl by lazy {
+        ContentControlWrapper()
+    }
+
     private lateinit var infoView: TextView
 
     @Mode
@@ -218,14 +234,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
                 createContentControl()
         }
 
-        autoInactivateControl.onSettingChanged(key)
-        brightnessControl.onSettingChanged(key)
-        contentControl.onSettingChanged(key)
-        floatControl.onSettingChanged(key)
-        fullscreenControl.onSettingChanged(key)
-        layoutControl.onSettingChanged(key)
-        scaleControl.onSettingChanged(key)
-        soundControl.onSettingChanged(key)
+        controlSet.forEach { it.onSettingChanged(key) }
     }
 
     internal fun onBackPressed(): Boolean {
@@ -238,27 +247,14 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
     }
 
     private fun onTimer(tick: Int) {
-        val time = if (timeIncrement == 0L) {
-            Date()
-        } else {
-            startTime += timeIncrement
-            Date(startTime)
-        }
-        contentControl.onTimer(time, tick)
-        soundControl.onTimer(time, tick)
+        val time = getCurrentTime()
+        controlSet.forEach { it.onTimer(time, tick) }
     }
 
     private fun setMode(@Mode newMode: Int, animate: Boolean) {
         if (mode != newMode) {
             mode = newMode
-
-            autoInactivateControl.onModeChanged(mode, animate)
-            brightnessControl.onModeChanged(mode, animate)
-            floatControl.onModeChanged(mode, animate)
-            fullscreenControl.onModeChanged(mode, animate)
-            layoutControl.onModeChanged(mode, animate)
-            scaleControl.onModeChanged(mode, animate)
-            soundControl.onModeChanged(mode, animate)
+            controlSet.forEach { it.onModeChanged(mode, animate) }
 
             Log.d(TAG, "Mode set to: $mode")
         }
@@ -293,18 +289,26 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
             addView(contentView)
         }
 
-        contentControl = when {
-            isDigitalClockLayout(layoutName) ->
-                DigitalClockControl(contentView, settings)
-            else ->
-                throw IllegalArgumentException("Unregistered content layout resource: $layoutName")
-        }
+        contentControl.setControl(
+            when {
+                isDigitalClockLayout(layoutName) -> DigitalClockControl(contentView, settings)
+                else ->
+                    throw IllegalArgumentException("Unregistered content layout resource: $layoutName")
+            }
+        )
 
         Log.d(TAG, "Created content")
     }
 
+    private fun getCurrentTime() = if (timeIncrement == 0L) {
+        Date()
+    } else {
+        startTime += timeIncrement
+        Date(startTime)
+    }
+
     /**
-     * Only for debug purposes.
+     * For debug purposes only. Allows to force time to go faster :)
      */
     internal fun setTimeParams(interval: Long, increment: Long) {
         timer.interval = interval
@@ -322,7 +326,5 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         const val MODE_INACTIVE = 0
         const val MODE_ACTIVE = 1
         const val MODE_EDITOR = 2
-
     }
-
 }

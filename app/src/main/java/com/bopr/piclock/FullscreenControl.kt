@@ -20,7 +20,7 @@ internal class FullscreenControl(
     private val activity: Activity,
     private val handler: Handler,
     settings: Settings
-) : ContentControl(settings) {
+) : ContentControlAdapter(settings) {
 
     /**
      * Some older devices needs a small delay between UI widget updates

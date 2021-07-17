@@ -17,7 +17,7 @@ import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 internal class AutoInactivateControl(
     private val handler: Handler,
     settings: Settings
-) : ContentControl(settings) {
+) : ContentControlAdapter(settings) {
 
     private val task = Runnable {
         if (enabled) {

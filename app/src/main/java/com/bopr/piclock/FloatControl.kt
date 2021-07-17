@@ -30,7 +30,7 @@ internal class FloatControl(
     private val view: View,
     private val handler: Handler,
     settings: Settings
-) : ContentControl(settings) {
+) : ContentControlAdapter(settings) {
 
     private val floatTask = Runnable {
         if (enabled && view.isLaidOut) {
@@ -39,12 +39,19 @@ internal class FloatControl(
             }
         }
     }
-    private val customViewProperties = setOf(
-        PROP_X_CURRENT_TO_END,
-        PROP_Y_CURRENT_TO_END,
-        PROP_ALPHA_CURRENT_TO_ZERO,
-        PROP_ALPHA_ZERO_TO_CURRENT
-    )
+
+    private var floatAnimator: Animator? = null
+    private var homeAnimator: Animator? = null
+    private var interval = 0L
+    private var animated = true
+
+    private var floating = false
+        set(value) {
+            if (field != value) {
+                field = value
+                onFloat(field)
+            }
+        }
 
     private var enabled = false
         set(value) {
@@ -60,17 +67,6 @@ internal class FloatControl(
                     handler.removeCallbacks(floatTask)
                     cancelAnimators()
                 }
-            }
-        }
-    private var floatAnimator: Animator? = null
-    private var homeAnimator: Animator? = null
-    private var interval = 0L
-    private var animated: Boolean = true
-    private var floating = false
-        set(value) {
-            if (field != value) {
-                field = value
-                onFloat(field)
             }
         }
 
@@ -191,10 +187,10 @@ internal class FloatControl(
         val resId = getResId("animator", settings.getString(PREF_FLOAT_ANIMATION))
         if (resId > 0) {
             floatAnimator = loadAnimator(requireContext(), resId).apply {
-                extendProperties(customViewProperties)
+                extendProperties(CUSTOM_VIEW_PROPERTIES)
             }
             homeAnimator = loadAnimator(requireContext(), R.animator.float_home).apply {
-                extendProperties(customViewProperties)
+                extendProperties(CUSTOM_VIEW_PROPERTIES)
             }
         } else {
             floatAnimator = null
@@ -253,5 +249,11 @@ internal class FloatControl(
     companion object {
 
         private const val TAG = "FloatControl"
+        private val CUSTOM_VIEW_PROPERTIES = setOf(
+            PROP_X_CURRENT_TO_END,
+            PROP_Y_CURRENT_TO_END,
+            PROP_ALPHA_CURRENT_TO_ZERO,
+            PROP_ALPHA_ZERO_TO_CURRENT
+        )
     }
 }

@@ -26,7 +26,7 @@ internal class LayoutControl(
     private val rootView: ConstraintLayout,
     private val fragmentManager: FragmentManager,
     settings: Settings
-) : ContentControl(settings) {
+) : ContentControlAdapter(settings) {
 
     private val screenOrientation get() = rootView.resources.configuration.orientation
     private val settingsButton get() = rootView.findViewById<View>(R.id.settings_button)
