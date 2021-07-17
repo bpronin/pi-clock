@@ -8,13 +8,14 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.hardware.SensorManager.SENSOR_DELAY_NORMAL
+import com.bopr.piclock.util.Destroyable
 
 /**
  * Convenience class to work with ambient light.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class IlluminanceDetector(context: Context) {
+internal class IlluminanceDetector(context: Context) : Destroyable {
 
     private var currentValue = -1f
     private val sensorManager = context.getSystemService(SENSOR_SERVICE) as SensorManager
@@ -41,7 +42,7 @@ internal class IlluminanceDetector(context: Context) {
 
     lateinit var onIlluminanceChange: (illuminance: Float) -> Unit
 
-    fun destroy() {
+    override fun destroy() {
         sensorManager.unregisterListener(sensorListener)
     }
 

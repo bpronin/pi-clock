@@ -11,6 +11,7 @@ import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.TICK_ACTIVE
 import com.bopr.piclock.Settings.Companion.TICK_FLOATING
 import com.bopr.piclock.Settings.Companion.TICK_INACTIVE
+import com.bopr.piclock.util.Destroyable
 import java.util.*
 
 /**
@@ -18,7 +19,8 @@ import java.util.*
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class SoundControl(context: Context, settings: Settings) : ContentControl(settings) {
+internal class SoundControl(context: Context, settings: Settings) : ContentControl(settings),
+    Destroyable {
 
     private val player = TickPlayer(context)
     private val fadeDuration = 4000L //todo: make it var
@@ -31,6 +33,10 @@ internal class SoundControl(context: Context, settings: Settings) : ContentContr
     init {
         updateSource()
         updatePlayRules()
+    }
+
+    override fun destroy() {
+        player.stop()
     }
 
     private fun updateSource() {
@@ -103,10 +109,6 @@ internal class SoundControl(context: Context, settings: Settings) : ContentContr
         if (viewFloating && whenFloating && !whenInactive) {
             player.fadeVolume(fadeDuration * 2, 0f, 1f, 0f)
         }
-    }
-
-    fun destroy() {
-        player.stop()
     }
 
     companion object {
