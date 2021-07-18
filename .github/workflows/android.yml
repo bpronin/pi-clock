@@ -28,7 +28,7 @@ jobs:
       - name: Inflate local gradle.properties
         env:
           GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
-        run: printf $GRADLE_PROPERTIES
+        run: echo $GRADLE_PROPERTIES
 
 #      - name: Inflate local.gradle
 #        env:
