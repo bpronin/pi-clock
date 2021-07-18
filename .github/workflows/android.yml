@@ -20,11 +20,11 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
 
-      - name: Inflate google-services.json from secrets
-        run: echo ${{ secrets.GOOGLE_SERVICES_JSON }} > app/google-services.json
-
       - name: Inflate app level gradle.properties from secrets
         run: echo ${{ secrets.GRADLE_PROPERTIES }} > app/gradle.properties
+
+      - name: Inflate google-services.json from secrets
+        run: echo ${{ secrets.GOOGLE_SERVICES_JSON }} > app/google-services.json
 
       - name: Inflate and decript keystore.p12 from secrets
         run: |
