@@ -30,7 +30,7 @@ def uploadApk = { apkName ->
             into dstPath
         }
     } else {
-        println("Property not set")
+        println("release upload canceled. destination not set")
     }
 }
 

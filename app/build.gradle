@@ -23,7 +23,7 @@ android {
     signingConfigs {
         release {
             storeFile file("keystore.p12")
-            keyAlias "sample"
+            keyAlias key_alias
             storePassword store_password
             keyPassword key_password
         }
@@ -32,7 +32,7 @@ android {
     buildTypes {
         all {
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            resValue("string", "developer_email", developer_email)
+            resValue("string", "developer_email", "boprsoft.dev@gmail.com")
         }
         debug {
             signingConfig signingConfigs.debug
