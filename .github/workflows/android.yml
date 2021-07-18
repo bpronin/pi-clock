@@ -41,7 +41,7 @@ jobs:
           RELEASE_KEYSTORE_PASSPHRASE: ${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}
         run:
           echo $RELEASE_KEYSTORE > app/keystore.p12.asc
-          gpg -d --passphrase $RELEASE_KEYSTORE_PASSPHRASE --batch keystore.p12.asc > keystore.p12
+          gpg -d --passphrase $RELEASE_KEYSTORE_PASSPHRASE --batch app/keystore.p12.asc > app/keystore.p12
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
