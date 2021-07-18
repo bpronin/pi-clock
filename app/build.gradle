@@ -25,14 +25,14 @@ android {
             storeFile file("keystore.p12")
             keyAlias "sample"
             storePassword store_password
-            keyPassword "sample"
+            keyPassword key_password
         }
     }
 
     buildTypes {
         all {
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            resValue("string", "developer_email", "developer_email")
+            resValue("string", "developer_email", developer_email)
         }
         debug {
             signingConfig signingConfigs.debug
