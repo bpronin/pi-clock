@@ -6,12 +6,9 @@
 /.idea/
 /app/build/
 /app/google-services.json
+/app/gradle.properties
 /app/keystore.p12
-/app/local.gradle
+/app/src/main/res/layout/test.xml
 /build/
 /captures
-/local.properties
 local.properties
-/app/src/main/res/layout/test.xml
-/app/gradle.properties
-/app/keystore.p12.asc

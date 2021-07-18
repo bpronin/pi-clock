@@ -1,5 +1,5 @@
 name: Android CI
-
+# see also https://docs.github.com/en/actions/reference/encrypted-secrets
 on:
   push:
     branches: [ main ]
@@ -30,13 +30,10 @@ jobs:
           GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }} # new lines in secret must be \n
         run: echo -e $GRADLE_PROPERTIES  > app/gradle.properties
 
-      - name: Inflate and decrypt keystore.p12
+      - name: Decrypt keystore.p12
         env:
-          RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
-          RELEASE_KEYSTORE_PASSPHRASE: ${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}
-        run:
-          echo $RELEASE_KEYSTORE > app/keystore.p12.asc
-          gpg -d --passphrase $RELEASE_KEYSTORE_PASSPHRASE --batch app/keystore.p12.asc > app/keystore.p12
+          KEYSTORE_PASSPHRASE: ${{ secrets.KEYSTORE_PASSPHRASE }}
+        run: gpg -d --passphrase $KEYSTORE_PASSPHRASE --batch app/keystore.p12.gpg > app/keystore.p12
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew

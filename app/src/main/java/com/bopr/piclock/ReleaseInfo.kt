@@ -8,6 +8,7 @@ import java.util.*
  * Application release info.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ * @see [BuildConfig]
  */
 class ReleaseInfo private constructor(
     val buildNumber: String,
