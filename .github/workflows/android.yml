@@ -30,10 +30,10 @@ jobs:
 #          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
 #        run: echo $GRADLE_PROPERTIES > app/gradle.properties
 
-#      - name: Inflate local.gradle
-#        env:
-#          LOCAL_GRADLE: ${{ secrets.LOCAL_GRADLE }}
-#        run: echo $LOCAL_GRADLE > app/local.gradle
+      - name: Inflate local.gradle
+        env:
+          LOCAL_GRADLE: ${{ secrets.LOCAL_GRADLE }}
+        run: echo $LOCAL_GRADLE > app/local.gradle
 
       - name: Inflate and decript keystore.p12
         env:

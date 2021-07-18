@@ -1,4 +1,4 @@
-apply from: 'local.gradle'
+apply from: "local.gradle"
 
 import java.text.SimpleDateFormat
 
@@ -12,7 +12,7 @@ def updateReleaseInfo = {
     def buildNumber = Integer.parseInt(props.getProperty("build_number")) + 1
 
     def df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z")
-    df.setTimeZone(TimeZone.getTimeZone('UTC'))
+    df.setTimeZone(TimeZone.getTimeZone("UTC"))
     def buildTime = df.format(new Date())
 
     props.setProperty("build_number", String.valueOf(buildNumber))
