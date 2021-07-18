@@ -27,8 +27,8 @@ jobs:
 
       - name: Inflate local gradle.properties
         env:
-          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
-        run: echo -e $GRADLE_PROPERTIES  # new lines in secret must be \n
+          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }} # new lines in secret must be \n
+        run: echo -e $GRADLE_PROPERTIES  > app/gradle.properties
 
       - name: Inflate and decrypt keystore.p12
         env:
