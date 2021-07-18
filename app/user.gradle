@@ -1,3 +1,5 @@
+apply from: 'local.gradle'
+
 import java.text.SimpleDateFormat
 
 /* user defined procedures */
