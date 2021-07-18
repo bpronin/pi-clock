@@ -1,43 +1,43 @@
 //plugins {
-//    id 'com.android.application'
-//    id 'kotlin-android'
+//    id "com.android.application"
+//    id "kotlin-android"
 //}
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
-apply from: 'user.gradle'
-apply from: 'local.gradle'
+apply plugin: "com.android.application"
+apply plugin: "kotlin-android"
+apply plugin: "com.google.gms.google-services"
+apply plugin: "com.google.firebase.crashlytics"
+//apply from: "user.gradle"
+//apply from: "local.gradle"
 
 android {
 
     compileSdkVersion 30
-    buildToolsVersion '30.0.3'
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         versionCode 11
-        versionName '1.1.3'
+        versionName "1.1.3"
         targetSdkVersion 30
         minSdkVersion 21
-        applicationId 'com.bopr.piclock'
+        applicationId "com.bopr.piclock"
         vectorDrawables.useSupportLibrary true
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         archivesBaseName = "piclock-${versionName}"
     }
 
     signingConfigs {
         release {
-            keyAlias 'sample'
-            storeFile file('keystore.p12')
-            storePassword store_password
-            keyPassword key_password
+            storeFile file("keystore.p12")
+            keyAlias "sample"
+            storePassword "sample"
+            keyPassword "sample"
         }
     }
 
     buildTypes {
         all {
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            resValue("string", "developer_email", developer_email)
+            resValue("string", "developer_email", "developer_email")
         }
         debug {
             signingConfig signingConfigs.debug
@@ -67,15 +67,15 @@ android {
 dependencies {
     implementation "androidx.appcompat:appcompat:1.3.0"
     implementation "androidx.constraintlayout:constraintlayout:2.0.4"
-    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation "androidx.core:core-ktx:1.6.0"
     implementation "androidx.preference:preference-ktx:1.1.1"
-    implementation 'com.google.android.material:material:1.4.0'
-    implementation 'com.google.firebase:firebase-crashlytics:18.1.0'
-    implementation 'com.google.firebase:firebase-analytics:19.0.0'
+    implementation "com.google.android.material:material:1.4.0"
+    implementation "com.google.firebase:firebase-crashlytics:18.1.0"
+    implementation "com.google.firebase:firebase-analytics:19.0.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     testImplementation "junit:junit:4.13.2"
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation "androidx.test.ext:junit:1.1.3"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.4.0"
 }
