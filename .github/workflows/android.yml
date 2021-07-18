@@ -28,14 +28,14 @@ jobs:
       - name: Inflate local gradle.properties
         env:
           GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
-        run: echo -e $GRADLE_PROPERTIES
+        run: printf $GRADLE_PROPERTIES
 
 #      - name: Inflate local.gradle
 #        env:
 #          LOCAL_GRADLE: ${{ secrets.LOCAL_GRADLE }}
 #        run: echo $LOCAL_GRADLE > app/local.gradle
 
-#      - name: Inflate and decript keystore.p12
+#      - name: Inflate and decrypt keystore.p12
 #        env:
 #          RELEASE_KEYSTORE: ${{ secrets.RELEASE_KEYSTORE }}
 #          RELEASE_KEYSTORE_PASSPHRASE: ${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}
