@@ -16,6 +16,7 @@ class MainActivity : BaseActivity<MainFragment>(MainFragment::class) {
     //todo: joke: settings "show nanoseconds"
     //todo: joke: release notes: seconds view moved 1px right and 2px up
     //todo: option to save different layouts for landscape and portrait orientation
+    //todo: randomly animate date, hours and minutes (with same values)
 
     private val settings by lazy { Settings(this) }
 

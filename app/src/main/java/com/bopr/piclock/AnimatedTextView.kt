@@ -15,6 +15,8 @@ import androidx.core.animation.doOnStart
 import com.bopr.piclock.util.extendProperties
 import com.bopr.piclock.util.property.PROP_RELATIVE_TRANSITION_X
 import com.bopr.piclock.util.property.PROP_RELATIVE_TRANSITION_Y
+import com.bopr.piclock.util.property.PROP_SCALE_Y_PIVOT_BOTTOM
+import com.bopr.piclock.util.property.PROP_SCALE_Y_PIVOT_TOP
 import com.bopr.piclock.util.resetRenderParams
 
 /**
@@ -118,7 +120,9 @@ class AnimatedTextView : FrameLayout {
 
         private val CUSTOM_PROPERTIES = setOf(
             PROP_RELATIVE_TRANSITION_X,
-            PROP_RELATIVE_TRANSITION_Y
+            PROP_RELATIVE_TRANSITION_Y,
+            PROP_SCALE_Y_PIVOT_TOP,
+            PROP_SCALE_Y_PIVOT_BOTTOM
         )
     }
 }

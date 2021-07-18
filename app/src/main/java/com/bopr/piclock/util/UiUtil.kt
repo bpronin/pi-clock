@@ -5,6 +5,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.app.AlertDialog
 import android.graphics.RectF
+import android.os.Build
 import android.text.InputType
 import android.util.Property
 import android.view.LayoutInflater
@@ -21,16 +22,6 @@ import com.bopr.piclock.R
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-
-//fun ViewGroup.forEachDeep(action: (view: View) -> Unit) {
-//    forEach { view ->
-//        if (view is ViewGroup) {
-//            view.forEachDeep(action)
-//        } else {
-//            action(view)
-//        }
-//    }
-//}
 
 fun RectF.scaled(factorX: Float, factorY: Float): RectF {
     if (factorX != 1f && factorY != 1f) {
@@ -53,12 +44,18 @@ fun View.resetRenderParams() = apply {
     alpha = 1f
     scaleX = 1f
     scaleY = 1f
-    translationZ = 0f
-    translationY = 0f
     translationX = 0f
+    translationY = 0f
+    translationZ = 0f
     rotation = 0f
-    rotationY = 0f
     rotationX = 0f
+    rotationY = 0f
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        resetPivot()
+    } else {
+        pivotX = width / 2f
+        pivotY = height / 2f
+    }
 }
 
 fun Contextual.messageBox(text: String) {

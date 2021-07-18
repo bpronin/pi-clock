@@ -14,4 +14,38 @@
         android:valueFrom="0f"
         android:valueTo="1f" />
 
+    <!--
+        <set>
+            <objectAnimator
+                android:duration="1000"
+                android:interpolator="@android:anim/linear_interpolator"
+                android:propertyName="relativeTranslationY"
+                android:valueFrom="-1f"
+                android:valueTo="0f" />
+
+            <objectAnimator
+                android:duration="1000"
+                android:interpolator="@android:anim/linear_interpolator"
+                android:propertyName="scaleYPivotTop"
+                android:valueFrom="0f"
+                android:valueTo="1f" />
+        </set>
+
+        <set>
+            <objectAnimator
+                android:duration="1000"
+                android:interpolator="@android:anim/linear_interpolator"
+                android:propertyName="relativeTranslationY"
+                android:valueFrom="0f"
+                android:valueTo="1f" />
+
+            <objectAnimator
+                android:duration="1000"
+                android:interpolator="@android:anim/linear_interpolator"
+                android:propertyName="scaleYPivotBottom"
+                android:valueFrom="1f"
+                android:valueTo="0f" />
+        </set>
+    -->
+
 </set>

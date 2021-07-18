@@ -27,12 +27,46 @@ val PROP_SCALE by lazy {
     }
 }
 
+val PROP_SCALE_Y_PIVOT_TOP by lazy {
+
+    object : Property<View, Float>(Float::class.java, "scaleYPivotTop") {
+
+        override fun get(view: View): Float {
+            return view.scaleY
+        }
+
+        override fun set(view: View, value: Float) {
+            view.apply {
+                pivotY = 0f
+                scaleY = value
+            }
+        }
+    }
+}
+
+val PROP_SCALE_Y_PIVOT_BOTTOM by lazy {
+
+    object : Property<View, Float>(Float::class.java, "scaleYPivotBottom") {
+
+        override fun get(view: View): Float {
+            return view.scaleY
+        }
+
+        override fun set(view: View, value: Float) {
+            view.apply {
+                pivotY = view.height.toFloat()
+                scaleY = value
+            }
+        }
+    }
+}
+
 val PROP_RELATIVE_TRANSITION_X by lazy {
 
     object : Property<View, Float>(Float::class.java, "relativeTranslationX") {
 
         override fun get(view: View?): Float? {
-            return view?.run { translationX / width } ?: run { null }
+            return view?.run { translationX / width }
         }
 
         override fun set(view: View?, value: Float?) {
@@ -46,7 +80,7 @@ val PROP_RELATIVE_TRANSITION_Y by lazy {
     object : Property<View, Float>(Float::class.java, "relativeTranslationY") {
 
         override fun get(view: View?): Float? {
-            return view?.run { translationY / height } ?: run { null }
+            return view?.run { translationY / height }
         }
 
         override fun set(view: View?, value: Float?) {
