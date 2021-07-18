@@ -17,7 +17,7 @@ internal class AutoInactivateControl(
     private val handler: Handler,
     settings: Settings
 ) : ContentControlAdapter(settings) {
-
+    //todo: remove Disabled option and make 1min option
     private val task = Runnable {
         if (enabled) {
             Log.d(TAG, "Inactivating")

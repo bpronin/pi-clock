@@ -27,7 +27,8 @@ import kotlin.math.min
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class ScaleControl(private val view: View, settings: Settings) : ContentControlAdapter(settings),
+internal class ScaleControl(private val view: View, settings: Settings) :
+    ContentControlAdapter(settings),
     Destroyable {
 
     private val gestureDetector by lazy {

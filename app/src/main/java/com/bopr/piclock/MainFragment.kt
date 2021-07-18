@@ -38,12 +38,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
     private val timer = HandlerTimer(handler, 500L, 4, ::onTimer)
     private val settings by lazy { Settings(this) }
 
-    private val fragmentView by lazy {
+    private val rootView by lazy {
         requireView() as ConstraintLayout
     }
 
     private val contentHolderView by lazy {
-        fragmentView.findViewById<ViewGroup>(R.id.content_holder).apply {
+        rootView.findViewById<ViewGroup>(R.id.content_holder).apply {
             setOnTouchListener { _, _ -> false } /* translate all touches to parent */
         }
     }
@@ -126,7 +126,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
     }
 
     private val layoutControl by lazy {
-        LayoutControl(fragmentView, parentFragmentManager, settings)
+        LayoutControl(rootView, parentFragmentManager, settings)
     }
 
     private val contentControl by lazy {
@@ -204,8 +204,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
     override fun onDestroy() {
         handler.removeCallbacksAndMessages(null)
         settings.removeListener(this)
-        soundControl.destroy()
-        scaleControl.destroy()
+        controlSet.forEach { if (it is Destroyable) it.destroy() }
         super.onDestroy()
     }
 
@@ -252,12 +251,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
     }
 
     private fun setMode(@Mode newMode: Int, animate: Boolean) {
-        if (mode != newMode) {
-            mode = newMode
-            controlSet.forEach { it.onModeChanged(mode, animate) }
+        mode = newMode
+        controlSet.forEach { it.onModeChanged(mode, animate) }
 
-            Log.d(TAG, "Mode set to: $mode")
-        }
+        Log.d(TAG, "Mode set to: $mode")
     }
 
     private fun createContentControl() {

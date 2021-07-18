@@ -31,7 +31,7 @@ import kotlin.math.min
  */
 internal class BrightnessControl(private val view: View, settings: Settings) :
     ContentControlAdapter(settings) {
-
+    //todo: made transparent control view al left side of the screen
     private val gestureDetector by lazy {
         GestureDetectorCompat(requireContext(), object : SimpleOnGestureListener() {
 
@@ -67,6 +67,7 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
 
     private var gesturesEnabled = true
     private var swiped = false
+    private var inSafeArea = true
     private var scaleFactor = 0f
     private var savedAlpha = MIN_ALPHA
 
@@ -162,14 +163,18 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
      */
     fun onTouch(event: MotionEvent): Boolean {
         if (gesturesEnabled && (mode == MODE_INACTIVE || mode == MODE_ACTIVE)) {
-
-            /* this prevents from calling onClick when swiped */
-            gestureDetector.onTouchEvent(event)
+            if (inSafeArea) {
+                gestureDetector.onTouchEvent(event)
+            }
             when (event.action) {
-                ACTION_DOWN ->
-                    swiped = false
+                ACTION_DOWN -> {
+                    inSafeArea = event.y > SYSTEM_BAR_SWIPE_ZONE
+                    if (inSafeArea) {
+                        swiped = false
+                    }
+                }
                 ACTION_UP -> {
-                    if (swiped) {
+                    if (inSafeArea && swiped) {
                         saveBrightness()
                         onSwipeEnd()
                         return true
@@ -184,6 +189,8 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
     companion object {
 
         private const val TAG = "BrightnessControl"
+
+        private const val SYSTEM_BAR_SWIPE_ZONE = 50
 
         const val MIN_BRIGHTNESS = 10
         const val MAX_BRIGHTNESS = 100

@@ -1,13 +1,14 @@
 package com.bopr.piclock
 
-import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.WindowInsets
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
 import androidx.constraintlayout.widget.ConstraintSet.UNSET
+import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.FragmentManager
 import androidx.transition.TransitionManager
@@ -15,6 +16,7 @@ import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
+import com.bopr.piclock.util.*
 
 /**
  * Convenience class to control content view layouts.
@@ -27,46 +29,60 @@ internal class LayoutControl(
     settings: Settings
 ) : ContentControlAdapter(settings) {
 
-    private val screenOrientation get() = rootView.resources.configuration.orientation
-    private val settingsButton get() = rootView.findViewById<View>(R.id.settings_button)
-    private val settingsContainer get() = rootView.findViewById<View>(R.id.settings_container)
+    private val settingsButton by lazy { rootView.findViewById<View>(R.id.settings_button) }
+    private val settingsContainer by lazy { rootView.findViewById<View>(R.id.settings_container) }
+    private val defaultSettingsButtonInsets by lazy { settingsButton.marginsToInsets() }
+    private val defaultSettingsContainerInsets by lazy { settingsContainer.marginsToInsets() }
 
-    private var wantRecreateActivity = false
+    private var requreRecreateActivity = false
 
-    private fun createSettingsView() {
-        fragmentManager.run {
-            findFragmentById(R.id.settings_container) ?: run {
-                beginTransaction()
-                    .replace(R.id.settings_container, SettingsFragment())
-                    .commit()
+    init {
+        setOnApplyWindowInsetsListener(rootView) { _, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsets.Type.systemBars())
+            settingsButton.fitIntoWindow(insets, defaultSettingsButtonInsets)
+            settingsContainer.fitIntoWindow(insets, defaultSettingsContainerInsets)
+            windowInsets
+        }
+    }
 
-                Log.d(TAG, "Added settings fragment")
+    private fun updateSettingsButtonLayout(editorMode: Boolean) {
+        settingsButton.updateLayoutParams<LayoutParams> {
+            if (editorMode) {
+                if (rootView.isPortraitScreen)
+                    topToBottom = R.id.content_container
+                else
+                    startToEnd = R.id.content_container
+            } else {
+                topToBottom = UNSET
+                startToEnd = UNSET
             }
         }
     }
 
-    private fun removeSettingsView() {
-        fragmentManager.run {
-            findFragmentById(R.id.settings_container)?.run {
-                beginTransaction()
-                    .remove(this)
-                    .commit()
+    private fun updateSettingsViewLayout(editorMode: Boolean) {
+        fragmentManager.apply {
+            if (editorMode) {
+                replaceFragment(R.id.settings_container, ::SettingsFragment)
 
-                Log.d(TAG, "Removed settings fragment")
+                Log.d(TAG, "Added settings fragment")
+            } else {
+                removeFragment(R.id.settings_container) {
+                    if (requreRecreateActivity) {
+                        Log.d(TAG, "Activity recreation required")
 
-                if (wantRecreateActivity) {
-                    Log.d(TAG, "Activity recreation required")
-
-                    wantRecreateActivity = false
-                    activity?.recreate()
+                        requreRecreateActivity = false
+                        it.activity?.recreate()
+                    }
                 }
+                Log.d(TAG, "Removed settings fragment")
             }
         }
     }
 
     override fun onSettingChanged(key: String) {
         if (key == PREF_FULLSCREEN_ENABLED) {
-            wantRecreateActivity = !settings.getBoolean(PREF_FULLSCREEN_ENABLED)
+            /* when the setting is disabled we need to recreate activity to reset entire layout */
+            requreRecreateActivity = !settings.getBoolean(PREF_FULLSCREEN_ENABLED)
         }
     }
 
@@ -74,36 +90,25 @@ internal class LayoutControl(
         if (animate) {
             TransitionManager.beginDelayedTransition(rootView)
         }
+
         when (mode) {
             MODE_ACTIVE -> {
-                settingsButton.updateLayoutParams<LayoutParams> {
-                    topToBottom = UNSET
-                    startToEnd = UNSET
-                }
+                updateSettingsButtonLayout(false)
+                updateSettingsViewLayout(false)
                 settingsButton.visibility = VISIBLE
                 settingsContainer.visibility = GONE
-                removeSettingsView()
             }
             MODE_INACTIVE -> {
-                settingsButton.updateLayoutParams<LayoutParams> {
-                    topToBottom = UNSET
-                    startToEnd = UNSET
-                }
+                updateSettingsButtonLayout(false)
+                updateSettingsViewLayout(false)
                 settingsButton.visibility = GONE
                 settingsContainer.visibility = GONE
-                removeSettingsView()
             }
             MODE_EDITOR -> {
-                settingsButton.updateLayoutParams<LayoutParams> {
-                    if (screenOrientation == ORIENTATION_PORTRAIT) {
-                        topToBottom = R.id.content_container
-                    } else {
-                        startToEnd = R.id.content_container
-                    }
-                }
+                updateSettingsButtonLayout(true)
+                updateSettingsViewLayout(true)
                 settingsButton.visibility = VISIBLE
                 settingsContainer.visibility = VISIBLE
-                createSettingsView()
             }
         }
     }

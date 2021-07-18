@@ -7,4 +7,4 @@ import com.bopr.piclock.util.ui.BaseToolbarActivity
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class BrowseSoundActivity : BaseToolbarActivity<BrowseSoundFragment>(BrowseSoundFragment::class)
+class BrowseSoundActivity : BaseToolbarActivity<BrowseSoundFragment>(::BrowseSoundFragment)

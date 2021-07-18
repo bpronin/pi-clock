@@ -11,7 +11,7 @@ import com.bopr.piclock.util.ui.BaseActivity
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-class MainActivity : BaseActivity<MainFragment>(MainFragment::class) {
+class MainActivity : BaseActivity<MainFragment>(::MainFragment) {
     //todo: если "схватить" движущиеся часы пальцем они начинают "вырываться"
     //todo: joke: settings "show nanoseconds"
     //todo: joke: release notes: seconds view moved 1px right and 2px up

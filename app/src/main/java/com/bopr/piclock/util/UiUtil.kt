@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.app.AlertDialog
+import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.graphics.RectF
 import android.os.Build
 import android.text.InputType
@@ -11,10 +12,16 @@ import android.util.Property
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.EditText
+import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.view.ContextThemeWrapper
+import androidx.core.graphics.Insets
+import androidx.core.view.*
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.bopr.piclock.R
 
 /**
@@ -40,6 +47,8 @@ val View.scaledRect get() = rect.scaled(scaleX, scaleY)
 
 val View.parentView get() = (parent as ViewGroup)
 
+val View.isPortraitScreen get() = resources.configuration.orientation == ORIENTATION_PORTRAIT
+
 fun View.resetRenderParams() = apply {
     alpha = 1f
     scaleX = 1f
@@ -55,6 +64,20 @@ fun View.resetRenderParams() = apply {
     } else {
         pivotX = width / 2f
         pivotY = height / 2f
+    }
+}
+
+fun View.marginsToInsets(): Insets {
+    return Insets.of(marginStart, marginTop, marginEnd, marginBottom)
+}
+
+fun View.fitIntoWindow(insets: Insets, baseInsets: Insets) {
+    val ins = Insets.add(baseInsets, insets)
+    updateLayoutParams<MarginLayoutParams> {
+        marginStart = ins.left
+        topMargin = ins.top
+        marginEnd = ins.right
+        bottomMargin = ins.bottom
     }
 }
 
@@ -118,5 +141,22 @@ fun Animator.extendProperties(properties: Collection<Property<*, *>>) {
                 properties.find { it.name == propertyName }?.also(::setProperty)
             }
         }
+    }
+}
+
+fun FragmentManager.replaceFragment(@IdRes containerId: Int, onGet: () -> Fragment) {
+    findFragmentById(containerId) ?: run {
+        beginTransaction()
+            .replace(containerId, onGet())
+            .commit()
+    }
+}
+
+fun FragmentManager.removeFragment(@IdRes containerId: Int, onEnd: (Fragment) -> Unit = {}) {
+    findFragmentById(containerId)?.run {
+        beginTransaction()
+            .remove(this)
+            .commit()
+        onEnd(this)
     }
 }
