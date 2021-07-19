@@ -14,6 +14,7 @@ import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_FLOAT_ANIMATION
+import com.bopr.piclock.Settings.Companion.PREF_FLOAT_SPEED
 import com.bopr.piclock.util.*
 import com.bopr.piclock.util.property.PROP_ALPHA_CURRENT_TO_ZERO
 import com.bopr.piclock.util.property.PROP_ALPHA_ZERO_TO_CURRENT
@@ -188,6 +189,7 @@ internal class FloatControl(
         if (resId > 0) {
             floatAnimator = loadAnimator(requireContext(), resId).apply {
                 extendProperties(CUSTOM_VIEW_PROPERTIES)
+                updateSpeed (settings.getInt(PREF_FLOAT_SPEED))
             }
             homeAnimator = loadAnimator(requireContext(), R.animator.float_home).apply {
                 extendProperties(CUSTOM_VIEW_PROPERTIES)
@@ -209,11 +211,16 @@ internal class FloatControl(
         }
     }
 
+    private fun computeAnimationDuration(current: Long): Long {
+        return (current * settings.getInt(PREF_FLOAT_SPEED) / 100f).toLong()
+    }
+
     override fun onSettingChanged(key: String) {
         when (key) {
             PREF_CONTENT_FLOAT_INTERVAL -> updateInterval()
-            PREF_FLOAT_ANIMATION -> updateAnimator()
             PREF_ANIMATION_ON -> updateAnimated()
+            PREF_FLOAT_SPEED,
+            PREF_FLOAT_ANIMATION -> updateAnimator()
         }
     }
 
@@ -227,8 +234,7 @@ internal class FloatControl(
                 enabled = true
             }
             MODE_EDITOR -> {
-                enabled = false
-                //todo: enable and move faster to show the chosen animation
+                enabled = true
             }
         }
     }
@@ -248,11 +254,15 @@ internal class FloatControl(
     companion object {
 
         private const val TAG = "FloatControl"
+
         private val CUSTOM_VIEW_PROPERTIES = setOf(
             PROP_X_CURRENT_TO_END,
             PROP_Y_CURRENT_TO_END,
             PROP_ALPHA_CURRENT_TO_ZERO,
             PROP_ALPHA_ZERO_TO_CURRENT
         )
+
+        const val MIN_FLOAT_SPEED = 0
+        const val MAX_FLOAT_SPEED = 500
     }
 }

@@ -34,4 +34,10 @@ class LongListPreference : ListPreference {
     override fun getPersistedString(defaultReturnValue: String?): String {
         return getPersistedLong(defaultReturnValue?.toLong() ?: 0).toString()
     }
+
+    var numberValue: Long
+        get() = value.toLong()
+        set(v) {
+            value = v.toString()
+        }
 }

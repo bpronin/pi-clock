@@ -34,4 +34,10 @@ class IntListPreference : ListPreference {
     override fun getPersistedString(defaultReturnValue: String?): String {
         return getPersistedInt(defaultReturnValue?.toInt() ?: 0).toString()
     }
+
+    var numberValue: Int
+        get() = value.toInt()
+        set(v) {
+            value = v.toString()
+        }
 }

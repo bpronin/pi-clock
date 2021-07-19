@@ -23,6 +23,7 @@ import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.bopr.piclock.R
+import kotlin.math.roundToLong
 
 /**
  * Miscellaneous UI utilities.
@@ -139,6 +140,17 @@ fun Animator.extendProperties(properties: Collection<Property<*, *>>) {
         child.apply {
             if (this is ObjectAnimator) {
                 properties.find { it.name == propertyName }?.also(::setProperty)
+            }
+        }
+    }
+}
+
+fun Animator.updateSpeed(multiplierPercents: Int) {
+    forEachChild { child ->
+        child.apply {
+            if (this is ObjectAnimator) {
+                startDelay = (startDelay * 100f / multiplierPercents).roundToLong()
+                duration = (duration * 100f / multiplierPercents).roundToLong()
             }
         }
     }

@@ -25,6 +25,14 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         return context
     }
 
+    private fun EditorWrapper.putIntResourceOptional(key: String, value: Int, valuesRes: Int) {
+        putIntOptional(
+            key, ensureResArrayContains(valuesRes, value)
+        ) {
+            isResArrayContains(valuesRes, it)
+        }
+    }
+
     private fun EditorWrapper.putLongResourceOptional(key: String, value: Long, valuesRes: Int) {
         putLongOptional(
             key, ensureResArrayContains(valuesRes, value)
@@ -67,10 +75,10 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         putBooleanOptional(PREF_GESTURES_ENABLED, true)
         putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)  /* 15 min */
         putIntOptional(PREF_CONTENT_SCALE, 100) {
-            getInt(PREF_CONTENT_SCALE) in MIN_SCALE..MAX_SCALE
+            it in MIN_SCALE..MAX_SCALE
         }
         putIntOptional(PREF_MUTED_BRIGHTNESS, 20) {
-            getInt(PREF_MUTED_BRIGHTNESS) in MIN_BRIGHTNESS..MAX_BRIGHTNESS
+            it in MIN_BRIGHTNESS..MAX_BRIGHTNESS
         }
 
         putStringSetResourceOptional(
@@ -101,6 +109,12 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             PREF_AUTO_INACTIVATE_DELAY,
             5000,
             R.array.auto_inactivate_delay_values
+        )
+
+        putIntResourceOptional(
+            PREF_FLOAT_SPEED,
+            100,
+            R.array.content_float_speed_values
         )
 
         putStringOptional(
@@ -166,6 +180,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_DATE_FORMAT = "date_format"
         const val PREF_DIGITS_ANIMATION = "digits_animation"
         const val PREF_FLOAT_ANIMATION = "float_animation"
+        const val PREF_FLOAT_SPEED = "float_speed"
         const val PREF_FULLSCREEN_ENABLED = "fullscreen_enabled"
         const val PREF_GESTURES_ENABLED = "gestures_enabled"
         const val PREF_MUTED_BRIGHTNESS = "muted_brightness"

@@ -34,4 +34,10 @@ class FloatListPreference : ListPreference {
     override fun getPersistedString(defaultReturnValue: String?): String {
         return getPersistedFloat(defaultReturnValue?.toFloat() ?: 0f).toString()
     }
+
+    var numberValue: Float?
+        get() = value.toFloatOrNull()
+        set(v) {
+            value = v.toString()
+        }
 }

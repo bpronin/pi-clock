@@ -22,6 +22,7 @@ import com.bopr.piclock.Settings.Companion.PREF_CONTENT_STYLE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_FLOAT_ANIMATION
+import com.bopr.piclock.Settings.Companion.PREF_FLOAT_SPEED
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_GESTURES_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_MUTED_BRIGHTNESS
@@ -34,6 +35,7 @@ import com.bopr.piclock.Settings.Companion.SHARED_PREFERENCES_NAME
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.*
 import com.bopr.piclock.util.ui.preference.CustomPreferenceFragment
+import com.bopr.piclock.util.ui.preference.IntListPreference
 import java.util.*
 
 /**
@@ -89,21 +91,22 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
                 updateStyleViewEntries()
                 validateSelectedStyle()
             }
+            PREF_ANIMATION_ON -> updateAnimationOnView()
             PREF_AUTO_INACTIVATE_DELAY -> updateAutoInactivateView()
             PREF_CONTENT_FLOAT_INTERVAL -> updateFloatIntervalView()
-            PREF_CONTENT_STYLE -> updateStyleView()
             PREF_CONTENT_SCALE -> updateScaleView()
+            PREF_CONTENT_STYLE -> updateStyleView()
             PREF_DATE_FORMAT -> updateDateFormatView()
+            PREF_DIGITS_ANIMATION -> updateDigitsAnimationView()
+            PREF_FLOAT_ANIMATION -> updateFloatAnimationView()
+            PREF_FLOAT_SPEED -> updateFloatSpeedView()
+            PREF_FULLSCREEN_ENABLED -> updateFullscreenView()
+            PREF_GESTURES_ENABLED -> updateGesturesView()
             PREF_MUTED_BRIGHTNESS -> updateMutedBrightnessView()
             PREF_SECONDS_FORMAT -> updateSecondsFormatView()
-            PREF_TICK_SOUND -> updateTickSoundView()
             PREF_TICK_RULES -> updateTickModeView()
+            PREF_TICK_SOUND -> updateTickSoundView()
             PREF_TIME_FORMAT -> updateTimeFormatView()
-            PREF_DIGITS_ANIMATION -> updateDigitsAnimationView()
-            PREF_GESTURES_ENABLED -> updateGesturesView()
-            PREF_FULLSCREEN_ENABLED -> updateFullscreenView()
-            PREF_ANIMATION_ON -> updateAnimationOnView()
-            PREF_FLOAT_ANIMATION -> updateFloatAnimationView()
         }
     }
 
@@ -370,6 +373,14 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         findPreference<ListPreference>(PREF_DIGITS_ANIMATION)?.apply {
             value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
+        }
+    }
+
+    private fun updateFloatSpeedView() {
+        requirePreference<IntListPreference>(PREF_FLOAT_SPEED).apply {
+            val value = settings.getInt(key)
+            val ix = findIndexOfValue(value.toString())
+            summary = if (ix >= 0) entries[ix] else null
         }
     }
 
