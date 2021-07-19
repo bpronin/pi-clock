@@ -48,7 +48,7 @@
         app:layout_constraintStart_toEndOf="@id/content_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.6" />
+        app:layout_constraintWidth_percent="0.5" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/settings_button"

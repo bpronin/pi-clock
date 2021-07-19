@@ -7,7 +7,6 @@ import android.os.Handler
 import android.util.Log
 import android.view.View
 import androidx.core.animation.doOnEnd
-import androidx.core.animation.doOnStart
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
@@ -23,7 +22,7 @@ import com.bopr.piclock.util.property.PROP_Y_CURRENT_TO_END
 import java.lang.Math.random
 
 /**
- * Convenience class to control floating content view along the screen.
+ * Controls content view floating movement along the screen.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
@@ -33,13 +32,14 @@ internal class FloatControl(
     settings: Settings
 ) : ContentControlAdapter(settings) {
 
-    private val floatTask = Runnable {
+    private val floatTask = {
         if (enabled && view.isLaidOut) {
             floatSomewhere {
-                scheduleTask(if (isAnimationOn()) 0 else 1000)
+                scheduleTask()
             }
         }
     }
+    private val canAnimate get() = animated && floatAnimator != null && homeAnimator != null
 
     private var floatAnimator: Animator? = null
     private var homeAnimator: Animator? = null
@@ -61,11 +61,11 @@ internal class FloatControl(
                 if (field) {
                     Log.d(TAG, "Enabled")
 
-                    scheduleTask(1000) /* let view a second to relayout if needed */
+                    scheduleTask()
                 } else {
                     Log.d(TAG, "Disabled")
 
-                    handler.removeCallbacks(floatTask)
+                    cancelTask()
                     cancelAnimators()
                 }
             }
@@ -79,19 +79,22 @@ internal class FloatControl(
         updateAnimated()
     }
 
-    private fun isAnimationOn() = animated && floatAnimator != null && homeAnimator != null
+    private fun scheduleTask() {
+        if (!enabled) return
 
-    private fun scheduleTask(startDelay: Long = 0) {
-        if (enabled) {
-            if (interval >= 0) {
-                val delay = interval + startDelay
-                handler.postDelayed(floatTask, delay)
+        if (interval < 0) {
+            Log.d(TAG, "Task ignored")
+        } else {
+            handler.postDelayed(floatTask, interval)
 
-                Log.d(TAG, "Task scheduled after: $delay")
-            } else {
-                Log.w(TAG, "Task not scheduled. Interval is negative")
-            }
+            Log.d(TAG, "Task scheduled in: $interval")
         }
+    }
+
+    private fun cancelTask() {
+        handler.removeCallbacks(floatTask)
+
+        Log.d(TAG, "Task canceled")
     }
 
     private fun floatSomewhere(onEnd: () -> Unit) {
@@ -113,7 +116,7 @@ internal class FloatControl(
         }
     }
 
-    private fun floatHome() {
+    private fun floatHome(onEnd: () -> Unit = {}) {
         Log.v(TAG, "Moving home")
 
         val pr = view.parentView.rect
@@ -121,8 +124,9 @@ internal class FloatControl(
         val x = (pr.width() - vr.width()) / 2
         val y = (pr.height() - vr.height()) / 2
 
-        floating = false
-        runAnimator(homeAnimator, x, y)
+        runAnimator(homeAnimator, x, y) {
+            onEnd()
+        }
     }
 
     private fun runAnimator(
@@ -138,8 +142,10 @@ internal class FloatControl(
             return
         }
 
-        if (isAnimationOn()) {
+        if (canAnimate) {
             animator?.run {
+                Log.v(TAG, "Start animation to x:$x y:$y")
+
                 /* NOTE: it's not possible to reach PropertyHolder's values initialized in XML nor identify
                    animators with ids or tags so we use property names as markers here */
                 forEachChild { child ->
@@ -156,9 +162,6 @@ internal class FloatControl(
                 }
 
                 removeAllListeners()
-                doOnStart {
-                    Log.d(TAG, "Start animation to x:$x y:$y")
-                }
                 doOnEnd {
                     Log.v(TAG, "End animation")
 
@@ -169,11 +172,10 @@ internal class FloatControl(
                 start()
             }
         } else {
+            Log.v(TAG, "Instantly moved to x:$x y:$y")
+
             view.x = x
             view.y = y
-
-            Log.d(TAG, "Instantly moved to x:$x y:$y")
-
             onEnd()
         }
     }
@@ -189,7 +191,7 @@ internal class FloatControl(
         if (resId > 0) {
             floatAnimator = loadAnimator(requireContext(), resId).apply {
                 extendProperties(CUSTOM_VIEW_PROPERTIES)
-                updateSpeed (settings.getInt(PREF_FLOAT_SPEED))
+                updateSpeed(settings.getInt(PREF_FLOAT_SPEED))
             }
             homeAnimator = loadAnimator(requireContext(), R.animator.float_home).apply {
                 extendProperties(CUSTOM_VIEW_PROPERTIES)
@@ -201,7 +203,9 @@ internal class FloatControl(
     }
 
     private fun updateInterval() {
+        cancelTask()
         interval = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
+        if (interval < 0) floatHome() else scheduleTask()
     }
 
     private fun updateAnimated() {
@@ -209,10 +213,6 @@ internal class FloatControl(
         if (!animated) {
             cancelAnimators()
         }
-    }
-
-    private fun computeAnimationDuration(current: Long): Long {
-        return (current * settings.getInt(PREF_FLOAT_SPEED) / 100f).toLong()
     }
 
     override fun onSettingChanged(key: String) {
@@ -230,11 +230,15 @@ internal class FloatControl(
                 enabled = false
                 floatHome()
             }
-            MODE_INACTIVE -> {
-                enabled = true
-            }
+            MODE_INACTIVE,
             MODE_EDITOR -> {
-                enabled = true
+                enabled = false
+                /* wait a second for layout animations finished */
+                handler.postDelayed({
+                    floatHome {
+                        enabled = true
+                    }
+                }, 1000)
             }
         }
     }
@@ -262,7 +266,5 @@ internal class FloatControl(
             PROP_ALPHA_ZERO_TO_CURRENT
         )
 
-        const val MIN_FLOAT_SPEED = 0
-        const val MAX_FLOAT_SPEED = 500
     }
 }
