@@ -4,11 +4,11 @@ import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.WindowInsets
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
 import androidx.constraintlayout.widget.ConstraintSet.UNSET
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.FragmentManager
 import androidx.transition.TransitionManager
@@ -34,11 +34,11 @@ internal class LayoutControl(
     private val defaultSettingsButtonInsets by lazy { settingsButton.marginsToInsets() }
     private val defaultSettingsContainerInsets by lazy { settingsContainer.marginsToInsets() }
 
-    private var requreRecreateActivity = false
+    private var requireRecreateActivity = false
 
     init {
         setOnApplyWindowInsetsListener(rootView) { _, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsets.Type.systemBars())
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             settingsButton.fitIntoWindow(insets, defaultSettingsButtonInsets)
             settingsContainer.fitIntoWindow(insets, defaultSettingsContainerInsets)
             windowInsets
@@ -67,10 +67,10 @@ internal class LayoutControl(
                 Log.d(TAG, "Added settings fragment")
             } else {
                 removeFragment(R.id.settings_container) {
-                    if (requreRecreateActivity) {
+                    if (requireRecreateActivity) {
                         Log.d(TAG, "Activity recreation required")
 
-                        requreRecreateActivity = false
+                        requireRecreateActivity = false
                         it.activity?.recreate()
                     }
                 }
@@ -82,7 +82,7 @@ internal class LayoutControl(
     override fun onSettingChanged(key: String) {
         if (key == PREF_FULLSCREEN_ENABLED) {
             /* when the setting is disabled we need to recreate activity to reset entire layout */
-            requreRecreateActivity = !settings.getBoolean(PREF_FULLSCREEN_ENABLED)
+            requireRecreateActivity = !settings.getBoolean(PREF_FULLSCREEN_ENABLED)
         }
     }
 
