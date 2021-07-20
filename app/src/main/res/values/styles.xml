@@ -22,21 +22,23 @@
     </style>
 
     <style name="Content.Digital.Default.Curly" parent="Content.Digital.Default">
-        <item name="contentAmPmTextPaddingTop">24sp</item>
+        <item name="contentAmPmTextPaddingTop">-2sp</item>
         <item name="contentAmPmTextSize">32sp</item>
         <item name="contentDateFont">@font/fraunces</item>
         <item name="contentDateTextSize">22sp</item>
         <item name="contentFont">@font/fraunces</item>
         <item name="contentSecondsSeparatorPaddingRight">2sp</item>
         <item name="contentSecondsPaddingTop">-10sp</item>
-        <item name="contentSecondsSeparatorPaddingBottom">22sp</item>
+        <item name="contentSecondsSeparatorPaddingBottom">12sp</item>
         <item name="contentSecondsTextSize">42sp</item>
         <item name="contentHoursTextSize">88sp</item>
-        <item name="contentTimeSeparatorPaddingBottom">14sp</item>
+        <item name="contentHoursPaddingTop">-28sp</item>
+        <item name="contentHoursPaddingBottom">-18sp</item>
+        <item name="contentTimeSeparatorPaddingBottom">4sp</item>
     </style>
 
     <style name="Content.Digital.Default.Round" parent="Content.Digital.Default">
-        <item name="contentAmPmTextPaddingTop">16sp</item>
+        <item name="contentAmPmTextPaddingTop">0sp</item>
         <item name="contentAmPmTextSize">32sp</item>
         <item name="contentDateFont">@font/sniglet</item>
         <item name="contentDatePaddingTop">-6sp</item>
@@ -46,14 +48,16 @@
         <item name="contentSecondsTextSize">42sp</item>
         <item name="contentSecondsWidth">56sp</item>
         <item name="contentHoursTextSize">88sp</item>
-        <item name="contentTimeSeparatorPaddingBottom">12sp</item>
+        <item name="contentTimeSeparatorPaddingBottom">4sp</item>
+        <item name="contentHoursPaddingTop">-18sp</item>
+        <item name="contentHoursPaddingBottom">-4sp</item>
     </style>
 
     <style name="Content.Digital.Default.Square" parent="Content.Digital.Default">
-        <item name="contentAmPmTextPaddingTop">12sp</item>
+        <item name="contentAmPmTextPaddingTop">-2sp</item>
         <item name="contentAmPmTextSize">30sp</item>
         <item name="contentDateFont">@font/orbitron</item>
-        <item name="contentDatePaddingTop">-4sp</item>
+        <item name="contentDatePaddingTop">0sp</item>
         <item name="contentFont">@font/orbitron</item>
         <item name="contentSecondsSeparatorPaddingRight">1sp</item>
         <item name="contentSecondsSeparatorPaddingBottom">10sp</item>
@@ -61,21 +65,25 @@
         <item name="contentSecondsWidth">60sp</item>
         <item name="contentHoursTextSize">72sp</item>
         <item name="contentTimeSeparatorPaddingBottom">5sp</item>
+        <item name="contentHoursPaddingTop">-14sp</item>
+        <item name="contentHoursPaddingBottom">0sp</item>
     </style>
 
     <style name="Content.Digital.Default.Thick" parent="Content.Digital.Default">
-        <item name="contentAmPmTextPaddingTop">26sp</item>
+        <item name="contentAmPmTextPaddingTop">-4sp</item>
         <item name="contentAmPmTextSize">32sp</item>
         <item name="contentDateFont">@font/kanit</item>
         <item name="contentDatePaddingTop">-6sp</item>
-        <item name="contentDateTextSize">20sp</item>
+        <item name="contentDateTextSize">22sp</item>
         <item name="contentFont">@font/kanit</item>
         <item name="contentSecondsSeparatorPaddingRight">1sp</item>
-        <item name="contentSecondsSeparatorPaddingBottom">24sp</item>
+        <item name="contentSecondsSeparatorPaddingBottom">4sp</item>
         <item name="contentSecondsTextSize">42sp</item>
         <item name="contentSecondsWidth">56sp</item>
         <item name="contentHoursTextSize">88sp</item>
-        <item name="contentTimeSeparatorPaddingBottom">10sp</item>
+        <item name="contentTimeSeparatorPaddingBottom">-12sp</item>
+        <item name="contentHoursPaddingTop">-32sp</item>
+        <item name="contentHoursPaddingBottom">-18sp</item>
     </style>
 
     <style name="Content.Digital.Default.Typewriter" parent="Content.Digital.Default">
@@ -120,14 +128,15 @@
     </style>
 
     <style name="Content.Digital.Simple.Curly" parent="Content.Digital.Default.Curly">
-        <item name="contentSecondsWidth">98sp</item>
+        <item name="contentSecondsWidth">90sp</item>
         <item name="contentHoursTextSize">80sp</item>
     </style>
 
     <style name="Content.Digital.Simple.Round" parent="Content.Digital.Default.Round">
-        <item name="contentAmPmTextPaddingTop">10sp</item>
+        <item name="contentAmPmTextPaddingTop">0sp</item>
+        <item name="contentHoursPaddingTop">-12sp</item>
         <item name="contentSecondsWidth">94sp</item>
-        <item name="contentHoursTextSize">70sp</item>
+        <item name="contentHoursTextSize">72sp</item>
     </style>
 
     <style name="Content.Digital.Simple.Square" parent="Content.Digital.Default.Square">
@@ -136,7 +145,7 @@
     </style>
 
     <style name="Content.Digital.Simple.Thick" parent="Content.Digital.Default.Thick">
-        <item name="contentSecondsWidth">100sp</item>
+        <item name="contentSecondsWidth">90sp</item>
         <item name="contentHoursTextSize">74sp</item>
     </style>
 
