@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         versionCode 12
-        versionName '1.2.0'
+        versionName '1.2.1'
         targetSdkVersion 30
         minSdkVersion 21
         applicationId "com.bopr.piclock"
