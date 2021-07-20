@@ -84,10 +84,17 @@ internal class FloatControl(
 
         if (interval < 0) {
             Log.d(TAG, "Task ignored")
-        } else {
+        } else if (canAnimate) {
             handler.postDelayed(floatTask, interval)
 
             Log.d(TAG, "Task scheduled in: $interval")
+        } else {
+            /* prevent content from jumping along the screen when animations is disabled
+               ans interval is 0 */
+            val delay = 1000L
+            handler.postDelayed(floatTask, delay)
+
+            Log.d(TAG, "Animation disabled. Task scheduled in: $delay")
         }
     }
 

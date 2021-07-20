@@ -51,8 +51,8 @@
 
         <SwitchPreferenceCompat
             android:key="animation_on"
-            android:title="@string/animation_enabled" />
-
+            android:title="@string/all_animation" />
+        <!--  todo: idea: disable animation on power unplug -->
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/floating">

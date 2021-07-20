@@ -323,7 +323,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
                 if (settings.getBoolean(key))
                     R.string.enabled
                 else
-                    R.string.disabled
+                    R.string.disabled_power_save
             )
         }
     }
