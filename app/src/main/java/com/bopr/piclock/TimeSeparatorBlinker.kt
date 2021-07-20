@@ -3,9 +3,8 @@ package com.bopr.piclock
 import android.animation.ObjectAnimator
 import android.util.Log
 import android.view.View
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
 import android.view.animation.CycleInterpolator
+import androidx.core.view.isVisible
 
 /**
  * Controls time separators blinking in digital clock.
@@ -26,6 +25,7 @@ internal class TimeSeparatorBlinker(
             interpolator = CycleInterpolator(1f)
         }
     }
+
     private val secondsSeparatorAnimator by lazy {
         ObjectAnimator().apply {
             setProperty(View.ALPHA)
@@ -45,10 +45,8 @@ internal class TimeSeparatorBlinker(
 
         val visible = halfTick % 2 == 0
 
-        minutesSeparator.visibility = if (visible) VISIBLE else INVISIBLE
-        if (secondsEnabled) {
-            secondsSeparator.visibility = if (visible) VISIBLE else INVISIBLE
-        }
+        minutesSeparator.isVisible = visible
+        secondsSeparator.isVisible = secondsEnabled && visible
     }
 
     private fun startAnimators(halfTick: Int) {
@@ -70,8 +68,8 @@ internal class TimeSeparatorBlinker(
     }
 
     private fun resetVisibility() {
-        minutesSeparator.visibility = VISIBLE
-        secondsSeparator.visibility = VISIBLE
+        minutesSeparator.isVisible = true
+        secondsSeparator.isVisible = true
     }
 
     private fun resetAlpha() {
