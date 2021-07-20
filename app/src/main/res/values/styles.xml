@@ -274,10 +274,4 @@
         <item name="contentWidth">140sp</item>
     </style>
 
-    <style name="Content.Analog.Default" parent="AppTheme">
-        <item name="contentDateFont">@font/comfortaa</item>
-        <item name="contentDateMarginTop">0sp</item>
-        <item name="contentDateTextSize">18sp</item>
-    </style>
-
 </resources>

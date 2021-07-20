@@ -1,0 +1,11 @@
+<resources>
+
+    <!-- Analog content default -->
+
+    <style name="Content.Analog.Default" parent="AppTheme">
+        <item name="contentDateFont">@font/comfortaa</item>
+        <item name="contentDatePaddingTop">0sp</item>
+        <item name="contentDateTextSize">18sp</item>
+    </style>
+
+</resources>

@@ -2,6 +2,7 @@ package com.bopr.piclock
 
 import android.view.View
 import android.widget.ImageView
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
@@ -9,7 +10,6 @@ import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_SECOND_HAND_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.defaultDatetimeFormat
-import com.bopr.piclock.util.setGone
 import java.text.DateFormat
 import java.util.*
 import java.util.Calendar.*
@@ -20,7 +20,7 @@ import java.util.Calendar.*
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class AnalogClockControl(private val view: View, settings: Settings) :
-    ContentControl(settings) {
+    ContentControlAdapter(settings) {
 
 // todo:  часы наизнанку - стрелки прикреплены к ободу а не к центру
 
@@ -87,7 +87,7 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
     }
 
     private fun updateSecondHandView() {
-        secondHandView.setGone(!settings.getBoolean(PREF_SECOND_HAND_VISIBLE))
+        secondHandView.isGone = !settings.getBoolean(PREF_SECOND_HAND_VISIBLE)
     }
 
     override fun onTimer(time: Date, tick: Int) {

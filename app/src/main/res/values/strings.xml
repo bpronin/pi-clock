@@ -65,6 +65,7 @@
     <string name="time_separators">Time separators</string>
     <string name="user_interface">Interface</string>
     <string name="disabled_power_save">Disabled (power saving)</string>
+    <string name="second_hand">Second hand</string>
 
     <string-array name="content_layout_titles">
         <item>Digital default</item>

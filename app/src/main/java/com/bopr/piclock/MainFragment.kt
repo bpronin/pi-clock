@@ -279,16 +279,11 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         contentControl.setControl(
             when {
                 isDigitalClockLayout(layoutName) -> DigitalClockControl(contentView, settings)
+                isAnalogClockLayout(layoutName) -> AnalogClockControl(contentView, settings)
                 else ->
                     throw IllegalArgumentException("Unregistered content layout resource: $layoutName")
             }
         )
-        contentControl = when {
-            isDigitalClockLayout(layoutName) -> DigitalClockControl(contentView, settings)
-            isAnalogClockLayout(layoutName) -> AnalogClockControl(contentView, settings)
-            else ->
-                throw IllegalArgumentException("Unregistered content layout resource: $layoutName")
-        }
 
         Log.d(TAG, "Created content")
     }
