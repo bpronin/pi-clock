@@ -8,6 +8,10 @@ import java.security.MessageDigest
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 
+val Int.isOdd get() = !isEven
+
+val Int.isEven get() = this % 2 == 0
+
 fun toPercents(decimal: Float) = (decimal * 100).toInt()
 
 fun toDecimal(percents: Int) = percents / 100f

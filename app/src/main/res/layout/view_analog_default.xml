@@ -1,64 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="200dp"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
     android:background="?attr/contentBackgroundColor"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="200dp">
-
-        <ImageView
-            android:id="@+id/clock_face"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/view_analog_default_face"
-            tools:ignore="ContentDescription" />
-
-        <ImageView
-            android:id="@+id/hour_hand_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:rotation="30"
-            android:src="@drawable/view_analog_default_hour_hand"
-            tools:ignore="ContentDescription" />
-
-        <ImageView
-            android:id="@+id/minute_hand_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:rotation="180"
-            android:src="@drawable/view_analog_default_minute_hand"
-            tools:ignore="ContentDescription" />
-
-        <ImageView
-            android:id="@+id/second_hand_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:rotation="240"
-            android:src="@drawable/view_analog_default_second_hand"
-            tools:ignore="ContentDescription" />
-    </FrameLayout>
-
     <include
-        layout="@layout/view_bar_date"
-        android:layout_width="match_parent"
-        android:layout_height="28sp"
-        android:layout_marginTop="24sp" />
+        layout="@layout/view_analog_face_minimal"
+        android:layout_width="200dp"
+        android:layout_height="200dp" />
 
-<!--    <com.bopr.piclock.AnimatedTextView-->
-<!--        android:id="@+id/date_view"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="?attr/contentDateMarginTop"-->
-<!--        android:fontFamily="?attr/contentDateFont"-->
-<!--        android:gravity="center"-->
-<!--        android:text="Someday of the week, Month 00, 2021"-->
-<!--        android:textColor="?attr/contentTextColor"-->
-<!--        android:textSize="?attr/contentDateTextSize"-->
-<!--        tools:ignore="HardcodedText" />-->
+    <com.bopr.piclock.AnimatedTextView
+        android:id="@+id/date_view"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="?attr/contentDateFont"
+        android:gravity="center"
+        android:paddingTop="?attr/contentDatePaddingTop"
+        android:text="Wednesday December 28 2021"
+        android:textSize="?attr/contentDateTextSize"
+        android:textColor="?attr/contentTextColor"
+        tools:ignore="HardcodedText" />
 
 </LinearLayout>

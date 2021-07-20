@@ -73,6 +73,7 @@
         <item>Digital vertical default</item>
         <item>Digital vertical simple</item>
         <item>Analog default</item>
+        <item>Analog bars date</item>
     </string-array>
 
     <string-array name="view_digital_default_style_titles">
@@ -111,7 +112,10 @@
 
     <string-array name="view_analog_default_style_titles">
         <item>Default</item>
-        <item>Bars date</item>
+    </string-array>
+
+    <string-array name="view_analog_bars_date_style_titles">
+        <item>Default</item>
     </string-array>
 
     <string-array name="tick_sound_titles">

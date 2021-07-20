@@ -1,14 +1,17 @@
 <resources>
 
-    <!-- Analog content default -->
+    <!-- Analog clock text date -->
 
     <style name="Content.Analog.Default" parent="AppTheme">
         <item name="contentDateFont">@font/comfortaa</item>
-        <item name="contentDatePaddingTop">0sp</item>
+        <item name="contentDatePaddingTop">8sp</item>
         <item name="contentDateTextSize">18sp</item>
     </style>
 
-    <style name="Content.Analog.Date.Bars" parent="Content.Analog.Default">
+    <!-- Analog clock date as bars -->
+
+    <style name="Content.Analog.BarsDate" parent="Content.Analog.Default">
+        <item name="contentDatePaddingTop">20sp</item>
     </style>
 
 </resources>

@@ -7,6 +7,7 @@
         <item>view_digital_vertical_default</item>
         <item>view_digital_vertical_simple</item>
         <item>view_analog_default</item>
+        <item>view_analog_bars_date</item>
     </string-array>
 
     <string-array name="view_digital_default_style_values" translatable="false">
@@ -45,7 +46,10 @@
 
     <string-array name="view_analog_default_style_values" translatable="false">
         <item>Content.Analog.Default</item>
-        <item>Content.Analog.Date.Bars</item>
+    </string-array>
+
+    <string-array name="view_analog_bars_date_style_values" translatable="false">
+        <item>Content.Analog.BarsDate</item>
     </string-array>
 
     <string-array name="time_format_values" translatable="false">
