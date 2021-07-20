@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="?attr/contentWidth"
+    android:layout_height="?attr/contentHeight"
     android:animateLayoutChanges="true"
     android:background="?attr/contentBackgroundColor"
     android:orientation="vertical">
@@ -30,7 +30,7 @@
         android:gravity="center"
         android:text="44"
         android:textColor="?attr/contentTextColor"
-        android:textSize="?attr/contentTextSize"
+        android:textSize="?attr/contentHoursTextSize"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -43,7 +43,7 @@
         android:fontFamily="?attr/contentFont"
         android:text="_"
         android:textColor="?attr/contentTextColor"
-        android:textSize="?attr/contentTextSize"
+        android:textSize="?attr/contentHoursTextSize"
         tools:ignore="HardcodedText" />
 
     <com.bopr.piclock.AnimatedTextView
@@ -57,7 +57,7 @@
         android:gravity="center"
         android:text="00"
         android:textColor="?attr/contentTextColor"
-        android:textSize="?attr/contentTextSize"
+        android:textSize="?attr/contentHoursTextSize"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -75,7 +75,7 @@
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/seconds_view"
-        android:layout_width="?attr/contentSecondsWidth"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="?attr/contentFont"

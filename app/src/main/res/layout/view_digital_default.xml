@@ -14,7 +14,7 @@
         android:fontFamily="?attr/contentFont"
         android:text="00"
         android:textColor="?attr/contentTextColor"
-        android:textSize="?attr/contentTextSize"
+        android:textSize="?attr/contentHoursTextSize"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText" />
@@ -27,7 +27,7 @@
         android:fontFamily="?attr/contentFont"
         android:text=":"
         android:textColor="?attr/contentTextColor"
-        android:textSize="?attr/contentTextSize"
+        android:textSize="?attr/contentHoursTextSize"
         app:layout_constraintBottom_toBottomOf="@id/hours_view"
         app:layout_constraintLeft_toRightOf="@id/hours_view"
         tools:ignore="HardcodedText" />
@@ -39,7 +39,7 @@
         android:fontFamily="?attr/contentFont"
         android:text="00"
         android:textColor="?attr/contentTextColor"
-        android:textSize="?attr/contentTextSize"
+        android:textSize="?attr/contentHoursTextSize"
         app:layout_constraintBaseline_toBaselineOf="@id/hours_view"
         app:layout_constraintLeft_toRightOf="@id/minutes_separator"
         tools:ignore="HardcodedText" />

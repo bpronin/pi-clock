@@ -10,7 +10,6 @@
         <attr name="contentDateMarginTop" format="dimension" />
         <attr name="contentDateTextSize" format="dimension" />
         <attr name="contentFont" format="reference" />
-        <attr name="contentHoursFontSize" format="dimension" />
         <attr name="contentHoursMarginBottom" format="dimension" />
         <attr name="contentHoursMarginTop" format="dimension" />
         <attr name="contentSecondsFontSize" format="dimension" />
@@ -22,7 +21,7 @@
         <attr name="contentSecondsTextSize" format="dimension" />
         <attr name="contentSecondsWidth" format="dimension" />
         <attr name="contentTextColor" format="color" />
-        <attr name="contentTextSize" format="dimension" />
+        <attr name="contentHoursTextSize" format="dimension" />
         <attr name="contentTimeSeparatorMarginBottom" format="dimension" />
         <attr name="contentTimeSeparatorMarginTop" format="dimension" />
         <attr name="contentHeight" format="dimension" />

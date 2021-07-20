@@ -15,7 +15,7 @@
         <item name="contentSecondsSeparatorMarginBottom">8sp</item>
         <item name="contentSecondsTextSize">48sp</item>
         <item name="contentSecondsWidth">50sp</item>
-        <item name="contentTextSize">96sp</item>
+        <item name="contentHoursTextSize">96sp</item>
         <item name="contentTimeSeparatorMarginBottom">6sp</item>
     </style>
 
@@ -29,7 +29,7 @@
         <item name="contentSecondsMarginTop">-10sp</item>
         <item name="contentSecondsSeparatorMarginBottom">22sp</item>
         <item name="contentSecondsTextSize">42sp</item>
-        <item name="contentTextSize">88sp</item>
+        <item name="contentHoursTextSize">88sp</item>
         <item name="contentTimeSeparatorMarginBottom">14sp</item>
     </style>
 
@@ -43,7 +43,7 @@
         <item name="contentSecondsSeparatorMarginBottom">20sp</item>
         <item name="contentSecondsTextSize">42sp</item>
         <item name="contentSecondsWidth">56sp</item>
-        <item name="contentTextSize">88sp</item>
+        <item name="contentHoursTextSize">88sp</item>
         <item name="contentTimeSeparatorMarginBottom">12sp</item>
     </style>
 
@@ -57,7 +57,7 @@
         <item name="contentSecondsSeparatorMarginBottom">10sp</item>
         <item name="contentSecondsTextSize">36sp</item>
         <item name="contentSecondsWidth">60sp</item>
-        <item name="contentTextSize">72sp</item>
+        <item name="contentHoursTextSize">72sp</item>
         <item name="contentTimeSeparatorMarginBottom">5sp</item>
     </style>
 
@@ -72,7 +72,7 @@
         <item name="contentSecondsSeparatorMarginBottom">24sp</item>
         <item name="contentSecondsTextSize">42sp</item>
         <item name="contentSecondsWidth">56sp</item>
-        <item name="contentTextSize">88sp</item>
+        <item name="contentHoursTextSize">88sp</item>
         <item name="contentTimeSeparatorMarginBottom">10sp</item>
     </style>
 
@@ -80,28 +80,28 @@
 
     <style name="Content.Digital.Simple" parent="Content.Digital.Default">
         <item name="contentSecondsWidth">90sp</item>
-        <item name="contentTextSize">84sp</item>
+        <item name="contentHoursTextSize">84sp</item>
     </style>
 
     <style name="Content.Digital.Simple.Curly" parent="Content.Digital.Default.Curly">
         <item name="contentSecondsWidth">98sp</item>
-        <item name="contentTextSize">80sp</item>
+        <item name="contentHoursTextSize">80sp</item>
     </style>
 
     <style name="Content.Digital.Simple.Round" parent="Content.Digital.Default.Round">
         <item name="contentAmPmTextMarginTop">18sp</item>
         <item name="contentSecondsWidth">94sp</item>
-        <item name="contentTextSize">70sp</item>
+        <item name="contentHoursTextSize">70sp</item>
     </style>
 
     <style name="Content.Digital.Simple.Square" parent="Content.Digital.Default.Square">
         <item name="contentSecondsWidth">100sp</item>
-        <item name="contentTextSize">58sp</item>
+        <item name="contentHoursTextSize">58sp</item>
     </style>
 
     <style name="Content.Digital.Simple.Thick" parent="Content.Digital.Default.Thick">
         <item name="contentSecondsWidth">100sp</item>
-        <item name="contentTextSize">74sp</item>
+        <item name="contentHoursTextSize">74sp</item>
     </style>
 
     <!-- Digital Vertical Default -->
@@ -116,7 +116,8 @@
         <item name="contentSecondsSeparatorMarginTop">-32sp</item>
         <item name="contentSecondsSeparatorMarginBottom">-8sp</item>
         <item name="contentDateMarginTop">0sp</item>
-        <item name="contentWidth">148sp</item>
+        <item name="contentHeight">330sp</item>
+        <item name="contentWidth">140sp</item>
     </style>
 
     <style name="Content.Digital.Vertical.Default.Curly" parent="Content.Digital.Default.Curly">
@@ -129,7 +130,8 @@
         <item name="contentSecondsSeparatorMarginTop">-74sp</item>
         <item name="contentSecondsSeparatorMarginBottom">-2sp</item>
         <item name="contentDateMarginTop">0sp</item>
-        <item name="contentWidth">148sp</item>
+        <item name="contentHeight">480sp</item>
+        <item name="contentWidth">140sp</item>
     </style>
 
     <style name="Content.Digital.Vertical.Default.Round" parent="Content.Digital.Default.Round">
@@ -142,7 +144,8 @@
         <item name="contentSecondsSeparatorMarginTop">-74sp</item>
         <item name="contentSecondsSeparatorMarginBottom">-2sp</item>
         <item name="contentDateMarginTop">0sp</item>
-        <item name="contentWidth">148sp</item>
+        <item name="contentHeight">480sp</item>
+        <item name="contentWidth">140sp</item>
     </style>
 
     <style name="Content.Digital.Vertical.Default.Square" parent="Content.Digital.Default.Square">
@@ -155,7 +158,8 @@
         <item name="contentSecondsSeparatorMarginTop">-40sp</item>
         <item name="contentSecondsSeparatorMarginBottom">-6sp</item>
         <item name="contentDateMarginTop">0sp</item>
-        <item name="contentWidth">148sp</item>
+        <item name="contentHeight">380sp</item>
+        <item name="contentWidth">140sp</item>
     </style>
 
     <style name="Content.Digital.Vertical.Default.Thick" parent="Content.Digital.Default.Thick">
@@ -168,21 +172,72 @@
         <item name="contentSecondsSeparatorMarginTop">-70sp</item>
         <item name="contentSecondsSeparatorMarginBottom">-16sp</item>
         <item name="contentDateMarginTop">0sp</item>
-        <item name="contentWidth">148sp</item>
+        <item name="contentHeight">480sp</item>
+        <item name="contentWidth">140sp</item>
     </style>
 
     <!-- Digital Vertical Simple -->
 
-    <style name="Content.Digital.Vertical.Simple" parent="Content.Digital.Default">
+    <style name="Content.Digital.Vertical.Simple" parent="Content.Digital.Simple">
+        <item name="contentAmPmTextMarginTop">0sp</item>
         <item name="contentAmPmTextMarginBottom">-12sp</item>
+        <item name="contentHoursMarginTop">0sp</item>
+        <item name="contentHoursMarginBottom">0sp</item>
+        <item name="contentTimeSeparatorMarginTop">-64sp</item>
+        <item name="contentTimeSeparatorMarginBottom">-34sp</item>
+        <item name="contentDateMarginTop">0sp</item>
+        <item name="contentHeight">330sp</item>
+        <item name="contentWidth">140sp</item>
     </style>
 
-    <style name="Content.Digital.Vertical.Simple.Curly" parent="Content.Digital.Default.Curly"></style>
+    <style name="Content.Digital.Vertical.Simple.Curly" parent="Content.Digital.Default.Curly">
+        <item name="contentAmPmTextMarginTop">0sp</item>
+        <item name="contentAmPmTextMarginBottom">-28sp</item>
+        <item name="contentHoursMarginTop">0sp</item>
+        <item name="contentHoursMarginBottom">0sp</item>
+        <item name="contentTimeSeparatorMarginTop">-130sp</item>
+        <item name="contentTimeSeparatorMarginBottom">-44sp</item>
+        <item name="contentDateMarginTop">-18sp</item>
+        <item name="contentHeight">480sp</item>
+        <item name="contentWidth">140sp</item>
+    </style>
 
-    <style name="Content.Digital.Vertical.Simple.Round" parent="Content.Digital.Default.Round"></style>
+    <style name="Content.Digital.Vertical.Simple.Round" parent="Content.Digital.Default.Round">
+        <item name="contentAmPmTextMarginTop">0sp</item>
+        <item name="contentAmPmTextMarginBottom">-28sp</item>
+        <item name="contentHoursMarginTop">0sp</item>
+        <item name="contentHoursMarginBottom">0sp</item>
+        <item name="contentTimeSeparatorMarginTop">-128sp</item>
+        <item name="contentTimeSeparatorMarginBottom">-40sp</item>
+        <item name="contentDateMarginTop">0sp</item>
+        <item name="contentHeight">480sp</item>
+        <item name="contentWidth">140sp</item>
+    </style>
 
-    <style name="Content.Digital.Vertical.Simple.Square" parent="Content.Digital.Default.Square"></style>
+    <style name="Content.Digital.Vertical.Simple.Square" parent="Content.Digital.Default.Square">
+        <item name="contentAmPmTextMarginTop">0sp</item>
+        <item name="contentAmPmTextMarginBottom">-12sp</item>
+        <item name="contentHoursMarginTop">0sp</item>
+        <item name="contentHoursMarginBottom">0sp</item>
+        <item name="contentTimeSeparatorMarginTop">-80sp</item>
+        <item name="contentTimeSeparatorMarginBottom">-18sp</item>
+        <item name="contentDateMarginTop">0sp</item>
+        <item name="contentHeight">380sp</item>
+        <item name="contentWidth">140sp</item>
+    </style>
 
-    <style name="Content.Digital.Vertical.Simple.Thick" parent="Content.Digital.Default.Thick"></style>
+    <style name="Content.Digital.Vertical.Simple.Thick" parent="Content.Digital.Default.Thick">
+        <item name="contentAmPmTextMarginTop">0sp</item>
+        <item name="contentAmPmTextMarginBottom">-40sp</item>
+        <item name="contentHoursMarginTop">0sp</item>
+        <item name="contentHoursMarginBottom">0sp</item>
+        <item name="contentTimeSeparatorMarginTop">-120sp</item>
+        <item name="contentTimeSeparatorMarginBottom">-50sp</item>
+        <item name="contentSecondsSeparatorMarginTop">-70sp</item>
+        <item name="contentSecondsSeparatorMarginBottom">-16sp</item>
+        <item name="contentDateMarginTop">-20sp</item>
+        <item name="contentHeight">480sp</item>
+        <item name="contentWidth">140sp</item>
+    </style>
 
 </resources>
