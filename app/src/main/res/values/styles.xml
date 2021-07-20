@@ -181,11 +181,11 @@
     <style name="Content.Digital.Vertical.Default.Round" parent="Content.Digital.Default.Round">
         <item name="contentAmPmTextPaddingTop">0sp</item>
         <item name="contentAmPmTextPaddingBottom">-10sp</item>
-        <item name="contentHoursPaddingTop">-10sp</item>
-        <item name="contentHoursPaddingBottom">-12sp</item>
-        <item name="contentTimeSeparatorPaddingTop">-78sp</item>
-        <item name="contentTimeSeparatorPaddingBottom">-18sp</item>
-        <item name="contentSecondsSeparatorPaddingTop">-38sp</item>
+        <item name="contentHoursPaddingTop">-12sp</item>
+        <item name="contentHoursPaddingBottom">-20sp</item>
+        <item name="contentTimeSeparatorPaddingTop">-72sp</item>
+        <item name="contentTimeSeparatorPaddingBottom">-20sp</item>
+        <item name="contentSecondsSeparatorPaddingTop">-36sp</item>
         <item name="contentSecondsSeparatorPaddingBottom">-6sp</item>
         <item name="contentDatePaddingTop">0sp</item>
         <item name="contentWidth">140sp</item>
