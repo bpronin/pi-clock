@@ -5,14 +5,15 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
-    android:background="?attr/contentBackgroundColor"
-    android:orientation="vertical">
+    android:background="?attr/contentBackgroundColor">
 
     <com.bopr.piclock.AnimatedTextView
         android:id="@+id/hours_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="?attr/contentFont"
+        android:paddingTop="?attr/contentHoursPaddingTop"
+        android:paddingBottom="?attr/contentHoursPaddingBottom"
         android:text="00"
         android:textColor="?attr/contentTextColor"
         android:textSize="?attr/contentHoursTextSize"
@@ -20,12 +21,12 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText" />
 
-    <TextView
+    <com.bopr.piclock.util.ui.ExtTextView
         android:id="@+id/minutes_separator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="?attr/contentTimeSeparatorMarginBottom"
         android:fontFamily="?attr/contentFont"
+        android:paddingBottom="?attr/contentTimeSeparatorPaddingBottom"
         android:text=":"
         android:textColor="?attr/contentTextColor"
         android:textSize="?attr/contentHoursTextSize"
@@ -39,18 +40,20 @@
         android:layout_height="wrap_content"
         android:fontFamily="?attr/contentFont"
         android:text="00"
+        android:paddingTop="?attr/contentHoursPaddingTop"
+        android:paddingBottom="?attr/contentHoursPaddingBottom"
         android:textColor="?attr/contentTextColor"
         android:textSize="?attr/contentHoursTextSize"
         app:layout_constraintBaseline_toBaselineOf="@id/hours_view"
         app:layout_constraintLeft_toRightOf="@id/minutes_separator"
         tools:ignore="HardcodedText" />
 
-    <TextView
+    <com.bopr.piclock.util.ui.ExtTextView
         android:id="@+id/seconds_separator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="?attr/contentTimeSeparatorMarginBottom"
         android:fontFamily="?attr/contentFont"
+        android:paddingBottom="?attr/contentTimeSeparatorPaddingBottom"
         android:text=":"
         android:textColor="?attr/contentTextColor"
         android:textSize="?attr/contentHoursTextSize"
@@ -63,20 +66,21 @@
         android:layout_width="?attr/contentSecondsWidth"
         android:layout_height="wrap_content"
         android:fontFamily="?attr/contentFont"
-        android:text="00"
+        android:paddingTop="?attr/contentSecondsPaddingTop"
+        android:paddingBottom="?attr/contentSecondsPaddingBottom"
+        android:text="44"
         android:textColor="?attr/contentTextColor"
         android:textSize="?attr/contentHoursTextSize"
         app:layout_constraintBaseline_toBaselineOf="@id/hours_view"
         app:layout_constraintLeft_toRightOf="@id/seconds_separator"
-        tools:ignore="HardcodedText" />
+        tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry" />
 
-    <TextView
-        android:id="@+id/am_pm_marker_view"
+    <com.bopr.piclock.util.ui.ExtTextView
+        android:id="@+id/am_pm_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="?attr/contentAmPmTextMarginTop"
-        android:background="?attr/contentBackgroundColor"
         android:fontFamily="?attr/contentFont"
+        android:paddingTop="?attr/contentAmPmTextPaddingTop"
         android:text="AM"
         android:textColor="?attr/contentTextColor"
         android:textSize="?attr/contentAmPmTextSize"
@@ -89,13 +93,13 @@
         android:layout_width="0sp"
         android:layout_height="wrap_content"
         android:fontFamily="?attr/contentDateFont"
-        android:layout_marginTop="?attr/contentDateMarginTop"
         android:gravity="center"
-        android:text="Someday, Month 00 "
+        android:paddingTop="?attr/contentDatePaddingTop"
+        android:text="Someday of the week, Month 00, 2021"
         android:textColor="?attr/contentTextColor"
         android:textSize="?attr/contentDateTextSize"
         app:layout_constraintLeft_toLeftOf="@id/hours_view"
-        app:layout_constraintRight_toRightOf="@id/am_pm_marker_view"
+        app:layout_constraintRight_toRightOf="@id/am_pm_view"
         app:layout_constraintTop_toBottomOf="@id/hours_view"
         tools:ignore="HardcodedText" />
 

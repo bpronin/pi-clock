@@ -13,7 +13,7 @@ import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.defaultDatetimeFormat
-import com.bopr.piclock.util.requireResId
+import com.bopr.piclock.util.getResId
 import java.text.DateFormat
 import java.util.*
 
@@ -22,7 +22,8 @@ import java.util.*
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class DigitalClockControl(view: View, settings: Settings) : ContentControlAdapter(settings) {
+internal class DigitalClockControl(view: View, settings: Settings) :
+    ContentControlAdapter(settings) {
 
     private val amPmFormat = defaultDatetimeFormat("a")
     private val hoursView: AnimatedTextView = view.findViewById(R.id.hours_view)
@@ -31,7 +32,7 @@ internal class DigitalClockControl(view: View, settings: Settings) : ContentCont
     private val dateView: AnimatedTextView = view.findViewById(R.id.date_view)
     private val minutesSeparator: TextView = view.findViewById(R.id.minutes_separator)
     private val secondsSeparator: TextView = view.findViewById(R.id.seconds_separator)
-    private val amPmMarkerView: TextView = view.findViewById(R.id.am_pm_marker_view)
+    private val amPmMarkerView: TextView = view.findViewById(R.id.am_pm_view)
     private val blinker by lazy {
         TimeSeparatorBlinker(minutesSeparator, secondsSeparator).apply {
             setEnabled(
@@ -114,12 +115,13 @@ internal class DigitalClockControl(view: View, settings: Settings) : ContentCont
     }
 
     private fun updateDigitsAnimation() {
-        val resId = requireResId("animator", settings.getString(PREF_DIGITS_ANIMATION))
-
-        hoursView.setTextAnimator(resId)
-        minutesView.setTextAnimator(resId)
-        secondsView.setTextAnimator(resId)
-        dateView.setTextAnimator(resId)
+        val resId = getResId("animator", settings.getString(PREF_DIGITS_ANIMATION))
+        if (resId != 0) { /* 0 = animation disabled for digits */
+            hoursView.setTextAnimator(resId)
+            minutesView.setTextAnimator(resId)
+            secondsView.setTextAnimator(resId)
+            dateView.setTextAnimator(resId)
+        }
     }
 
     private fun updateViewsData(time: Date, animated: Boolean) {

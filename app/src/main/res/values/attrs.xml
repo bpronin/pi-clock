@@ -2,28 +2,28 @@
     <declare-styleable name="FullscreenAttrs">
         <attr name="contentAmPmFontSize" format="dimension" />
         <attr name="contentAmPmTextMarginBottom" format="dimension" />
-        <attr name="contentAmPmTextMarginTop" format="dimension" />
+        <attr name="contentAmPmTextPaddingTop" format="dimension" />
         <attr name="contentAmPmTextSize" format="dimension" />
         <attr name="contentBackgroundColor" format="color" />
         <attr name="contentDateFont" format="reference" />
         <attr name="contentDateFontSize" format="dimension" />
-        <attr name="contentDateMarginTop" format="dimension" />
+        <attr name="contentDatePaddingTop" format="dimension" />
         <attr name="contentDateTextSize" format="dimension" />
         <attr name="contentFont" format="reference" />
         <attr name="contentHeight" format="dimension" />
-        <attr name="contentHoursMarginBottom" format="dimension" />
-        <attr name="contentHoursMarginTop" format="dimension" />
+        <attr name="contentHoursPaddingBottom" format="dimension" />
+        <attr name="contentHoursPaddingTop" format="dimension" />
         <attr name="contentHoursTextSize" format="dimension" />
         <attr name="contentSecondsFontSize" format="dimension" />
-        <attr name="contentSecondsMarginBottom" format="dimension" />
-        <attr name="contentSecondsMarginStart" format="dimension" />
-        <attr name="contentSecondsMarginTop" format="dimension" />
-        <attr name="contentSecondsSeparatorMarginBottom" format="dimension" />
+        <attr name="contentSecondsPaddingBottom" format="dimension" />
+        <attr name="contentSecondsSeparatorPaddingRight" format="dimension" />
+        <attr name="contentSecondsPaddingTop" format="dimension" />
+        <attr name="contentSecondsSeparatorPaddingBottom" format="dimension" />
         <attr name="contentSecondsSeparatorMarginTop" format="dimension" />
         <attr name="contentSecondsTextSize" format="dimension" />
         <attr name="contentSecondsWidth" format="dimension" />
         <attr name="contentTextColor" format="color" />
-        <attr name="contentTimeSeparatorMarginBottom" format="dimension" />
+        <attr name="contentTimeSeparatorPaddingBottom" format="dimension" />
         <attr name="contentTimeSeparatorMarginTop" format="dimension" />
         <attr name="contentWidth" format="dimension" />
         <attr name="fabColor" format="color" />

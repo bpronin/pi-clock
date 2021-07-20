@@ -9,7 +9,6 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.bopr.piclock.util.extendProperties
@@ -18,6 +17,7 @@ import com.bopr.piclock.util.property.PROP_RELATIVE_TRANSITION_Y
 import com.bopr.piclock.util.property.PROP_SCALE_Y_PIVOT_BOTTOM
 import com.bopr.piclock.util.property.PROP_SCALE_Y_PIVOT_TOP
 import com.bopr.piclock.util.resetRenderParams
+import com.bopr.piclock.util.ui.ExtTextView
 
 /**
  * Text view with animated transitions.
@@ -27,8 +27,8 @@ import com.bopr.piclock.util.resetRenderParams
 class AnimatedTextView : FrameLayout {
     //todo: get rid of blinking of first symbol in fade-trough animation
     @Suppress("JoinDeclarationAndAssignment")
-    private lateinit var view: AppCompatTextView
-    private lateinit var shadowView: AppCompatTextView
+    private lateinit var view: ExtTextView
+    private lateinit var shadowView: ExtTextView
     private var textAnimator: AnimatorSet? = null
 
     constructor(context: Context) : super(context)
@@ -45,8 +45,8 @@ class AnimatedTextView : FrameLayout {
         context: Context, attrs: AttributeSet?,
         @AttrRes defStyleAttr: Int, @StyleRes defStyleRes: Int
     ) : super(context, attrs, defStyleAttr, defStyleRes) {
-        view = AppCompatTextView(context, attrs, defStyleAttr)
-        shadowView = AppCompatTextView(context, attrs, defStyleAttr)
+        view = ExtTextView(context, attrs, defStyleAttr)
+        shadowView = ExtTextView(context, attrs, defStyleAttr)
 
         resetViews()
 

@@ -1,0 +1,9 @@
+<!-- Dummy and shadowing attributes not used in the project directly -->
+<resources>
+
+    <declare-styleable name="ExtTextView">
+        <attr name="android:paddingTop" format="dimension" />
+        <attr name="android:paddingBottom" format="dimension" />
+    </declare-styleable>
+
+</resources>
