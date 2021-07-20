@@ -67,7 +67,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
     override fun onStart() {
         super.onStart()
         updateAboutView()
-        refreshPreferences()
+        refreshPreferenceViews(preferenceScreen)
         /* restore last scroll position */
         listView.scrollToPosition(settings.getInt(PREF_TOP_SETTING, 0))
     }
@@ -110,10 +110,15 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         }
     }
 
-    /** Forces update preference views */
-    private fun refreshPreferences() {
-        for (key in settings.all.keys) {
-            onSharedPreferenceChanged(settings, key)
+    /** Forces update preference views recursively */
+    private fun refreshPreferenceViews(group:PreferenceGroup) {
+        group.forEach { preference ->
+            preference.key?.apply {
+                onSharedPreferenceChanged(settings, this)
+            }
+            if (preference is PreferenceGroup) {
+                refreshPreferenceViews(preference)
+            }
         }
     }
 
@@ -229,6 +234,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
                 summary = entries[findIndexOfValue(value)]
                 isEnabled = true
             } ?: apply {
+                value = null
                 summary = getString(R.string.layout_has_no_styles)
                 isEnabled = false
             }
