@@ -158,8 +158,8 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
     companion object {
 
         private const val SETTINGS_VERSION = 1
-
         const val SHARED_PREFERENCES_NAME = "com.bopr.piclock_preferences"
+
         const val SYSTEM_DEFAULT = "system_default"
         const val TICK_ACTIVE = "active"
         const val TICK_INACTIVE = "inactive"

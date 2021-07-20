@@ -32,9 +32,8 @@ fun Contextual.getResId(defType: String, resName: String): Int {
  */
 fun Contextual.requireResId(defType: String, resName: String): Int {
     val resId = getResId(defType, resName)
-    if (resId == 0) {
+    if (resId == 0)
         throw IllegalArgumentException("Resource does not exist: $defType/$resName")
-    }
     return resId
 }
 
@@ -97,7 +96,7 @@ fun Contextual.getStringArray(resId: Int): Array<out String> {
 }
 
 fun Contextual.getStyleValuesResId(layoutResId: Int): Int {
-    return getResId("array", getResName(layoutResId) + "_style_values")
+    return requireResId("array", getResName(layoutResId) + "_style_values")
 }
 
 fun Contextual.getStyleTitlesResId(layoutResId: Int): Int {
@@ -105,7 +104,7 @@ fun Contextual.getStyleTitlesResId(layoutResId: Int): Int {
 }
 
 fun Contextual.getLayoutStyles(layoutName: String): Array<out String> {
-    return getStringArray(getStyleValuesResId(getResId("layout", layoutName)))
+    return getStringArray(getStyleValuesResId(requireResId("layout", layoutName)))
 }
 
 fun defaultDatetimeFormat(pattern: String) = SimpleDateFormat(pattern, Locale.getDefault())

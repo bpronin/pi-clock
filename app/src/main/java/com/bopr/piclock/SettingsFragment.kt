@@ -240,7 +240,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
     private fun updateStyleViewEntries() {
         requireContext().apply {
             val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
-            val layoutResId = getResId("layout", layoutName)
+            val layoutResId = requireResId("layout", layoutName)
             val valuesResId = getStyleValuesResId(layoutResId)
             requirePreference<ListPreference>(PREF_CONTENT_STYLE).apply {
                 if (valuesResId != 0) {

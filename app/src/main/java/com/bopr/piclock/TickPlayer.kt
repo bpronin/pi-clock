@@ -44,7 +44,7 @@ internal class TickPlayer(private val context: Context) : Contextual {
             } else {
                 player = null
 
-                Log.d(TAG, "Zero resource")
+                Log.d(TAG, "No sound selected")
             }
         }
     }
