@@ -43,7 +43,7 @@
         <item>Content.Digital.Vertical.Simple.Thick</item>
     </string-array>
 
-    <string-array name="view_analog_default_values" translatable="false">
+    <string-array name="view_analog_default_style_values" translatable="false">
         <item>Content.Analog.Default</item>
         <item>Content.Analog.Date.Bars</item>
     </string-array>

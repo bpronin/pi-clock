@@ -109,7 +109,7 @@
         <item>Thick</item>
     </string-array>
 
-    <string-array name="view_analog_default_titles">
+    <string-array name="view_analog_default_style_titles">
         <item>Default</item>
         <item>Bars date</item>
     </string-array>
