@@ -38,7 +38,6 @@
     <string name="hours_minutes_format">Hours and minutes</string>
     <string name="keep_clock_view">Clock keeps its position on the screen</string>
     <string name="layout">Layout</string>
-    <string name="layout_has_no_styles">Layout has no styles</string>
     <string name="layout_specific">Layout specific</string>
     <string name="layout_type">Layout type</string>
     <string name="minutes_separator">Minutes separator</string>
@@ -88,6 +87,14 @@
         <item>Square</item>
         <item>Curly</item>
         <item>Thick</item>
+    </string-array>
+
+    <string-array name="view_digital_vertical_default_style_titles">
+        <item>Default</item>
+    </string-array>
+
+    <string-array name="view_digital_vertical_simple_style_titles">
+        <item>Default</item>
     </string-array>
 
     <string-array name="tick_sound_titles">

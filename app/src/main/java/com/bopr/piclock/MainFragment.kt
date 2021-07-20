@@ -259,27 +259,16 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
     private fun createContentControl() {
         val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
+        val styleName = settings.getString(PREF_CONTENT_STYLE)
+
         val styles = getLayoutStyles(layoutName)
+        if (!styles.contains(styleName))
+            throw IllegalStateException("Unregistered style: $styleName for layout: $layoutName")
 
-        val contentView = if (styles.isNullOrEmpty()) {
-            layoutInflater.inflate(
-                requireResId("layout", layoutName),
-                contentHolderView,
-                false
-            )
-        } else {
-            val styleName = settings.getString(PREF_CONTENT_STYLE)
-
-            if (!styles.contains(styleName))
-                throw IllegalStateException("Unregistered style: $styleName for layout: $layoutName")
-
-            layoutInflater.inflateWithTheme(
-                requireResId("layout", layoutName),
-                contentHolderView,
-                false,
-                requireResId("style", styleName)
-            )
-        }
+        val contentView = layoutInflater.inflateWithTheme(
+            requireResId("layout", layoutName), contentHolderView,
+            false, requireResId("style", styleName)
+        )
 
         contentHolderView.apply {
             removeAllViews()

@@ -125,13 +125,12 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             ),
             isOldValueValid = { oldLayoutName ->
                 if (isResArrayContains(R.array.content_layout_values, oldLayoutName)) {
-                    getLayoutStyles(oldLayoutName)?.contains(getString(PREF_CONTENT_STYLE, null))
-                        ?: true
+                    getLayoutStyles(oldLayoutName).contains(getString(PREF_CONTENT_STYLE, null))
                 } else
                     false
             },
             onPut = { newLayoutName ->
-                getLayoutStyles(newLayoutName!!)?.apply {
+                getLayoutStyles(newLayoutName!!).apply {
                     putString(PREF_CONTENT_STYLE, get(0))
                 }
             }

@@ -104,12 +104,8 @@ fun Contextual.getStyleTitlesResId(layoutResId: Int): Int {
     return requireResId("array", getResName(layoutResId) + "_style_titles")
 }
 
-fun Contextual.getLayoutStyles(layoutName: String): Array<out String>? {
-    val stylesResId = getStyleValuesResId(getResId("layout", layoutName))
-    return if (stylesResId == 0)
-        null /* layout has styles */
-    else
-        getStringArray(stylesResId)
+fun Contextual.getLayoutStyles(layoutName: String): Array<out String> {
+    return getStringArray(getStyleValuesResId(getResId("layout", layoutName)))
 }
 
 fun defaultDatetimeFormat(pattern: String) = SimpleDateFormat(pattern, Locale.getDefault())

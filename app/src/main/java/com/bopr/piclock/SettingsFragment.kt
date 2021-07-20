@@ -89,7 +89,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
                 updateLayoutView()
                 updateLayoutPreferences()
                 updateStyleViewEntries()
-                validateSelectedStyle()
+                validateStyleSetting()
             }
             PREF_ANIMATION_ON -> updateAnimationOnView()
             PREF_AUTO_INACTIVATE_DELAY -> updateAutoInactivateView()
@@ -111,7 +111,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
     }
 
     /** Forces update preference views recursively */
-    private fun refreshPreferenceViews(group:PreferenceGroup) {
+    private fun refreshPreferenceViews(group: PreferenceGroup) {
         group.forEach { preference ->
             preference.key?.apply {
                 onSharedPreferenceChanged(settings, this)
@@ -229,14 +229,10 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     private fun updateStyleView() {
         requirePreference<ListPreference>(PREF_CONTENT_STYLE).apply {
-            entries?.apply {
+            entries.apply {
                 value = settings.getString(key)
                 summary = entries[findIndexOfValue(value)]
-                isEnabled = true
-            } ?: apply {
-                value = null
-                summary = getString(R.string.layout_has_no_styles)
-                isEnabled = false
+                isEnabled = entries.size > 1
             }
         }
     }
@@ -258,17 +254,14 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         }
     }
 
-    private fun validateSelectedStyle() {
-        val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
-        getLayoutStyles(layoutName)?.apply {
-            val styleName = settings.getString(PREF_CONTENT_STYLE, null)
-            if (contains(styleName)) {
-                /* the style is OK, do not touch settings */
+    private fun validateStyleSetting() {
+        getLayoutStyles(settings.getString(PREF_CONTENT_LAYOUT)).apply {
+            if (contains(settings.getString(PREF_CONTENT_STYLE, null))) {
+                updateStyleView()
             } else {
+                /* setting update will trigger updateStyleView */
                 settings.update { putString(PREF_CONTENT_STYLE, get(0)) }
             }
-        } ?: apply {
-            settings.update { putString(PREF_CONTENT_STYLE, null) }
         }
     }
 

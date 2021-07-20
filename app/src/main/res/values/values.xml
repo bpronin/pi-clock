@@ -24,6 +24,14 @@
         <item>Content.Digital.Simple.Thick</item>
     </string-array>
 
+    <string-array name="view_digital_vertical_default_style_values" translatable="false">
+        <item>Content.Digital.Default</item>
+    </string-array>
+
+    <string-array name="view_digital_vertical_simple_style_values" translatable="false">
+        <item>Content.Digital.Simple</item>
+    </string-array>
+
     <string-array name="time_format_values" translatable="false">
         <item>HH:mm</item>
         <item>H:mm</item>
