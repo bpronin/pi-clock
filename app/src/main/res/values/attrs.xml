@@ -25,6 +25,8 @@
         <attr name="contentTextSize" format="dimension" />
         <attr name="contentTimeSeparatorMarginBottom" format="dimension" />
         <attr name="contentTimeSeparatorMarginTop" format="dimension" />
+        <attr name="contentHeight" format="dimension" />
+        <attr name="contentWidth" format="dimension" />
         <attr name="fabColor" format="color" />
     </declare-styleable>
 </resources>
