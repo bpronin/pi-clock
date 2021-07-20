@@ -78,6 +78,23 @@
         <item name="contentTimeSeparatorPaddingBottom">10sp</item>
     </style>
 
+    <style name="Content.Digital.Default.Typewriter" parent="Content.Digital.Default">
+        <item name="contentAmPmTextPaddingTop">0sp</item>
+        <item name="contentAmPmTextSize">30sp</item>
+        <item name="contentDateFont">@font/specialelite</item>
+        <item name="contentDatePaddingTop">0sp</item>
+        <item name="contentDateTextSize">20sp</item>
+        <item name="contentFont">@font/specialelite</item>
+        <item name="contentSecondsSeparatorPaddingRight">1sp</item>
+        <item name="contentSecondsSeparatorPaddingBottom">4sp</item>
+        <item name="contentSecondsTextSize">32sp</item>
+        <item name="contentSecondsWidth">56sp</item>
+        <item name="contentHoursTextSize">78sp</item>
+        <item name="contentHoursPaddingTop">-10sp</item>
+        <item name="contentHoursPaddingBottom">-14sp</item>
+        <item name="contentTimeSeparatorPaddingBottom">-8sp</item>
+    </style>
+
     <!-- Digital Simple -->
 
     <style name="Content.Digital.Simple" parent="Content.Digital.Default">

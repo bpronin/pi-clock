@@ -14,6 +14,7 @@
         <item>Content.Digital.Default.Square</item>
         <item>Content.Digital.Default.Curly</item>
         <item>Content.Digital.Default.Thick</item>
+        <item>Content.Digital.Default.Typewriter</item>
     </string-array>
 
     <string-array name="view_digital_simple_style_values" translatable="false">

@@ -86,7 +86,6 @@
         android:textColor="?attr/contentTextColor"
         android:textSize="?attr/contentAmPmTextSize"
         app:layout_constraintLeft_toLeftOf="@id/seconds_view"
-        app:layout_constraintRight_toRightOf="@id/seconds_view"
         app:layout_constraintTop_toTopOf="@id/hours_view"
         tools:ignore="HardcodedText" />
 
@@ -101,7 +100,7 @@
         android:textColor="?attr/contentTextColor"
         android:textSize="?attr/contentDateTextSize"
         app:layout_constraintLeft_toLeftOf="@id/hours_view"
-        app:layout_constraintRight_toRightOf="@id/am_pm_view"
+        app:layout_constraintRight_toRightOf="@id/seconds_view"
         app:layout_constraintTop_toBottomOf="@id/hours_view"
         tools:ignore="HardcodedText" />
 
