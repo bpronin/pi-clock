@@ -28,7 +28,7 @@ internal class LayoutControl(
     private val fragmentManager: FragmentManager,
     settings: Settings
 ) : ContentControlAdapter(settings) {
-
+//    todo: idea:  draw in edit mode a scaled screen and scale content into it
     private val settingsButton by lazy { rootView.findViewById<View>(R.id.settings_button) }
     private val settingsContainer by lazy { rootView.findViewById<View>(R.id.settings_container) }
     private val defaultSettingsButtonInsets by lazy { settingsButton.marginsToInsets() }

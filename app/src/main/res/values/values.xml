@@ -25,11 +25,19 @@
     </string-array>
 
     <string-array name="view_digital_vertical_default_style_values" translatable="false">
-        <item>Content.Digital.Default</item>
+        <item>Content.Digital.Vertical.Default</item>
+        <item>Content.Digital.Vertical.Default.Round</item>
+        <item>Content.Digital.Vertical.Default.Square</item>
+        <item>Content.Digital.Vertical.Default.Curly</item>
+        <item>Content.Digital.Vertical.Default.Thick</item>
     </string-array>
 
     <string-array name="view_digital_vertical_simple_style_values" translatable="false">
-        <item>Content.Digital.Simple</item>
+        <item>Content.Digital.Vertical.Simple</item>
+        <item>Content.Digital.Vertical.Simple.Round</item>
+        <item>Content.Digital.Vertical.Simple.Square</item>
+        <item>Content.Digital.Vertical.Simple.Curly</item>
+        <item>Content.Digital.Vertical.Simple.Thick</item>
     </string-array>
 
     <string-array name="time_format_values" translatable="false">

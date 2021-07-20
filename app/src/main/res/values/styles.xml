@@ -104,4 +104,40 @@
         <item name="contentTextSize">74sp</item>
     </style>
 
+    <!-- Digital Vertical Default -->
+
+    <style name="Content.Digital.Vertical.Default" parent="Content.Digital.Default">
+        <item name="contentAmPmTextMarginTop">0sp</item>
+        <item name="contentAmPmTextMarginBottom">-12sp</item>
+        <item name="contentHoursMarginTop">0sp</item>
+        <item name="contentHoursMarginBottom">0sp</item>
+        <item name="contentTimeSeparatorMarginTop">-64sp</item>
+        <item name="contentTimeSeparatorMarginBottom">-30sp</item>
+        <item name="contentSecondsSeparatorMarginTop">-32sp</item>
+        <item name="contentSecondsSeparatorMarginBottom">-8sp</item>
+        <item name="contentDateMarginTop">0sp</item>
+    </style>
+
+    <style name="Content.Digital.Vertical.Default.Curly" parent="Content.Digital.Default.Curly"></style>
+
+    <style name="Content.Digital.Vertical.Default.Round" parent="Content.Digital.Default.Round"></style>
+
+    <style name="Content.Digital.Vertical.Default.Square" parent="Content.Digital.Default.Square"></style>
+
+    <style name="Content.Digital.Vertical.Default.Thick" parent="Content.Digital.Default.Thick"></style>
+
+    <!-- Digital Vertical Simple -->
+
+    <style name="Content.Digital.Vertical.Simple" parent="Content.Digital.Default">
+        <item name="contentAmPmTextMarginBottom">-12sp</item>
+    </style>
+
+    <style name="Content.Digital.Vertical.Simple.Curly" parent="Content.Digital.Default.Curly"></style>
+
+    <style name="Content.Digital.Vertical.Simple.Round" parent="Content.Digital.Default.Round"></style>
+
+    <style name="Content.Digital.Vertical.Simple.Square" parent="Content.Digital.Default.Square"></style>
+
+    <style name="Content.Digital.Vertical.Simple.Thick" parent="Content.Digital.Default.Thick"></style>
+
 </resources>

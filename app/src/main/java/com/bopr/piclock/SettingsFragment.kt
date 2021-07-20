@@ -232,7 +232,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             entries.apply {
                 value = settings.getString(key)
                 summary = entries[findIndexOfValue(value)]
-                isEnabled = entries.size > 1
+                isEnabled = entryValues.size > 1
             }
         }
     }

@@ -91,10 +91,18 @@
 
     <string-array name="view_digital_vertical_default_style_titles">
         <item>Default</item>
+        <item>Round</item>
+        <item>Square</item>
+        <item>Curly</item>
+        <item>Thick</item>
     </string-array>
 
     <string-array name="view_digital_vertical_simple_style_titles">
         <item>Default</item>
+        <item>Round</item>
+        <item>Square</item>
+        <item>Curly</item>
+        <item>Thick</item>
     </string-array>
 
     <string-array name="tick_sound_titles">
