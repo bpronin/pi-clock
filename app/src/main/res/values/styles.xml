@@ -95,6 +95,23 @@
         <item name="contentTimeSeparatorPaddingBottom">-8sp</item>
     </style>
 
+    <style name="Content.Digital.Default.Zen" parent="Content.Digital.Default">
+        <item name="contentAmPmTextPaddingTop">0sp</item>
+        <item name="contentAmPmTextSize">58sp</item>
+        <item name="contentDateFont">@font/zenloop</item>
+        <item name="contentDatePaddingTop">0sp</item>
+        <item name="contentDateTextSize">28sp</item>
+        <item name="contentFont">@font/zenloop</item>
+        <item name="contentSecondsSeparatorPaddingRight">1sp</item>
+        <item name="contentSecondsSeparatorPaddingBottom">6sp</item>
+        <item name="contentSecondsTextSize">60sp</item>
+        <item name="contentSecondsWidth">56sp</item>
+        <item name="contentHoursTextSize">120sp</item>
+        <item name="contentHoursPaddingTop">-10sp</item>
+        <item name="contentHoursPaddingBottom">-14sp</item>
+        <item name="contentTimeSeparatorPaddingBottom">0sp</item>
+    </style>
+
     <!-- Digital Simple -->
 
     <style name="Content.Digital.Simple" parent="Content.Digital.Default">
