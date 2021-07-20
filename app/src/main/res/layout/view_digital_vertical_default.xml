@@ -7,12 +7,12 @@
     android:background="?attr/contentBackgroundColor"
     android:orientation="vertical">
 
-    <TextView
+    <com.bopr.piclock.util.ui.ExtTextView
         android:id="@+id/am_pm_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="?attr/contentAmPmTextMarginBottom"
+        android:paddingBottom="?attr/contentAmPmTextPaddingBottom"
         android:fontFamily="?attr/contentFont"
         android:text="AM"
         android:textColor="?attr/contentTextColor"
@@ -25,21 +25,21 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="?attr/contentFont"
-        android:layout_marginTop="?attr/contentHoursPaddingTop"
-        android:layout_marginBottom="?attr/contentHoursPaddingBottom"
+        android:paddingTop="?attr/contentHoursPaddingTop"
+        android:paddingBottom="?attr/contentHoursPaddingBottom"
         android:gravity="center"
         android:text="44"
         android:textColor="?attr/contentTextColor"
         android:textSize="?attr/contentHoursTextSize"
         tools:ignore="HardcodedText" />
 
-    <TextView
+    <com.bopr.piclock.util.ui.ExtTextView
         android:id="@+id/minutes_separator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="?attr/contentTimeSeparatorMarginTop"
-        android:layout_marginBottom="?attr/contentTimeSeparatorPaddingBottom"
+        android:paddingTop="?attr/contentTimeSeparatorPaddingTop"
+        android:paddingBottom="?attr/contentTimeSeparatorPaddingBottom"
         android:fontFamily="?attr/contentFont"
         android:text="_"
         android:textColor="?attr/contentTextColor"
@@ -51,8 +51,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="?attr/contentHoursPaddingTop"
-        android:layout_marginBottom="?attr/contentHoursPaddingBottom"
+        android:paddingTop="?attr/contentHoursPaddingTop"
+        android:paddingBottom="?attr/contentHoursPaddingBottom"
         android:fontFamily="?attr/contentFont"
         android:gravity="center"
         android:text="00"
@@ -60,13 +60,13 @@
         android:textSize="?attr/contentHoursTextSize"
         tools:ignore="HardcodedText" />
 
-    <TextView
+    <com.bopr.piclock.util.ui.ExtTextView
         android:id="@+id/seconds_separator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="?attr/contentSecondsSeparatorMarginTop"
-        android:layout_marginBottom="?attr/contentSecondsSeparatorPaddingBottom"
+        android:paddingTop="?attr/contentSecondsSeparatorPaddingTop"
+        android:paddingBottom="?attr/contentSecondsSeparatorPaddingBottom"
         android:fontFamily="?attr/contentFont"
         android:text="_"
         android:textColor="?attr/contentTextColor"
@@ -79,8 +79,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="?attr/contentFont"
-        android:layout_marginTop="?attr/contentSecondsPaddingTop"
-        android:layout_marginBottom="?attr/contentSecondsPaddingBottom"
+        android:paddingTop="?attr/contentSecondsPaddingTop"
+        android:paddingBottom="?attr/contentSecondsPaddingBottom"
         android:gravity="center"
         android:text="44"
         android:textColor="?attr/contentTextColor"
@@ -91,7 +91,7 @@
         android:id="@+id/date_view"
         android:layout_width="?attr/contentWidth"
         android:layout_height="wrap_content"
-        android:layout_marginTop="?attr/contentDatePaddingTop"
+        android:paddingTop="?attr/contentDatePaddingTop"
         android:fontFamily="?attr/contentDateFont"
         android:gravity="center"
         android:text="Wednsday, December 28, 2021"
