@@ -43,6 +43,11 @@
         <item>Content.Digital.Vertical.Simple.Thick</item>
     </string-array>
 
+    <string-array name="view_analog_default_values" translatable="false">
+        <item>Content.Analog.Default</item>
+        <item>Content.Analog.Date.Bars</item>
+    </string-array>
+
     <string-array name="time_format_values" translatable="false">
         <item>HH:mm</item>
         <item>H:mm</item>

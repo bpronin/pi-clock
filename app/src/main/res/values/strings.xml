@@ -109,6 +109,11 @@
         <item>Thick</item>
     </string-array>
 
+    <string-array name="view_analog_default_titles">
+        <item>Default</item>
+        <item>Bars date</item>
+    </string-array>
+
     <string-array name="tick_sound_titles">
         <item>Alarm clock</item>
         <item>Tick-tick</item>

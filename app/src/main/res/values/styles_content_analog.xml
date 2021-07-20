@@ -8,4 +8,7 @@
         <item name="contentDateTextSize">18sp</item>
     </style>
 
+    <style name="Content.Analog.Date.Bars" parent="Content.Analog.Default">
+    </style>
+
 </resources>
