@@ -14,12 +14,12 @@ val PROP_SCALE by lazy {
 
     object : Property<View, Float>(Float::class.java, "scale") {
 
-        override fun get(view: View?): Float? {
-            return view?.scaleX
+        override fun get(view: View): Float {
+            return view.scaleX
         }
 
-        override fun set(view: View?, value: Float) {
-            view?.apply {
+        override fun set(view: View, value: Float) {
+            view.apply {
                 scaleX = value
                 scaleY = scaleX
             }
@@ -65,12 +65,12 @@ val PROP_RELATIVE_TRANSITION_X by lazy {
 
     object : Property<View, Float>(Float::class.java, "relativeTranslationX") {
 
-        override fun get(view: View?): Float? {
-            return view?.run { translationX / width }
+        override fun get(view: View): Float? {
+            return view.run { translationX / width }
         }
 
-        override fun set(view: View?, value: Float?) {
-            view?.apply { translationX = (value ?: 0f) * width }
+        override fun set(view: View, value: Float) {
+            view.apply { translationX = value * width }
         }
     }
 }
@@ -79,12 +79,26 @@ val PROP_RELATIVE_TRANSITION_Y by lazy {
 
     object : Property<View, Float>(Float::class.java, "relativeTranslationY") {
 
-        override fun get(view: View?): Float? {
-            return view?.run { translationY / height }
+        override fun get(view: View): Float {
+            return view.run { translationY / height }
         }
 
-        override fun set(view: View?, value: Float?) {
-            view?.apply { translationY = (value ?: 0f) * height }
+        override fun set(view: View, value: Float) {
+            view.apply { translationY = value * height }
+        }
+    }
+}
+
+val PROP_RELATIVE_ROTATION by lazy {
+
+    object : Property<View, Float>(Float::class.java, "relativeRotation") {
+
+        override fun get(view: View): Float? {
+            return view.run { rotation }
+        }
+
+        override fun set(view: View, value: Float) {
+            view.apply { rotation = value }
         }
     }
 }

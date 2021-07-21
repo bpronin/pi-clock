@@ -1,11 +1,16 @@
 package com.bopr.piclock
 
+import android.animation.Animator
+import android.animation.AnimatorInflater.loadAnimator
+import android.animation.ObjectAnimator
 import android.view.View
+import android.view.View.ROTATION
 import android.widget.ImageView
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_SECOND_HAND_VISIBLE
+import com.bopr.piclock.util.forEachChildRecusively
 import com.bopr.piclock.util.isOdd
 import java.util.*
 import java.util.Calendar.*
@@ -26,41 +31,82 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
     private val textDateViewControl = AnalogClockTextDateControl(view, settings)
     private val barsDateControl = AnalogClockBarsDateControl(view, settings)
 
-    private var animated = true
+    private var secondHandAnimator: Animator? = null
+    private var animationOn = true
     private var currentTime = Date()
     private var currentTick = 1
 
     init {
-        updateAnimated()
+        updateAnimationOn()
         updateSecondHandView()
-        updateViewData()
+        updateViewData(false)
+        updateAnimators()
+    }
+
+    private fun updateAnimators() {
+//        val resId = R.animator.clock_handle_rotate_overshot
+        val resId = R.animator.clock_handle_rotate_linear
+        secondHandAnimator = loadAnimator(requireContext(), resId).apply {
+            setTarget(secondHandView)
+        }
     }
 
     private fun updateSecondHandView() {
         secondHandView.isGone = !settings.getBoolean(PREF_SECOND_HAND_VISIBLE)
     }
 
-    private fun updateAnimated() {
-        animated = settings.getBoolean(PREF_ANIMATION_ON)
+    private fun updateAnimationOn() {
+        animationOn = settings.getBoolean(PREF_ANIMATION_ON)
     }
 
-    private fun updateViewData() {
+    private fun updateViewData(animated: Boolean) {
         GregorianCalendar.getInstance().apply {
             time = currentTime
             if (currentTick == 1) {
                 minuteHandView.rotation = get(MINUTE) * 6f
                 hourHandView.rotation = get(HOUR) * 30f
             }
+
             if (currentTick.isOdd && secondHandView.isVisible) {
-                secondHandView.rotation = get(SECOND) * 6f
+                rotateSecondHand(get(SECOND), animated)
             }
+        }
+    }
+
+    private fun rotateSecondHand(second: Int, animated: Boolean) {
+        val angle = second * 6f
+        if (animated) {
+            secondHandAnimator?.apply {
+                cancel()
+
+                val start = if (secondHandView.rotation <= 360f)
+                    secondHandView.rotation
+                else
+                    secondHandView.rotation - 360f
+
+                val end = if (start <= angle) angle else angle + 360f
+
+                forEachChildRecusively { child ->
+                    if (child is ObjectAnimator) {
+                        child.apply {
+                            when (propertyName) {
+                                ROTATION.name -> setFloatValues(start, end)
+                            }
+                        }
+                    }
+                }
+
+                start()
+            }
+        } else {
+            secondHandView.rotation = angle
         }
     }
 
     override fun onTimer(time: Date, tick: Int) {
         currentTime = time
         currentTick = tick
-        updateViewData()
+        updateViewData(animationOn)
         barsDateControl.onTimer(time, tick)
         textDateViewControl.onTimer(time, tick)
     }
@@ -69,9 +115,9 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
         when (key) {
             PREF_SECOND_HAND_VISIBLE -> {
                 updateSecondHandView()
-                updateViewData()
+                updateViewData(animationOn)
             }
-            PREF_ANIMATION_ON -> updateAnimated()
+            PREF_ANIMATION_ON -> updateAnimationOn()
         }
         barsDateControl.onSettingChanged(key)
         textDateViewControl.onSettingChanged(key)

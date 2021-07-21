@@ -119,7 +119,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     /** Forces update preference views recursively */
     private fun refreshPreferenceViews(root: PreferenceGroup) {
-        root.forEachDescendant {
+        root.forEachChildRecusively {
             it.key?.apply { onSharedPreferenceChanged(settings, this) }
         }
     }

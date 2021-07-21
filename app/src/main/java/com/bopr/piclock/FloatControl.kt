@@ -39,12 +39,12 @@ internal class FloatControl(
             }
         }
     }
-    private val canAnimate get() = animated && floatAnimator != null && homeAnimator != null
+    private val canAnimate get() = animationOn && floatAnimator != null && homeAnimator != null
 
     private var floatAnimator: Animator? = null
     private var homeAnimator: Animator? = null
     private var interval = 0L
-    private var animated = true
+    private var animationOn = true
 
     private var floating = false
         set(value) {
@@ -75,26 +75,30 @@ internal class FloatControl(
 
     init {
         updateInterval()
-        updateAnimator()
-        updateAnimated()
+        updateAnimators()
+        updateAnimationOn()
     }
 
     private fun scheduleTask() {
         if (!enabled) return
 
-        if (interval < 0) {
-            Log.d(TAG, "Task ignored")
-        } else if (canAnimate) {
-            handler.postDelayed(floatTask, interval)
+        when {
+            interval < 0 -> {
+                Log.d(TAG, "Task ignored")
+            }
+            canAnimate -> {
+                handler.postDelayed(floatTask, interval)
 
-            Log.d(TAG, "Task scheduled in: $interval")
-        } else {
-            /* prevent content from jumping along the screen when animations is disabled
-               ans interval is 0 */
-            val delay = 1000L
-            handler.postDelayed(floatTask, delay)
+                Log.d(TAG, "Task scheduled in: $interval")
+            }
+            else -> {
+                /* prevent content from jumping along the screen when animations is disabled
+                   ans interval is 0 */
+                val delay = 1000L
+                handler.postDelayed(floatTask, delay)
 
-            Log.d(TAG, "Animation disabled. Task scheduled in: $delay")
+                Log.d(TAG, "Animation disabled. Task scheduled in: $delay")
+            }
         }
     }
 
@@ -155,7 +159,7 @@ internal class FloatControl(
 
                 /* NOTE: it's not possible to reach PropertyHolder's values initialized in XML nor identify
                    animators with ids or tags so we use property names as markers here */
-                forEachDescendant { child ->
+                forEachChildRecusively { child ->
                     if (child is ObjectAnimator) {
                         child.apply {
                             when (propertyName) {
@@ -192,7 +196,7 @@ internal class FloatControl(
         homeAnimator?.cancel()
     }
 
-    private fun updateAnimator() {
+    private fun updateAnimators() {
         cancelAnimators()
         val resId = getResId("animator", settings.getString(PREF_FLOAT_ANIMATION))
         if (resId != 0) { /* 0 = floating animation disabled */
@@ -215,9 +219,9 @@ internal class FloatControl(
         if (interval < 0) floatHome() else scheduleTask()
     }
 
-    private fun updateAnimated() {
-        animated = settings.getBoolean(PREF_ANIMATION_ON)
-        if (!animated) {
+    private fun updateAnimationOn() {
+        animationOn = settings.getBoolean(PREF_ANIMATION_ON)
+        if (!animationOn) {
             cancelAnimators()
         }
     }
@@ -225,9 +229,9 @@ internal class FloatControl(
     override fun onSettingChanged(key: String) {
         when (key) {
             PREF_CONTENT_FLOAT_INTERVAL -> updateInterval()
-            PREF_ANIMATION_ON -> updateAnimated()
+            PREF_ANIMATION_ON -> updateAnimationOn()
             PREF_FLOAT_SPEED,
-            PREF_FLOAT_ANIMATION -> updateAnimator()
+            PREF_FLOAT_ANIMATION -> updateAnimators()
         }
     }
 

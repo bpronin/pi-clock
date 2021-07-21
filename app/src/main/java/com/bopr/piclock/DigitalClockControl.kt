@@ -1,8 +1,10 @@
 package com.bopr.piclock
 
 import android.view.View
-import android.view.ViewGroup.*
+import android.view.ViewGroup.GONE
+import android.view.ViewGroup.VISIBLE
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
@@ -41,7 +43,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
                         settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING)
             )
             setSecondsEnabled(settings.getString(PREF_SECONDS_FORMAT).isNotEmpty())
-            setAnimated(animated)
+            setAnimated(animationOn)
         }
     }
 
@@ -50,7 +52,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
     private lateinit var secondsFormat: DateFormat
     private lateinit var dateFormat: DateFormat
 
-    private var animated: Boolean = true
+    private var animationOn: Boolean = true
 
     init {
         updateHoursMinutesViews()
@@ -58,13 +60,13 @@ internal class DigitalClockControl(view: View, settings: Settings) :
         updateSeparatorsViews()
         updateDateView()
         updateDigitsAnimation()
-        updateAnimated()
+        updateAnimationOn()
         updateViewsData(Date(), false)
     }
 
-    private fun updateAnimated() {
-        animated = settings.getBoolean(PREF_ANIMATION_ON)
-        blinker.setAnimated(animated)
+    private fun updateAnimationOn() {
+        animationOn = settings.getBoolean(PREF_ANIMATION_ON)
+        blinker.setAnimated(animationOn)
     }
 
     private fun updateHoursMinutesViews() {
@@ -91,25 +93,24 @@ internal class DigitalClockControl(view: View, settings: Settings) :
     private fun updateDateView() {
         val pattern = settings.getString(PREF_DATE_FORMAT)
 
-        dateFormat =
-            if (pattern == SYSTEM_DEFAULT) DEFAULT_DATE_FORMAT else defaultDatetimeFormat(
-                pattern
-            )
+        dateFormat = if (pattern == SYSTEM_DEFAULT)
+            DEFAULT_DATE_FORMAT
+        else
+            defaultDatetimeFormat(pattern)
         dateView.visibility = if (pattern.isEmpty()) GONE else VISIBLE
     }
 
     private fun updateSeparatorsViews() {
         if (settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE)) {
             val secondsVisible = settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()
-            minutesSeparator.visibility = VISIBLE
-            secondsSeparator.visibility =
-                if (secondsVisible) VISIBLE else INVISIBLE
+            minutesSeparator.isVisible = true
+            secondsSeparator.isVisible = secondsVisible
 
             blinker.setEnabled(settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING))
             blinker.setSecondsEnabled(secondsVisible)
         } else {
-            minutesSeparator.visibility = INVISIBLE
-            secondsSeparator.visibility = INVISIBLE
+            minutesSeparator.isVisible = false
+            secondsSeparator.isVisible = false
 
             blinker.setEnabled(false)
         }
@@ -141,7 +142,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
 
     override fun onTimer(time: Date, tick: Int) {
         if (tick.isOdd) {
-            updateViewsData(time, animated)
+            updateViewsData(time, animationOn)
         }
 
         blinker.onTimer(tick)
@@ -150,7 +151,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
     override fun onSettingChanged(key: String) {
         when (key) {
             PREF_ANIMATION_ON ->
-                updateAnimated()
+                updateAnimationOn()
             PREF_TIME_FORMAT ->
                 updateHoursMinutesViews()
             PREF_SECONDS_FORMAT -> {

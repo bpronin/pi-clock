@@ -23,11 +23,11 @@ internal class AnalogClockBarsDateControl(private val view: View, settings: Sett
 
     private val dateView: ViewGroup? by lazy { view.findViewById(R.id.bars_date_view) }
 
-    private var animated = true
+    private var animationOn = true
     private var currentTime = Date()
 
     init {
-        updateAnimated()
+        updateAnimationOn()
         updateView()
     }
 
@@ -36,8 +36,8 @@ internal class AnalogClockBarsDateControl(private val view: View, settings: Sett
         return if (k >= 0) k else k + 7
     }
 
-    private fun updateAnimated() {
-        animated = settings.getBoolean(PREF_ANIMATION_ON)
+    private fun updateAnimationOn() {
+        animationOn = settings.getBoolean(PREF_ANIMATION_ON)
     }
 
     private fun updateView() {
@@ -72,7 +72,7 @@ internal class AnalogClockBarsDateControl(private val view: View, settings: Sett
 
     override fun onSettingChanged(key: String) {
         when (key) {
-            PREF_ANIMATION_ON -> updateAnimated()
+            PREF_ANIMATION_ON -> updateAnimationOn()
             PREF_WEEK_START -> updateView()
         }
     }

@@ -23,16 +23,16 @@ internal class AnalogClockTextDateControl(private val view: View, settings: Sett
 
     private lateinit var dateFormat: DateFormat
 
-    private var animated = true
+    private var animationOn = true
     private var currentTime = Date()
 
     init {
-        updateAnimated()
+        updateAnimationOn()
         updateView()
     }
 
-    private fun updateAnimated() {
-        animated = settings.getBoolean(PREF_ANIMATION_ON)
+    private fun updateAnimationOn() {
+        animationOn = settings.getBoolean(PREF_ANIMATION_ON)
     }
 
     private fun updateView() {
@@ -45,7 +45,7 @@ internal class AnalogClockTextDateControl(private val view: View, settings: Sett
             isGone = pattern.isEmpty()
 
             if (isVisible) {
-                setText(dateFormat.format(currentTime), animated)
+                setText(dateFormat.format(currentTime), animationOn)
             }
         }
     }
@@ -59,7 +59,7 @@ internal class AnalogClockTextDateControl(private val view: View, settings: Sett
 
     override fun onSettingChanged(key: String) {
         when (key) {
-            PREF_ANIMATION_ON -> updateAnimated()
+            PREF_ANIMATION_ON -> updateAnimationOn()
             PREF_DATE_FORMAT -> updateView() //todo: animate when format changed
         }
     }
