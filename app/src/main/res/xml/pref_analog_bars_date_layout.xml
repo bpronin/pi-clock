@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="layout_specific_content">
+
+    <PreferenceCategory android:key="layout_specific_preferences">
+
+        <PreferenceCategory android:title="@string/formats">
+
+            <ListPreference
+                android:entryValues="@array/date_format_values"
+                android:key="date_format"
+                android:title="@string/date_format">
+
+                <!-- entries for 'date_format' are build dynamically -->
+
+            </ListPreference>
+
+        </PreferenceCategory>
+
+        <SwitchPreferenceCompat
+            android:key="second_hand_visible"
+            android:title="@string/second_hand" />
+
+        <com.bopr.piclock.util.ui.preference.IntListPreference
+            android:key="week_start"
+            android:title="@string/week_start">
+
+            <!-- entries for 'week_start' are build dynamically -->
+
+        </com.bopr.piclock.util.ui.preference.IntListPreference>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

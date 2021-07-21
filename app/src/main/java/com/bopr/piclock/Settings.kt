@@ -74,6 +74,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
         putBooleanOptional(PREF_GESTURES_ENABLED, true)
         putBooleanOptional(PREF_SECOND_HAND_VISIBLE, true)
+        putIntOptional(PREF_WEEK_START, localeFirstDayOfWeek)
         putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)  /* 15 min */
         putIntOptional(PREF_CONTENT_SCALE, 100) {
             it in MIN_SCALE..MAX_SCALE
@@ -90,7 +91,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
         putStringResourceOptional(
             PREF_TIME_FORMAT,
-            if (is24HourLocale()) "HH:mm" else "h:mm",
+            if (is24HourLocale) "HH:mm" else "h:mm",
             R.array.time_format_values
         )
 
@@ -191,6 +192,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_TIME_FORMAT = "time_format"
         const val PREF_TIME_SEPARATORS_BLINKING = "time_separators_blinking"
         const val PREF_TIME_SEPARATORS_VISIBLE = "time_separators_visible"
+        const val PREF_WEEK_START = "week_start"
     }
 
 }

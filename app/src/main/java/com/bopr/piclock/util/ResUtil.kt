@@ -10,10 +10,19 @@ import java.util.*
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 
-fun is24HourLocale(): Boolean {
-    val pattern = (DateFormat.getTimeInstance() as SimpleDateFormat).toPattern()
-    return !pattern.lowercase(Locale.ROOT).contains("a")
-}
+/**
+ * Miscellaneous resourceconstants and  utilities.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ */
+
+val localeFirstDayOfWeek: Int get() = Calendar.getInstance(Locale.ROOT).firstDayOfWeek
+
+val is24HourLocale: Boolean
+    get() {
+        val pattern = (DateFormat.getTimeInstance() as SimpleDateFormat).toPattern()
+        return !pattern.lowercase(Locale.ROOT).contains("a")
+    }
 
 /**
  * Returns ID of resource by its name.

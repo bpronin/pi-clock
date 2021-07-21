@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.preference.*
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bopr.piclock.AnalogClockControl.Companion.isAnalogClockBarsDateLayout
 import com.bopr.piclock.AnalogClockControl.Companion.isAnalogClockLayout
 import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
 import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
@@ -32,6 +33,7 @@ import com.bopr.piclock.Settings.Companion.PREF_TICK_RULES
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TOP_SETTING
+import com.bopr.piclock.Settings.Companion.PREF_WEEK_START
 import com.bopr.piclock.Settings.Companion.SHARED_PREFERENCES_NAME
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.*
@@ -108,6 +110,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             PREF_TICK_RULES -> updateTickModeView()
             PREF_TICK_SOUND -> updateTickSoundView()
             PREF_TIME_FORMAT -> updateTimeFormatView()
+            PREF_WEEK_START -> updateWeekStartView()
         }
     }
 
@@ -127,8 +130,12 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
 
         val layoutPrefsResId = when {
-            isDigitalClockLayout(layoutName) -> R.xml.pref_digital_layout
-            isAnalogClockLayout(layoutName) -> R.xml.pref_analog_layout
+            isDigitalClockLayout(layoutName) ->
+                R.xml.pref_digital_layout
+            isAnalogClockBarsDateLayout(layoutName) -> /* before isAnalogClockLayout ! */
+                R.xml.pref_analog_bars_date_layout
+            isAnalogClockLayout(layoutName) ->
+                R.xml.pref_analog_layout
             else ->
                 throw IllegalArgumentException("No preferences resource for layout:$layoutName")
         }
@@ -381,6 +388,13 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             val value = settings.getInt(key)
             val ix = findIndexOfValue(value.toString())
             summary = if (ix >= 0) entries[ix] else null
+        }
+    }
+
+    private fun updateWeekStartView() {
+        requirePreference<ListPreference>(PREF_WEEK_START).apply {
+            val value = settings.getInt(key)
+            summary = value.toString()
         }
     }
 

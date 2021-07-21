@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="300dp"
-    android:layout_height="40dp"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="200dp"
+    android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
     android:background="?attr/contentBackgroundColor"
     android:orientation="horizontal">
@@ -11,71 +11,65 @@
     <ImageView
         android:id="@+id/sun_view"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:scaleY="0.5"
+        android:paddingHorizontal="1dp"
         android:src="@drawable/view_bar_date_bar"
-        android:transformPivotY="0dp"
         app:tint="@color/orange"
         tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/mon_view"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:scaleY="0.5"
+        android:paddingHorizontal="1dp"
         android:src="@drawable/view_bar_date_bar"
-        android:transformPivotY="0dp"
         tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/tue_view"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:scaleY="0.5"
-        android:src="@drawable/view_bar_date_bar"
-        android:transformPivotY="0dp"
+        android:paddingHorizontal="1dp"
+        android:src="@drawable/view_bar_date_bar_today"
         tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/wed_view"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:paddingHorizontal="1dp"
         android:src="@drawable/view_bar_date_bar"
-        android:transformPivotY="0dp"
         tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/thu_view"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:scaleY="0.5"
+        android:paddingHorizontal="1dp"
         android:src="@drawable/view_bar_date_bar"
-        android:transformPivotY="0dp"
         tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/fri_view"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:scaleY="0.5"
+        android:paddingHorizontal="1dp"
         android:src="@drawable/view_bar_date_bar"
-        android:transformPivotY="0dp"
         tools:ignore="ContentDescription" />
 
     <ImageView
         android:id="@+id/sat_view"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:scaleY="0.5"
+        android:paddingHorizontal="1dp"
         android:src="@drawable/view_bar_date_bar"
-        android:transformPivotY="0dp"
         tools:ignore="ContentDescription" />
 
 </LinearLayout>

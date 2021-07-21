@@ -66,6 +66,9 @@
     <string name="user_interface">Interface</string>
     <string name="disabled_power_save">Disabled (power saving)</string>
     <string name="second_hand">Second hand</string>
+    <string name="week_start">Week start</string>
+    <string name="on_monday">on Monday</string>
+    <string name="on_sunday">on Sunday</string>
 
     <string-array name="content_layout_titles">
         <item>Digital default</item>

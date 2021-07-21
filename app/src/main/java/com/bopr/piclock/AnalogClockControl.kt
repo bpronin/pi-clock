@@ -73,7 +73,11 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
     companion object {
 
         fun isAnalogClockLayout(layoutName: String): Boolean {
-            return layoutName.startsWith("view_analog_")
+            return layoutName.startsWith("view_analog")
+        }
+
+        fun isAnalogClockBarsDateLayout(layoutName: String): Boolean {
+            return layoutName.startsWith("view_analog_bars_date")
         }
     }
 }

@@ -2,7 +2,9 @@ package com.bopr.piclock
 
 import android.view.View
 import android.widget.ImageView
+import androidx.core.content.ContextCompat.getColor
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
+import com.bopr.piclock.Settings.Companion.PREF_WEEK_START
 import java.util.*
 import java.util.Calendar.DAY_OF_WEEK
 
@@ -30,8 +32,19 @@ internal class AnalogClockBarsDateControl(private val view: View, settings: Sett
     private var animated: Boolean = true
 
     init {
+        updateView()
         updateAnimated()
         updateViewData(Date())
+    }
+
+    private fun updateView() {
+        dateView?.apply {
+            val firstDay = settings.getInt(PREF_WEEK_START)
+            weekViews.forEachIndexed { index, view ->
+                val color = if (index == firstDay) R.color.orange else R.color.white
+                view.setColorFilter(getColor(view.context, color))
+            }
+        }
     }
 
     private fun updateAnimated() {
@@ -46,7 +59,13 @@ internal class AnalogClockBarsDateControl(private val view: View, settings: Sett
             }
 
             weekViews.forEachIndexed { index, view ->
-                if (index == today) view.scaleY = 1f else view.scaleY = 0.5f
+                view.setImageResource(
+                    if (index == today) {
+                        R.drawable.view_bar_date_bar_today
+                    } else {
+                        R.drawable.view_bar_date_bar
+                    }
+                )
             }
         }
     }
@@ -58,6 +77,7 @@ internal class AnalogClockBarsDateControl(private val view: View, settings: Sett
     override fun onSettingChanged(key: String) {
         when (key) {
             PREF_ANIMATION_ON -> updateAnimated()
+            PREF_WEEK_START -> updateView()
         }
     }
 }
