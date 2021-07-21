@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.view.animation.CycleInterpolator
 import androidx.core.view.isVisible
+import com.bopr.piclock.util.isOdd
 
 /**
  * Controls time separators blinking in digital clock.
@@ -40,13 +41,11 @@ internal class TimeSeparatorBlinker(
     private var enabled = true
     private var secondsEnabled = true
 
-    private fun toggleVisibility(halfTick: Int) {
+    private fun toggleVisibility(tick: Int) {
         resetAlpha()
 
-        val visible = halfTick % 2 == 0
-
-        minutesSeparator.isVisible = visible
-        secondsSeparator.isVisible = secondsEnabled && visible
+        minutesSeparator.isVisible = tick.isOdd
+        secondsSeparator.isVisible = secondsEnabled && tick.isOdd
     }
 
     private fun startAnimators(halfTick: Int) {

@@ -7,7 +7,6 @@ import android.view.View.VISIBLE
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
 import androidx.constraintlayout.widget.ConstraintSet.UNSET
-import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.FragmentManager
 import androidx.transition.TransitionManager
@@ -16,7 +15,6 @@ import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.util.isPortraitScreen
-import com.bopr.piclock.util.marginsToInsets
 import com.bopr.piclock.util.removeFragment
 import com.bopr.piclock.util.replaceFragment
 
@@ -30,23 +28,12 @@ internal class LayoutControl(
     private val fragmentManager: FragmentManager,
     settings: Settings
 ) : ContentControlAdapter(settings) {
-//    todo: idea:  draw in edit mode a scaled screen and scale content into it also add button
-//     to toggle such mini-screen and fullscreen modes
+    //    todo: idea:  draw in edit mode a scaled screen and scale content into it also add button
+    //     to toggle such mini-screen and fullscreen modes
     private val settingsButton by lazy { rootView.findViewById<View>(R.id.settings_button) }
     private val settingsContainer by lazy { rootView.findViewById<View>(R.id.settings_container) }
-    private val defaultSettingsButtonInsets by lazy { settingsButton.marginsToInsets() }
-    private val defaultSettingsContainerInsets by lazy { settingsContainer.marginsToInsets() }
 
     private var requireRecreateActivity = false
-
-    init {
-        setOnApplyWindowInsetsListener(rootView) { _, windowInsets ->
-//            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-//            settingsButton.fitIntoWindow(insets, defaultSettingsButtonInsets)
-//            settingsContainer.fitIntoWindow(insets, defaultSettingsContainerInsets)
-            windowInsets
-        }
-    }
 
     private fun updateSettingsButtonLayout(editorMode: Boolean) {
         settingsButton.updateLayoutParams<LayoutParams> {
@@ -108,10 +95,10 @@ internal class LayoutControl(
                 settingsContainer.visibility = GONE
             }
             MODE_EDITOR -> {
-                updateSettingsButtonLayout(true)
-                updateSettingsViewLayout(true)
                 settingsButton.visibility = VISIBLE
                 settingsContainer.visibility = VISIBLE
+                updateSettingsButtonLayout(true)
+                updateSettingsViewLayout(true)
             }
         }
     }

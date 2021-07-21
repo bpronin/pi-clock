@@ -18,14 +18,16 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.view.ContextThemeWrapper
-import androidx.core.graphics.Insets
-import androidx.core.view.*
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.forEachIndexed
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.preference.Preference
 import androidx.preference.PreferenceGroup
 import androidx.preference.forEach
 import com.bopr.piclock.R
+import kotlin.math.max
 import kotlin.math.roundToLong
 
 /**
@@ -71,17 +73,27 @@ fun View.resetRenderParams() = apply {
     }
 }
 
-fun View.marginsToInsets(): Insets {
-    return Insets.of(marginStart, marginTop, marginEnd, marginBottom)
-}
+//fun View.marginsToInsets(): Insets {
+//    return Insets.of(marginStart, marginTop, marginEnd, marginBottom)
+//}
 
-fun View.fitIntoWindow(insets: Insets, baseInsets: Insets) {
-    val ins = Insets.add(baseInsets, insets)
+//fun View.fitIntoWindow(insets: WindowInsetsCompat) {
+//    val ins = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//    updateLayoutParams<MarginLayoutParams> {
+//        marginStart = ins.left
+//        topMargin = ins.top
+//        marginEnd = ins.right
+//        bottomMargin = ins.bottom
+//    }
+//}
+
+fun View.fitIntoWindowOnce(insets: WindowInsetsCompat) {
+    val ins = insets.getInsets(WindowInsetsCompat.Type.systemBars())
     updateLayoutParams<MarginLayoutParams> {
-        marginStart = ins.left
-        topMargin = ins.top
-        marginEnd = ins.right
-        bottomMargin = ins.bottom
+        marginStart = max(marginStart, ins.left)
+        topMargin = max(topMargin, ins.top)
+        marginEnd = max(marginEnd, ins.right)
+        bottomMargin = max(bottomMargin, ins.bottom)
     }
 }
 

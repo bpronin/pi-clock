@@ -57,18 +57,18 @@
 
     <PreferenceCategory android:title="@string/floating">
 
-        <ListPreference
-            android:entries="@array/float_animation_titles"
-            android:entryValues="@array/float_animation_values"
-            android:key="float_animation"
-            android:title="@string/float_animation" />
-
         <com.bopr.piclock.util.ui.preference.LongListPreference
             android:entries="@array/content_float_interval_titles"
             android:entryValues="@array/content_float_interval_values"
             android:key="content_float_interval"
             android:title="@string/floating_interval" />
 
+        <ListPreference
+            android:entries="@array/float_animation_titles"
+            android:entryValues="@array/float_animation_values"
+            android:key="float_animation"
+            android:title="@string/float_animation" />
+        
         <com.bopr.piclock.util.ui.preference.IntListPreference
             android:entries="@array/content_float_speed_titles"
             android:entryValues="@array/content_float_speed_values"

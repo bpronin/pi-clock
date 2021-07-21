@@ -14,6 +14,7 @@ import android.view.ViewGroup.GONE
 import android.widget.TextView
 import androidx.annotation.IntDef
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.fragment.app.Fragment
 import com.bopr.piclock.AnalogClockControl.Companion.isAnalogClockLayout
 import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
@@ -152,11 +153,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         savedState: Bundle?
     ): View {
         return inflater.inflate(R.layout.fragment_main, container, false).apply {
-            setOnClickListener {
-                when (mode) {
-                    MODE_ACTIVE -> setMode(MODE_INACTIVE, true)
-                    MODE_INACTIVE -> setMode(MODE_ACTIVE, true)
-                }
+            setOnApplyWindowInsetsListener(this) { _, insets ->
+                fitIntoWindowOnce(insets)  /* fit once to avoid flickering of status areas */
+                insets
             }
 
             setOnTouchListener { _, event ->
@@ -164,19 +163,25 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
                         || scaleControl.onTouch(event)
             }
 
-            findViewById<View>(R.id.settings_container).apply {
-                visibility = GONE
+            setOnClickListener {
+                when (mode) {
+                    MODE_ACTIVE -> setMode(MODE_INACTIVE, true)
+                    MODE_INACTIVE -> setMode(MODE_ACTIVE, true)
+                }
             }
 
             findViewById<View>(R.id.settings_button).apply {
                 setOnClickListener {
                     when (mode) {
-                        MODE_ACTIVE, MODE_INACTIVE ->
-                            setMode(MODE_EDITOR, true)
-                        MODE_EDITOR ->
-                            setMode(MODE_INACTIVE, true)
+                        MODE_ACTIVE,
+                        MODE_INACTIVE -> setMode(MODE_EDITOR, true)
+                        MODE_EDITOR -> setMode(MODE_INACTIVE, true)
                     }
                 }
+                visibility = GONE
+            }
+
+            findViewById<View>(R.id.settings_container).apply {
                 visibility = GONE
             }
 
@@ -228,10 +233,9 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
         when (key) {
             PREF_CONTENT_LAYOUT -> {
-                /* do nothing on changes of layout itself. wait style */
+                /* do nothing on changes of layout itself. wait for style */
             }
-            PREF_CONTENT_STYLE ->
-                createContentControl()
+            PREF_CONTENT_STYLE -> createContentControl()
         }
 
         controlSet.forEach { it.onSettingChanged(key) }

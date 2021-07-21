@@ -26,9 +26,11 @@ internal class FullscreenControl(
      * and a change of the status and navigation bar.
      */
     private val startDelay = 300L
+
     private val turnOnTask = Runnable {
         showSystemUI()
     }
+
     private val turnOffTask = Runnable {
         hideSystemUI()
     }
@@ -46,6 +48,7 @@ internal class FullscreenControl(
                 Log.d(TAG, "Fullscreen: $field")
             }
         }
+
     private var enabled = true
         set(value) {
             if (field != value) {

@@ -14,6 +14,7 @@ import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.defaultDatetimeFormat
 import com.bopr.piclock.util.getResId
+import com.bopr.piclock.util.isOdd
 import java.text.DateFormat
 import java.util.*
 
@@ -139,7 +140,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
     }
 
     override fun onTimer(time: Date, tick: Int) {
-        if (tick % 2 == 0) {
+        if (tick.isOdd) {
             updateViewsData(time, animated)
         }
 

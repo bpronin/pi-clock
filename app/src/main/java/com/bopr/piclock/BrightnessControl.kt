@@ -67,7 +67,6 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
 
     private var gesturesEnabled = true
     private var swiped = false
-    private var inSafeArea = true
     private var scaleFactor = 0f
     private var savedAlpha = MIN_ALPHA
 
@@ -163,18 +162,11 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
      */
     fun onTouch(event: MotionEvent): Boolean {
         if (gesturesEnabled && (mode == MODE_INACTIVE || mode == MODE_ACTIVE)) {
-            if (inSafeArea) {
-                gestureDetector.onTouchEvent(event)
-            }
+            gestureDetector.onTouchEvent(event)
             when (event.action) {
-                ACTION_DOWN -> {
-                    inSafeArea = event.y > SYSTEM_BAR_SWIPE_ZONE
-                    if (inSafeArea) {
-                        swiped = false
-                    }
-                }
+                ACTION_DOWN -> swiped = false
                 ACTION_UP -> {
-                    if (inSafeArea && swiped) {
+                    if (swiped) {
                         saveBrightness()
                         onSwipeEnd()
                         return true

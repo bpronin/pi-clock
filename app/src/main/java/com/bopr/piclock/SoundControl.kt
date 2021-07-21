@@ -11,6 +11,7 @@ import com.bopr.piclock.Settings.Companion.TICK_ACTIVE
 import com.bopr.piclock.Settings.Companion.TICK_FLOATING
 import com.bopr.piclock.Settings.Companion.TICK_INACTIVE
 import com.bopr.piclock.util.Destroyable
+import com.bopr.piclock.util.isOdd
 import java.util.*
 
 /**
@@ -93,12 +94,11 @@ internal class SoundControl(context: Context, settings: Settings) : ContentContr
     }
 
     override fun onTimer(time: Date, tick: Int) {
-        if (tick % 2 != 0) return
-
-        if ((whenActive && mode == MODE_ACTIVE)
-            || (whenInactive && mode == MODE_INACTIVE)
-            || (whenFloating && viewFloating)
-            || player.fadingVolume
+        if (tick.isOdd
+            && ((whenActive && mode == MODE_ACTIVE)
+                    || (whenInactive && mode == MODE_INACTIVE)
+                    || (whenFloating && viewFloating)
+                    || player.fadingVolume)
         ) player.play()
     }
 
