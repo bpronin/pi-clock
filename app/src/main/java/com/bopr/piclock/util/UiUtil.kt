@@ -85,6 +85,12 @@ fun View.fitIntoWindow(insets: Insets, baseInsets: Insets) {
     }
 }
 
+inline fun <reified V : View> ViewGroup.forEachChildIndexed(action: (index: Int, view: V) -> Unit) {
+    forEachIndexed { index, view ->
+        if (view is V) action(index, view)
+    }
+}
+
 fun Contextual.messageBox(text: String) {
     AlertDialog.Builder(requireContext()).apply {
         setTitle(R.string.app_name)
@@ -120,11 +126,11 @@ fun LayoutInflater.inflateWithTheme(
     )
 }
 
-fun Animator.forEachChild(action: (Animator) -> Unit) {
+fun Animator.forEachDescendant(action: (Animator) -> Unit) {
     if (this is AnimatorSet) {
         for (child in childAnimations) {
             if (child is AnimatorSet) {
-                child.forEachChild(action)
+                child.forEachDescendant(action)
             } else {
                 action(child)
             }
@@ -139,7 +145,7 @@ fun Animator.forEachChild(action: (Animator) -> Unit) {
  * Property names should be qualified before.
  */
 fun Animator.extendProperties(properties: Collection<Property<*, *>>) {
-    forEachChild { child ->
+    forEachDescendant { child ->
         child.apply {
             if (this is ObjectAnimator) {
                 properties.find { it.name == propertyName }?.also(::setProperty)
@@ -149,7 +155,7 @@ fun Animator.extendProperties(properties: Collection<Property<*, *>>) {
 }
 
 fun Animator.updateSpeed(multiplierPercents: Int) {
-    forEachChild { child ->
+    forEachDescendant { child ->
         child.apply {
             if (this is ObjectAnimator) {
                 startDelay = (startDelay * 100f / multiplierPercents).roundToLong()
@@ -177,9 +183,9 @@ inline fun FragmentManager.removeFragment(@IdRes containerId: Int, onEnd: (Fragm
 }
 
 /** Performs the given action on each preference in this preference group recursively. */
-fun PreferenceGroup.forEachChild(action: (preference: Preference) -> Unit) {
+fun PreferenceGroup.forEachDescendant(action: (preference: Preference) -> Unit) {
     forEach {
         action(it)
-        if (it is PreferenceGroup) it.forEachChild(action)
+        if (it is PreferenceGroup) it.forEachDescendant(action)
     }
 }

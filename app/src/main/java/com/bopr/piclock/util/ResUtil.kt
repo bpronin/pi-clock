@@ -11,13 +11,13 @@ import java.util.Calendar.DAY_OF_WEEK
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 
-val is24HourLocale: Boolean
+val localeIs24Hour: Boolean
     get() {
         val pattern = (DateFormat.getTimeInstance() as SimpleDateFormat).toPattern()
         return !pattern.lowercase().contains("a")
     }
 
-val firstDayOfWeek: Int get() = Calendar.getInstance().firstDayOfWeek
+val localeFirstDayOfWeek: Int get() = Calendar.getInstance().firstDayOfWeek
 
 fun dayOfWeek(date: Date): Int = Calendar.getInstance().run {
     time = date

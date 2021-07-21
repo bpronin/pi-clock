@@ -155,7 +155,7 @@ internal class FloatControl(
 
                 /* NOTE: it's not possible to reach PropertyHolder's values initialized in XML nor identify
                    animators with ids or tags so we use property names as markers here */
-                forEachChild { child ->
+                forEachDescendant { child ->
                     if (child is ObjectAnimator) {
                         child.apply {
                             when (propertyName) {

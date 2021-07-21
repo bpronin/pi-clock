@@ -8,7 +8,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
 import androidx.constraintlayout.widget.ConstraintSet.UNSET
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.FragmentManager
 import androidx.transition.TransitionManager
@@ -16,7 +15,10 @@ import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
-import com.bopr.piclock.util.*
+import com.bopr.piclock.util.isPortraitScreen
+import com.bopr.piclock.util.marginsToInsets
+import com.bopr.piclock.util.removeFragment
+import com.bopr.piclock.util.replaceFragment
 
 /**
  * Convenience class to control content view layouts.
@@ -39,9 +41,9 @@ internal class LayoutControl(
 
     init {
         setOnApplyWindowInsetsListener(rootView) { _, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            settingsButton.fitIntoWindow(insets, defaultSettingsButtonInsets)
-            settingsContainer.fitIntoWindow(insets, defaultSettingsContainerInsets)
+//            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            settingsButton.fitIntoWindow(insets, defaultSettingsButtonInsets)
+//            settingsContainer.fitIntoWindow(insets, defaultSettingsContainerInsets)
             windowInsets
         }
     }

@@ -4,10 +4,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.ContextCompat.getColor
-import androidx.core.view.children
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_WEEK_START
 import com.bopr.piclock.util.dayOfWeek
+import com.bopr.piclock.util.forEachChildIndexed
 import java.util.*
 import java.util.Calendar.SUNDAY
 
@@ -23,17 +23,17 @@ internal class AnalogClockBarsDateControl(private val view: View, settings: Sett
 
     private val dateView: ViewGroup? by lazy { view.findViewById(R.id.bars_date_view) }
 
-    private var firstDay = 0
     private var animated = true
+    private var currentTime = Date()
 
     init {
-        updateView()
         updateAnimated()
-        updateViewData(Date())
+        updateView()
     }
 
-    private fun dayViewIndex(dayOfWeek: Int): Int {
-        return dayOfWeek - 1
+    private fun dayViewIndex(dayOfWeek: Int, firstDay: Int): Int {
+        val k = dayOfWeek - firstDay
+        return if (k >= 0) k else k + 7
     }
 
     private fun updateAnimated() {
@@ -41,35 +41,33 @@ internal class AnalogClockBarsDateControl(private val view: View, settings: Sett
     }
 
     private fun updateView() {
-        firstDay = settings.getInt(PREF_WEEK_START)
-
         dateView?.apply {
-            val sundayIndex = dayViewIndex(SUNDAY)
-            children.forEachIndexed { index, view ->
-                val color = if (index == sundayIndex)
-                    R.color.orange
-                else
-                    R.color.white
-                (view as ImageView).setColorFilter(getColor(view.context, color))
-            }
-        }
-    }
+            val firstDay = settings.getInt(PREF_WEEK_START)
+            val sundayIndex = dayViewIndex(SUNDAY, firstDay)
+            val dayIndex = dayViewIndex(dayOfWeek(currentTime), firstDay)
+            forEachChildIndexed<ImageView> { index, view ->
+                view.apply {
+                    val image = if (index == dayIndex)
+                        R.drawable.view_bar_date_bar_today
+                    else
+                        R.drawable.view_bar_date_bar
 
-    private fun updateViewData(time: Date) {
-        dateView?.apply {
-            val todayIndex = dayViewIndex(dayOfWeek(time))
-            children.forEachIndexed { index, view ->
-                val image = if (index == todayIndex)
-                    R.drawable.view_bar_date_bar_today
-                else
-                    R.drawable.view_bar_date_bar
-                (view as ImageView).setImageResource(image)
+                    val color = if (index == sundayIndex)
+                        R.color.orange
+                    else
+                        R.color.white
+                    setImageResource(image)
+                    setColorFilter(getColor(view.context, color))
+                }
             }
         }
     }
 
     override fun onTimer(time: Date, tick: Int) {
-        if (tick == 1) updateViewData(time)
+        if (tick == 1) {
+            currentTime = time
+            updateView()
+        }
     }
 
     override fun onSettingChanged(key: String) {
