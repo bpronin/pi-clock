@@ -22,6 +22,9 @@ import androidx.core.graphics.Insets
 import androidx.core.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.preference.Preference
+import androidx.preference.PreferenceGroup
+import androidx.preference.forEach
 import com.bopr.piclock.R
 import kotlin.math.roundToLong
 
@@ -156,7 +159,7 @@ fun Animator.updateSpeed(multiplierPercents: Int) {
     }
 }
 
-fun FragmentManager.replaceFragment(@IdRes containerId: Int, onGet: () -> Fragment) {
+inline fun FragmentManager.replaceFragment(@IdRes containerId: Int, onGet: () -> Fragment) {
     findFragmentById(containerId) ?: run {
         beginTransaction()
             .replace(containerId, onGet())
@@ -164,11 +167,19 @@ fun FragmentManager.replaceFragment(@IdRes containerId: Int, onGet: () -> Fragme
     }
 }
 
-fun FragmentManager.removeFragment(@IdRes containerId: Int, onEnd: (Fragment) -> Unit = {}) {
+inline fun FragmentManager.removeFragment(@IdRes containerId: Int, onEnd: (Fragment) -> Unit = {}) {
     findFragmentById(containerId)?.run {
         beginTransaction()
             .remove(this)
             .commit()
         onEnd(this)
+    }
+}
+
+/** Performs the given action on each preference in this preference group recursively. */
+fun PreferenceGroup.forEachChild(action: (preference: Preference) -> Unit) {
+    forEach {
+        action(it)
+        if (it is PreferenceGroup) it.forEachChild(action)
     }
 }

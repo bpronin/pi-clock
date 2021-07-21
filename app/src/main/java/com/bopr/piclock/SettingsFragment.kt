@@ -115,14 +115,9 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
     }
 
     /** Forces update preference views recursively */
-    private fun refreshPreferenceViews(group: PreferenceGroup) {
-        group.forEach { preference ->
-            preference.key?.apply {
-                onSharedPreferenceChanged(settings, this)
-            }
-            if (preference is PreferenceGroup) {
-                refreshPreferenceViews(preference)
-            }
+    private fun refreshPreferenceViews(root: PreferenceGroup) {
+        root.forEachChild {
+            it.key?.apply { onSharedPreferenceChanged(settings, this) }
         }
     }
 
@@ -158,7 +153,10 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         }
 
         addPreferencesFromResource(layoutPrefsResId)
+
         val contentPref = requirePreference<PreferenceGroup>(PREF_LAYOUT_PREFERENCES)
+        refreshPreferenceViews(contentPref)
+
         preferenceScreen.removePreference(contentPref) /* we do not need it anymore */
         while (contentPref.isNotEmpty()) {
             contentPref[0].apply {

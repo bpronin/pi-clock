@@ -9,10 +9,8 @@
             <ListPreference
                 android:entryValues="@array/date_format_values"
                 android:key="date_format"
-                android:title="@string/date_format">
-
-                <!-- entries for 'date_format' are build dynamically -->
-
+                android:title="@string/date_format" >
+                <!-- entry names for 'date_format' are build dynamically -->
             </ListPreference>
 
         </PreferenceCategory>
@@ -24,9 +22,7 @@
         <com.bopr.piclock.util.ui.preference.IntListPreference
             android:key="week_start"
             android:title="@string/week_start">
-
             <!-- entries for 'week_start' are build dynamically -->
-
         </com.bopr.piclock.util.ui.preference.IntListPreference>
 
     </PreferenceCategory>
