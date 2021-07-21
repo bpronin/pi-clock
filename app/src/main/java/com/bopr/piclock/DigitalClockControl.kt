@@ -4,6 +4,8 @@ import android.view.View
 import android.view.ViewGroup.GONE
 import android.view.ViewGroup.VISIBLE
 import android.widget.TextView
+import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
@@ -97,7 +99,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
             DEFAULT_DATE_FORMAT
         else
             defaultDatetimeFormat(pattern)
-        dateView.visibility = if (pattern.isEmpty()) GONE else VISIBLE
+        dateView.isGone = pattern.isEmpty()
     }
 
     private fun updateSeparatorsViews() {
@@ -109,8 +111,8 @@ internal class DigitalClockControl(view: View, settings: Settings) :
             blinker.setEnabled(settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING))
             blinker.setSecondsEnabled(secondsVisible)
         } else {
-            minutesSeparator.isVisible = false
-            secondsSeparator.isVisible = false
+            minutesSeparator.isInvisible = true
+            secondsSeparator.isInvisible = true
 
             blinker.setEnabled(false)
         }
