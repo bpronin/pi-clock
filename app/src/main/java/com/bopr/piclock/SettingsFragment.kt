@@ -29,6 +29,7 @@ import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_GESTURES_ENABLED
 import com.bopr.piclock.Settings.Companion.PREF_MUTED_BRIGHTNESS
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
+import com.bopr.piclock.Settings.Companion.PREF_SECOND_HAND_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TICK_RULES
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
@@ -112,6 +113,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             PREF_TICK_SOUND -> updateTickSoundView()
             PREF_TIME_FORMAT -> updateTimeFormatView()
             PREF_WEEK_START -> updateWeekStartView()
+            PREF_SECOND_HAND_VISIBLE -> updateSecondHandView()
         }
     }
 
@@ -401,6 +403,17 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             }
             value = settings.getInt(key).toString()
             summary = entries[findIndexOfValue(value)]
+        }
+    }
+
+    private fun updateSecondHandView() {
+        requirePreference<SwitchPreferenceCompat>(PREF_SECOND_HAND_VISIBLE).apply {
+            summary = getString(
+                if (settings.getBoolean(key))
+                    R.string.visible
+                else
+                    R.string.hidden
+            )
         }
     }
 

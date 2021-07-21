@@ -69,6 +69,8 @@
     <string name="week_start">Week start</string>
     <string name="on_monday">on Monday</string>
     <string name="on_sunday">on Sunday</string>
+    <string name="visible">Visible</string>
+    <string name="hidden">Hidden</string>
 
     <string-array name="content_layout_titles">
         <item>Digital default</item>

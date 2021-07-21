@@ -26,12 +26,14 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
     private val textDateViewControl = AnalogClockTextDateControl(view, settings)
     private val barsDateControl = AnalogClockBarsDateControl(view, settings)
 
-    private var animated: Boolean = true
+    private var animated = true
+    private var currentTime = Date()
+    private var currentTick = 1
 
     init {
         updateAnimated()
         updateSecondHandView()
-        updateViewData(Date(), 1)
+        updateViewData()
     }
 
     private fun updateSecondHandView() {
@@ -42,28 +44,33 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
         animated = settings.getBoolean(PREF_ANIMATION_ON)
     }
 
-    private fun updateViewData(time: Date, tick: Int) {
+    private fun updateViewData() {
         GregorianCalendar.getInstance().apply {
-            this.time = time
-            if (tick == 1) {
+            time = currentTime
+            if (currentTick == 1) {
                 minuteHandView.rotation = get(MINUTE) * 6f
                 hourHandView.rotation = get(HOUR) * 30f
             }
-            if (tick.isOdd && secondHandView.isVisible) {
+            if (currentTick.isOdd && secondHandView.isVisible) {
                 secondHandView.rotation = get(SECOND) * 6f
             }
         }
     }
 
     override fun onTimer(time: Date, tick: Int) {
-        updateViewData(time, tick)
+        currentTime = time
+        currentTick = tick
+        updateViewData()
         barsDateControl.onTimer(time, tick)
         textDateViewControl.onTimer(time, tick)
     }
 
     override fun onSettingChanged(key: String) {
         when (key) {
-            PREF_SECOND_HAND_VISIBLE -> updateSecondHandView()
+            PREF_SECOND_HAND_VISIBLE -> {
+                updateSecondHandView()
+                updateViewData()
+            }
             PREF_ANIMATION_ON -> updateAnimated()
         }
         barsDateControl.onSettingChanged(key)
