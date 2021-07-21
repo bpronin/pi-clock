@@ -3,26 +3,26 @@ package com.bopr.piclock.util
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.Calendar.DAY_OF_WEEK
 
 /**
  * Miscellaneous resourceconstants and  utilities.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-
-/**
- * Miscellaneous resourceconstants and  utilities.
- *
- * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
- */
-
-val localeFirstDayOfWeek: Int get() = Calendar.getInstance(Locale.ROOT).firstDayOfWeek
 
 val is24HourLocale: Boolean
     get() {
         val pattern = (DateFormat.getTimeInstance() as SimpleDateFormat).toPattern()
-        return !pattern.lowercase(Locale.ROOT).contains("a")
+        return !pattern.lowercase().contains("a")
     }
+
+val firstDayOfWeek: Int get() = Calendar.getInstance().firstDayOfWeek
+
+fun dayOfWeek(date: Date): Int = Calendar.getInstance().run {
+    time = date
+    get(DAY_OF_WEEK)
+}
 
 /**
  * Returns ID of resource by its name.
@@ -65,7 +65,10 @@ fun <T> Contextual.isResArrayContains(arrayResId: Int, value: T): Boolean {
 /**
  * Returns true if resource array contains all specified values.
  */
-fun <V, C : Collection<V>> Contextual.isResArrayContainsAll(arrayResId: Int, values: C): Boolean {
+fun <V, C : Collection<V>> Contextual.isResArrayContainsAll(
+    arrayResId: Int,
+    values: C
+): Boolean {
     val array = getStringArray(arrayResId)
     for (value in values) {
         if (!array.contains(value.toString())) {

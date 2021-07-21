@@ -74,7 +74,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
         putBooleanOptional(PREF_GESTURES_ENABLED, true)
         putBooleanOptional(PREF_SECOND_HAND_VISIBLE, true)
-        putIntOptional(PREF_WEEK_START, localeFirstDayOfWeek)
+        putIntOptional(PREF_WEEK_START, firstDayOfWeek)
         putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)  /* 15 min */
         putIntOptional(PREF_CONTENT_SCALE, 100) {
             it in MIN_SCALE..MAX_SCALE

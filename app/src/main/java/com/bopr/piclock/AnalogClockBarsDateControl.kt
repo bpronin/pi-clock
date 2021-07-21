@@ -1,12 +1,15 @@
 package com.bopr.piclock
 
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.ContextCompat.getColor
+import androidx.core.view.children
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_WEEK_START
+import com.bopr.piclock.util.dayOfWeek
 import java.util.*
-import java.util.Calendar.DAY_OF_WEEK
+import java.util.Calendar.SUNDAY
 
 /**
  * Controls bars date view (if exists) in analog clock.
@@ -16,20 +19,12 @@ import java.util.Calendar.DAY_OF_WEEK
 internal class AnalogClockBarsDateControl(private val view: View, settings: Settings) :
     ContentControlAdapter(settings) {
 
-    private val dateView: View? by lazy { view.findViewById(R.id.bars_date_view) }
-    private val weekViews by lazy {
-        arrayOf<ImageView>(
-            view.findViewById(R.id.sun_view),
-            view.findViewById(R.id.mon_view),
-            view.findViewById(R.id.tue_view),
-            view.findViewById(R.id.wed_view),
-            view.findViewById(R.id.thu_view),
-            view.findViewById(R.id.fri_view),
-            view.findViewById(R.id.sat_view)
-        )
-    }
+    //todo: idea: marks (radial red hatch) of appointments (some events)) on clock face
 
-    private var animated: Boolean = true
+    private val dateView: ViewGroup? by lazy { view.findViewById(R.id.bars_date_view) }
+
+    private var firstDay = 0
+    private var animated = true
 
     init {
         updateView()
@@ -37,35 +32,38 @@ internal class AnalogClockBarsDateControl(private val view: View, settings: Sett
         updateViewData(Date())
     }
 
-    private fun updateView() {
-        dateView?.apply {
-            val firstDay = settings.getInt(PREF_WEEK_START)
-            weekViews.forEachIndexed { index, view ->
-                val color = if (index == firstDay) R.color.orange else R.color.white
-                view.setColorFilter(getColor(view.context, color))
-            }
-        }
+    private fun dayViewIndex(dayOfWeek: Int): Int {
+        return dayOfWeek - 1
     }
 
     private fun updateAnimated() {
         animated = settings.getBoolean(PREF_ANIMATION_ON)
     }
 
+    private fun updateView() {
+        firstDay = settings.getInt(PREF_WEEK_START)
+
+        dateView?.apply {
+            val sundayIndex = dayViewIndex(SUNDAY)
+            children.forEachIndexed { index, view ->
+                val color = if (index == sundayIndex)
+                    R.color.orange
+                else
+                    R.color.white
+                (view as ImageView).setColorFilter(getColor(view.context, color))
+            }
+        }
+    }
+
     private fun updateViewData(time: Date) {
         dateView?.apply {
-            val today = GregorianCalendar.getInstance().run {
-                this.time = time
-                get(DAY_OF_WEEK) - 1
-            }
-
-            weekViews.forEachIndexed { index, view ->
-                view.setImageResource(
-                    if (index == today) {
-                        R.drawable.view_bar_date_bar_today
-                    } else {
-                        R.drawable.view_bar_date_bar
-                    }
-                )
+            val todayIndex = dayViewIndex(dayOfWeek(time))
+            children.forEachIndexed { index, view ->
+                val image = if (index == todayIndex)
+                    R.drawable.view_bar_date_bar_today
+                else
+                    R.drawable.view_bar_date_bar
+                (view as ImageView).setImageResource(image)
             }
         }
     }

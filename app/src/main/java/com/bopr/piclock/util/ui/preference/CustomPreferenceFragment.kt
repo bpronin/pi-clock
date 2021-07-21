@@ -25,7 +25,7 @@ abstract class CustomPreferenceFragment : PreferenceFragmentCompat(), Contextual
     }
 
     protected fun <T : Preference> requirePreference(key: CharSequence): T {
-        return findPreference(key) ?: throw IllegalStateException("Preference $key does not exist")
+        return findPreference(key) ?: throw IllegalStateException("Preference view for $key does not exist")
     }
 
 }

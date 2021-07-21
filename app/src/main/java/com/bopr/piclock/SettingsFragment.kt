@@ -39,6 +39,7 @@ import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.*
 import com.bopr.piclock.util.ui.preference.CustomPreferenceFragment
 import com.bopr.piclock.util.ui.preference.IntListPreference
+import java.text.DateFormatSymbols
 import java.util.*
 
 /**
@@ -156,8 +157,9 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
         val contentPref = requirePreference<PreferenceGroup>(PREF_LAYOUT_PREFERENCES)
         refreshPreferenceViews(contentPref)
+        preferenceScreen.removePreference(contentPref) /* we do not need it anymore on screen */
 
-        preferenceScreen.removePreference(contentPref) /* we do not need it anymore */
+        /* move children to new destination */
         while (contentPref.isNotEmpty()) {
             contentPref[0].apply {
                 contentPref.removePreference(this)
@@ -353,7 +355,6 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     private fun updateDateFormatView() {
         findPreference<ListPreference>(PREF_DATE_FORMAT)?.apply {
-
             val date = Date()
             val patterns = getStringArray(R.array.date_format_values)
             val entryNames = arrayOfNulls<String>(patterns.size)
@@ -391,8 +392,15 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     private fun updateWeekStartView() {
         requirePreference<ListPreference>(PREF_WEEK_START).apply {
-            val value = settings.getInt(key)
-            summary = value.toString()
+            entries = arrayOfNulls<String>(7)
+            entryValues = arrayOfNulls<String>(7)
+            val weekdays = DateFormatSymbols.getInstance().weekdays
+            for (i in 1..7) {
+                entryValues[i-1] = i.toString()
+                entries[i-1] = weekdays[i]
+            }
+            value = settings.getInt(key).toString()
+            summary = entries[findIndexOfValue(value)]
         }
     }
 
