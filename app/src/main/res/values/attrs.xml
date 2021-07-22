@@ -20,8 +20,8 @@
         <attr name="contentSecondsTextSize" format="dimension" />
         <attr name="contentSecondsWidth" format="dimension" />
         <attr name="contentTextColor" format="color" />
-        <attr name="contentTimeSeparatorPaddingBottom" format="dimension" />
-        <attr name="contentTimeSeparatorPaddingTop" format="dimension" />
+        <attr name="contentMinutesSeparatorPaddingBottom" format="dimension" />
+        <attr name="contentMinutesSeparatorPaddingTop" format="dimension" />
         <attr name="contentWidth" format="dimension" />
         <attr name="fabColor" format="color" />
     </declare-styleable>

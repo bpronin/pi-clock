@@ -3,9 +3,9 @@ package com.bopr.piclock
 import android.animation.ObjectAnimator
 import android.util.Log
 import android.view.View
+import android.view.View.VISIBLE
 import android.view.animation.CycleInterpolator
 import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import com.bopr.piclock.util.isEven
 
 /**
@@ -68,8 +68,8 @@ internal class TimeSeparatorBlinker(
     }
 
     private fun resetVisibility() {
-        minutesSeparator.isVisible = true
-        secondsSeparator.isVisible = true
+        minutesSeparator.visibility = VISIBLE
+        secondsSeparator.visibility = VISIBLE
     }
 
     private fun resetAlpha() {

@@ -44,7 +44,9 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
     }
 
     private fun updateAnimators() {
+        cancelAnimators()
 //        val resId = R.animator.clock_handle_rotate_overshot
+//        val resId = getResId("animator", settings.getString(PREF_HAND_ANIMATION))
         val resId = R.animator.clock_handle_rotate_linear
         secondHandAnimator = loadAnimator(requireContext(), resId).apply {
             setTarget(secondHandView)
@@ -57,6 +59,13 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
 
     private fun updateAnimationOn() {
         animationOn = settings.getBoolean(PREF_ANIMATION_ON)
+        if (animationOn){
+            cancelAnimators()
+        }
+    }
+
+    private fun cancelAnimators() {
+        secondHandAnimator?.cancel()
     }
 
     private fun updateViewData(animated: Boolean) {

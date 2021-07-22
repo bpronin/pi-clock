@@ -73,11 +73,11 @@
     <string name="hidden">Hidden</string>
 
     <string-array name="content_layout_titles">
-        <item>Digital default</item>
-        <item>Digital simple</item>
-        <item>Digital vertical default</item>
-        <item>Digital vertical simple</item>
-        <item>Analog default</item>
+        <item>Digital horizontal small seconds</item>
+        <item>Digital horizontal big seconds</item>
+        <item>Digital vertical small seconds</item>
+        <item>Digital vertical big seconds</item>
+        <item>Analog text date</item>
         <item>Analog bars date</item>
     </string-array>
 

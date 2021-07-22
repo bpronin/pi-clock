@@ -3,9 +3,9 @@
     <!-- Analog clock text date -->
 
     <style name="Content.Analog.Default" parent="AppTheme">
-        <item name="contentDateFont">@font/comfortaa</item>
+        <item name="contentDateFont">@font/kanit</item>
         <item name="contentDatePaddingTop">8sp</item>
-        <item name="contentDateTextSize">18sp</item>
+        <item name="contentDateTextSize">26sp</item>
     </style>
 
     <!-- Analog clock date as bars -->

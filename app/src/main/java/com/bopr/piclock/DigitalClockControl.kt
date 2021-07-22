@@ -1,12 +1,9 @@
 package com.bopr.piclock
 
 import android.view.View
-import android.view.ViewGroup.GONE
-import android.view.ViewGroup.VISIBLE
+import android.view.ViewGroup.*
 import android.widget.TextView
 import androidx.core.view.isGone
-import androidx.core.view.isInvisible
-import androidx.core.view.isVisible
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
@@ -78,8 +75,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
 
         hoursFormat = defaultDatetimeFormat(hoursPattern)
         minutesFormat = defaultDatetimeFormat(minutesPattern)
-        amPmMarkerView.visibility =
-            if (hoursPattern.startsWith("h")) VISIBLE else GONE
+        amPmMarkerView.isGone = !hoursPattern.startsWith("h")
     }
 
     private fun updateSecondsView() {
@@ -105,14 +101,14 @@ internal class DigitalClockControl(view: View, settings: Settings) :
     private fun updateSeparatorsViews() {
         if (settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE)) {
             val secondsVisible = settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()
-            minutesSeparator.isVisible = true
-            secondsSeparator.isVisible = secondsVisible
+            minutesSeparator.visibility = VISIBLE
+            secondsSeparator.isGone = !secondsVisible
 
             blinker.setEnabled(settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING))
             blinker.setSecondsEnabled(secondsVisible)
         } else {
-            minutesSeparator.isInvisible = true
-            secondsSeparator.isInvisible = true
+            minutesSeparator.visibility = INVISIBLE
+            secondsSeparator.visibility = INVISIBLE
 
             blinker.setEnabled(false)
         }
