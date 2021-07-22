@@ -10,7 +10,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_HAND_ANIMATION
-import com.bopr.piclock.Settings.Companion.PREF_CLOCK_HAND_SMOOTH
+import com.bopr.piclock.Settings.Companion.PREF_CLOCK_HAND_MOVE_SMOOTH
 import com.bopr.piclock.Settings.Companion.PREF_SECOND_HAND_VISIBLE
 import com.bopr.piclock.util.forEachChildRecursively
 import com.bopr.piclock.util.getResId
@@ -83,7 +83,8 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
     }
 
     private fun updateSmoothOn() {
-        smoothOn = settings.getBoolean(PREF_CLOCK_HAND_SMOOTH)
+        smoothOn = settings.getBoolean(PREF_CLOCK_HAND_MOVE_SMOOTH)
+        updateViewsData(false)
     }
 
     private fun cancelAnimators() {
@@ -150,7 +151,7 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
         when (key) {
             PREF_ANIMATION_ON -> updateAnimationOn()
             PREF_CLOCK_HAND_ANIMATION -> updateAnimators()
-            PREF_CLOCK_HAND_SMOOTH -> updateSmoothOn()
+            PREF_CLOCK_HAND_MOVE_SMOOTH -> updateSmoothOn()
             PREF_SECOND_HAND_VISIBLE -> {
                 updateSecondHandView()
                 updateViewsData(canAnimate)

@@ -74,6 +74,9 @@
     <string name="visible">Visible</string>
     <string name="week_start">Week start</string>
     <string name="clock_hands_animation">Hands animation</string>
+    <string name="move_hands_smooth">Move hour and minute hands smoothly</string>
+    <string name="move_hands_discretely">Move hour and minute hands discretely</string>
+    <string name="hands_smooth">Smooth hands</string>
 
     <string-array name="content_layout_titles">
         <item>Digital horizontal small seconds</item>

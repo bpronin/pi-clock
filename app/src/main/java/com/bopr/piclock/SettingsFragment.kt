@@ -18,6 +18,7 @@ import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_HAND_ANIMATION
+import com.bopr.piclock.Settings.Companion.PREF_CLOCK_HAND_MOVE_SMOOTH
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
@@ -116,6 +117,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             PREF_WEEK_START -> updateWeekStartView()
             PREF_SECOND_HAND_VISIBLE -> updateSecondHandView()
             PREF_CLOCK_HAND_ANIMATION -> updateClockHandAnimationView()
+            PREF_CLOCK_HAND_MOVE_SMOOTH -> updateMoveHandSmoothView()
         }
     }
 
@@ -396,14 +398,14 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     private fun updateWeekStartView() {
         requirePreference<ListPreference>(PREF_WEEK_START).apply {
-           //todo:instead of rebuilding prefs  isVisible = isAnalogClockBarsDateLayout(settings.getString(PREF_CONTENT_LAYOUT))
+            //todo:instead of rebuilding prefs  isVisible = isAnalogClockBarsDateLayout(settings.getString(PREF_CONTENT_LAYOUT))
 
             entries = arrayOfNulls<String>(7)
             entryValues = arrayOfNulls<String>(7)
             val weekdays = DateFormatSymbols.getInstance().weekdays
             for (i in 1..7) {
-                entryValues[i-1] = i.toString()
-                entries[i-1] = weekdays[i]
+                entryValues[i - 1] = i.toString()
+                entries[i - 1] = weekdays[i]
             }
             value = settings.getInt(key).toString()
             summary = entries[findIndexOfValue(value)]
@@ -427,6 +429,18 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             summary = entries[findIndexOfValue(value)]
         }
     }
+
+    private fun updateMoveHandSmoothView() {
+        requirePreference<SwitchPreferenceCompat>(PREF_CLOCK_HAND_MOVE_SMOOTH).apply {
+            summary = getString(
+                if (settings.getBoolean(key))
+                    R.string.move_hands_smooth
+                else
+                    R.string.move_hands_discretely
+            )
+        }
+    }
+
 
     private inner class AboutPreferenceClickListener : OnPreferenceClickListener {
 
