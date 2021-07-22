@@ -155,6 +155,12 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             getResName(R.animator.float_move),
             R.array.float_animation_values
         )
+
+        putStringResourceOptional(
+            PREF_CLOCK_HAND_ANIMATION,
+            getResName(R.animator.clock_handle_rotate_overshot),
+            R.array.clock_hand_animation_values
+        )
     }
 
     companion object {
@@ -174,10 +180,11 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
         const val PREF_ANIMATION_ON = "animation_on"
         const val PREF_AUTO_INACTIVATE_DELAY = "auto_inactivate_delay"
+        const val PREF_CLOCK_HAND_ANIMATION = "clock_hand_animation"
         const val PREF_CONTENT_FLOAT_INTERVAL = "content_float_interval"
         const val PREF_CONTENT_LAYOUT = "content_layout"
-        const val PREF_CONTENT_STYLE = "content_style"
         const val PREF_CONTENT_SCALE = "content_scale"
+        const val PREF_CONTENT_STYLE = "content_style"
         const val PREF_DATE_FORMAT = "date_format"
         const val PREF_DIGITS_ANIMATION = "digits_animation"
         const val PREF_FLOAT_ANIMATION = "float_animation"

@@ -25,7 +25,6 @@ import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_STYLE
 import com.bopr.piclock.util.*
-import java.lang.System.currentTimeMillis
 import java.util.*
 
 /**
@@ -37,7 +36,7 @@ import java.util.*
 class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
     private val handler = Handler(Looper.getMainLooper())
-    private val timer = HandlerTimer(handler, 500L, 4, ::onTimer)
+    private val timer = TimeControl(handler, ::onTimer)
     private val settings by lazy { Settings(this) }
 
     private val rootView by lazy {
@@ -139,8 +138,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
     @Mode
     private var mode = MODE_ACTIVE
-    private var startTime: Long = currentTimeMillis()
-    private var timeIncrement = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -215,7 +212,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
     }
 
     override fun onPause() {
-        timer.enabled = false
+        timer.pause()
         autoInactivateControl.pause()
         floatControl.pause()
         super.onPause()
@@ -225,7 +222,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         super.onResume()
         floatControl.resume()
         autoInactivateControl.resume()
-        timer.enabled = true
+        timer.resume()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
@@ -250,9 +247,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         }
     }
 
-    private fun onTimer(tick: Int) {
-        val time = getCurrentTime()
+    private fun onTimer(time: Date, tick: Int) {
         controlSet.forEach { it.onTimer(time, tick) }
+
+//        Log.v(TAG, "Time: $time, tick:$tick")
     }
 
     private fun setMode(@Mode newMode: Int, animate: Boolean) {
@@ -292,19 +290,16 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         Log.d(TAG, "Created content")
     }
 
-    private fun getCurrentTime() = if (timeIncrement == 0L) {
-        Date()
-    } else {
-        startTime += timeIncrement
-        Date(startTime)
-    }
-
     /**
-     * For debug purposes only. Allows to force time to go faster :)
+     * For debug purposes only. Allows to force time to go faster or slower :)
      */
-    internal fun setTimeParams(interval: Long, increment: Long) {
-        timer.interval = interval
-        timeIncrement = increment
+    internal fun setTimeParams(multiplier: Float, increment: Long) {
+        Log.w(TAG, "FAKE TIME: multiplier = $multiplier, increment = $increment")
+
+        timer.apply {
+            if (multiplier > 0) fakeTimeMultiplier = multiplier
+            if (increment > 0) fakeTimeIncrement = increment
+        }
     }
 
     @IntDef(value = [MODE_ACTIVE, MODE_INACTIVE, MODE_EDITOR])

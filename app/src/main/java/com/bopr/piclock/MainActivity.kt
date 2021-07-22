@@ -41,8 +41,8 @@ class MainActivity : BaseActivity<MainFragment>(::MainFragment) {
             when (it) {
                 "timer" -> {
                     fragment.setTimeParams(
-                        intent.getLongExtra("interval", 500L),
-                        intent.getLongExtra("increment", 0L)
+                        intent.getFloatExtra("multiplier", -1f),
+                        intent.getLongExtra("increment", -1)
                     )
                 }
                 "clear-settings" -> {

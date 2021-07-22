@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup.*
 import android.widget.TextView
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
@@ -15,7 +16,6 @@ import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.defaultDatetimeFormat
 import com.bopr.piclock.util.getResId
-import com.bopr.piclock.util.isOdd
 import java.text.DateFormat
 import java.util.*
 
@@ -26,15 +26,16 @@ import java.util.*
  */
 internal class DigitalClockControl(view: View, settings: Settings) :
     ContentControlAdapter(settings) {
-
+    //todo: time separators : - . | * ~
     private val amPmFormat = defaultDatetimeFormat("a")
-    private val hoursView: AnimatedTextView = view.findViewById(R.id.hours_view)
-    private val minutesView: AnimatedTextView = view.findViewById(R.id.minutes_view)
-    private val secondsView: AnimatedTextView = view.findViewById(R.id.seconds_view)
-    private val dateView: AnimatedTextView = view.findViewById(R.id.date_view)
-    private val minutesSeparator: TextView = view.findViewById(R.id.minutes_separator)
-    private val secondsSeparator: TextView = view.findViewById(R.id.seconds_separator)
+    private val hoursView: AnimatedTextView by lazy { view.findViewById(R.id.hours_view) }
+    private val minutesView: AnimatedTextView by lazy { view.findViewById(R.id.minutes_view) }
+    private val secondsView: AnimatedTextView by lazy { view.findViewById(R.id.seconds_view) }
+    private val dateView: AnimatedTextView by lazy { view.findViewById(R.id.date_view) }
+    private val minutesSeparator: TextView by lazy { view.findViewById(R.id.minutes_separator) }
+    private val secondsSeparator: TextView by lazy { view.findViewById(R.id.seconds_separator) }
     private val amPmMarkerView: TextView = view.findViewById(R.id.am_pm_view)
+
     private val blinker by lazy {
         TimeSeparatorBlinker(minutesSeparator, secondsSeparator).apply {
             setEnabled(
@@ -52,6 +53,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
     private lateinit var dateFormat: DateFormat
 
     private var animationOn: Boolean = true
+    private var currentTime = Date()
 
     init {
         updateHoursMinutesViews()
@@ -60,7 +62,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
         updateDateView()
         updateDigitsAnimation()
         updateAnimationOn()
-        updateViewsData(Date(), false)
+        updateViewsData(false)
     }
 
     private fun updateAnimationOn() {
@@ -95,7 +97,11 @@ internal class DigitalClockControl(view: View, settings: Settings) :
             DEFAULT_DATE_FORMAT
         else
             defaultDatetimeFormat(pattern)
+
         dateView.isGone = pattern.isEmpty()
+        if (dateView.isVisible) {
+            updateViewsData(animationOn)
+        }
     }
 
     private fun updateSeparatorsViews() {
@@ -124,26 +130,24 @@ internal class DigitalClockControl(view: View, settings: Settings) :
         }
     }
 
-    private fun updateViewsData(time: Date, animated: Boolean) {
-        hoursView.setText(hoursFormat.format(time), animated)
-        minutesView.setText(minutesFormat.format(time), animated)
+    private fun updateViewsData(animated: Boolean) {
+        hoursView.setText(hoursFormat.format(currentTime), animated)
+        minutesView.setText(minutesFormat.format(currentTime), animated)
         if (dateView.visibility == VISIBLE) {
-            dateView.setText(dateFormat.format(time), animated)
+            dateView.setText(dateFormat.format(currentTime), animated)
         }
         if (amPmMarkerView.visibility == VISIBLE) {
-            amPmMarkerView.text = amPmFormat.format(time)
+            amPmMarkerView.text = amPmFormat.format(currentTime)
         }
         if (secondsView.visibility == VISIBLE) {
-            secondsView.setText(secondsFormat.format(time), animated)
+            secondsView.setText(secondsFormat.format(currentTime), animated)
         }
     }
 
     override fun onTimer(time: Date, tick: Int) {
-        if (tick.isOdd) {
-            updateViewsData(time, animationOn)
-        }
-
-        blinker.onTimer(tick)
+        currentTime = time
+        if (tick == 1) updateViewsData(animationOn)
+        blinker.onTimer(currentTime, tick)
     }
 
     override fun onSettingChanged(key: String) {
@@ -152,10 +156,6 @@ internal class DigitalClockControl(view: View, settings: Settings) :
                 updateAnimationOn()
             PREF_TIME_FORMAT ->
                 updateHoursMinutesViews()
-            PREF_SECONDS_FORMAT -> {
-                updateSecondsView()
-                updateSeparatorsViews()
-            }
             PREF_TIME_SEPARATORS_VISIBLE ->
                 updateSeparatorsViews()
             PREF_TIME_SEPARATORS_BLINKING ->
@@ -164,6 +164,10 @@ internal class DigitalClockControl(view: View, settings: Settings) :
                 updateDateView()
             PREF_DIGITS_ANIMATION ->
                 updateDigitsAnimation()
+            PREF_SECONDS_FORMAT -> {
+                updateSecondsView()
+                updateSeparatorsViews()
+            }
         }
     }
 

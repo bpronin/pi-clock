@@ -17,6 +17,7 @@ import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
+import com.bopr.piclock.Settings.Companion.PREF_CLOCK_HAND_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
@@ -114,6 +115,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             PREF_TIME_FORMAT -> updateTimeFormatView()
             PREF_WEEK_START -> updateWeekStartView()
             PREF_SECOND_HAND_VISIBLE -> updateSecondHandView()
+            PREF_CLOCK_HAND_ANIMATION -> updateClockHandAnimationView()
         }
     }
 
@@ -417,48 +419,27 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         }
     }
 
+    private fun updateClockHandAnimationView() {
+        requirePreference<ListPreference>(PREF_CLOCK_HAND_ANIMATION).apply {
+            value = settings.getString(key)
+            summary = entries[findIndexOfValue(value)]
+        }
+    }
+
     private inner class AboutPreferenceClickListener : OnPreferenceClickListener {
 
-        private var clicksCount: Int = 0
-/*
-        private var messageIndex: Int = 0
-        private val messages = arrayListOf(
-            "Wrong rhythm! You are definitely not me.",
-            "Oops! Try again.",
-            "Well I'll tell you. The rhythm is ta ta-ta ta.",
-            "Almost. But not.",
-            "OK. I'm just kidding. There is nothing here.",
-            "Resetting messages counter...",
-            "Wrong rhythm! You are definitely not me.",
-            "And you are persistent!",
-            "I give up. The secret code is 42. Use it ... somewhere."
-        )
-*/
+        private var clicksCount = 0
 
         override fun onPreferenceClick(preference: Preference?): Boolean {
             if (++clicksCount == 4) {
                 clicksCount = 0
-
                 passwordBox("Enter some secret code") {
                     if (getString(R.string.developer_sha) == sha512(it)) {
                         startActivity(Intent(context, DebugActivity::class.java))
                     } else {
-                        messageBox("Are you really trying to hack the clock app?")
+                        messageBox("Are you really trying to hack a clock app? :)")
                     }
                 }
-/*
-                toast(messages[messageIndex++])
-
-                if (messageIndex >= messages.size) {
-                    messageIndex = 0
-
-                    MediaPlayer.create(requireContext(), R.raw.tada).run {
-                        setOnCompletionListener { release() }
-                        start()
-                    }
-                }
-*/
-
             }
             return true
         }

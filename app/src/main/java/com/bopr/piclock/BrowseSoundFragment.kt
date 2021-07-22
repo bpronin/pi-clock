@@ -25,7 +25,7 @@ class BrowseSoundFragment : Fragment(), Contextual {
     private val itemValues by lazy { getStringArray(R.array.tick_sound_values) }
     private val itemNames by lazy { getStringArray(R.array.tick_sound_titles) }
     private val settings: Settings by lazy { Settings(this) }
-    private val timer by lazy { HandlerTimer(Handler(Looper.getMainLooper()), 1000L, 1, ::onTimer) }
+    private val timer by lazy { HandlerTimer(Handler(Looper.getMainLooper()), 1000L, ::onTimer) }
     private val player by lazy { TickPlayer(requireContext()) }
     private var repeatsCounter = 0
 
@@ -75,16 +75,14 @@ class BrowseSoundFragment : Fragment(), Contextual {
         }
     }
 
-    private fun onTimer(tick: Int) {
-        if (tick == 1) {
-            player.apply {
-                play()
-                if (repeatsCounter == 0) {
-                    fadeVolume(MAX_REPEATS * 1000L, 1f, 0f)
-                }
-                if (++repeatsCounter == MAX_REPEATS) {
-                    stopPlaySound()
-                }
+    private fun onTimer() {
+        player.apply {
+            play()
+            if (repeatsCounter == 0) {
+                fadeVolume(MAX_REPEATS * 1000L, 1f, 0f)
+            }
+            if (++repeatsCounter == MAX_REPEATS) {
+                stopPlaySound()
             }
         }
     }

@@ -12,6 +12,10 @@ val Int.isOdd get() = !isEven
 
 val Int.isEven get() = this % 2 == 0
 
+val Long.isOdd get() = !isEven
+
+val Long.isEven get() = this % 2 == 0L
+
 fun toPercents(decimal: Float) = (decimal * 100).toInt()
 
 fun toDecimal(percents: Int) = percents / 100f

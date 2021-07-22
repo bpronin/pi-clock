@@ -19,6 +19,12 @@
             android:key="second_hand_visible"
             android:title="@string/second_hand" />
 
+        <ListPreference
+            android:entries="@array/clock_hand_animation_titles"
+            android:entryValues="@array/clock_hand_animation_values"
+            android:key="clock_hand_animation"
+            android:title="@string/clock_hands_animation" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

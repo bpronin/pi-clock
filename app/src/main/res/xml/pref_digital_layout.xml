@@ -26,6 +26,12 @@
 
         </PreferenceCategory>
 
+        <ListPreference
+            android:entries="@array/digits_animation_titles"
+            android:entryValues="@array/digits_animation_values"
+            android:key="digits_animation"
+            android:title="@string/digits_animation" />
+
         <PreferenceCategory android:title="@string/time_separators">
 
             <SwitchPreference
@@ -37,12 +43,6 @@
                 android:title="@string/blink_time_separators" />
 
         </PreferenceCategory>
-
-        <ListPreference
-            android:entries="@array/digits_animation_titles"
-            android:entryValues="@array/digits_animation_values"
-            android:key="digits_animation"
-            android:title="@string/digits_animation" />
 
     </PreferenceCategory>
 
