@@ -91,9 +91,9 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         )
 
         putStringResourceOptional(
-            PREF_TIME_FORMAT,
+            PREF_HOURS_MINUTES_FORMAT,
             if (localeIs24Hour) "HH:mm" else "h:mm",
-            R.array.time_format_values
+            R.array.hours_minutes_format_values
         )
 
         putStringResourceOptional(
@@ -198,7 +198,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_SECOND_HAND_VISIBLE = "second_hand_visible"
         const val PREF_TICK_RULES = "tick_sound_mode"
         const val PREF_TICK_SOUND = "tick_sound"
-        const val PREF_TIME_FORMAT = "time_format"
+        const val PREF_HOURS_MINUTES_FORMAT = "hours_minutes_format"
         const val PREF_TIME_SEPARATORS_BLINKING = "time_separators_blinking"
         const val PREF_TIME_SEPARATORS_VISIBLE = "time_separators_visible"
         const val PREF_WEEK_START = "week_start"

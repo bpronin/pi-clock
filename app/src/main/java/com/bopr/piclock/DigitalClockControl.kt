@@ -9,8 +9,8 @@ import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
+import com.bopr.piclock.Settings.Companion.PREF_HOURS_MINUTES_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
-import com.bopr.piclock.Settings.Companion.PREF_TIME_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
@@ -71,7 +71,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
     }
 
     private fun updateHoursMinutesViews() {
-        val patterns = settings.getString(PREF_TIME_FORMAT).split(":")
+        val patterns = settings.getString(PREF_HOURS_MINUTES_FORMAT).split(":")
         val hoursPattern = patterns[0]
         val minutesPattern = patterns[1]
 
@@ -154,7 +154,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
         when (key) {
             PREF_ANIMATION_ON ->
                 updateAnimationOn()
-            PREF_TIME_FORMAT ->
+            PREF_HOURS_MINUTES_FORMAT ->
                 updateHoursMinutesViews()
             PREF_TIME_SEPARATORS_VISIBLE ->
                 updateSeparatorsViews()

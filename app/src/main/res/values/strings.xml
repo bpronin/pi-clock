@@ -40,7 +40,7 @@
     <string name="gestures_enabled_summary">Adjust scale and brightness by swiping across the screen</string>
     <string name="hidden">Hidden</string>
     <string name="hours_minutes_format">Hours and minutes</string>
-    <string name="keep_clock_view">Clock keeps its position on the screen</string>
+    <string name="clock_in_center">Clock always stays in center of the screen</string>
     <string name="layout">Layout</string>
     <string name="layout_specific">Layout specific</string>
     <string name="layout_type">Layout type</string>
@@ -77,6 +77,8 @@
     <string name="move_hands_smooth">Move hour and minute hands smoothly</string>
     <string name="move_hands_discretely">Move hour and minute hands discretely</string>
     <string name="hands_smooth">Smooth hands</string>
+    <string name="hands">Hands</string>
+    <string name="when_in">Clock is %s</string>
 
     <string-array name="content_layout_titles">
         <item>Digital horizontal small seconds</item>
@@ -145,11 +147,11 @@
     </string-array>
 
     <string-array name="content_float_interval_titles">
-        <item>Always</item>
+        <item>Always move</item>
         <item>10 second</item>
         <item>1 minute</item>
         <item>15 minutes</item>
-        <item>Never</item>
+        <item>Never move</item>
     </string-array>
 
     <string-array name="content_float_speed_titles">
@@ -161,14 +163,14 @@
         <item>5.0x</item>
     </string-array>
 
-    <string-array name="time_format_titles">
+    <string-array name="hours_minutes_format_titles">
         <item>24-hour trailing zeroes</item>
         <item>24-hour no trailing zeroes</item>
         <item>12-hour trailing zeroes</item>
         <item>12-hour no trailing zeroes</item>
     </string-array>
 
-    <string-array name="time_format_hints">
+    <string-array name="hours_minutes_format_hints">
         <item> (07:07)</item>
         <item> (7:07)</item>
         <item> (07:07 AM)</item>

@@ -2,9 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory
-        android:key="appearance"
-        android:title="@string/appearance">
+    <PreferenceCategory android:title="@string/appearance">
 
         <ListPreference
             android:entries="@array/content_layout_titles"
@@ -12,14 +10,83 @@
             android:key="content_layout"
             android:title="@string/layout" />
 
-        <!-- entries for 'content_style' are set dynamically -->
         <ListPreference
             android:key="content_style"
-            android:title="@string/style" />
-
-        <!-- dynamic preferences here -->
+            android:title="@string/style">
+            <!-- entries for 'content_style' are built dynamically -->
+        </ListPreference>
 
     </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/formats">
+
+            <ListPreference
+                android:entries="@array/hours_minutes_format_titles"
+                android:entryValues="@array/hours_minutes_format_values"
+                android:key="hours_minutes_format"
+                android:title="@string/hours_minutes_format" />
+
+            <ListPreference
+                android:entries="@array/seconds_format_titles"
+                android:entryValues="@array/seconds_format_values"
+                android:key="seconds_format"
+                android:title="@string/seconds_format" />
+
+            <ListPreference
+                android:entryValues="@array/date_format_values"
+                android:key="date_format"
+                android:title="@string/date_format">
+                <!-- entry names for 'date_format' are build dynamically -->
+            </ListPreference>
+
+            <com.bopr.piclock.util.ui.preference.IntListPreference
+                android:key="week_start"
+                android:title="@string/week_start"
+                app:isPreferenceVisible="false">
+                <!-- entries for 'week_start' are build dynamically -->
+            </com.bopr.piclock.util.ui.preference.IntListPreference>
+
+            <ListPreference
+                android:entries="@array/digits_animation_titles"
+                android:entryValues="@array/digits_animation_values"
+                android:key="digits_animation"
+                android:title="@string/digits_animation" />
+
+            <PreferenceCategory
+                android:key="time_separators"
+                android:title="@string/time_separators">
+
+                <SwitchPreferenceCompat
+                    android:key="time_separators_visible"
+                    android:title="@string/show_time_separators" />
+
+                <SwitchPreferenceCompat
+                    android:key="time_separators_blinking"
+                    android:title="@string/blink_time_separators" />
+
+            </PreferenceCategory>
+
+            <PreferenceCategory
+                android:key="hands"
+                android:title="@string/hands">
+
+                <SwitchPreferenceCompat
+                    android:key="second_hand_visible"
+                    android:title="@string/second_hand" />
+
+                <SwitchPreferenceCompat
+                    android:key="clock_hand_move_smooth"
+                    android:title="@string/hands_smooth" />
+
+                <ListPreference
+                    android:entries="@array/clock_hand_animation_titles"
+                    android:entryValues="@array/clock_hand_animation_values"
+                    android:key="clock_hand_animation"
+                    android:title="@string/clock_hands_animation" />
+
+            </PreferenceCategory>
+
+        </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/user_interface">
 
@@ -68,7 +135,7 @@
             android:entryValues="@array/float_animation_values"
             android:key="float_animation"
             android:title="@string/float_animation" />
-        
+
         <com.bopr.piclock.util.ui.preference.IntListPreference
             android:entries="@array/content_float_speed_titles"
             android:entryValues="@array/content_float_speed_values"
@@ -79,6 +146,12 @@
 
     <PreferenceCategory android:title="@string/sound">
 
+        <MultiSelectListPreference
+            android:entries="@array/tick_sound_mode_titles"
+            android:entryValues="@array/tick_sound_mode_values"
+            android:key="tick_sound_mode"
+            android:title="@string/tick_sound_mode" />
+
         <Preference
             android:key="tick_sound"
             android:title="@string/tick_sound">
@@ -86,12 +159,6 @@
                 android:targetClass="com.bopr.piclock.BrowseSoundActivity"
                 android:targetPackage="com.bopr.piclock" />
         </Preference>
-
-        <MultiSelectListPreference
-            android:entries="@array/tick_sound_mode_titles"
-            android:entryValues="@array/tick_sound_mode_values"
-            android:key="tick_sound_mode"
-            android:title="@string/tick_sound_mode" />
 
     </PreferenceCategory>
 

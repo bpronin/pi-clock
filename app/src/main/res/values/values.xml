@@ -52,7 +52,7 @@
         <item>Content.Analog.BarsDate</item>
     </string-array>
 
-    <string-array name="time_format_values" translatable="false">
+    <string-array name="hours_minutes_format_values" translatable="false">
         <item>HH:mm</item>
         <item>H:mm</item>
         <item>hh:mm</item>

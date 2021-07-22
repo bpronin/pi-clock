@@ -28,6 +28,7 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
 // todo:  часы наизнанку - стрелки прикреплены к ободу а не к центру
 // todo:  вместо цифр доли числа Пи (фирменный стиль)
 // todo:  clock face with 24 hours
+// todo:  fade in-out handles animation
 
     private val textDateViewControl = AnalogClockTextDateControl(view, settings)
     private val barsDateControl = AnalogClockBarsDateControl(view, settings)
@@ -126,9 +127,7 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
                 forEachChildRecursively { child ->
                     if (child is ObjectAnimator) {
                         child.apply {
-                            when (propertyName) {
-                                ROTATION.name -> setFloatValues(start, end)
-                            }
+                            if (propertyName == ROTATION.name) setFloatValues(start, end)
                         }
                     }
                 }
