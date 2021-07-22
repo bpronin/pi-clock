@@ -10,8 +10,9 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_HAND_ANIMATION
+import com.bopr.piclock.Settings.Companion.PREF_CLOCK_HAND_SMOOTH
 import com.bopr.piclock.Settings.Companion.PREF_SECOND_HAND_VISIBLE
-import com.bopr.piclock.util.forEachChildRecusively
+import com.bopr.piclock.util.forEachChildRecursively
 import com.bopr.piclock.util.getResId
 import java.util.*
 import java.util.Calendar.*
@@ -26,22 +27,25 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
 
 // todo:  часы наизнанку - стрелки прикреплены к ободу а не к центру
 // todo:  вместо цифр доли числа Пи (фирменный стиль)
+// todo:  clock face with 24 hours
 
+    private val textDateViewControl = AnalogClockTextDateControl(view, settings)
+    private val barsDateControl = AnalogClockBarsDateControl(view, settings)
     private val hourHandView: ImageView by lazy { view.findViewById(R.id.hour_hand_view) }
     private val secondHandView: ImageView by lazy { view.findViewById(R.id.second_hand_view) }
     private val minuteHandView: ImageView by lazy { view.findViewById(R.id.minute_hand_view) }
-    private val textDateViewControl = AnalogClockTextDateControl(view, settings)
-    private val barsDateControl = AnalogClockBarsDateControl(view, settings)
     private val canAnimate get() = animationOn && secondHandAnimator != null
 
     private var hoursHandAnimator: Animator? = null
     private var minuteHandAnimator: Animator? = null
     private var secondHandAnimator: Animator? = null
     private var animationOn = true
+    private var smoothOn = false
     private var currentTime = Date()
 
     init {
         updateAnimationOn()
+        updateSmoothOn()
         updateSecondHandView()
         updateViewsData(false)
         updateAnimators()
@@ -78,6 +82,10 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
         }
     }
 
+    private fun updateSmoothOn() {
+        smoothOn = settings.getBoolean(PREF_CLOCK_HAND_SMOOTH)
+    }
+
     private fun cancelAnimators() {
         secondHandAnimator?.cancel()
         minuteHandAnimator?.cancel()
@@ -85,30 +93,36 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
     }
 
     private fun updateViewsData(animated: Boolean) {
-        GregorianCalendar.getInstance().apply {
+        getInstance().apply {
             time = currentTime
 
-            minuteHandView.rotation = get(MINUTE) * 6f
-            hourHandView.rotation = get(HOUR) * 30f
-            rotateHand(secondHandView, get(SECOND) * 6f, secondHandAnimator, animated)
+            var hourAngle = get(HOUR) * 30f /* not HOUR-OF_DAY */
+            var minuteAngle = get(MINUTE) * 6f
+            val secondAngle = get(SECOND) * 6f
+            if (smoothOn) {
+                minuteAngle += secondAngle / 60f
+                hourAngle += minuteAngle / 60f
+            }
+
+            rotateHand(hourHandView, hourAngle, hoursHandAnimator, animated && !smoothOn)
+            rotateHand(minuteHandView, minuteAngle, minuteHandAnimator, animated && !smoothOn)
+            rotateHand(secondHandView, secondAngle, secondHandAnimator, animated)
         }
     }
 
     private fun rotateHand(handView: View, angle: Float, animator: Animator?, animated: Boolean) {
-        if (!handView.isVisible) return
+        if (!handView.isVisible || handView.rotation == angle) return
 
         if (animated) {
             animator?.apply {
-                cancel()
+                end() /* not cancel here */
 
-                val start = if (handView.rotation <= 360f)
-                    handView.rotation
-                else
-                    handView.rotation - 360f
+                var start = handView.rotation
+                var end = angle
+                if (start > 360) start -= 360
+                if (start > end) end += 360
 
-                val end = if (start <= angle) angle else angle + 360f
-
-                forEachChildRecusively { child ->
+                forEachChildRecursively { child ->
                     if (child is ObjectAnimator) {
                         child.apply {
                             when (propertyName) {
@@ -128,14 +142,15 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
     override fun onTimer(time: Date, tick: Int) {
         currentTime = time
         if (tick == 1) updateViewsData(canAnimate)
-        barsDateControl.onTimer(currentTime, tick)
-        textDateViewControl.onTimer(currentTime, tick)
+        barsDateControl.onTimer(time, tick)
+        textDateViewControl.onTimer(time, tick)
     }
 
     override fun onSettingChanged(key: String) {
         when (key) {
             PREF_ANIMATION_ON -> updateAnimationOn()
             PREF_CLOCK_HAND_ANIMATION -> updateAnimators()
+            PREF_CLOCK_HAND_SMOOTH -> updateSmoothOn()
             PREF_SECOND_HAND_VISIBLE -> {
                 updateSecondHandView()
                 updateViewsData(canAnimate)

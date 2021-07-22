@@ -8,6 +8,10 @@ import java.security.MessageDigest
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 
+const val SECOND_DURATION = 1000L
+const val MINUTE_DURATION = 60 * SECOND_DURATION
+const val HOUR_DURATION = 60 * MINUTE_DURATION
+
 val Int.isOdd get() = !isEven
 
 val Int.isEven get() = this % 2 == 0

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.util.Contextual
 import com.bopr.piclock.util.HandlerTimer
+import com.bopr.piclock.util.SECOND_DURATION
 import com.bopr.piclock.util.getStringArray
 
 /**
@@ -25,7 +26,13 @@ class BrowseSoundFragment : Fragment(), Contextual {
     private val itemValues by lazy { getStringArray(R.array.tick_sound_values) }
     private val itemNames by lazy { getStringArray(R.array.tick_sound_titles) }
     private val settings: Settings by lazy { Settings(this) }
-    private val timer by lazy { HandlerTimer(Handler(Looper.getMainLooper()), 1000L, ::onTimer) }
+    private val timer by lazy {
+        HandlerTimer(
+            Handler(Looper.getMainLooper()),
+            SECOND_DURATION,
+            ::onTimer
+        )
+    }
     private val player by lazy { TickPlayer(requireContext()) }
     private var repeatsCounter = 0
 
@@ -79,7 +86,7 @@ class BrowseSoundFragment : Fragment(), Contextual {
         player.apply {
             play()
             if (repeatsCounter == 0) {
-                fadeVolume(MAX_REPEATS * 1000L, 1f, 0f)
+                fadeVolume(MAX_REPEATS * SECOND_DURATION, 1f, 0f)
             }
             if (++repeatsCounter == MAX_REPEATS) {
                 stopPlaySound()

@@ -39,6 +39,7 @@ internal class FloatControl(
             }
         }
     }
+
     private val canAnimate get() = animationOn && floatAnimator != null && homeAnimator != null
 
     private var floatAnimator: Animator? = null
@@ -94,10 +95,9 @@ internal class FloatControl(
             else -> {
                 /* prevent content from jumping along the screen when animations is disabled
                    ans interval is 0 */
-                val delay = 1000L
-                handler.postDelayed(floatTask, delay)
+                handler.postDelayed(floatTask, SECOND_DURATION)
 
-                Log.d(TAG, "Animation disabled. Task scheduled in: $delay")
+                Log.d(TAG, "Animation disabled. Task scheduled in: $SECOND_DURATION")
             }
         }
     }
@@ -159,7 +159,7 @@ internal class FloatControl(
 
                 /* NOTE: it's not possible to reach PropertyHolder's values initialized in XML nor identify
                    animators with ids or tags so we use property names as markers here */
-                forEachChildRecusively { child ->
+                forEachChildRecursively { child ->
                     if (child is ObjectAnimator) {
                         child.apply {
                             when (propertyName) {
@@ -249,7 +249,7 @@ internal class FloatControl(
                     floatHome {
                         enabled = true
                     }
-                }, 1000)
+                }, SECOND_DURATION)
             }
         }
     }

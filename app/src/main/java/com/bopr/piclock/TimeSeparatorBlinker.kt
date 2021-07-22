@@ -6,6 +6,7 @@ import android.view.View
 import android.view.View.VISIBLE
 import android.view.animation.CycleInterpolator
 import androidx.core.view.isInvisible
+import com.bopr.piclock.util.SECOND_DURATION
 import com.bopr.piclock.util.isEven
 import java.util.*
 
@@ -80,7 +81,7 @@ internal class TimeSeparatorBlinker(
 
     fun onTimer(time: Date, tick: Int) {
         if (enabled && tick == 1) {
-            val seconds = time.time / 1000
+            val seconds = time.time / SECOND_DURATION
 
             if (animated) {
                 startAnimators(seconds)

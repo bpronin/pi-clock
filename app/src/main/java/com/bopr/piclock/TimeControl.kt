@@ -3,6 +3,7 @@ package com.bopr.piclock
 import android.os.Handler
 import android.util.Log
 import com.bopr.piclock.util.HandlerTimer
+import com.bopr.piclock.util.SECOND_DURATION
 import java.util.*
 
 internal class TimeControl(handler: Handler, onTimer: (time: Date, tick: Int) -> Unit) {
@@ -58,6 +59,5 @@ internal class TimeControl(handler: Handler, onTimer: (time: Date, tick: Int) ->
 
         private const val TAG = "TimeControl"
         private const val TICKS_PER_SECOND = 4
-        const val SECOND_DURATION = 1000L
     }
 }

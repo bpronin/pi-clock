@@ -138,11 +138,11 @@ fun LayoutInflater.inflateWithTheme(
     )
 }
 
-fun Animator.forEachChildRecusively(action: (Animator) -> Unit) {
+fun Animator.forEachChildRecursively(action: (Animator) -> Unit) {
     if (this is AnimatorSet) {
         for (child in childAnimations) {
             if (child is AnimatorSet) {
-                child.forEachChildRecusively(action)
+                child.forEachChildRecursively(action)
             } else {
                 action(child)
             }
@@ -157,7 +157,7 @@ fun Animator.forEachChildRecusively(action: (Animator) -> Unit) {
  * Property names should be qualified before.
  */
 fun Animator.extendProperties(properties: Collection<Property<*, *>>) {
-    forEachChildRecusively { child ->
+    forEachChildRecursively { child ->
         child.apply {
             if (this is ObjectAnimator) {
                 properties.find { it.name == propertyName }?.also(::setProperty)
@@ -167,7 +167,7 @@ fun Animator.extendProperties(properties: Collection<Property<*, *>>) {
 }
 
 fun Animator.updateSpeed(multiplierPercents: Int) {
-    forEachChildRecusively { child ->
+    forEachChildRecursively { child ->
         child.apply {
             if (this is ObjectAnimator) {
                 startDelay = (startDelay * 100f / multiplierPercents).roundToLong()
@@ -195,9 +195,9 @@ inline fun FragmentManager.removeFragment(@IdRes containerId: Int, onEnd: (Fragm
 }
 
 /** Performs the given action on each preference in this preference group recursively. */
-fun PreferenceGroup.forEachChildRecusively(action: (preference: Preference) -> Unit) {
+fun PreferenceGroup.forEachChildRecursively(action: (preference: Preference) -> Unit) {
     forEach {
         action(it)
-        if (it is PreferenceGroup) it.forEachChildRecusively(action)
+        if (it is PreferenceGroup) it.forEachChildRecursively(action)
     }
 }

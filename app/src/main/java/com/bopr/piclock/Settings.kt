@@ -74,6 +74,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
         putBooleanOptional(PREF_GESTURES_ENABLED, true)
         putBooleanOptional(PREF_SECOND_HAND_VISIBLE, true)
+        putBooleanOptional(PREF_CLOCK_HAND_SMOOTH, true)
         putIntOptional(PREF_WEEK_START, localeFirstDayOfWeek)
         putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)  /* 15 min */
         putIntOptional(PREF_CONTENT_SCALE, 100) {
@@ -181,6 +182,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_ANIMATION_ON = "animation_on"
         const val PREF_AUTO_INACTIVATE_DELAY = "auto_inactivate_delay"
         const val PREF_CLOCK_HAND_ANIMATION = "clock_hand_animation"
+        const val PREF_CLOCK_HAND_SMOOTH = "clock_hand_smooth"
         const val PREF_CONTENT_FLOAT_INTERVAL = "content_float_interval"
         const val PREF_CONTENT_LAYOUT = "content_layout"
         const val PREF_CONTENT_SCALE = "content_scale"
