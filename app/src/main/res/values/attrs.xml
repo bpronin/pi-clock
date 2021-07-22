@@ -1,6 +1,5 @@
 <resources>
     <declare-styleable name="FullscreenAttrs">
-        <attr name="contentAmPmTextPaddingBottom" format="dimension" />
         <attr name="contentAmPmTextPaddingTop" format="dimension" />
         <attr name="contentAmPmTextSize" format="dimension" />
         <attr name="contentBackgroundColor" format="color" />

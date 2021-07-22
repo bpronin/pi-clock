@@ -25,6 +25,7 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
     ContentControlAdapter(settings) {
 
 // todo:  часы наизнанку - стрелки прикреплены к ободу а не к центру
+// todo:  вместо цифр доли числа Пи (фирменный стиль)
 
     private val hourHandView: ImageView by lazy { view.findViewById(R.id.hour_hand_view) }
     private val secondHandView: ImageView by lazy { view.findViewById(R.id.second_hand_view) }

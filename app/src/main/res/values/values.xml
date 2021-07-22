@@ -29,11 +29,11 @@
     </string-array>
 
     <string-array name="view_digital_vertical_default_style_values" translatable="false">
-        <item>Content.Digital.Vertical.Default</item>
-        <item>Content.Digital.Vertical.Round</item>
-        <item>Content.Digital.Vertical.Square</item>
-        <item>Content.Digital.Vertical.Curly</item>
-        <item>Content.Digital.Vertical.Thick</item>
+        <item>Content.Digital.Vertical.Default.Default</item>
+        <item>Content.Digital.Vertical.Default.Round</item>
+        <item>Content.Digital.Vertical.Default.Square</item>
+        <item>Content.Digital.Vertical.Default.Curly</item>
+        <item>Content.Digital.Vertical.Default.Thick</item>
     </string-array>
 
     <string-array name="view_digital_vertical_simple_style_values" translatable="false">
