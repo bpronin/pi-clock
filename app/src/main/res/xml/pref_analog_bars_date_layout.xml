@@ -25,6 +25,12 @@
             <!-- entries for 'week_start' are build dynamically -->
         </com.bopr.piclock.util.ui.preference.IntListPreference>
 
+        <ListPreference
+            android:entries="@array/clock_hand_animation_titles"
+            android:entryValues="@array/clock_hand_animation_values"
+            android:key="clock_hand_animation"
+            android:title="@string/clock_hands_animation" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

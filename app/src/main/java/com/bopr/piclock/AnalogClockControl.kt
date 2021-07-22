@@ -34,6 +34,8 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
     private val barsDateControl = AnalogClockBarsDateControl(view, settings)
     private val canAnimate get() = animationOn && secondHandAnimator != null
 
+    private var hoursHandAnimator: Animator? = null
+    private var minuteHandAnimator: Animator? = null
     private var secondHandAnimator: Animator? = null
     private var animationOn = true
     private var currentTime = Date()
@@ -52,8 +54,16 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
             secondHandAnimator = loadAnimator(requireContext(), resId).apply {
                 setTarget(secondHandView)
             }
+            minuteHandAnimator = loadAnimator(requireContext(), resId).apply {
+                setTarget(minuteHandView)
+            }
+            hoursHandAnimator = loadAnimator(requireContext(), resId).apply {
+                setTarget(hoursHandAnimator)
+            }
         } else {
             secondHandAnimator = null
+            minuteHandAnimator = null
+            hoursHandAnimator = null
         }
     }
 
@@ -70,6 +80,8 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
 
     private fun cancelAnimators() {
         secondHandAnimator?.cancel()
+        minuteHandAnimator?.cancel()
+        hoursHandAnimator?.cancel()
     }
 
     private fun updateViewsData(animated: Boolean) {
@@ -78,22 +90,21 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
 
             minuteHandView.rotation = get(MINUTE) * 6f
             hourHandView.rotation = get(HOUR) * 30f
-            if (secondHandView.isVisible) {
-                rotateSecondHand(get(SECOND), animated)
-            }
+            rotateHand(secondHandView, get(SECOND) * 6f, secondHandAnimator, animated)
         }
     }
 
-    private fun rotateSecondHand(second: Int, animated: Boolean) {
-        val angle = second * 6f
+    private fun rotateHand(handView: View, angle: Float, animator: Animator?, animated: Boolean) {
+        if (!handView.isVisible) return
+
         if (animated) {
-            secondHandAnimator?.apply {
+            animator?.apply {
                 cancel()
 
-                val start = if (secondHandView.rotation <= 360f)
-                    secondHandView.rotation
+                val start = if (handView.rotation <= 360f)
+                    handView.rotation
                 else
-                    secondHandView.rotation - 360f
+                    handView.rotation - 360f
 
                 val end = if (start <= angle) angle else angle + 360f
 
@@ -110,7 +121,7 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
                 start()
             }
         } else {
-            secondHandView.rotation = angle
+            handView.rotation = angle
         }
     }
 

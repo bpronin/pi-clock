@@ -396,6 +396,8 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     private fun updateWeekStartView() {
         requirePreference<ListPreference>(PREF_WEEK_START).apply {
+           //todo:instead of rebuilding prefs  isVisible = isAnalogClockBarsDateLayout(settings.getString(PREF_CONTENT_LAYOUT))
+
             entries = arrayOfNulls<String>(7)
             entryValues = arrayOfNulls<String>(7)
             val weekdays = DateFormatSymbols.getInstance().weekdays
