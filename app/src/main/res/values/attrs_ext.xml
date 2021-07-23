@@ -1,9 +1,16 @@
-<!-- Dummy and shadowing attributes not used in the project directly -->
+<!-- Attributes of custom views -->
 <resources>
 
+    <!-- android:xxx attributes shadow native attributes intentionally.
+         see [ExtTextView] implementation -->
     <declare-styleable name="ExtTextView">
         <attr name="android:paddingTop" format="dimension" />
         <attr name="android:paddingBottom" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="SplitAnimatedTextView">
+        <attr name="splitDigits" format="boolean" />
+        <attr name="digitsCount" format="integer" />
     </declare-styleable>
 
 </resources>

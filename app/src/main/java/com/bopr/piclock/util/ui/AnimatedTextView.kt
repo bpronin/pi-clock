@@ -106,8 +106,8 @@ class AnimatedTextView : FrameLayout {
         return view.text
     }
 
-    fun setText(text: CharSequence?, animated: Boolean) {
-        if (view.text != text) {
+    fun setText(text: CharSequence?, animated: Boolean, forceAnimate: Boolean = false) {
+        if (view.text != text || forceAnimate) {
             shadowView.text = view.text
             view.text = text
             view.requestLayout() /* important! */

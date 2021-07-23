@@ -6,11 +6,14 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
+import com.bopr.piclock.R
 
 class SplitAnimatedTextView : LinearLayout {
 
-    private lateinit var hiDigitView: AnimatedTextView
-    private lateinit var loDigitView: AnimatedTextView
+    private lateinit var digitViews: Array<AnimatedTextView>
+    private var digitCount = 2
+
+    var splitDigits = true
 
     constructor(context: Context) : super(context)
 
@@ -26,40 +29,45 @@ class SplitAnimatedTextView : LinearLayout {
         context: Context, attrs: AttributeSet?,
         @AttrRes defStyleAttr: Int, @StyleRes defStyleRes: Int
     ) : super(context, attrs, defStyleAttr, defStyleRes) {
+        context.obtainStyledAttributes(attrs, R.styleable.SplitAnimatedTextView, defStyleAttr, 0)
+            .apply {
+                digitCount = getInt(R.styleable.SplitAnimatedTextView_digitsCount, digitCount)
+                splitDigits = getBoolean(R.styleable.SplitAnimatedTextView_splitDigits, splitDigits)
+
+                recycle()
+            }
+
+        digitViews = Array(digitCount) { i ->
+            val params = if (i < digitCount - 1)
+                LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
+            else
+                LayoutParams(0, WRAP_CONTENT, 1f)
+            val view = AnimatedTextView(context, attrs, defStyleAttr)
+            addView(view, params)
+            view
+        }
+
         orientation = HORIZONTAL
-
-        hiDigitView = AnimatedTextView(context, attrs, defStyleAttr)
-        loDigitView = AnimatedTextView(context, attrs, defStyleAttr)
-
-        addView(hiDigitView, LayoutParams(WRAP_CONTENT, WRAP_CONTENT))
-        addView(loDigitView, LayoutParams(0, WRAP_CONTENT, 1f))
-
-        setText(hiDigitView.getText(), false)
-
-/*  DEBUG COLORS
-        hiDigitView.setBackgroundColor(Color.RED)
-        loDigitView.setBackgroundColor(Color.BLUE)
-*/
+        setText(digitViews[0].getText(), false)
     }
 
     override fun getBaseline(): Int {
-        return hiDigitView.baseline
+        return digitViews[0].baseline
     }
 
     fun setText(text: CharSequence?, animated: Boolean) {
-        var hiText: CharSequence? = null
-        var loText: CharSequence? = null
-        text?.apply {
-            hiText = get(0).toString()
-            if (length > 1) loText = get(1).toString()
+        digitViews.forEachIndexed { i, view ->
+            val digitText = text?.run {
+                if (i < length) get(i).toString() else null
+            }
+            view.setText(digitText, animated, !splitDigits)
         }
-        hiDigitView.setText(hiText, animated)
-        loDigitView.setText(loText, animated)
     }
 
     fun setTextAnimator(resId: Int) {
-        hiDigitView.setTextAnimator(resId)
-        loDigitView.setTextAnimator(resId)
+        digitViews.forEach { view ->
+            view.setTextAnimator(resId)
+        }
     }
 
 }
