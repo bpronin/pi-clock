@@ -18,7 +18,7 @@
         android:textSize="?attr/contentAmPmTextSize"
         tools:ignore="HardcodedText" />
 
-    <com.bopr.piclock.AnimatedTextView
+    <com.bopr.piclock.util.ui.AnimatedTextView
         android:id="@+id/hours_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
         android:textSize="?attr/contentHoursTextSize"
         tools:ignore="HardcodedText" />
 
-    <com.bopr.piclock.AnimatedTextView
+    <com.bopr.piclock.util.ui.AnimatedTextView
         android:id="@+id/minutes_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
         android:textSize="?attr/contentSecondsTextSize"
         tools:ignore="HardcodedText" />
 
-    <com.bopr.piclock.AnimatedTextView
+    <com.bopr.piclock.util.ui.SplitAnimatedTextView
         android:id="@+id/seconds_view"
         android:layout_width="?attr/contentSecondsWidth"
         android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
         android:textSize="?attr/contentSecondsTextSize"
         tools:ignore="HardcodedText" />
 
-    <com.bopr.piclock.AnimatedTextView
+    <com.bopr.piclock.util.ui.AnimatedTextView
         android:id="@+id/date_view"
         android:layout_width="?attr/contentWidth"
         android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-package com.bopr.piclock
+package com.bopr.piclock.util.ui
 
 import android.animation.AnimatorInflater.loadAnimator
 import android.animation.AnimatorSet
@@ -17,16 +17,15 @@ import com.bopr.piclock.util.property.PROP_RELATIVE_TRANSITION_Y
 import com.bopr.piclock.util.property.PROP_SCALE_Y_PIVOT_BOTTOM
 import com.bopr.piclock.util.property.PROP_SCALE_Y_PIVOT_TOP
 import com.bopr.piclock.util.resetRenderParams
-import com.bopr.piclock.util.ui.ExtTextView
 
 /**
  * Text view with animated transitions.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+@Suppress("JoinDeclarationAndAssignment")
 class AnimatedTextView : FrameLayout {
-    //todo: get rid of blinking of first symbol in fade-trough animation
-    @Suppress("JoinDeclarationAndAssignment")
+
     private lateinit var view: ExtTextView
     private lateinit var shadowView: ExtTextView
     private var textAnimator: AnimatorSet? = null
@@ -59,6 +58,15 @@ class AnimatedTextView : FrameLayout {
 
         addView(shadowView)
         addView(view)
+
+/*  DEBUG COLORS
+        view.setBackgroundColor(Color.RED)
+        shadowView.setBackgroundColor(Color.BLUE)
+*/
+    }
+
+    override fun getBaseline(): Int {
+        return view.baseline
     }
 
     private fun resetViews() {
@@ -70,11 +78,6 @@ class AnimatedTextView : FrameLayout {
             resetRenderParams()
             visibility = GONE
         }
-
-/*  DEBUG COLORS
-        view.setBackgroundColor(Color.RED)
-        shadowView.setBackgroundColor(Color.BLUE)
-*/
     }
 
     fun setTextAnimator(resId: Int) {
@@ -107,6 +110,7 @@ class AnimatedTextView : FrameLayout {
         if (view.text != text) {
             shadowView.text = view.text
             view.text = text
+            view.requestLayout() /* important! */
             if (animated) {
                 textAnimator?.run {
                     end()
@@ -114,10 +118,6 @@ class AnimatedTextView : FrameLayout {
                 }
             }
         }
-    }
-
-    override fun getBaseline(): Int {
-        return view.baseline
     }
 
     companion object {

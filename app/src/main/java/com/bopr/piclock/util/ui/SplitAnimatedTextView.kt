@@ -1,13 +1,16 @@
-package com.bopr.piclock
+package com.bopr.piclock.util.ui
 
 import android.content.Context
-import android.graphics.Color
 import android.util.AttributeSet
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
 
-class DualDigitsAnimatedText : LinearLayout {
+class SplitAnimatedTextView : LinearLayout {
+
+    private lateinit var hiDigitView: AnimatedTextView
+    private lateinit var loDigitView: AnimatedTextView
 
     constructor(context: Context) : super(context)
 
@@ -26,25 +29,22 @@ class DualDigitsAnimatedText : LinearLayout {
         orientation = HORIZONTAL
 
         hiDigitView = AnimatedTextView(context, attrs, defStyleAttr)
-            .apply {
-                setBackgroundColor(Color.RED)
-            }
         loDigitView = AnimatedTextView(context, attrs, defStyleAttr)
 
-//        val lp = generateLayoutParams(attrs)
-//        val hiLp = LayoutParams(WRAP_CONTENT, lp.height, 0f)
-//        val loLp = LayoutParams(0, lp.height, 1f)
-//
-//        addView(hiDigitView, hiLp)
-//        addView(loDigitView, loLp)
-        addView(hiDigitView)
-        addView(loDigitView)
+        addView(hiDigitView, LayoutParams(WRAP_CONTENT, WRAP_CONTENT))
+        addView(loDigitView, LayoutParams(0, WRAP_CONTENT, 1f))
 
         setText(hiDigitView.getText(), false)
+
+/*  DEBUG COLORS
+        hiDigitView.setBackgroundColor(Color.RED)
+        loDigitView.setBackgroundColor(Color.BLUE)
+*/
     }
 
-    private lateinit var hiDigitView: AnimatedTextView
-    private lateinit var loDigitView: AnimatedTextView
+    override fun getBaseline(): Int {
+        return hiDigitView.baseline
+    }
 
     fun setText(text: CharSequence?, animated: Boolean) {
         var hiText: CharSequence? = null
@@ -57,9 +57,9 @@ class DualDigitsAnimatedText : LinearLayout {
         loDigitView.setText(loText, animated)
     }
 
-    fun setTextAnimator(hiAnimatorResId: Int, loAnimatorResId: Int = hiAnimatorResId) {
-        hiDigitView.setTextAnimator(hiAnimatorResId)
-        loDigitView.setTextAnimator(loAnimatorResId)
+    fun setTextAnimator(resId: Int) {
+        hiDigitView.setTextAnimator(resId)
+        loDigitView.setTextAnimator(resId)
     }
 
 }

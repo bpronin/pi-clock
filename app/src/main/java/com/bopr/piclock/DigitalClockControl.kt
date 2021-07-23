@@ -16,6 +16,8 @@ import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.defaultDatetimeFormat
 import com.bopr.piclock.util.getResId
+import com.bopr.piclock.util.ui.AnimatedTextView
+import com.bopr.piclock.util.ui.SplitAnimatedTextView
 import java.text.DateFormat
 import java.util.*
 
@@ -30,7 +32,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
     private val amPmFormat = defaultDatetimeFormat("a")
     private val hoursView: AnimatedTextView by lazy { view.findViewById(R.id.hours_view) }
     private val minutesView: AnimatedTextView by lazy { view.findViewById(R.id.minutes_view) }
-    private val secondsView: AnimatedTextView by lazy { view.findViewById(R.id.seconds_view) }
+    private val secondsView: SplitAnimatedTextView by lazy { view.findViewById(R.id.seconds_view) }
     private val dateView: AnimatedTextView by lazy { view.findViewById(R.id.date_view) }
     private val minutesSeparator: TextView by lazy { view.findViewById(R.id.minutes_separator) }
     private val secondsSeparator: TextView by lazy { view.findViewById(R.id.seconds_separator) }
