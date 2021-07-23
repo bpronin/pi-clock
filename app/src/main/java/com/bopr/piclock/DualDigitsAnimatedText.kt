@@ -3,12 +3,11 @@ package com.bopr.piclock
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import androidx.annotation.AttrRes
 import androidx.annotation.StyleRes
 
-class TwoDigitsAnimatedText : LinearLayout {
+class DualDigitsAnimatedText : LinearLayout {
 
     constructor(context: Context) : super(context)
 
@@ -32,12 +31,14 @@ class TwoDigitsAnimatedText : LinearLayout {
             }
         loDigitView = AnimatedTextView(context, attrs, defStyleAttr)
 
-        val lp = generateLayoutParams(attrs)
-        val hiLp = LayoutParams(WRAP_CONTENT, lp.height, 0f)
-        val loLp = LayoutParams(0, lp.height, 1f)
-
-        addView(hiDigitView, hiLp)
-        addView(loDigitView, loLp)
+//        val lp = generateLayoutParams(attrs)
+//        val hiLp = LayoutParams(WRAP_CONTENT, lp.height, 0f)
+//        val loLp = LayoutParams(0, lp.height, 1f)
+//
+//        addView(hiDigitView, hiLp)
+//        addView(loDigitView, loLp)
+        addView(hiDigitView)
+        addView(loDigitView)
 
         setText(hiDigitView.getText(), false)
     }
