@@ -99,7 +99,11 @@ class AnimatedTextView : FrameLayout {
         }
     }
 
-    fun setText(text: CharSequence, animated: Boolean) {
+    fun getText(): CharSequence? {
+        return view.text
+    }
+
+    fun setText(text: CharSequence?, animated: Boolean) {
         if (view.text != text) {
             shadowView.text = view.text
             view.text = text
