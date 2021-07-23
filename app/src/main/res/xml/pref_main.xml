@@ -46,8 +46,7 @@
             <!-- entries for 'week_start' are build dynamically -->
         </com.bopr.piclock.util.ui.preference.IntListPreference>
 
-        <PreferenceCategory
-            android:title="@string/digits_animation">
+        <PreferenceCategory android:title="@string/digits_animation">
 
             <ListPreference
                 android:entries="@array/digits_animation_titles"
@@ -60,9 +59,7 @@
                 android:title="@string/digits_split_animation" />
         </PreferenceCategory>
 
-        <PreferenceCategory
-            android:key="time_separators"
-            android:title="@string/time_separators">
+        <PreferenceCategory android:title="@string/time_separators">
 
             <SwitchPreferenceCompat
                 android:key="time_separators_visible"
@@ -75,7 +72,6 @@
         </PreferenceCategory>
 
         <PreferenceCategory
-            android:key="hands"
             android:title="@string/hands">
 
             <SwitchPreferenceCompat

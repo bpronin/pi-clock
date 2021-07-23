@@ -29,6 +29,7 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
 // todo:  вместо цифр доли числа Пи (фирменный стиль)
 // todo:  clock face with 24 hours
 // todo:  fade in-out handles animation
+// todo:  rounder hands style
 
     private val textDateViewControl = AnalogClockTextDateControl(view, settings)
     private val barsDateControl = AnalogClockBarsDateControl(view, settings)

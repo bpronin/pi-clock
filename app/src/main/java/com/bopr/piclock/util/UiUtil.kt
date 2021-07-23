@@ -201,3 +201,11 @@ fun PreferenceGroup.forEachChildRecursively(action: (preference: Preference) -> 
         if (it is PreferenceGroup) it.forEachChildRecursively(action)
     }
 }
+
+val PreferenceGroup.isAnyChildrenVisible: Boolean
+    get() {
+        forEach {
+            if (it.isVisible) return true
+        }
+        return false
+    }

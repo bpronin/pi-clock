@@ -137,6 +137,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
     private fun updateDigitsSplitAnimation() {
         val splitEnabled = settings.getBoolean(PREF_DIGITS_SPLIT_ANIMATION)
         secondsView.splitDigits = splitEnabled
+        //todo: add the rest
     }
 
     private fun updateViewsData(animated: Boolean) {
