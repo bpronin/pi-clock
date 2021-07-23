@@ -1,5 +1,6 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Show animator -->
     <objectAnimator
         android:duration="800"
         android:interpolator="@android:anim/bounce_interpolator"
@@ -7,6 +8,7 @@
         android:valueFrom="-1.2f"
         android:valueTo="0f" />
 
+    <!-- Hide animator -->
     <objectAnimator
         android:duration="800"
         android:interpolator="@android:anim/bounce_interpolator"

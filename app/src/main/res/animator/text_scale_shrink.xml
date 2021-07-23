@@ -1,5 +1,6 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Show animator -->
     <set>
         <objectAnimator
             android:duration="800"
@@ -23,6 +24,7 @@
             android:valueTo="1f" />
     </set>
 
+    <!-- Hide animator -->
     <set>
         <objectAnimator
             android:duration="800"
