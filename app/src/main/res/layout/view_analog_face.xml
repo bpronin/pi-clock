@@ -10,7 +10,7 @@
         android:id="@+id/clock_face"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/view_analog_default_face"
+        android:src="?attr/contentClockFaceShape"
         tools:ignore="ContentDescription" />
 
     <ImageView
@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:rotation="30"
-        android:src="@drawable/view_analog_default_hour_hand"
+        android:src="?attr/contentClockHandShapeHour"
         tools:ignore="ContentDescription" />
 
     <ImageView
@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:rotation="180"
-        android:src="@drawable/view_analog_default_minute_hand"
+        android:src="?attr/contentClockHandShapeMinute"
         tools:ignore="ContentDescription" />
 
     <ImageView
@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:rotation="240"
-        android:src="@drawable/view_analog_default_second_hand"
+        android:src="?attr/contentClockHandShapeSecond"
         tools:ignore="ContentDescription" />
 
 </FrameLayout>

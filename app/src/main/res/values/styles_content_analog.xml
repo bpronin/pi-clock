@@ -1,17 +1,29 @@
 <resources>
 
-    <!-- Analog clock text date -->
+    <!-- Analog clock with text date -->
 
-    <style name="Content.Analog.Default" parent="AppTheme">
+    <style name="Content.Analog.Default.Square" parent="AppTheme">
         <item name="contentDateFont">@font/kanit</item>
         <item name="contentDatePaddingTop">8sp</item>
         <item name="contentDateTextSize">26sp</item>
+        <item name="contentClockFaceShape">@drawable/view_analog_min_face</item>
+        <item name="contentClockHandShapeHour">@drawable/view_analog_min_hour_hand_square</item>
+        <item name="contentClockHandShapeMinute">@drawable/view_analog_min_minute_hand_square</item>
+        <item name="contentClockHandShapeSecond">@drawable/view_analog_min_second_hand_square</item>
     </style>
 
-    <!-- Analog clock date as bars -->
+    <style name="Content.Analog.Default.Rounded" parent="Content.Analog.Default.Square">
+        <item name="contentClockHandShapeHour">@drawable/view_analog_min_hour_hand_round</item>
+        <item name="contentClockHandShapeMinute">@drawable/view_analog_min_minute_hand_round</item>
+        <item name="contentClockHandShapeSecond">@drawable/view_analog_min_second_hand_round</item>
+    </style>
 
-    <style name="Content.Analog.BarsDate" parent="Content.Analog.Default">
-        <item name="contentDatePaddingTop">20sp</item>
+    <!-- Analog clock with date as bars -->
+
+    <style name="Content.Analog.BarsDate.Default" parent="Content.Analog.Default.Square">
+    </style>
+
+    <style name="Content.Analog.BarsDate.Rounded" parent="Content.Analog.Default.Rounded">
     </style>
 
 </resources>

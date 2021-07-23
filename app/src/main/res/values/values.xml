@@ -6,8 +6,8 @@
         <item>view_digital_simple</item>
         <item>view_digital_vertical_default</item>
         <item>view_digital_vertical_simple</item>
-        <item>view_analog_default</item>
-        <item>view_analog_bars_date</item>
+        <item>view_analog_min_text_date</item>
+        <item>view_analog_min_bars_date</item>
     </string-array>
 
     <string-array name="view_digital_default_style_values" translatable="false">
@@ -44,12 +44,14 @@
         <item>Content.Digital.Vertical.Simple.Thick</item>
     </string-array>
 
-    <string-array name="view_analog_default_style_values" translatable="false">
-        <item>Content.Analog.Default</item>
+    <string-array name="view_analog_min_text_date_style_values" translatable="false">
+        <item>Content.Analog.Default.Square</item>
+        <item>Content.Analog.Default.Rounded</item>
     </string-array>
 
-    <string-array name="view_analog_bars_date_style_values" translatable="false">
-        <item>Content.Analog.BarsDate</item>
+    <string-array name="view_analog_min_bars_date_style_values" translatable="false">
+        <item>Content.Analog.BarsDate.Square</item>
+        <item>Content.Analog.BarsDate.Rounded</item>
     </string-array>
 
     <string-array name="hours_minutes_format_values" translatable="false">

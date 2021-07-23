@@ -83,12 +83,12 @@
     <string name="digits_animation">Digits animation</string>
 
     <string-array name="content_layout_titles">
-        <item>Digital horizontal small seconds</item>
-        <item>Digital horizontal big seconds</item>
-        <item>Digital vertical small seconds</item>
-        <item>Digital vertical big seconds</item>
-        <item>Analog text date</item>
-        <item>Analog bars date</item>
+        <item>Digital horizontal, small seconds</item>
+        <item>Digital horizontal, big seconds</item>
+        <item>Digital vertical, small seconds</item>
+        <item>Digital vertical, big seconds</item>
+        <item>Analog minimalistic, text date</item>
+        <item>Analog minimalistic, bars date</item>
     </string-array>
 
     <string-array name="view_digital_default_style_titles">
@@ -125,12 +125,14 @@
         <item>Thick</item>
     </string-array>
 
-    <string-array name="view_analog_default_style_titles">
-        <item>@string/default_title</item>
+    <string-array name="view_analog_min_text_date_style_titles">
+        <item>Square hands</item>
+        <item>Rounded hands</item>
     </string-array>
 
-    <string-array name="view_analog_bars_date_style_titles">
-        <item>@string/default_title</item>
+    <string-array name="view_analog_min_bars_date_style_titles">
+        <item>Square hands</item>
+        <item>Rounded hands</item>
     </string-array>
 
     <string-array name="tick_sound_titles">

@@ -1,8 +1,12 @@
 <resources>
-    <declare-styleable name="FullscreenAttrs">
+    <declare-styleable name="AppThemeAttributes">
         <attr name="contentAmPmTextPaddingTop" format="dimension" />
         <attr name="contentAmPmTextSize" format="dimension" />
         <attr name="contentBackgroundColor" format="color" />
+        <attr name="contentClockFaceShape" format="reference" />
+        <attr name="contentClockHandShapeHour" format="reference" />
+        <attr name="contentClockHandShapeMinute" format="reference" />
+        <attr name="contentClockHandShapeSecond" format="reference" />
         <attr name="contentDateFont" format="reference" />
         <attr name="contentDatePaddingTop" format="dimension" />
         <attr name="contentDateTextSize" format="dimension" />
@@ -11,16 +15,16 @@
         <attr name="contentHoursPaddingBottom" format="dimension" />
         <attr name="contentHoursPaddingTop" format="dimension" />
         <attr name="contentHoursTextSize" format="dimension" />
+        <attr name="contentMinutesSeparatorPaddingBottom" format="dimension" />
+        <attr name="contentMinutesSeparatorPaddingTop" format="dimension" />
         <attr name="contentSecondsPaddingBottom" format="dimension" />
-        <attr name="contentSecondsSeparatorPaddingRight" format="dimension" />
         <attr name="contentSecondsPaddingTop" format="dimension" />
         <attr name="contentSecondsSeparatorPaddingBottom" format="dimension" />
+        <attr name="contentSecondsSeparatorPaddingRight" format="dimension" />
         <attr name="contentSecondsSeparatorPaddingTop" format="dimension" />
         <attr name="contentSecondsTextSize" format="dimension" />
         <attr name="contentSecondsWidth" format="dimension" />
         <attr name="contentTextColor" format="color" />
-        <attr name="contentMinutesSeparatorPaddingBottom" format="dimension" />
-        <attr name="contentMinutesSeparatorPaddingTop" format="dimension" />
         <attr name="contentWidth" format="dimension" />
         <attr name="fabColor" format="color" />
     </declare-styleable>
