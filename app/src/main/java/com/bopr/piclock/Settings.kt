@@ -75,6 +75,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         putBooleanOptional(PREF_GESTURES_ENABLED, true)
         putBooleanOptional(PREF_SECOND_HAND_VISIBLE, true)
         putBooleanOptional(PREF_CLOCK_HAND_MOVE_SMOOTH, true)
+        putBooleanOptional(PREF_DIGITS_SPLIT_ANIMATION, true)
         putIntOptional(PREF_WEEK_START, localeFirstDayOfWeek)
         putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)  /* 15 min */
         putIntOptional(PREF_CONTENT_SCALE, 100) {
@@ -189,6 +190,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_CONTENT_STYLE = "content_style"
         const val PREF_DATE_FORMAT = "date_format"
         const val PREF_DIGITS_ANIMATION = "digits_animation"
+        const val PREF_DIGITS_SPLIT_ANIMATION = "digits_split_animation"
         const val PREF_FLOAT_ANIMATION = "float_animation"
         const val PREF_FLOAT_SPEED = "float_speed"
         const val PREF_FULLSCREEN_ENABLED = "fullscreen_enabled"

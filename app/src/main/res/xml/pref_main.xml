@@ -20,73 +20,81 @@
 
     <PreferenceCategory android:title="@string/formats">
 
-            <ListPreference
-                android:entries="@array/hours_minutes_format_titles"
-                android:entryValues="@array/hours_minutes_format_values"
-                android:key="hours_minutes_format"
-                android:title="@string/hours_minutes_format" />
+        <ListPreference
+            android:entries="@array/hours_minutes_format_titles"
+            android:entryValues="@array/hours_minutes_format_values"
+            android:key="hours_minutes_format"
+            android:title="@string/hours_minutes_format" />
 
-            <ListPreference
-                android:entries="@array/seconds_format_titles"
-                android:entryValues="@array/seconds_format_values"
-                android:key="seconds_format"
-                android:title="@string/seconds_format" />
+        <ListPreference
+            android:entries="@array/seconds_format_titles"
+            android:entryValues="@array/seconds_format_values"
+            android:key="seconds_format"
+            android:title="@string/seconds_format" />
 
-            <ListPreference
-                android:entryValues="@array/date_format_values"
-                android:key="date_format"
-                android:title="@string/date_format">
-                <!-- entry names for 'date_format' are build dynamically -->
-            </ListPreference>
+        <ListPreference
+            android:entryValues="@array/date_format_values"
+            android:key="date_format"
+            android:title="@string/date_format">
+            <!-- entry names for 'date_format' are build dynamically -->
+        </ListPreference>
 
-            <com.bopr.piclock.util.ui.preference.IntListPreference
-                android:key="week_start"
-                android:title="@string/week_start"
-                app:isPreferenceVisible="false">
-                <!-- entries for 'week_start' are build dynamically -->
-            </com.bopr.piclock.util.ui.preference.IntListPreference>
+        <com.bopr.piclock.util.ui.preference.IntListPreference
+            android:key="week_start"
+            android:title="@string/week_start"
+            app:isPreferenceVisible="false">
+            <!-- entries for 'week_start' are build dynamically -->
+        </com.bopr.piclock.util.ui.preference.IntListPreference>
+
+        <PreferenceCategory
+            android:title="@string/digits_animation">
 
             <ListPreference
                 android:entries="@array/digits_animation_titles"
                 android:entryValues="@array/digits_animation_values"
                 android:key="digits_animation"
-                android:title="@string/digits_animation" />
+                android:title="@string/digits_animation_type" />
 
-            <PreferenceCategory
-                android:key="time_separators"
-                android:title="@string/time_separators">
+            <SwitchPreferenceCompat
+                android:key="digits_split_animation"
+                android:title="@string/digits_split_animation" />
+        </PreferenceCategory>
 
-                <SwitchPreferenceCompat
-                    android:key="time_separators_visible"
-                    android:title="@string/show_time_separators" />
+        <PreferenceCategory
+            android:key="time_separators"
+            android:title="@string/time_separators">
 
-                <SwitchPreferenceCompat
-                    android:key="time_separators_blinking"
-                    android:title="@string/blink_time_separators" />
+            <SwitchPreferenceCompat
+                android:key="time_separators_visible"
+                android:title="@string/show_time_separators" />
 
-            </PreferenceCategory>
-
-            <PreferenceCategory
-                android:key="hands"
-                android:title="@string/hands">
-
-                <SwitchPreferenceCompat
-                    android:key="second_hand_visible"
-                    android:title="@string/second_hand" />
-
-                <SwitchPreferenceCompat
-                    android:key="clock_hand_move_smooth"
-                    android:title="@string/hands_smooth" />
-
-                <ListPreference
-                    android:entries="@array/clock_hand_animation_titles"
-                    android:entryValues="@array/clock_hand_animation_values"
-                    android:key="clock_hand_animation"
-                    android:title="@string/clock_hands_animation" />
-
-            </PreferenceCategory>
+            <SwitchPreferenceCompat
+                android:key="time_separators_blinking"
+                android:title="@string/blink_time_separators" />
 
         </PreferenceCategory>
+
+        <PreferenceCategory
+            android:key="hands"
+            android:title="@string/hands">
+
+            <SwitchPreferenceCompat
+                android:key="second_hand_visible"
+                android:title="@string/second_hand" />
+
+            <SwitchPreferenceCompat
+                android:key="clock_hand_move_smooth"
+                android:title="@string/hands_smooth" />
+
+            <ListPreference
+                android:entries="@array/clock_hand_animation_titles"
+                android:entryValues="@array/clock_hand_animation_values"
+                android:key="clock_hand_animation"
+                android:title="@string/clock_hands_animation" />
+
+        </PreferenceCategory>
+
+    </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/user_interface">
 

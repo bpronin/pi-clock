@@ -20,7 +20,7 @@
     <string name="default_date_format">%s (system)</string>
     <string name="default_title">Default</string>
     <string name="digital_clock">Digital clock</string>
-    <string name="digits_animation">Digits animation type</string>
+    <string name="digits_animation_type">Digits animation type</string>
     <string name="disabled">Disabled</string>
     <string name="disabled_power_save">Disabled (power saving)</string>
     <string name="do_not_animate">Do not animate</string>
@@ -79,6 +79,8 @@
     <string name="hands_smooth">Smooth hands</string>
     <string name="hands">Hands</string>
     <string name="when_in">Clock is %s</string>
+    <string name="digits_split_animation">Animate digits separately</string>
+    <string name="digits_animation">Digits animation</string>
 
     <string-array name="content_layout_titles">
         <item>Digital horizontal small seconds</item>

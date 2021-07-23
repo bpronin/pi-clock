@@ -9,6 +9,7 @@ import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
+import com.bopr.piclock.Settings.Companion.PREF_DIGITS_SPLIT_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_HOURS_MINUTES_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
@@ -63,6 +64,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
         updateSeparatorsViews()
         updateDateView()
         updateDigitsAnimation()
+        updateDigitsSplitAnimation()
         updateAnimationOn()
         updateViewsData(false)
     }
@@ -132,6 +134,11 @@ internal class DigitalClockControl(view: View, settings: Settings) :
         }
     }
 
+    private fun updateDigitsSplitAnimation() {
+        val splitEnabled = settings.getBoolean(PREF_DIGITS_SPLIT_ANIMATION)
+        secondsView.splitDigits = splitEnabled
+    }
+
     private fun updateViewsData(animated: Boolean) {
         hoursView.setText(hoursFormat.format(currentTime), animated)
         minutesView.setText(minutesFormat.format(currentTime), animated)
@@ -166,6 +173,8 @@ internal class DigitalClockControl(view: View, settings: Settings) :
                 updateDateView()
             PREF_DIGITS_ANIMATION ->
                 updateDigitsAnimation()
+            PREF_DIGITS_SPLIT_ANIMATION ->
+                updateDigitsSplitAnimation()
             PREF_SECONDS_FORMAT -> {
                 updateSecondsView()
                 updateSeparatorsViews()

@@ -25,6 +25,7 @@ import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_STYLE
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
+import com.bopr.piclock.Settings.Companion.PREF_DIGITS_SPLIT_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_FLOAT_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_FLOAT_SPEED
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
@@ -107,11 +108,12 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             PREF_CONTENT_STYLE -> updateStyleView()
             PREF_DATE_FORMAT -> updateDateFormatView()
             PREF_DIGITS_ANIMATION -> updateDigitsAnimationView()
+            PREF_DIGITS_SPLIT_ANIMATION -> updateDigitsSplitAnimationView()
             PREF_FLOAT_ANIMATION -> updateFloatAnimationView()
             PREF_FLOAT_SPEED -> updateFloatSpeedView()
             PREF_FULLSCREEN_ENABLED -> updateFullscreenView()
             PREF_GESTURES_ENABLED -> updateGesturesView()
-            PREF_HOURS_MINUTES_FORMAT -> updateTimeFormatView()
+            PREF_HOURS_MINUTES_FORMAT -> updateHoursMinutesFormatView()
             PREF_MUTED_BRIGHTNESS -> updateMutedBrightnessView()
             PREF_SECONDS_FORMAT -> updateSecondsFormatView()
             PREF_SECOND_HAND_VISIBLE -> updateSecondHandView()
@@ -124,26 +126,38 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
     }
 
     /** Forces update preference views recursively */
-    private fun refreshPreferenceViews(root: PreferenceGroup) {
+    private fun refreshPreferenceViews(root: PreferenceGroup, vararg exclude: String) {
         root.forEachChildRecursively {
-            it.key?.apply { onSharedPreferenceChanged(settings, this) }
+            it.key?.apply {
+                if (this !in exclude) {
+                    onSharedPreferenceChanged(settings, this)
+                }
+            }
         }
     }
 
+    private fun isDigitalLayout(): Boolean {
+       return isDigitalClockLayout(settings.getString(PREF_CONTENT_LAYOUT))
+    }
+
+    private fun isAnalogLayout(): Boolean {
+       return isAnalogClockLayout(settings.getString(PREF_CONTENT_LAYOUT))
+    }
+
+    private fun isBarsDateLayout(): Boolean {
+       return isAnalogClockBarsDateLayout(settings.getString(PREF_CONTENT_LAYOUT))
+    }
+
     private fun updateLayoutPreferences() {
-        val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
-
-        val isDigital = isDigitalClockLayout(layoutName)
-        val isAnalog = isAnalogClockLayout(layoutName)
-        val isAnalogBars = isAnalogClockBarsDateLayout(layoutName)
-
-        requirePreference<Preference>(PREF_TIME_SEPARATORS).isVisible = isDigital
-        requirePreference<Preference>(PREF_DIGITS_ANIMATION).isVisible = isDigital
-        requirePreference<Preference>(PREF_SECONDS_FORMAT).isVisible = isDigital
-        requirePreference<Preference>(PREF_HOURS_MINUTES_FORMAT).isVisible = isDigital
-        requirePreference<Preference>(PREF_DATE_FORMAT).isVisible = !isAnalogBars
-        requirePreference<Preference>(PREF_HANDS).isVisible = isAnalog
-        requirePreference<Preference>(PREF_WEEK_START).isVisible = isAnalogBars
+        updateTimeSeparatorsVisibleView()
+        updateDigitsAnimationView()
+        updateDigitsSplitAnimationView()
+        updateSecondsFormatView()
+        updateHoursMinutesFormatView()
+        updateDateFormatView()
+        updateWeekStartView()
+        requirePreference<Preference>(PREF_TIME_SEPARATORS).isVisible = isDigitalLayout()
+        requirePreference<Preference>(PREF_HANDS).isVisible = isAnalogLayout()
     }
 
     private fun updateAboutView() {
@@ -215,6 +229,23 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         }
     }
 
+    private fun updateMutedBrightnessView() {
+        requirePreference<SeekBarPreference>(PREF_MUTED_BRIGHTNESS).apply {
+            value = settings.getInt(key)
+            min = MIN_BRIGHTNESS
+            max = MAX_BRIGHTNESS
+            summary = getString(R.string.muted_brightness_summary, value)
+        }
+    }
+
+    private fun updateTickSoundView() {
+        requirePreference<Preference>(PREF_TICK_SOUND).apply {
+            val value = settings.getString(key)
+            val index = getStringArray(R.array.tick_sound_values).indexOf(value)
+            summary = getStringArray(R.array.tick_sound_titles)[index]
+        }
+    }
+
     private fun updateLayoutView() {
         requirePreference<ListPreference>(PREF_CONTENT_LAYOUT).apply {
             value = settings.getString(key)
@@ -260,14 +291,6 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         }
     }
 
-    private fun updateTickSoundView() {
-        requirePreference<Preference>(PREF_TICK_SOUND).apply {
-            val value = settings.getString(key)
-            val index = getStringArray(R.array.tick_sound_values).indexOf(value)
-            summary = getStringArray(R.array.tick_sound_titles)[index]
-        }
-    }
-
     private fun updateAutoInactivateView() {
         requirePreference<ListPreference>(PREF_AUTO_INACTIVATE_DELAY).apply {
             val value = settings.getLong(key)
@@ -277,15 +300,6 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             } else {
                 getString(R.string.auto_inactivate_never_summary)
             }
-        }
-    }
-
-    private fun updateMutedBrightnessView() {
-        requirePreference<SeekBarPreference>(PREF_MUTED_BRIGHTNESS).apply {
-            value = settings.getInt(key)
-            min = MIN_BRIGHTNESS
-            max = MAX_BRIGHTNESS
-            summary = getString(R.string.muted_brightness_summary, value)
         }
     }
 
@@ -322,8 +336,9 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         }
     }
 
-    private fun updateTimeFormatView() {
+    private fun updateHoursMinutesFormatView() {
         findPreference<ListPreference>(PREF_HOURS_MINUTES_FORMAT)?.apply {
+            isVisible = isDigitalLayout()
             value = settings.getString(key)
             val ix = findIndexOfValue(value)
             val hint = getStringArray(R.array.hours_minutes_format_hints)[ix]
@@ -333,6 +348,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     private fun updateSecondsFormatView() {
         findPreference<ListPreference>(PREF_SECONDS_FORMAT)?.apply {
+            isVisible = isDigitalLayout()
             value = settings.getString(key)
             val ix = findIndexOfValue(value)
             val hint = getStringArray(R.array.seconds_format_hints)[ix]
@@ -356,7 +372,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
                         defaultDatetimeFormat(pattern).format(date)
                 }
             }
-
+            isVisible = !isBarsDateLayout()
             entries = entryNames
             summary = entryNames[findIndexOfValue(settings.getString(key))]
         }
@@ -364,13 +380,23 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     private fun updateDigitsAnimationView() {
         findPreference<ListPreference>(PREF_DIGITS_ANIMATION)?.apply {
+            isVisible = isDigitalLayout()
             value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
         }
     }
 
+    private fun updateDigitsSplitAnimationView() {
+        requirePreference<SwitchPreferenceCompat>(PREF_DIGITS_SPLIT_ANIMATION).apply {
+            isVisible = isDigitalLayout()
+            val value = settings.getBoolean(key)
+            summary = getString(if (value) R.string.enabled else R.string.disabled)
+        }
+    }
+
     private fun updateWeekStartView() {
         requirePreference<ListPreference>(PREF_WEEK_START).apply {
+            isVisible = isBarsDateLayout()
             entries = arrayOfNulls<String>(7)
             entryValues = arrayOfNulls<String>(7)
             val weekdays = DateFormatSymbols.getInstance().weekdays
@@ -409,6 +435,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     private fun updateTimeSeparatorsVisibleView() {
         requirePreference<SwitchPreferenceCompat>(PREF_TIME_SEPARATORS_VISIBLE).apply {
+            isVisible = isDigitalLayout()
             val value = settings.getBoolean(key)
             summary = getString(if (value) R.string.visible else R.string.hidden)
             requirePreference<Preference>(PREF_TIME_SEPARATORS_BLINKING).isEnabled = value
