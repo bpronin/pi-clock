@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup.*
 import android.widget.TextView
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
@@ -112,7 +113,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
         if (settings.getBoolean(PREF_TIME_SEPARATORS_VISIBLE)) {
             val secondsVisible = settings.getString(PREF_SECONDS_FORMAT).isNotEmpty()
             minutesSeparator.visibility = VISIBLE
-            secondsSeparator.isGone = !secondsVisible
+            secondsSeparator.isInvisible = !secondsVisible
 
             blinker.setEnabled(settings.getBoolean(PREF_TIME_SEPARATORS_BLINKING))
             blinker.setSecondsEnabled(secondsVisible)

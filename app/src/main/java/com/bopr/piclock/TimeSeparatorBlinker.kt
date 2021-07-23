@@ -52,26 +52,21 @@ internal class TimeSeparatorBlinker(
     }
 
     private fun startAnimators(second: Long) {
-        resetVisibility()
-
         if (second.isEven) return
 
+        minutesSeparator.visibility = VISIBLE
         minutesSeparatorAnimator.apply {
             cancel()
             start()
         }
 
         if (secondsEnabled) {
+            secondsSeparator.visibility = VISIBLE
             secondsSeparatorAnimator.apply {
                 cancel()
                 start()
             }
         }
-    }
-
-    private fun resetVisibility() {
-        minutesSeparator.visibility = VISIBLE
-        secondsSeparator.visibility = VISIBLE
     }
 
     private fun resetAlpha() {
