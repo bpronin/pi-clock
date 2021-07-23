@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.DAY_OF_WEEK
 
+
 /**
  * Miscellaneous resourceconstants and  utilities.
  *
@@ -37,6 +38,16 @@ fun Contextual.getResId(defType: String, resName: String): Int {
 }
 
 /**
+ * Returns ID of resource by its fully qualified path.
+ */
+fun Contextual.getResId(resPath: String): Int {
+    return requireContext().run {
+        val resName = resPath.substringAfter("res/").substringBeforeLast(".")
+        resources.getIdentifier(resName, null, packageName)
+    }
+}
+
+/**
  * Returns ID of resource by its name or throws an exception when resource does not exist.
  */
 fun Contextual.requireResId(defType: String, resName: String): Int {
@@ -50,10 +61,31 @@ fun Contextual.requireResId(defType: String, resName: String): Int {
  * Returns name of resource ID (short).
  */
 fun Contextual.getResName(resId: Int): String {
-    requireContext().resources.getResourceName(resId).run {
-        return substring(lastIndexOf("/") + 1)
-    }
+    return requireContext().resources.getResourceEntryName(resId)
 }
+
+//fun Contextual.getResFullName(resId: Int): String {
+//    return requireContext().resources.run {
+//        "@${getResourceTypeName(resId)}/${getResourceEntryName(resId)}"
+//    }
+//}
+
+///**
+// * Returns resource fully qualified path in form of "res/drawable/pic.jpg"
+// */
+//fun Contextual.getResPath(resId: Int): String {
+//    val value = TypedValue()
+//    requireContext().resources.getValue(resId, value, true)
+//    return value.string.toString()
+//}
+//fun Contextual.getResArray(resId: Int): IntArray {
+//    val array: IntArray
+//    requireContext().resources.obtainTypedArray(resId).apply {
+//        array = IntArray(length()) { getResourceId(it, 0) }
+//        recycle()
+//    }
+//    return array
+//}
 
 /**
  * Returns true if resource array contains specified value.
@@ -103,6 +135,7 @@ fun <C : Collection<*>> Contextual.ensureAllResExists(arrayResId: Int, values: C
 /**
  * Convenience function. Returns context's resource array.
  */
+
 fun Contextual.getStringArray(resId: Int): Array<out String> {
     return requireContext().resources.getStringArray(resId)
 }

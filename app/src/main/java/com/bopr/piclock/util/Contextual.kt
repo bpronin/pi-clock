@@ -12,4 +12,14 @@ import android.content.Context
 interface Contextual {
 
     fun requireContext(): Context
+
 }
+
+val Context.contextual: Contextual
+    get() {
+        return object : Contextual {
+            override fun requireContext(): Context {
+                return this@contextual
+            }
+        }
+    }

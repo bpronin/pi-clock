@@ -7,6 +7,7 @@ import android.widget.LinearLayout
 import androidx.annotation.AttrRes
 import androidx.annotation.Keep
 import androidx.annotation.StyleRes
+import androidx.core.view.isGone
 import com.bopr.piclock.R
 
 /**
@@ -19,8 +20,18 @@ class SplitAnimatedTextView : LinearLayout {
 
     private lateinit var digitViews: Array<AnimatedTextView>
     private var digitCount = 2
+    private var text: CharSequence? = null
 
     var splitDigits = true
+        set(value) {
+            if (field != value) {
+                field = value
+                for (i in 0..digitViews.size - 2) {
+                    digitViews[i].isGone = !splitDigits
+                }
+                updateViewsText(false)
+            }
+        }
 
     constructor(context: Context) : super(context)
 
@@ -55,20 +66,29 @@ class SplitAnimatedTextView : LinearLayout {
         }
 
         orientation = HORIZONTAL
-        setText(digitViews[0].getText(), false)
+        setText(digitViews.last().getText(), false)
     }
 
     override fun getBaseline(): Int {
-        return digitViews[0].baseline
+        return digitViews.last().baseline
+    }
+
+    private fun updateViewsText(animated: Boolean) {
+        if (splitDigits) {
+            digitViews.forEachIndexed { i, view ->
+                val digitText = text?.run {
+                    if (i < length) get(i).toString() else null
+                }
+                view.setText(digitText, animated)
+            }
+        } else {
+            digitViews.last().setText(text, animated)
+        }
     }
 
     fun setText(text: CharSequence?, animated: Boolean) {
-        digitViews.forEachIndexed { i, view ->
-            val digitText = text?.run {
-                if (i < length) get(i).toString() else null
-            }
-            view.setText(digitText, animated, !splitDigits)
-        }
+        this.text = text
+        updateViewsText(animated)
     }
 
     fun setTextAnimator(resId: Int) {
