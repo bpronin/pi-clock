@@ -3,12 +3,14 @@ package com.bopr.piclock.util.ui
 import android.content.Context
 import android.util.AttributeSet
 import androidx.annotation.AttrRes
+import androidx.annotation.Keep
 import androidx.appcompat.widget.AppCompatTextView
 import com.bopr.piclock.R
 
 /**
  * Workaround to fix [AppCompatTextView]'s issue with ignored negative vertical paddings.
  */
+@Keep
 class ExtTextView : AppCompatTextView {
 
     constructor(context: Context) : super(context)

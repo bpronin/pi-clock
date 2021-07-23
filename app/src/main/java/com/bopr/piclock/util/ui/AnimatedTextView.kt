@@ -8,6 +8,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import androidx.annotation.AttrRes
+import androidx.annotation.Keep
 import androidx.annotation.StyleRes
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
@@ -19,11 +20,12 @@ import com.bopr.piclock.util.property.PROP_SCALE_Y_PIVOT_TOP
 import com.bopr.piclock.util.resetRenderParams
 
 /**
- * Text view with animated transitions.
+ * Text view with animated text transitions.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 @Suppress("JoinDeclarationAndAssignment")
+@Keep
 class AnimatedTextView : FrameLayout {
 
     private lateinit var view: ExtTextView

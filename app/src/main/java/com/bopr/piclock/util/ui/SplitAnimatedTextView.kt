@@ -5,9 +5,16 @@ import android.util.AttributeSet
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import androidx.annotation.AttrRes
+import androidx.annotation.Keep
 import androidx.annotation.StyleRes
 import com.bopr.piclock.R
 
+/**
+ * Text view with animated text transitions. Every digit animated separately.
+ *
+ * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
+ */
+@Keep
 class SplitAnimatedTextView : LinearLayout {
 
     private lateinit var digitViews: Array<AnimatedTextView>
