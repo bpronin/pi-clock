@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
+import androidx.annotation.AnimatorRes
 import androidx.annotation.AttrRes
 import androidx.annotation.Keep
 import androidx.annotation.StyleRes
@@ -82,8 +83,8 @@ class AnimatedTextView : FrameLayout {
         }
     }
 
-    fun setTextAnimator(resId: Int) {
-        val animator = if (resId > 0) loadAnimator(context, resId) as AnimatorSet else null
+    fun setTextAnimator(@AnimatorRes resId: Int) {
+        val animator = if (resId != 0) loadAnimator(context, resId) as AnimatorSet else null
         animator?.apply {
             if (childAnimations.size < 2) throw IllegalArgumentException("Invalid animation set")
         }
@@ -108,17 +109,15 @@ class AnimatedTextView : FrameLayout {
         return view.text
     }
 
-    fun setText(text: CharSequence?, animated: Boolean, forceAnimate: Boolean = false) {
-        if (view.text != text || forceAnimate) {
+    fun setText(text: CharSequence?, animated: Boolean) {
+        if (view.text != text) {
+            textAnimator?.end()
+
             shadowView.text = view.text
             view.text = text
             view.requestLayout() /* important! */
-            if (animated) {
-                textAnimator?.run {
-                    end()
-                    start()
-                }
-            }
+
+            if (animated) textAnimator?.start()
         }
     }
 

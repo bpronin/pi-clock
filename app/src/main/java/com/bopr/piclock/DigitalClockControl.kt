@@ -16,7 +16,7 @@ import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.defaultDatetimeFormat
-import com.bopr.piclock.util.getResId
+import com.bopr.piclock.util.getAnimatorResId
 import com.bopr.piclock.util.ui.AnimatedTextView
 import com.bopr.piclock.util.ui.SplitAnimatedTextView
 import java.text.DateFormat
@@ -125,13 +125,12 @@ internal class DigitalClockControl(view: View, settings: Settings) :
     }
 
     private fun updateDigitsAnimation() {
-        val resId = getResId("animator", settings.getString(PREF_DIGITS_ANIMATION))
-        if (resId != 0) { /* 0 = animation disabled for digits */
-            hoursView.setTextAnimator(resId)
-            minutesView.setTextAnimator(resId)
-            secondsView.setTextAnimator(resId)
-            dateView.setTextAnimator(resId)
-        }
+        val resId = getAnimatorResId(settings.getString(PREF_DIGITS_ANIMATION))
+        /* resId = 0 is allowed. it means that animation is disabled */
+        hoursView.setTextAnimator(resId)
+        minutesView.setTextAnimator(resId)
+        secondsView.setTextAnimator(resId)
+        dateView.setTextAnimator(resId)
     }
 
     private fun updateDigitsSplitAnimation() {
@@ -162,20 +161,13 @@ internal class DigitalClockControl(view: View, settings: Settings) :
 
     override fun onSettingChanged(key: String) {
         when (key) {
-            PREF_ANIMATION_ON ->
-                updateAnimationOn()
-            PREF_HOURS_MINUTES_FORMAT ->
-                updateHoursMinutesViews()
-            PREF_TIME_SEPARATORS_VISIBLE ->
-                updateSeparatorsViews()
-            PREF_TIME_SEPARATORS_BLINKING ->
-                updateSeparatorsViews()
-            PREF_DATE_FORMAT ->
-                updateDateView()
-            PREF_DIGITS_ANIMATION ->
-                updateDigitsAnimation()
-            PREF_DIGITS_SPLIT_ANIMATION ->
-                updateDigitsSplitAnimation()
+            PREF_ANIMATION_ON -> updateAnimationOn()
+            PREF_HOURS_MINUTES_FORMAT -> updateHoursMinutesViews()
+            PREF_TIME_SEPARATORS_VISIBLE -> updateSeparatorsViews()
+            PREF_TIME_SEPARATORS_BLINKING -> updateSeparatorsViews()
+            PREF_DATE_FORMAT -> updateDateView()
+            PREF_DIGITS_ANIMATION -> updateDigitsAnimation()
+            PREF_DIGITS_SPLIT_ANIMATION -> updateDigitsSplitAnimation()
             PREF_SECONDS_FORMAT -> {
                 updateSecondsView()
                 updateSeparatorsViews()

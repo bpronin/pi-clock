@@ -269,8 +269,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
             throw IllegalStateException("Unregistered style: $styleName for layout: $layoutName")
 
         val contentView = layoutInflater.inflateWithTheme(
-            requireResId("layout", layoutName), contentHolderView,
-            false, requireResId("style", styleName)
+            requireLayoutResId(layoutName), contentHolderView, false, requireStyleResId(styleName)
         )
 
         contentHolderView.apply {

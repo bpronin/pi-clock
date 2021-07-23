@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.animation.LinearInterpolator
 import androidx.core.animation.doOnEnd
 import com.bopr.piclock.util.Contextual
-import com.bopr.piclock.util.getResId
+import com.bopr.piclock.util.getRawResId
 import com.bopr.piclock.util.property.PROP_VOLUME
 
 /**
@@ -36,7 +36,7 @@ internal class TickPlayer(private val context: Context) : Contextual {
 
     private fun prepare() {
         if (player == null) {
-            val resId = getResId("raw", sourceName)
+            val resId = getRawResId(sourceName)
             if (resId != 0) {
                 player = MediaPlayer.create(context, resId)
 
