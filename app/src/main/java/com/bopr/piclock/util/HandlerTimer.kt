@@ -1,6 +1,7 @@
 package com.bopr.piclock.util
 
 import android.os.Handler
+import android.os.Looper
 
 /**
  * [Handler] based timer.
@@ -8,11 +9,11 @@ import android.os.Handler
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 class HandlerTimer(
-    private val handler: Handler,
     var interval: Long,
     private val onTimer: () -> Unit
 ) {
 
+    private val handler = Handler(Looper.getMainLooper())
     private val task = Runnable(::executeTask)
 
     var enabled = false
@@ -22,7 +23,7 @@ class HandlerTimer(
                 if (field) {
                     handler.post(task)
                 } else {
-                    handler.removeCallbacks(task)
+                    handler.removeCallbacksAndMessages(null)
                 }
             }
         }

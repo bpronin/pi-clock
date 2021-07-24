@@ -1,8 +1,6 @@
 package com.bopr.piclock
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.*
 import android.view.LayoutInflater.from
 import android.widget.RadioButton
@@ -26,13 +24,7 @@ class BrowseSoundFragment : Fragment(), Contextual {
     private val itemValues by lazy { getStringArray(R.array.tick_sound_values) }
     private val itemNames by lazy { getStringArray(R.array.tick_sound_titles) }
     private val settings: Settings by lazy { Settings(this) }
-    private val timer by lazy {
-        HandlerTimer(
-            Handler(Looper.getMainLooper()),
-            SECOND_DURATION,
-            ::onTimer
-        )
-    }
+    private val timer by lazy { HandlerTimer(SECOND_DURATION, ::onTimer) }
     private val player by lazy { TickPlayer(requireContext()) }
     private var repeatsCounter = 0
 

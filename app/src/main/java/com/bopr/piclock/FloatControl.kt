@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorInflater.loadAnimator
 import android.animation.ObjectAnimator
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.core.animation.doOnEnd
@@ -27,13 +28,15 @@ import java.lang.Math.random
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class FloatControl(
-    private val view: View,
-    private val handler: Handler,
-    settings: Settings
-) : ContentControlAdapter(settings) {
+    private val view: View, settings: Settings
+) : ContentControlAdapter(settings), Destroyable {
+
+    private val handler = Handler(Looper.getMainLooper())
 
     private val floatTask = {
-        if (enabled && view.isLaidOut) {
+        if (enabled) {
+            Log.v(TAG, "Running task")
+
             floatSomewhere {
                 scheduleTask()
             }
@@ -80,31 +83,28 @@ internal class FloatControl(
         updateAnimationOn()
     }
 
+    override fun destroy() {
+        cancelTask()
+    }
+
     private fun scheduleTask() {
-        if (!enabled) return
+        if (!enabled || interval < 0) return
 
-        when {
-            interval < 0 -> {
-                Log.d(TAG, "Task ignored")
-            }
-            canAnimate -> {
-                handler.postDelayed(floatTask, interval)
-
-                Log.d(TAG, "Task scheduled in: $interval")
-            }
-            else -> {
-                /* prevent content from jumping along the screen when animations is disabled
-                   ans interval is 0 */
-                handler.postDelayed(floatTask, SECOND_DURATION)
-
-                Log.d(TAG, "Animation disabled. Task scheduled in: $SECOND_DURATION")
-            }
+        val delay = if (animationOn || interval > 0) {
+            interval
+        } else {
+            /* prevent content from jumping along the screen when animations
+            is disabled ans interval is 0 */
+            SECOND_DURATION
         }
+
+        handler.postDelayed(floatTask, delay)
+
+        Log.d(TAG, "Task scheduled in: $delay")
     }
 
     private fun cancelTask() {
-        handler.removeCallbacks(floatTask)
-
+        handler.removeCallbacksAndMessages(null)
         Log.d(TAG, "Task canceled")
     }
 
@@ -216,6 +216,9 @@ internal class FloatControl(
     private fun updateInterval() {
         cancelTask()
         interval = settings.getLong(PREF_CONTENT_FLOAT_INTERVAL)
+
+        Log.v(TAG, "Interval set to :$interval")
+
         if (interval < 0) floatHome() else scheduleTask()
     }
 
@@ -278,4 +281,5 @@ internal class FloatControl(
         )
 
     }
+
 }

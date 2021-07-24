@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -35,8 +33,7 @@ import java.util.*
 @SuppressLint("ClickableViewAccessibility")
 class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
-    private val handler = Handler(Looper.getMainLooper())
-    private val timer = TimeControl(handler, ::onTimer)
+    private val timer = TimeControl(::onTimer)
     private val settings by lazy { Settings(this) }
 
     private val rootView by lazy {
@@ -63,7 +60,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
     }
 
     private val fullscreenControl by lazy {
-        FullscreenControl(requireActivity(), handler, settings)
+        FullscreenControl(requireActivity(), settings)
     }
 
     private val soundControl by lazy {
@@ -71,13 +68,13 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
     }
 
     private val floatControl by lazy {
-        FloatControl(contentHolderView, handler, settings).apply {
+        FloatControl(contentHolderView, settings).apply {
             onFloat = { soundControl.onViewFloating(it) }
         }
     }
 
     private val autoInactivateControl by lazy {
-        AutoInactivateControl(handler, settings).apply {
+        AutoInactivateControl(settings).apply {
             onInactivate = { setMode(MODE_INACTIVE, true) }
         }
     }
@@ -205,7 +202,6 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
     }
 
     override fun onDestroy() {
-        handler.removeCallbacksAndMessages(null)
         settings.removeListener(this)
         controlSet.forEach { if (it is Destroyable) it.destroy() }
         super.onDestroy()

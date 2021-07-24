@@ -3,12 +3,14 @@ package com.bopr.piclock
 import android.app.Activity
 import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View.*
 import android.view.WindowInsets.Type.systemBars
 import android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
+import com.bopr.piclock.util.Destroyable
 
 /**
  * Convenience class to control system UI's visibility.
@@ -17,9 +19,10 @@ import com.bopr.piclock.Settings.Companion.PREF_FULLSCREEN_ENABLED
  */
 internal class FullscreenControl(
     private val activity: Activity,
-    private val handler: Handler,
     settings: Settings
-) : ContentControlAdapter(settings) {
+) : ContentControlAdapter(settings), Destroyable {
+
+    private val handler = Handler(Looper.getMainLooper())
 
     /**
      * Some older devices needs a small delay between UI widget updates
@@ -38,10 +41,8 @@ internal class FullscreenControl(
     private var fullscreen: Boolean = false
         set(value) {
             if (field != value) {
-                handler.removeCallbacks(turnOnTask)
-                handler.removeCallbacks(turnOffTask)
+                handler.removeCallbacksAndMessages(null)
                 field = value
-
                 val task = if (field) turnOffTask else turnOnTask
                 handler.postDelayed(task, startDelay)
 
@@ -69,6 +70,14 @@ internal class FullscreenControl(
             }
         }
         updateEnabled()
+    }
+
+    override fun destroy() {
+        cancelTasks()
+    }
+
+    private fun cancelTasks() {
+        handler.removeCallbacksAndMessages(null)
     }
 
     private fun showSystemUI() {
@@ -122,4 +131,5 @@ internal class FullscreenControl(
 
         private const val TAG = "FullscreenControl"
     }
+
 }

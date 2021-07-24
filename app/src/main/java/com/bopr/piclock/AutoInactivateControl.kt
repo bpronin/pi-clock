@@ -1,12 +1,14 @@
 package com.bopr.piclock
 
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
+import com.bopr.piclock.util.Destroyable
 
 /**
  * Controls auto-switching app into inactive mode after delay.
@@ -14,10 +16,13 @@ import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class AutoInactivateControl(
-    private val handler: Handler,
     settings: Settings
-) : ContentControlAdapter(settings) {
+) : ContentControlAdapter(settings), Destroyable {
+
     //todo: remove Disabled option and make 1min option
+
+    private val handler = Handler(Looper.getMainLooper())
+
     private val task = Runnable {
         if (enabled) {
             Log.d(TAG, "Inactivating")
@@ -37,7 +42,7 @@ internal class AutoInactivateControl(
                 } else {
                     Log.d(TAG, "Disabled")
 
-                    handler.removeCallbacks(task)
+                    handler.removeCallbacksAndMessages(null)
                 }
             }
         }
@@ -47,6 +52,10 @@ internal class AutoInactivateControl(
 
     init {
         updateDelay()
+    }
+
+    override fun destroy() {
+        handler.removeCallbacksAndMessages(null)
     }
 
     private fun updateDelay() {

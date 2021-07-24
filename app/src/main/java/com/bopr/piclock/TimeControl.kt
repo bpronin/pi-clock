@@ -1,14 +1,13 @@
 package com.bopr.piclock
 
-import android.os.Handler
 import android.util.Log
 import com.bopr.piclock.util.HandlerTimer
 import com.bopr.piclock.util.SECOND_DURATION
 import java.util.*
 
-internal class TimeControl(handler: Handler, onTimer: (time: Date, tick: Int) -> Unit) {
+internal class TimeControl(onTimer: (time: Date, tick: Int) -> Unit) {
 
-    private val timer = HandlerTimer(handler, SECOND_DURATION / TICKS_PER_SECOND) {
+    private val timer = HandlerTimer(SECOND_DURATION / TICKS_PER_SECOND) {
         onTimer(getTime(), getNextTick())
     }
 
