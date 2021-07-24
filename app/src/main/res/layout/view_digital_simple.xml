@@ -7,7 +7,7 @@
     android:animateLayoutChanges="true"
     android:background="?attr/contentBackgroundColor">
 
-    <com.bopr.piclock.util.ui.AnimatedTextView
+    <com.bopr.piclock.util.ui.SplitAnimatedTextView
         android:id="@+id/hours_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
         app:layout_constraintLeft_toRightOf="@id/hours_view"
         tools:ignore="HardcodedText" />
 
-    <com.bopr.piclock.util.ui.AnimatedTextView
+    <com.bopr.piclock.util.ui.SplitAnimatedTextView
         android:id="@+id/minutes_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -84,7 +84,10 @@ class AnimatedTextView : FrameLayout {
     }
 
     fun setTextAnimator(@AnimatorRes resId: Int) {
-        val animator = if (resId != 0) loadAnimator(context, resId) as AnimatorSet else null
+        setTextAnimator(if (resId != 0) loadAnimator(context, resId) as AnimatorSet else null)
+    }
+
+    fun setTextAnimator(animator: AnimatorSet?) {
         animator?.apply {
             if (childAnimations.size < 2) throw IllegalArgumentException("Invalid animation set")
         }

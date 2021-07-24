@@ -36,13 +36,13 @@ android {
         }
         debug {
             signingConfig signingConfigs.debug
-            shrinkResources false
+//            shrinkResources false
             minifyEnabled false
             manifestPlaceholders = [crashlyticsEnabled: "false"]
         }
         release {
             signingConfig signingConfigs.release
-            shrinkResources true
+//            shrinkResources true
             minifyEnabled true
             manifestPlaceholders = [crashlyticsEnabled: "true"]
         }
