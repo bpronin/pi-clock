@@ -20,7 +20,7 @@
 
     <!-- Analog clock with date as bars -->
 
-    <style name="Content.Analog.BarsDate.Default" parent="Content.Analog.Default.Square">
+    <style name="Content.Analog.BarsDate.Square" parent="Content.Analog.Default.Square">
     </style>
 
     <style name="Content.Analog.BarsDate.Rounded" parent="Content.Analog.Default.Rounded">

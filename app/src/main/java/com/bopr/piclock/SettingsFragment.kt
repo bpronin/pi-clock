@@ -7,11 +7,10 @@ import android.os.Bundle
 import androidx.preference.*
 import androidx.preference.Preference.OnPreferenceClickListener
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bopr.piclock.AnalogClockControl.Companion.isAnalogClockBarsDateLayout
-import com.bopr.piclock.AnalogClockControl.Companion.isAnalogClockLayout
 import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
 import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
-import com.bopr.piclock.DigitalClockControl.Companion.isDigitalClockLayout
+import com.bopr.piclock.ContentLayoutType.*
+import com.bopr.piclock.ContentLayoutType.Companion.layoutTypeOf
 import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
@@ -132,17 +131,8 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         }
     }
 
-    private fun isDigitalLayout(): Boolean {
-        return isDigitalClockLayout(settings.getString(PREF_CONTENT_LAYOUT))
-    }
-
-    private fun isAnalogLayout(): Boolean {
-        return isAnalogClockLayout(settings.getString(PREF_CONTENT_LAYOUT))
-    }
-
-    private fun isBarsDateLayout(): Boolean {
-        return isAnalogClockBarsDateLayout(settings.getString(PREF_CONTENT_LAYOUT))
-    }
+    private fun isLayoutOfType(type: ContentLayoutType) =
+        layoutTypeOf(settings.getString(PREF_CONTENT_LAYOUT)) == type
 
     private fun updatePreferenceVisibility(preference: Preference, visible: Boolean) {
         preference.isVisible = visible
@@ -313,7 +303,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     private fun updateHoursMinutesFormatView() {
         findPreference<ListPreference>(PREF_HOURS_MINUTES_FORMAT)?.apply {
-            updatePreferenceVisibility(this, isDigitalLayout())
+            updatePreferenceVisibility(this, isLayoutOfType(DIGITAL))
             value = settings.getString(key)
             val ix = findIndexOfValue(value)
             val hint = getStringArray(R.array.hours_minutes_format_hints)[ix]
@@ -323,7 +313,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     private fun updateSecondsFormatView() {
         findPreference<ListPreference>(PREF_SECONDS_FORMAT)?.apply {
-            updatePreferenceVisibility(this, isDigitalLayout())
+            updatePreferenceVisibility(this, isLayoutOfType(DIGITAL))
             value = settings.getString(key)
             val ix = findIndexOfValue(value)
             val hint = getStringArray(R.array.seconds_format_hints)[ix]
@@ -349,7 +339,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             }
             entries = entryNames
             summary = entryNames[findIndexOfValue(settings.getString(key))]
-            updatePreferenceVisibility(this, !isBarsDateLayout())
+            updatePreferenceVisibility(this, !isLayoutOfType(ANALOG_BARS_DATE))
         }
     }
 
@@ -357,7 +347,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         findPreference<ListPreference>(PREF_DIGITS_ANIMATION)?.apply {
             value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
-            updatePreferenceVisibility(this, isDigitalLayout())
+            updatePreferenceVisibility(this, isLayoutOfType(DIGITAL))
         }
     }
 
@@ -365,7 +355,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         requirePreference<SwitchPreferenceCompat>(PREF_DIGITS_SPLIT_ANIMATION).apply {
             val value = settings.getBoolean(key)
             summary = getString(if (value) R.string.enabled else R.string.disabled)
-            updatePreferenceVisibility(this, isDigitalLayout())
+            updatePreferenceVisibility(this, isLayoutOfType(DIGITAL))
         }
     }
 
@@ -380,14 +370,14 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             }
             value = settings.getInt(key).toString()
             summary = entries[findIndexOfValue(value)]
-            updatePreferenceVisibility(this, isBarsDateLayout())
+            updatePreferenceVisibility(this, isLayoutOfType(ANALOG_BARS_DATE))
         }
     }
 
     private fun updateSecondHandView() {
         requirePreference<SwitchPreferenceCompat>(PREF_SECOND_HAND_VISIBLE).apply {
             summary = getString(if (settings.getBoolean(key)) R.string.visible else R.string.hidden)
-            updatePreferenceVisibility(this, isAnalogLayout())
+            updatePreferenceVisibility(this, isLayoutOfType(ANALOG_TEXT_DATE))
         }
     }
 
@@ -395,7 +385,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         requirePreference<ListPreference>(PREF_CLOCK_HAND_ANIMATION).apply {
             value = settings.getString(key)
             summary = entries[findIndexOfValue(value)]
-            updatePreferenceVisibility(this, isAnalogLayout())
+            updatePreferenceVisibility(this, isLayoutOfType(ANALOG_TEXT_DATE))
         }
     }
 
@@ -407,7 +397,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
                 else
                     R.string.move_hands_discretely
             )
-            updatePreferenceVisibility(this, isAnalogLayout())
+            updatePreferenceVisibility(this, isLayoutOfType(ANALOG_TEXT_DATE))
         }
     }
 
@@ -416,7 +406,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             val value = settings.getBoolean(key)
             summary = getString(if (value) R.string.visible else R.string.hidden)
             requirePreference<Preference>(PREF_TIME_SEPARATORS_BLINKING).isEnabled = value
-            updatePreferenceVisibility(this, isDigitalLayout())
+            updatePreferenceVisibility(this, isLayoutOfType(DIGITAL))
         }
     }
 
@@ -425,7 +415,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             summary = getString(
                 if (settings.getBoolean(key)) R.string.enabled else R.string.disabled
             )
-            updatePreferenceVisibility(this, isDigitalLayout())
+            updatePreferenceVisibility(this, isLayoutOfType(DIGITAL))
         }
     }
 
@@ -452,7 +442,5 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
         /* dummy settings to refer to preference views */
         private const val PREF_ABOUT_APP = "about_app"
-        private const val PREF_HANDS = "hands"
-        private const val PREF_TIME_SEPARATORS = "time_separators"
     }
 }

@@ -22,7 +22,7 @@ import java.util.Calendar.*
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
-internal class AnalogClockControl(private val view: View, settings: Settings) :
+internal abstract class AnalogClockControl(private val view: View, settings: Settings) :
     ContentControlAdapter(settings) {
 
 // todo:  часы наизнанку - стрелки прикреплены к ободу а не к центру
@@ -31,8 +31,6 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
 // todo:  fade in-out handles animation
 // todo:  rounder hands style
 
-    private val textDateViewControl = AnalogClockTextDateControl(view, settings)
-    private val barsDateControl = AnalogClockBarsDateControl(view, settings)
     private val hourHandView: ImageView by lazy { view.findViewById(R.id.hour_hand_view) }
     private val secondHandView: ImageView by lazy { view.findViewById(R.id.second_hand_view) }
     private val minuteHandView: ImageView by lazy { view.findViewById(R.id.minute_hand_view) }
@@ -143,8 +141,6 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
     override fun onTimer(time: Date, tick: Int) {
         currentTime = time
         if (tick == 1) updateViewsData(canAnimate)
-        barsDateControl.onTimer(time, tick)
-        textDateViewControl.onTimer(time, tick)
     }
 
     override fun onSettingChanged(key: String) {
@@ -157,18 +153,6 @@ internal class AnalogClockControl(private val view: View, settings: Settings) :
                 updateViewsData(canAnimate)
             }
         }
-        barsDateControl.onSettingChanged(key)
-        textDateViewControl.onSettingChanged(key)
     }
 
-    companion object {
-
-        fun isAnalogClockLayout(layoutName: String): Boolean {
-            return layoutName.startsWith("view_analog")
-        }
-
-        fun isAnalogClockBarsDateLayout(layoutName: String): Boolean {
-            return layoutName.startsWith("view_analog_bars_date")
-        }
-    }
 }

@@ -125,12 +125,12 @@
         <item>Thick</item>
     </string-array>
 
-    <string-array name="view_analog_min_text_date_style_titles">
+    <string-array name="view_analog_text_date_min_style_titles">
         <item>Square hands</item>
         <item>Rounded hands</item>
     </string-array>
 
-    <string-array name="view_analog_min_bars_date_style_titles">
+    <string-array name="view_analog_bars_date_min_style_titles">
         <item>Square hands</item>
         <item>Rounded hands</item>
     </string-array>

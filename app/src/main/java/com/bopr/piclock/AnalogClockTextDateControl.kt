@@ -13,14 +13,14 @@ import java.text.DateFormat
 import java.util.*
 
 /**
- * Controls text date view (if exists) in analog clock.
+ * Controls analog clock view with text date view.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class AnalogClockTextDateControl(private val view: View, settings: Settings) :
-    ContentControlAdapter(settings) {
+    AnalogClockControl(view, settings) {
 
-    private val dateView: AnimatedTextView? by lazy { view.findViewById(R.id.date_view) }
+    private val dateView: AnimatedTextView by lazy { view.findViewById(R.id.date_view) }
 
     private lateinit var dateFormat: DateFormat
 
@@ -37,7 +37,7 @@ internal class AnalogClockTextDateControl(private val view: View, settings: Sett
     }
 
     private fun updateView() {
-        dateView?.apply {
+        dateView.apply {
             val pattern = settings.getString(PREF_DATE_FORMAT)
             dateFormat = if (pattern == SYSTEM_DEFAULT)
                 DEFAULT_DATE_FORMAT
@@ -52,6 +52,7 @@ internal class AnalogClockTextDateControl(private val view: View, settings: Sett
     }
 
     override fun onTimer(time: Date, tick: Int) {
+        super.onTimer(time, tick)
         if (tick == 1) {
             currentTime = time
             updateView()
@@ -59,6 +60,7 @@ internal class AnalogClockTextDateControl(private val view: View, settings: Sett
     }
 
     override fun onSettingChanged(key: String) {
+        super.onSettingChanged(key)
         when (key) {
             PREF_ANIMATION_ON -> updateAnimationOn()
             PREF_DATE_FORMAT -> updateView() //todo: animate date view when format changed

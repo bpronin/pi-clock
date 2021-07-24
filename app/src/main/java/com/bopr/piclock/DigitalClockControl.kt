@@ -177,10 +177,4 @@ internal class DigitalClockControl(view: View, settings: Settings) :
         }
     }
 
-    companion object {
-
-        fun isDigitalClockLayout(layoutName: String): Boolean {
-            return layoutName.startsWith("view_digital_")
-        }
-    }
 }

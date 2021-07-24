@@ -14,10 +14,10 @@ import androidx.annotation.IntDef
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.fragment.app.Fragment
-import com.bopr.piclock.AnalogClockControl.Companion.isAnalogClockLayout
 import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
 import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
-import com.bopr.piclock.DigitalClockControl.Companion.isDigitalClockLayout
+import com.bopr.piclock.ContentLayoutType.*
+import com.bopr.piclock.ContentLayoutType.Companion.layoutTypeOf
 import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
@@ -274,11 +274,10 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         }
 
         contentControl.setControl(
-            when {
-                isDigitalClockLayout(layoutName) -> DigitalClockControl(contentView, settings)
-                isAnalogClockLayout(layoutName) -> AnalogClockControl(contentView, settings)
-                else ->
-                    throw IllegalArgumentException("Unregistered content layout resource: $layoutName")
+            when (layoutTypeOf(layoutName)) {
+                DIGITAL -> DigitalClockControl(contentView, settings)
+                ANALOG_TEXT_DATE -> AnalogClockTextDateControl(contentView, settings)
+                ANALOG_BARS_DATE -> AnalogClockBarsDateControl(contentView, settings)
             }
         )
 

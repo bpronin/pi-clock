@@ -123,11 +123,13 @@ fun Contextual.getStringArray(@ArrayRes resId: Int): Array<out String> {
 @ArrayRes
 fun Contextual.getStyleValuesResId(@LayoutRes layoutResId: Int): Int {
     return requireArrayResId(getResName(layoutResId) + "_style_values")
+    //todo: get rid of it. it can fail at runtime. need some sort of hard references
 }
 
 @ArrayRes
 fun Contextual.getStyleTitlesResId(@LayoutRes layoutResId: Int): Int {
     return requireArrayResId(getResName(layoutResId) + "_style_titles")
+    //todo: get rid of it. it can fail at runtime. need some sort of hard references
 }
 
 fun Contextual.getLayoutStyles(layoutName: String): Array<out String> {

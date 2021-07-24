@@ -12,14 +12,14 @@ import java.util.*
 import java.util.Calendar.SUNDAY
 
 /**
- * Controls bars date view (if exists) in analog clock.
+ * Controls analog clock view with bars date view.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
 internal class AnalogClockBarsDateControl(private val view: View, settings: Settings) :
-    ContentControlAdapter(settings) {
+    AnalogClockControl(view, settings) {
 
-    private val dateView: ViewGroup? by lazy { view.findViewById(R.id.bars_date_view) }
+    private val dateView: ViewGroup by lazy { view.findViewById(R.id.bars_date_view) }
 
     private var animationOn = true
     private var currentTime = Date()
@@ -39,7 +39,7 @@ internal class AnalogClockBarsDateControl(private val view: View, settings: Sett
     }
 
     private fun updateView() {
-        dateView?.apply {
+        dateView.apply {
             val firstDay = settings.getInt(PREF_WEEK_START)
             val sundayIndex = dayViewIndex(SUNDAY, firstDay)
             val dayIndex = dayViewIndex(dayOfWeek(currentTime), firstDay)
@@ -62,6 +62,7 @@ internal class AnalogClockBarsDateControl(private val view: View, settings: Sett
     }
 
     override fun onTimer(time: Date, tick: Int) {
+        super.onTimer(time, tick)
         if (tick == 1) {
             currentTime = time
             updateView()
@@ -69,6 +70,7 @@ internal class AnalogClockBarsDateControl(private val view: View, settings: Sett
     }
 
     override fun onSettingChanged(key: String) {
+        super.onSettingChanged(key)
         when (key) {
             PREF_ANIMATION_ON -> updateAnimationOn()
             PREF_WEEK_START -> updateView()
