@@ -8,7 +8,7 @@ import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.defaultDatetimeFormat
-import com.bopr.piclock.util.ui.SplitAnimatedTextView
+import com.bopr.piclock.util.ui.AnimatedTextView
 import java.text.DateFormat
 import java.util.*
 
@@ -20,7 +20,7 @@ import java.util.*
 internal class AnalogClockTextDateControl(private val view: View, settings: Settings) :
     ContentControlAdapter(settings) {
 
-    private val dateView: SplitAnimatedTextView? by lazy { view.findViewById(R.id.date_view) }
+    private val dateView: AnimatedTextView? by lazy { view.findViewById(R.id.date_view) }
 
     private lateinit var dateFormat: DateFormat
 
@@ -61,7 +61,7 @@ internal class AnalogClockTextDateControl(private val view: View, settings: Sett
     override fun onSettingChanged(key: String) {
         when (key) {
             PREF_ANIMATION_ON -> updateAnimationOn()
-            PREF_DATE_FORMAT -> updateView() //todo: animate when format changed
+            PREF_DATE_FORMAT -> updateView() //todo: animate date view when format changed
         }
     }
 

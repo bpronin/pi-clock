@@ -19,8 +19,6 @@ import java.util.Calendar.SUNDAY
 internal class AnalogClockBarsDateControl(private val view: View, settings: Settings) :
     ContentControlAdapter(settings) {
 
-    //todo: idea: marks (radial red hatch) of appointments (some events)) on clock face
-
     private val dateView: ViewGroup? by lazy { view.findViewById(R.id.bars_date_view) }
 
     private var animationOn = true
