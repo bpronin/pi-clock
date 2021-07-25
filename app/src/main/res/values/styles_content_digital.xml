@@ -234,4 +234,12 @@
         <item name="contentSecondsWidth">100sp</item>
     </style>
 
+    <style name="Content.Digital.Vertical.Simple.Thin" parent="Content.Digital.Vertical.Default.Thin">
+        <item name="contentSecondsWidth">100sp</item>
+    </style>
+
+    <style name="Content.Digital.Vertical.Simple.Typewriter" parent="Content.Digital.Vertical.Default.Typewriter">
+        <item name="contentSecondsWidth">100sp</item>
+    </style>
+
 </resources>
