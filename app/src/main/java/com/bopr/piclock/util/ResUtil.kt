@@ -26,7 +26,7 @@ fun dayOfWeek(date: Date): Int = Calendar.getInstance().run {
     get(DAY_OF_WEEK)
 }
 
-fun defaultDatetimeFormat(pattern: String) = SimpleDateFormat(pattern, Locale.ROOT)
+fun defaultDatetimeFormat(pattern: String) = SimpleDateFormat(pattern, Locale.getDefault())
 
 /**
  * Returns ID of resource by its name.

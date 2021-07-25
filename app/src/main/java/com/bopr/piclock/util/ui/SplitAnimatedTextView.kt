@@ -19,6 +19,8 @@ import com.bopr.piclock.R
 @Keep
 class SplitAnimatedTextView : LinearLayout {
 
+    //todo: animate transition when width of digits changes
+
     private lateinit var views: Array<AnimatedTextView>
     private lateinit var primaryView: AnimatedTextView
     private var digitCount = 2
