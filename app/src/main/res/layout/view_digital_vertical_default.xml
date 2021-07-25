@@ -76,11 +76,10 @@
 
     <com.bopr.piclock.util.ui.SplitAnimatedTextView
         android:id="@+id/seconds_view"
-        android:layout_width="?attr/contentSecondsWidth"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="?attr/contentFont"
-        android:gravity="center"
         android:paddingTop="?attr/contentSecondsPaddingTop"
         android:paddingBottom="?attr/contentSecondsPaddingBottom"
         android:text="44"
@@ -95,7 +94,7 @@
         android:fontFamily="?attr/contentDateFont"
         android:gravity="center"
         android:paddingTop="?attr/contentDatePaddingTop"
-        android:text="Wednsday, December 28, 2021"
+        android:text="Wednesday, December 28, 2021"
         android:textColor="?attr/contentForeground"
         android:textSize="?attr/contentDateTextSize"
         tools:ignore="HardcodedText" />

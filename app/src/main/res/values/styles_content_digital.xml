@@ -7,7 +7,7 @@
         <item name="contentAmPmTextSize">30sp</item>
         <item name="contentDateFont">@font/normal_companion</item>
         <item name="contentDatePaddingTop">0sp</item>
-        <item name="contentDateTextSize">18sp</item>
+        <item name="contentDateTextSize">16sp</item>
         <item name="contentFont">@font/normal</item>
         <item name="contentHoursPaddingBottom">-10sp</item>
         <item name="contentHoursPaddingTop">-20sp</item>
@@ -154,7 +154,6 @@
         <item name="contentSecondsWidth">110sp</item>
     </style>
 
-X
     <!-- Digital vertical small seconds -->
 
     <style name="Content.Digital.Vertical.Default.Default" parent="Content.Digital.Default.Default">
@@ -193,6 +192,22 @@ X
         <item name="contentMinutesSeparatorPaddingBottom">-16sp</item>
         <item name="contentMinutesSeparatorPaddingTop">-80sp</item>
         <item name="contentSecondsSeparatorPaddingBottom">-10sp</item>
+        <item name="contentSecondsSeparatorPaddingTop">-38sp</item>
+        <item name="contentWidth">140sp</item>
+    </style>
+
+    <style name="Content.Digital.Vertical.Default.Thin" parent="Content.Digital.Default.Thin">
+        <item name="contentMinutesSeparatorPaddingBottom">-28sp</item>
+        <item name="contentMinutesSeparatorPaddingTop">-98sp</item>
+        <item name="contentSecondsSeparatorPaddingBottom">-10sp</item>
+        <item name="contentSecondsSeparatorPaddingTop">-48sp</item>
+        <item name="contentWidth">140sp</item>
+    </style>
+
+    <style name="Content.Digital.Vertical.Default.Typewriter" parent="Content.Digital.Default.Typewriter">
+        <item name="contentMinutesSeparatorPaddingBottom">-8sp</item>
+        <item name="contentMinutesSeparatorPaddingTop">-80sp</item>
+        <item name="contentSecondsSeparatorPaddingBottom">-2sp</item>
         <item name="contentSecondsSeparatorPaddingTop">-38sp</item>
         <item name="contentWidth">140sp</item>
     </style>

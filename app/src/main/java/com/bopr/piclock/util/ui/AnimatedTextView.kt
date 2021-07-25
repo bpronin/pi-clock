@@ -33,6 +33,13 @@ class AnimatedTextView : FrameLayout {
     private lateinit var shadowView: ExtTextView
     private var textAnimator: AnimatorSet? = null
 
+    var gravity: Int
+        get() = view.gravity
+        set(value) {
+            view.gravity = value
+            shadowView.gravity = view.gravity
+        }
+
     constructor(context: Context) : super(context)
 
     constructor(

@@ -2,6 +2,7 @@ package com.bopr.piclock.util.ui
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import androidx.annotation.AnimatorRes
@@ -68,6 +69,7 @@ class SplitAnimatedTextView : LinearLayout {
                     LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
                 else
                     LayoutParams(0, WRAP_CONTENT, 1f)
+                view.gravity = Gravity.START
                 addView(view)
             }
         }
@@ -75,6 +77,8 @@ class SplitAnimatedTextView : LinearLayout {
 
         orientation = HORIZONTAL
         setText(primaryView.getText(), false)
+
+        /*  DEBUG COLOR:  primaryView.setBackgroundColor(Color.RED) */
     }
 
     override fun getBaseline(): Int {

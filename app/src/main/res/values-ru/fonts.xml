@@ -5,6 +5,6 @@
     <item name="round_companion" type="font">@font/balsamiq_cyr</item>
     <item name="square_companion" type="font">@font/jura_cyr</item>
     <item name="thick_companion" type="font">@font/montserrat_black_cyr</item>
-    <item name="thin_companion" type="font">@font/poiret_one_cyr</item>
+    <item name="thin_companion" type="font">@font/yanone_extra_light_cyr</item>
     <item name="typewriter_companion" type="font">@font/podkova_cyr</item>
 </resources>
