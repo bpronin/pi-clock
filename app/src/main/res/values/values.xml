@@ -44,14 +44,18 @@
         <item>Content.Digital.Simple.Square</item>
         <item>Content.Digital.Simple.Round</item>
         <item>Content.Digital.Simple.Thick</item>
+        <item>Content.Digital.Simple.Thin</item>
         <item>Content.Digital.Simple.Curly</item>
+        <item>Content.Digital.Simple.Typewriter</item>
     </string-array>
     <string-array name="view_digital_simple_style_titles">
         <item>@string/default_title</item>
         <item>@string/square</item>
         <item>@string/round</item>
         <item>@string/thick</item>
+        <item>@string/thin</item>
         <item>@string/curly</item>
+        <item>@string/typewriter</item>
     </string-array>
 
     <string-array name="view_digital_vertical_default_style_values">
