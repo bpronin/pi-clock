@@ -22,66 +22,66 @@
 
     <string-array name="view_digital_default_style_values">
         <item>Content.Digital.Default.Default</item>
-        <item>Content.Digital.Default.Round</item>
         <item>Content.Digital.Default.Square</item>
-        <item>Content.Digital.Default.Curly</item>
+        <item>Content.Digital.Default.Round</item>
         <item>Content.Digital.Default.Thick</item>
-        <item>Content.Digital.Default.Typewriter</item>
         <item>Content.Digital.Default.Thin</item>
+        <item>Content.Digital.Default.Curly</item>
+        <item>Content.Digital.Default.Typewriter</item>
     </string-array>
     <string-array name="view_digital_default_style_titles">
         <item>@string/default_title</item>
-        <item>@string/round</item>
         <item>@string/square</item>
-        <item>@string/curly</item>
+        <item>@string/round</item>
         <item>@string/thick</item>
-        <item>@string/typewriter</item>
         <item>@string/thin</item>
+        <item>@string/curly</item>
+        <item>@string/typewriter</item>
     </string-array>
 
     <string-array name="view_digital_simple_style_values">
         <item>Content.Digital.Simple.Default</item>
-        <item>Content.Digital.Simple.Round</item>
         <item>Content.Digital.Simple.Square</item>
-        <item>Content.Digital.Simple.Curly</item>
+        <item>Content.Digital.Simple.Round</item>
         <item>Content.Digital.Simple.Thick</item>
+        <item>Content.Digital.Simple.Curly</item>
     </string-array>
     <string-array name="view_digital_simple_style_titles">
         <item>@string/default_title</item>
-        <item>@string/round</item>
         <item>@string/square</item>
-        <item>@string/curly</item>
+        <item>@string/round</item>
         <item>@string/thick</item>
+        <item>@string/curly</item>
     </string-array>
 
     <string-array name="view_digital_vertical_default_style_values">
         <item>Content.Digital.Vertical.Default.Default</item>
-        <item>Content.Digital.Vertical.Default.Round</item>
         <item>Content.Digital.Vertical.Default.Square</item>
-        <item>Content.Digital.Vertical.Default.Curly</item>
+        <item>Content.Digital.Vertical.Default.Round</item>
         <item>Content.Digital.Vertical.Default.Thick</item>
+        <item>Content.Digital.Vertical.Default.Curly</item>
     </string-array>
     <string-array name="view_digital_vertical_default_style_titles">
         <item>@string/default_title</item>
-        <item>@string/round</item>
         <item>@string/square</item>
-        <item>@string/curly</item>
+        <item>@string/round</item>
         <item>@string/thick</item>
+        <item>@string/curly</item>
     </string-array>
 
     <string-array name="view_digital_vertical_simple_style_values">
         <item>Content.Digital.Vertical.Simple.Default</item>
-        <item>Content.Digital.Vertical.Simple.Round</item>
         <item>Content.Digital.Vertical.Simple.Square</item>
-        <item>Content.Digital.Vertical.Simple.Curly</item>
+        <item>Content.Digital.Vertical.Simple.Round</item>
         <item>Content.Digital.Vertical.Simple.Thick</item>
+        <item>Content.Digital.Vertical.Simple.Curly</item>
     </string-array>
     <string-array name="view_digital_vertical_simple_style_titles">
         <item>@string/default_title</item>
-        <item>@string/round</item>
         <item>@string/square</item>
-        <item>@string/curly</item>
+        <item>@string/round</item>
         <item>@string/thick</item>
+        <item>@string/curly</item>
     </string-array>
 
     <string-array name="view_analog_text_date_min_style_values">

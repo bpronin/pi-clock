@@ -1,16 +1,16 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- standard theme colors -->
         <item name="colorPrimary">@color/eerie_black</item>
         <item name="colorPrimaryDark">@color/black</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorAccent">@color/_3am_in_shibuya</item>
-        <item name="colorSecondary">@color/black_overlay</item>
+        <item name="colorSecondary">@color/eerie_black</item>  <!-- FAB -->
         <item name="colorOnSecondary">@color/white_overlay</item>
-
-        <item name="contentBackgroundColor">@color/black</item>
-        <item name="contentTextColor">@color/white</item>
-        <item name="fabColor">@color/eerie_black</item>
+        <!-- custom colors -->
+        <item name="contentBackground">@color/black</item>
+        <item name="contentForeground">@color/white</item>
     </style>
 
 </resources>

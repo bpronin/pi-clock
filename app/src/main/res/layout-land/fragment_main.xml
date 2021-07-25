@@ -11,7 +11,7 @@
         android:id="@+id/content_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="?attr/contentBackgroundColor"
+        android:background="?attr/contentBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/settings_container"
@@ -35,7 +35,7 @@
             android:layout_margin="@dimen/fab_margin"
             android:fontFamily="@font/normal_companion"
             android:text="Brightness 30%"
-            android:textColor="?attr/contentTextColor"
+            android:textColor="?attr/contentForeground"
             tools:ignore="HardcodedText,RtlHardcoded" />
     </FrameLayout>
 
@@ -56,9 +56,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="@dimen/fab_margin"
-        android:backgroundTint="?attr/fabColor"
         android:contentDescription="@string/settings_button"
-        android:tint="?attr/contentTextColor"
+        android:tint="?attr/contentForeground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/content_container"
         app:maxImageSize="32dp"

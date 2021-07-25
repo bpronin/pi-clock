@@ -2,7 +2,7 @@
     <declare-styleable name="AppThemeAttributes">
         <attr name="contentAmPmTextPaddingTop" format="dimension" />
         <attr name="contentAmPmTextSize" format="dimension" />
-        <attr name="contentBackgroundColor" format="color" />
+        <attr name="contentBackground" format="color" />
         <attr name="contentClockFaceShape" format="reference" />
         <attr name="contentClockHandShapeHour" format="reference" />
         <attr name="contentClockHandShapeMinute" format="reference" />
@@ -24,8 +24,7 @@
         <attr name="contentSecondsSeparatorPaddingTop" format="dimension" />
         <attr name="contentSecondsTextSize" format="dimension" />
         <attr name="contentSecondsWidth" format="dimension" />
-        <attr name="contentTextColor" format="color" />
+        <attr name="contentForeground" format="color" />
         <attr name="contentWidth" format="dimension" />
-        <attr name="fabColor" format="color" />
     </declare-styleable>
 </resources>

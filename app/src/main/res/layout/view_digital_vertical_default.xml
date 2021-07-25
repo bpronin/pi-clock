@@ -4,8 +4,10 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
-    android:background="?attr/contentBackgroundColor"
+    android:background="?attr/contentBackground"
     android:orientation="vertical">
+
+    <!-- to see layout properly select appropriate theme -->
 
     <com.bopr.piclock.util.ui.ExtTextView
         android:id="@+id/am_pm_view"
@@ -14,7 +16,7 @@
         android:layout_gravity="center"
         android:fontFamily="?attr/contentFont"
         android:text="AM"
-        android:textColor="?attr/contentTextColor"
+        android:textColor="?attr/contentForeground"
         android:textSize="?attr/contentAmPmTextSize"
         tools:ignore="HardcodedText" />
 
@@ -24,11 +26,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="?attr/contentFont"
+        android:gravity="center"
         android:paddingTop="?attr/contentHoursPaddingTop"
         android:paddingBottom="?attr/contentHoursPaddingBottom"
-        android:gravity="center"
         android:text="44"
-        android:textColor="?attr/contentTextColor"
+        android:textColor="?attr/contentForeground"
         android:textSize="?attr/contentHoursTextSize"
         tools:ignore="HardcodedText" />
 
@@ -37,11 +39,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:fontFamily="?attr/contentFont"
         android:paddingTop="?attr/contentMinutesSeparatorPaddingTop"
         android:paddingBottom="?attr/contentMinutesSeparatorPaddingBottom"
-        android:fontFamily="?attr/contentFont"
         android:text="_"
-        android:textColor="?attr/contentTextColor"
+        android:textColor="?attr/contentForeground"
         android:textSize="?attr/contentHoursTextSize"
         tools:ignore="HardcodedText" />
 
@@ -50,12 +52,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingTop="?attr/contentHoursPaddingTop"
-        android:paddingBottom="?attr/contentHoursPaddingBottom"
         android:fontFamily="?attr/contentFont"
         android:gravity="center"
+        android:paddingTop="?attr/contentHoursPaddingTop"
+        android:paddingBottom="?attr/contentHoursPaddingBottom"
         android:text="00"
-        android:textColor="?attr/contentTextColor"
+        android:textColor="?attr/contentForeground"
         android:textSize="?attr/contentHoursTextSize"
         tools:ignore="HardcodedText" />
 
@@ -64,11 +66,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:fontFamily="?attr/contentFont"
         android:paddingTop="?attr/contentSecondsSeparatorPaddingTop"
         android:paddingBottom="?attr/contentSecondsSeparatorPaddingBottom"
-        android:fontFamily="?attr/contentFont"
         android:text="_"
-        android:textColor="?attr/contentTextColor"
+        android:textColor="?attr/contentForeground"
         android:textSize="?attr/contentSecondsTextSize"
         tools:ignore="HardcodedText" />
 
@@ -78,11 +80,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="?attr/contentFont"
+        android:gravity="center"
         android:paddingTop="?attr/contentSecondsPaddingTop"
         android:paddingBottom="?attr/contentSecondsPaddingBottom"
-        android:gravity="center"
         android:text="44"
-        android:textColor="?attr/contentTextColor"
+        android:textColor="?attr/contentForeground"
         android:textSize="?attr/contentSecondsTextSize"
         tools:ignore="HardcodedText" />
 
@@ -90,11 +92,11 @@
         android:id="@+id/date_view"
         android:layout_width="?attr/contentWidth"
         android:layout_height="wrap_content"
-        android:paddingTop="?attr/contentDatePaddingTop"
         android:fontFamily="?attr/contentDateFont"
         android:gravity="center"
+        android:paddingTop="?attr/contentDatePaddingTop"
         android:text="Wednsday, December 28, 2021"
-        android:textColor="?attr/contentTextColor"
+        android:textColor="?attr/contentForeground"
         android:textSize="?attr/contentDateTextSize"
         tools:ignore="HardcodedText" />
 

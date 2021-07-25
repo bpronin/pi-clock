@@ -4,7 +4,9 @@
     android:layout_width="200dp"
     android:layout_height="200dp"
     android:animateLayoutChanges="true"
-    android:background="?attr/contentBackgroundColor">
+    android:background="?attr/contentBackground">
+
+    <!-- to see layout properly select appropriate theme -->
 
     <ImageView
         android:id="@+id/clock_face"

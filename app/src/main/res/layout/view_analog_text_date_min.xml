@@ -4,8 +4,10 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
-    android:background="?attr/contentBackgroundColor"
+    android:background="?attr/contentBackground"
     android:orientation="vertical">
+
+    <!-- to see layout properly select appropriate theme -->
 
     <include
         layout="@layout/view_analog_face"
@@ -20,8 +22,8 @@
         android:gravity="center"
         android:paddingTop="?attr/contentDatePaddingTop"
         android:text="Wednesday December 28 2021"
+        android:textColor="?attr/contentForeground"
         android:textSize="?attr/contentDateTextSize"
-        android:textColor="?attr/contentTextColor"
         tools:ignore="HardcodedText" />
 
 </LinearLayout>
