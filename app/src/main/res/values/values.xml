@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="content_layout_values" translatable="false">
+    <string name="developer_sha" translatable="false">637a049c399e085c699e1938d09e2ccfdf08071a66f9ef848edb06fbb751ad02da700f91cd0a8113820a32e98ff04dbb0ec5526c41385548081637392bb37ffd</string>
+
+    <string-array name="content_layout_values">
         <item>view_digital_default</item>
         <item>view_digital_simple</item>
         <item>view_digital_vertical_default</item>
@@ -9,65 +11,133 @@
         <item>view_analog_text_date_min</item>
         <item>view_analog_bars_date_min</item>
     </string-array>
+    <string-array name="content_layout_titles">
+        <item>@string/digital_horizontal_small_seconds</item>
+        <item>@string/digital_horizontal_big_seconds</item>
+        <item>@string/digital_vertical_small_seconds</item>
+        <item>@string/digital_vertical_big_seconds</item>
+        <item>@string/analog_minimalistic_text_date</item>
+        <item>@string/analog_minimalistic_bars_date</item>
+    </string-array>
 
-    <string-array name="view_digital_default_style_values" translatable="false">
+    <string-array name="view_digital_default_style_values">
         <item>Content.Digital.Default.Default</item>
         <item>Content.Digital.Default.Round</item>
         <item>Content.Digital.Default.Square</item>
         <item>Content.Digital.Default.Curly</item>
         <item>Content.Digital.Default.Thick</item>
         <item>Content.Digital.Default.Typewriter</item>
-        <item>Content.Digital.Default.Zen</item>
+        <item>Content.Digital.Default.Thin</item>
+    </string-array>
+    <string-array name="view_digital_default_style_titles">
+        <item>@string/default_title</item>
+        <item>@string/round</item>
+        <item>@string/square</item>
+        <item>@string/curly</item>
+        <item>@string/thick</item>
+        <item>@string/typewriter</item>
+        <item>@string/thin</item>
     </string-array>
 
-    <string-array name="view_digital_simple_style_values" translatable="false">
+    <string-array name="view_digital_simple_style_values">
         <item>Content.Digital.Simple.Default</item>
         <item>Content.Digital.Simple.Round</item>
         <item>Content.Digital.Simple.Square</item>
         <item>Content.Digital.Simple.Curly</item>
         <item>Content.Digital.Simple.Thick</item>
     </string-array>
+    <string-array name="view_digital_simple_style_titles">
+        <item>@string/default_title</item>
+        <item>@string/round</item>
+        <item>@string/square</item>
+        <item>@string/curly</item>
+        <item>@string/thick</item>
+    </string-array>
 
-    <string-array name="view_digital_vertical_default_style_values" translatable="false">
+    <string-array name="view_digital_vertical_default_style_values">
         <item>Content.Digital.Vertical.Default.Default</item>
         <item>Content.Digital.Vertical.Default.Round</item>
         <item>Content.Digital.Vertical.Default.Square</item>
         <item>Content.Digital.Vertical.Default.Curly</item>
         <item>Content.Digital.Vertical.Default.Thick</item>
     </string-array>
+    <string-array name="view_digital_vertical_default_style_titles">
+        <item>@string/default_title</item>
+        <item>@string/round</item>
+        <item>@string/square</item>
+        <item>@string/curly</item>
+        <item>@string/thick</item>
+    </string-array>
 
-    <string-array name="view_digital_vertical_simple_style_values" translatable="false">
+    <string-array name="view_digital_vertical_simple_style_values">
         <item>Content.Digital.Vertical.Simple.Default</item>
         <item>Content.Digital.Vertical.Simple.Round</item>
         <item>Content.Digital.Vertical.Simple.Square</item>
         <item>Content.Digital.Vertical.Simple.Curly</item>
         <item>Content.Digital.Vertical.Simple.Thick</item>
     </string-array>
+    <string-array name="view_digital_vertical_simple_style_titles">
+        <item>@string/default_title</item>
+        <item>@string/round</item>
+        <item>@string/square</item>
+        <item>@string/curly</item>
+        <item>@string/thick</item>
+    </string-array>
 
-    <string-array name="view_analog_text_date_min_style_values" translatable="false">
+    <string-array name="view_analog_text_date_min_style_values">
         <item>Content.Analog.Default.Square</item>
         <item>Content.Analog.Default.Rounded</item>
     </string-array>
+    <string-array name="view_analog_text_date_min_style_titles">
+        <item>@string/square_hands</item>
+        <item>@string/rounded_hands</item>
+    </string-array>
 
-    <string-array name="view_analog_bars_date_min_style_values" translatable="false">
+    <string-array name="view_analog_bars_date_min_style_values">
         <item>Content.Analog.BarsDate.Square</item>
         <item>Content.Analog.BarsDate.Rounded</item>
     </string-array>
+    <string-array name="view_analog_bars_date_min_style_titles">
+        <item>@string/square_hands</item>
+        <item>@string/rounded_hands</item>
+    </string-array>
 
-    <string-array name="hours_minutes_format_values" translatable="false">
+    <string-array name="hours_minutes_format_values">
         <item>HH:mm</item>
         <item>H:mm</item>
         <item>hh:mm</item>
         <item>h:mm</item>
     </string-array>
-
-    <string-array name="seconds_format_values" translatable="false">
-        <item>ss</item>
-        <item>s</item>
-        <item/>
+    <string-array name="hours_minutes_format_titles">
+        <item>@string/_24_hour_trailing_zeroes</item>
+        <item>@string/_24_hour_no_trailing_zeroes</item>
+        <item>@string/_12_hour_trailing_zeroes</item>
+        <item>@string/_12_hour_no_trailing_zeroes</item>
+    </string-array>
+    <string-array name="hours_minutes_format_hints">
+        <item>@string/_07_07_</item>
+        <item>@string/_7_07_</item>
+        <item>@string/_07_07_AM_</item>
+        <item>@string/_7_07_AM_</item>
     </string-array>
 
-    <string-array name="date_format_values" translatable="false">
+    <string-array name="seconds_format_values">
+        <item>ss</item>
+        <item>s</item>
+        <item />
+    </string-array>
+    <string-array name="seconds_format_titles">
+        <item>@string/trailing_zeroes</item>
+        <item>@string/no_trailing_zeroes</item>
+        <item>@string/do_not_show</item>
+    </string-array>
+    <string-array name="seconds_format_hints">
+        <item>@string/_00_07_</item>
+        <item>@string/_00_7_</item>
+        <item />
+    </string-array>
+
+    <string-array name="date_format_values">
         <item>system_default</item>
         <item>EEEE, MMMM dd</item>
         <item>EEE, MMM d</item>
@@ -82,30 +152,50 @@
         <item />
     </string-array>
 
-    <string-array name="tick_sound_values" translatable="false">
+    <string-array name="tick_sound_values">
         <item>alarm_clock</item>
         <item>clock_tick_tick</item>
         <item>mantle_clock</item>
         <item>wooden_wall_clock</item>
         <item>wrist_watch</item>
     </string-array>
+    <string-array name="tick_sound_titles">
+        <item>@string/alarm_clock</item>
+        <item>@string/tick_tick</item>
+        <item>@string/mantle_clock</item>
+        <item>@string/wall_clock</item>
+        <item>@string/wrist_watch</item>
+    </string-array>
 
-    <string-array name="auto_inactivate_delay_values" translatable="false">
+    <string-array name="auto_inactivate_delay_values">
         <item>2000</item>
         <item>5000</item>
         <item>10000</item>
         <item>-1</item>
     </string-array>
+    <string-array name="auto_inactivate_delay_titles">
+        <item>@string/_2_second</item>
+        <item>@string/_5_seconds</item>
+        <item>@string/_10_seconds</item>
+        <item>@string/disabled</item>
+    </string-array>
 
-    <string-array name="content_float_interval_values" translatable="false">
+    <string-array name="content_float_interval_values">
         <item>0</item>
         <item>10000</item>
         <item>60000</item>
         <item>900000</item>
         <item>-1</item>
     </string-array>
+    <string-array name="content_float_interval_titles">
+        <item>@string/always_move</item>
+        <item>@string/_10_second</item>
+        <item>@string/_1_minute</item>
+        <item>@string/_15_minutes</item>
+        <item>@string/_never_move</item>
+    </string-array>
 
-    <string-array name="content_float_speed_values" translatable="false">
+    <string-array name="content_float_speed_values">
         <item>10</item>
         <item>30</item>
         <item>50</item>
@@ -113,14 +203,27 @@
         <item>200</item>
         <item>500</item>
     </string-array>
+    <string-array name="content_float_speed_titles">
+        <item>@string/_0_1x</item>
+        <item>@string/_0_3x</item>
+        <item>@string/_0_5x</item>
+        <item>@string/_1_0x</item>
+        <item>@string/_2_0x</item>
+        <item>@string/_5_0x</item>
+    </string-array>
 
-    <string-array name="tick_sound_mode_values" translatable="false">
+    <string-array name="tick_sound_mode_values">
         <item>active</item>
         <item>inactive</item>
         <item>floating</item>
     </string-array>
+    <string-array name="tick_sound_mode_titles">
+        <item>@string/active</item>
+        <item>@string/inactive</item>
+        <item>@string/floating</item>
+    </string-array>
 
-    <string-array name="digits_animation_values" translatable="false">
+    <string-array name="digits_animation_values">
         <item>text_fade_trough_linear</item>
         <item>text_slide_vertical_linear</item>
         <item>text_slide_vertical_accelerate</item>
@@ -133,20 +236,42 @@
         <item>text_scale_grow_shrink</item>
         <item />
     </string-array>
+    <string-array name="digits_animation_titles">
+        <item>@string/fade_through</item>
+        <item>@string/scroll</item>
+        <item>@string/fall</item>
+        <item>@string/fall_and_bounce</item>
+        <item>@string/cylinder</item>
+        <item>@string/slide</item>
+        <item>@string/slide_and_bounce</item>
+        <item>@string/grow_in</item>
+        <item>@string/shrink_out</item>
+        <item>@string/grow_in_shrink_out</item>
+        <item>@string/do_not_animate</item>
+    </string-array>
 
-    <string-array name="float_animation_values" translatable="false">
+    <string-array name="float_animation_values">
         <item>float_move</item>
         <item>float_fade</item>
         <item>float_move_fade</item>
         <item />
     </string-array>
+    <string-array name="float_animation_titles">
+        <item>@string/move</item>
+        <item>@string/fade</item>
+        <item>@string/fade_and_move</item>
+        <item>@string/do_not_animate</item>
+    </string-array>
 
-    <string-array name="clock_hand_animation_values" translatable="false">
+    <string-array name="clock_hand_animation_values">
         <item>clock_handle_rotate_overshot</item>
         <item>clock_handle_rotate_linear</item>
         <item />
     </string-array>
-
-    <string name="developer_sha" translatable="false">637a049c399e085c699e1938d09e2ccfdf08071a66f9ef848edb06fbb751ad02da700f91cd0a8113820a32e98ff04dbb0ec5526c41385548081637392bb37ffd</string>
+    <string-array name="clock_hand_animation_titles">
+        <item>@string/overshot</item>
+        <item>@string/linear</item>
+        <item>@string/do_not_animate</item>
+    </string-array>
 
 </resources>

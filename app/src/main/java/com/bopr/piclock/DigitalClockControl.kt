@@ -31,6 +31,9 @@ import java.util.*
 internal class DigitalClockControl(view: View, settings: Settings) :
     ContentControlAdapter(settings) {
     //todo: time separators : - . | * ~
+    //todo: seconds custom color
+    //todo: date custom color
+    //todo: hours+minutes custom color
     private val amPmFormat = defaultDatetimeFormat("a")
     private val hoursView: SplitAnimatedTextView by lazy { view.findViewById(R.id.hours_view) }
     private val minutesView: SplitAnimatedTextView by lazy { view.findViewById(R.id.minutes_view) }

@@ -1,8 +1,39 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+
+<!--   todo: remove tools:ignore="MissingTranslation" -->
+
+    <string name="_00_07_">(00:07)</string>
+    <string name="_00_7_">(00:7)</string>
+    <string name="_07_07_">(07:07)</string>
+    <string name="_07_07_AM_">(07:07 AM)</string>
+    <string name="_0_1x">0.1x</string>
+    <string name="_0_3x">0.3x</string>
+    <string name="_0_5x">0.5x</string>
+    <string name="_10_second">10 second</string>
+    <string name="_10_seconds">10 seconds</string>
+    <string name="_12_hour_no_trailing_zeroes">12-hour no trailing zeroes</string>
+    <string name="_12_hour_trailing_zeroes">12-hour trailing zeroes</string>
+    <string name="_15_minutes">15 minutes</string>
+    <string name="_1_0x">1.0x</string>
+    <string name="_1_minute">1 minute</string>
+    <string name="_24_hour_no_trailing_zeroes">24-hour no trailing zeroes</string>
+    <string name="_24_hour_trailing_zeroes">24-hour trailing zeroes</string>
+    <string name="_2_0x">2.0x</string>
+    <string name="_2_second">2 second</string>
+    <string name="_5_0x">5.0x</string>
+    <string name="_5_seconds">5 seconds</string>
+    <string name="_7_07_">(7:07)</string>
+    <string name="_7_07_AM_">(7:07 AM)</string>
+    <string name="_never_move">Never move</string>
     <string name="about_label">About app</string>
     <string name="about_summary">%1$s-%2$s</string>
     <string name="about_version">Version</string>
+    <string name="active">Active</string>
+    <string name="alarm_clock">Alarm clock</string>
     <string name="all_animation">All animation</string>
+    <string name="always_move">Always move</string>
+    <string name="analog_minimalistic_bars_date">Analog minimalistic, bars date</string>
+    <string name="analog_minimalistic_text_date">Analog minimalistic, text date</string>
     <string name="animation">Animation</string>
     <string name="app_name">Pi Clock</string>
     <string name="appearance">Appearance</string>
@@ -15,17 +46,32 @@
     <string name="brightness_info_min">Brightness %d%% (min)</string>
     <string name="brightness_level">Brightness level</string>
     <string name="clock_always_moves_along_screen">Clock always moves along the screen</string>
+    <string name="clock_hands_animation">Hands animation</string>
+    <string name="clock_in_center">Clock always stays in center of the screen</string>
     <string name="clock_moves_along_screen">Clock moves along the screen every %s</string>
+    <string name="curly">Curly</string>
+    <string name="cylinder">Cylinder</string>
     <string name="date_format">Date</string>
     <string name="default_date_format">%s (system)</string>
     <string name="default_title">Default</string>
     <string name="digital_clock">Digital clock</string>
+    <string name="digital_horizontal_big_seconds">Digital horizontal, big seconds</string>
+    <string name="digital_horizontal_small_seconds">Digital horizontal, small seconds</string>
+    <string name="digital_vertical_big_seconds">Digital vertical, big seconds</string>
+    <string name="digital_vertical_small_seconds">Digital vertical, small seconds</string>
+    <string name="digits_animation">Digits animation</string>
     <string name="digits_animation_type">Digits animation type</string>
+    <string name="digits_split_animation">Animate digits separately</string>
     <string name="disabled">Disabled</string>
     <string name="disabled_power_save">Disabled (power saving)</string>
     <string name="do_not_animate">Do not animate</string>
     <string name="do_not_show">Do not show</string>
     <string name="enabled">Enabled</string>
+    <string name="fade">Fade</string>
+    <string name="fade_and_move">Fade and move</string>
+    <string name="fade_through">Fade through</string>
+    <string name="fall">Fall</string>
+    <string name="fall_and_bounce">Fall and bounce</string>
     <string name="float_animation">Floating animation type</string>
     <string name="floating">Floating</string>
     <string name="floating_interval">Floating interval</string>
@@ -38,22 +84,36 @@
     <string name="gestures">Gestures</string>
     <string name="gestures_disabled_summary">Gestures disabled</string>
     <string name="gestures_enabled_summary">Adjust scale and brightness by swiping across the screen</string>
+    <string name="grow_in">Grow in</string>
+    <string name="grow_in_shrink_out">Grow in shrink out</string>
+    <string name="hands">Hands</string>
+    <string name="hands_smooth">Smooth hands</string>
     <string name="hidden">Hidden</string>
     <string name="hours_minutes_format">Hours and minutes</string>
-    <string name="clock_in_center">Clock always stays in center of the screen</string>
+    <string name="inactive">Inactive</string>
     <string name="layout">Layout</string>
     <string name="layout_specific">Layout specific</string>
     <string name="layout_type">Layout type</string>
+    <string name="linear">Linear</string>
+    <string name="mantle_clock">Mantle clock</string>
     <string name="minutes_separator">Minutes separator</string>
+    <string name="move">Move</string>
+    <string name="move_hands_discretely">Move hour and minute hands discretely</string>
+    <string name="move_hands_smooth">Move hour and minute hands smoothly</string>
     <string name="muted_brightness_summary">Muted brightness in inactive mode %d%%</string>
+    <string name="no_trailing_zeroes">No trailing zeroes</string>
     <string name="on_monday">on Monday</string>
     <string name="on_sunday">on Sunday</string>
+    <string name="overshot">Overshot</string>
+    <string name="round">Round</string>
+    <string name="rounded_hands">Rounded hands</string>
     <string name="save">Save</string>
     <string name="scale">Scale</string>
     <string name="scale_info">Scale %d%%</string>
     <string name="scale_info_max">Scale %d%% (max)</string>
     <string name="scale_info_min">Scale %d%% (min)</string>
     <string name="scale_summary">%d%%</string>
+    <string name="scroll">Scroll</string>
     <string name="second_hand">Second hand</string>
     <string name="seconds_format">Seconds</string>
     <string name="seconds_separator">Seconds separator</string>
@@ -61,169 +121,30 @@
     <string name="settings">Settings</string>
     <string name="settings_button">Settings button</string>
     <string name="show_time_separators">Show time separators</string>
+    <string name="shrink_out">Shrink out</string>
+    <string name="slide">Slide</string>
+    <string name="slide_and_bounce">Slide and bounce</string>
     <string name="sound">Sound</string>
+    <string name="square">Square</string>
+    <string name="square_hands">Square hands</string>
     <string name="status">Status</string>
     <string name="style">Style</string>
+    <string name="thick">Thick</string>
+    <string name="thin">Thin</string>
     <string name="tick_always">Always</string>
     <string name="tick_never">Never</string>
     <string name="tick_sound">Tick sound</string>
     <string name="tick_sound_always">Tick always</string>
     <string name="tick_sound_mode">Play tick sound when</string>
+    <string name="tick_tick">Tick-tick</string>
     <string name="time_separators">Time separators</string>
+    <string name="trailing_zeroes">Trailing zeroes</string>
+    <string name="typewriter">Typewriter</string>
     <string name="user_interface">Interface</string>
     <string name="visible">Visible</string>
+    <string name="wall_clock">Wall clock</string>
     <string name="week_start">Week start</string>
-    <string name="clock_hands_animation">Hands animation</string>
-    <string name="move_hands_smooth">Move hour and minute hands smoothly</string>
-    <string name="move_hands_discretely">Move hour and minute hands discretely</string>
-    <string name="hands_smooth">Smooth hands</string>
-    <string name="hands">Hands</string>
     <string name="when_in">Clock is %s</string>
-    <string name="digits_split_animation">Animate digits separately</string>
-    <string name="digits_animation">Digits animation</string>
-
-    <string-array name="content_layout_titles">
-        <item>Digital horizontal, small seconds</item>
-        <item>Digital horizontal, big seconds</item>
-        <item>Digital vertical, small seconds</item>
-        <item>Digital vertical, big seconds</item>
-        <item>Analog minimalistic, text date</item>
-        <item>Analog minimalistic, bars date</item>
-    </string-array>
-
-    <string-array name="view_digital_default_style_titles">
-        <item>@string/default_title</item>
-        <item>Round</item>
-        <item>Square</item>
-        <item>Curly</item>
-        <item>Thick</item>
-        <item>Typewriter</item>
-        <item>Zen</item>
-    </string-array>
-
-    <string-array name="view_digital_simple_style_titles">
-        <item>@string/default_title</item>
-        <item>Round</item>
-        <item>Square</item>
-        <item>Curly</item>
-        <item>Thick</item>
-    </string-array>
-
-    <string-array name="view_digital_vertical_default_style_titles">
-        <item>@string/default_title</item>
-        <item>Round</item>
-        <item>Square</item>
-        <item>Curly</item>
-        <item>Thick</item>
-    </string-array>
-
-    <string-array name="view_digital_vertical_simple_style_titles">
-        <item>@string/default_title</item>
-        <item>Round</item>
-        <item>Square</item>
-        <item>Curly</item>
-        <item>Thick</item>
-    </string-array>
-
-    <string-array name="view_analog_text_date_min_style_titles">
-        <item>Square hands</item>
-        <item>Rounded hands</item>
-    </string-array>
-
-    <string-array name="view_analog_bars_date_min_style_titles">
-        <item>Square hands</item>
-        <item>Rounded hands</item>
-    </string-array>
-
-    <string-array name="tick_sound_titles">
-        <item>Alarm clock</item>
-        <item>Tick-tick</item>
-        <item>Mantle clock</item>
-        <item>Wall clock</item>
-        <item>Wrist watch</item>
-    </string-array>
-
-    <string-array name="auto_inactivate_delay_titles">
-        <item>2 second</item>
-        <item>5 seconds</item>
-        <item>10 seconds</item>
-        <item>Disabled</item>
-    </string-array>
-
-    <string-array name="content_float_interval_titles">
-        <item>Always move</item>
-        <item>10 second</item>
-        <item>1 minute</item>
-        <item>15 minutes</item>
-        <item>Never move</item>
-    </string-array>
-
-    <string-array name="content_float_speed_titles">
-        <item>0.1x</item>
-        <item>0.3x</item>
-        <item>0.5x</item>
-        <item>1.0x</item>
-        <item>2.0x</item>
-        <item>5.0x</item>
-    </string-array>
-
-    <string-array name="hours_minutes_format_titles">
-        <item>24-hour trailing zeroes</item>
-        <item>24-hour no trailing zeroes</item>
-        <item>12-hour trailing zeroes</item>
-        <item>12-hour no trailing zeroes</item>
-    </string-array>
-
-    <string-array name="hours_minutes_format_hints">
-        <item> (07:07)</item>
-        <item> (7:07)</item>
-        <item> (07:07 AM)</item>
-        <item> (7:07 AM)</item>
-    </string-array>
-
-    <string-array name="seconds_format_titles">
-        <item>Trailing zeroes</item>
-        <item>No trailing zeroes</item>
-        <item>Do not show</item>
-    </string-array>
-
-    <string-array name="seconds_format_hints">
-        <item> (00:07)</item>
-        <item> (00:7)</item>
-        <item />
-    </string-array>
-
-    <string-array name="tick_sound_mode_titles">
-        <item>Active</item>
-        <item>Inactive</item>
-        <item>Floating</item>
-    </string-array>
-
-    <string-array name="digits_animation_titles">
-        <item>Fade through</item>
-        <item>Scroll</item>
-        <item>Fall</item>
-        <item>Fall and bounce</item>
-        <item>Cylinder</item>
-        <item>Slide</item>
-        <item>Slide and bounce</item>
-        <item>Grow in</item>
-        <item>Shrink out</item>
-        <item>Grow in shrink out</item>
-        <item>@string/do_not_animate</item>
-    </string-array>
-
-    <string-array name="float_animation_titles">
-        <item>Move</item>
-        <item>Fade</item>
-        <item>Fade and move</item>
-        <item>@string/do_not_animate</item>
-    </string-array>
-
-    <string-array name="clock_hand_animation_titles">
-        <item>Overshot</item>
-        <item>Linear</item>
-        <item>@string/do_not_animate</item>
-    </string-array>
+    <string name="wrist_watch">Wrist watch</string>
 
 </resources>

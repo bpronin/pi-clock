@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="curly" type="font">@font/lora_cyr</item>
+    <item name="curly_companion" type="font">@font/curly</item>
+    <item name="normal" type="font">@font/gruppo</item>
+    <item name="normal_companion" type="font">@font/montserrat_cyr</item>
+    <item name="round" type="font">@font/sniglet</item>
+    <item name="round_companion" type="font">@font/round</item>
+    <item name="square" type="font">@font/orbitron</item>
+    <item name="square_companion" type="font">@font/square</item>
+    <item name="thick" type="font">@font/kanit</item>
+    <item name="thick_companion" type="font">@font/thick</item>
+    <item name="thin" type="font">@font/zenloop</item>
+    <item name="thin_companion" type="font">@font/thin</item>
+    <item name="typewriter" type="font">@font/specialelite</item>
+    <item name="typewriter_companion" type="font">@font/typewriter</item>
+</resources>

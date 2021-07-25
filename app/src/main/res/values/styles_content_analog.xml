@@ -3,7 +3,7 @@
     <!-- Analog clock with text date -->
 
     <style name="Content.Analog.Default.Square" parent="AppTheme">
-        <item name="contentDateFont">@font/kanit</item>
+        <item name="contentDateFont">@font/thick</item>
         <item name="contentDatePaddingTop">8sp</item>
         <item name="contentDateTextSize">26sp</item>
         <item name="contentClockFaceShape">@drawable/view_analog_min_face</item>

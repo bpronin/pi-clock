@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="curly_companion" type="font">@font/lora_cyr</item>
+    <item name="normal_companion" type="font">@font/comfortaa_cyr</item>
+    <item name="round_companion" type="font">@font/balsamiq_cyr</item>
+    <item name="square_companion" type="font">@font/jura_cyr</item>
+    <item name="thick_companion" type="font">@font/montserrat_black_cyr</item>
+    <item name="thin_companion" type="font">@font/poiret_one_cyr</item>
+    <item name="typewriter_companion" type="font">@font/podkova_cyr</item>
+</resources>
