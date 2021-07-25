@@ -243,7 +243,7 @@
         <item name="contentSecondsWidth">100sp</item>
     </style>
 
-    <!-- Digital small seconds blue -->
+    <!-- Digital small seconds blue seconds -->
 
     <style name="Content.Digital.Default.Default.BlueSeconds" parent="Content.Digital.Default.Default">
         <item name="contentSecondsForeground">@color/material_light_blue_500</item>
@@ -273,5 +273,64 @@
         <item name="contentSecondsForeground">@color/material_light_blue_500</item>
     </style>
 
+    <!-- Digital small seconds orange seconds -->
+
+    <style name="Content.Digital.Default.Default.OrangeSeconds" parent="Content.Digital.Default.Default">
+        <item name="contentSecondsForeground">@color/material_orange_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Square.OrangeSeconds" parent="Content.Digital.Default.Square">
+        <item name="contentSecondsForeground">@color/material_orange_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Round.OrangeSeconds" parent="Content.Digital.Default.Round">
+        <item name="contentSecondsForeground">@color/material_orange_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Thick.OrangeSeconds" parent="Content.Digital.Default.Thick">
+        <item name="contentSecondsForeground">@color/material_orange_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Thin.OrangeSeconds" parent="Content.Digital.Default.Thin">
+        <item name="contentSecondsForeground">@color/material_orange_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Curly.OrangeSeconds" parent="Content.Digital.Default.Curly">
+        <item name="contentSecondsForeground">@color/material_orange_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Typewriter.OrangeSeconds" parent="Content.Digital.Default.Typewriter">
+        <item name="contentSecondsForeground">@color/material_orange_500</item>
+    </style>
+
+    <!-- Digital small seconds green seconds -->
+
+    <style name="Content.Digital.Default.Default.GreenSeconds" parent="Content.Digital.Default.Default">
+        <item name="contentSecondsForeground">@color/material_green_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Square.GreenSeconds" parent="Content.Digital.Default.Square">
+        <item name="contentSecondsForeground">@color/material_green_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Round.GreenSeconds" parent="Content.Digital.Default.Round">
+        <item name="contentSecondsForeground">@color/material_green_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Thick.GreenSeconds" parent="Content.Digital.Default.Thick">
+        <item name="contentSecondsForeground">@color/material_green_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Thin.GreenSeconds" parent="Content.Digital.Default.Thin">
+        <item name="contentSecondsForeground">@color/material_green_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Curly.GreenSeconds" parent="Content.Digital.Default.Curly">
+        <item name="contentSecondsForeground">@color/material_green_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Typewriter.GreenSeconds" parent="Content.Digital.Default.Typewriter">
+        <item name="contentSecondsForeground">@color/material_green_500</item>
+    </style>
 
 </resources>

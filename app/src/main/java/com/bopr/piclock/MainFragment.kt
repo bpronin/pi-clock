@@ -268,11 +268,12 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
     private fun createContentControl() {
         val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
-        val styleName = settings.getString(PREF_CONTENT_STYLE)
-        val colorsName = settings.getString(PREF_CONTENT_COLORS)
-
         val layoutRes = requireLayoutResId(layoutName)
-        val styleRes = getLayoutStyleRes(layoutName, styleName, colorsName)
+        val styleRes = getLayoutStyleRes(
+            layoutName,
+            settings.getString(PREF_CONTENT_STYLE),
+            settings.getString(PREF_CONTENT_COLORS)
+        )
 
         val contentView =
             layoutInflater.inflateWithTheme(layoutRes, contentHolderView, false, styleRes)

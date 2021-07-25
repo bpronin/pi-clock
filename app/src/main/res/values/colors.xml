@@ -12,4 +12,7 @@
     <color name="orange">#ff5722</color> <!-- same as private error_color_material_light -->
     <color name="material_blue_500">#2196F3</color>
     <color name="material_light_blue_500">#03A9F4</color>
+    <color name="material_orange_500">#BF9000</color>
+    <color name="material_green_500">#38761D</color>
+<!--    <color name="material_orange_500">#E69138</color>-->
 </resources>

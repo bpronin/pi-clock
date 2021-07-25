@@ -49,10 +49,14 @@
     <string-array name="view_digital_default_colors_values">
         <item />
         <item>.BlueSeconds</item>
+        <item>.OrangeSeconds</item>
+        <item>.GreenSeconds</item>
     </string-array>
     <string-array name="view_digital_default_colors_titles">
         <item>@string/monochrome</item>
         <item>@string/blue_seconds</item>
+        <item>@string/orange_seconds</item>
+        <item>@string/green_seconds</item>
     </string-array>
 
     <string-array name="view_digital_simple_style_values">

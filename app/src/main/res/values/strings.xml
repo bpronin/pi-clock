@@ -2,7 +2,6 @@
 
 <!--   todo: remove tools:ignore="MissingTranslation" -->
 
-    <string name="monochrome">Monochrome</string>
     <string name="_00_07_">(00:07)</string>
     <string name="_00_7_">(00:7)</string>
     <string name="_07_07_">(07:07)</string>
@@ -42,6 +41,7 @@
     <string name="auto_inactivate_never_summary">Disabled. Toggle active mode by touching screen</string>
     <string name="auto_inactivate_summary">Hide controls and decrease brightness after %s</string>
     <string name="blink_time_separators">Blink time separators</string>
+    <string name="blue_seconds">Blue seconds</string>
     <string name="brightness_info">Brightness %d%%</string>
     <string name="brightness_info_max">Brightness %d%% (max)</string>
     <string name="brightness_info_min">Brightness %d%% (min)</string>
@@ -50,6 +50,7 @@
     <string name="clock_hands_animation">Hands animation</string>
     <string name="clock_in_center">Clock always stays in center of the screen</string>
     <string name="clock_moves_along_screen">Clock moves along the screen every %s</string>
+    <string name="colors">Colors</string>
     <string name="curly">Curly</string>
     <string name="cylinder">Cylinder</string>
     <string name="date_format">Date</string>
@@ -85,6 +86,7 @@
     <string name="gestures">Gestures</string>
     <string name="gestures_disabled_summary">Gestures disabled</string>
     <string name="gestures_enabled_summary">Adjust scale and brightness by swiping across the screen</string>
+    <string name="green_seconds">Green seconds</string>
     <string name="grow_in">Grow in</string>
     <string name="grow_in_shrink_out">Grow in shrink out</string>
     <string name="hands">Hands</string>
@@ -98,6 +100,7 @@
     <string name="linear">Linear</string>
     <string name="mantle_clock">Mantle clock</string>
     <string name="minutes_separator">Minutes separator</string>
+    <string name="monochrome">Monochrome</string>
     <string name="move">Move</string>
     <string name="move_hands_discretely">Move hour and minute hands discretely</string>
     <string name="move_hands_smooth">Move hour and minute hands smoothly</string>
@@ -105,6 +108,7 @@
     <string name="no_trailing_zeroes">No trailing zeroes</string>
     <string name="on_monday">on Monday</string>
     <string name="on_sunday">on Sunday</string>
+    <string name="orange_seconds">Orange seconds</string>
     <string name="overshot">Overshot</string>
     <string name="round">Round</string>
     <string name="rounded_hands">Rounded hands</string>
@@ -147,7 +151,5 @@
     <string name="week_start">Week start</string>
     <string name="when_in">Clock is %s</string>
     <string name="wrist_watch">Wrist watch</string>
-    <string name="blue_seconds">Blue seconds</string>
-    <string name="colors">Colors</string>
 
 </resources>
