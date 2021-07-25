@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.GONE
 import android.widget.TextView
 import androidx.annotation.IntDef
+import androidx.annotation.StyleRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.fragment.app.Fragment
@@ -20,6 +21,7 @@ import com.bopr.piclock.ContentLayoutType.*
 import com.bopr.piclock.ContentLayoutType.Companion.layoutTypeOf
 import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
+import com.bopr.piclock.Settings.Companion.PREF_CONTENT_COLORS
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_STYLE
 import com.bopr.piclock.util.*
@@ -228,7 +230,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
             PREF_CONTENT_LAYOUT -> {
                 /* do nothing on changes of layout itself. wait for style */
             }
-            PREF_CONTENT_STYLE -> createContentControl()
+            PREF_CONTENT_STYLE,
+            PREF_CONTENT_COLORS -> createContentControl()
         }
 
         controlSet.forEach { it.onSettingChanged(key) }
@@ -256,17 +259,23 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         Log.d(TAG, "Mode set to: $mode")
     }
 
+    @StyleRes
+    private fun getLayoutStyleRes(layoutName: String, style: String, color: String): Int {
+        val layoutIndex = getStringArray(R.array.content_layout_values).indexOf(layoutName)
+        val stylePrefix = getStringArray(R.array.content_layout_styles)[layoutIndex]
+        return requireStyleResId(stylePrefix + style + color)
+    }
+
     private fun createContentControl() {
         val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
         val styleName = settings.getString(PREF_CONTENT_STYLE)
+        val colorsName = settings.getString(PREF_CONTENT_COLORS)
 
-        val styles = getLayoutStyles(layoutName)
-        if (!styles.contains(styleName))
-            throw IllegalStateException("Unregistered style: $styleName for layout: $layoutName")
+        val layoutRes = requireLayoutResId(layoutName)
+        val styleRes = getLayoutStyleRes(layoutName, styleName, colorsName)
 
-        val contentView = layoutInflater.inflateWithTheme(
-            requireLayoutResId(layoutName), contentHolderView, false, requireStyleResId(styleName)
-        )
+        val contentView =
+            layoutInflater.inflateWithTheme(layoutRes, contentHolderView, false, styleRes)
 
         contentHolderView.apply {
             removeAllViews()

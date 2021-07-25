@@ -19,15 +19,23 @@
         <item>@string/analog_minimalistic_text_date</item>
         <item>@string/analog_minimalistic_bars_date</item>
     </string-array>
+    <string-array name="content_layout_styles">
+        <item>Content.Digital.Default</item>
+        <item>Content.Digital.Simple</item>
+        <item>Content.Digital.Vertical.Default</item>
+        <item>Content.Digital.Vertical.Simple</item>
+        <item>Content.Analog.Default</item>
+        <item>Content.Analog.BarsDate</item>
+    </string-array>
 
     <string-array name="view_digital_default_style_values">
-        <item>Content.Digital.Default.Default</item>
-        <item>Content.Digital.Default.Square</item>
-        <item>Content.Digital.Default.Round</item>
-        <item>Content.Digital.Default.Thick</item>
-        <item>Content.Digital.Default.Thin</item>
-        <item>Content.Digital.Default.Curly</item>
-        <item>Content.Digital.Default.Typewriter</item>
+        <item>.Default</item>
+        <item>.Square</item>
+        <item>.Round</item>
+        <item>.Thick</item>
+        <item>.Thin</item>
+        <item>.Curly</item>
+        <item>.Typewriter</item>
     </string-array>
     <string-array name="view_digital_default_style_titles">
         <item>@string/default_title</item>
@@ -38,15 +46,23 @@
         <item>@string/curly</item>
         <item>@string/typewriter</item>
     </string-array>
+    <string-array name="view_digital_default_colors_values">
+        <item />
+        <item>.BlueSeconds</item>
+    </string-array>
+    <string-array name="view_digital_default_colors_titles">
+        <item>@string/monochrome</item>
+        <item>@string/blue_seconds</item>
+    </string-array>
 
     <string-array name="view_digital_simple_style_values">
-        <item>Content.Digital.Simple.Default</item>
-        <item>Content.Digital.Simple.Square</item>
-        <item>Content.Digital.Simple.Round</item>
-        <item>Content.Digital.Simple.Thick</item>
-        <item>Content.Digital.Simple.Thin</item>
-        <item>Content.Digital.Simple.Curly</item>
-        <item>Content.Digital.Simple.Typewriter</item>
+        <item>.Default</item>
+        <item>.Square</item>
+        <item>.Round</item>
+        <item>.Thick</item>
+        <item>.Thin</item>
+        <item>.Curly</item>
+        <item>.Typewriter</item>
     </string-array>
     <string-array name="view_digital_simple_style_titles">
         <item>@string/default_title</item>
@@ -59,13 +75,13 @@
     </string-array>
 
     <string-array name="view_digital_vertical_default_style_values">
-        <item>Content.Digital.Vertical.Default.Default</item>
-        <item>Content.Digital.Vertical.Default.Square</item>
-        <item>Content.Digital.Vertical.Default.Round</item>
-        <item>Content.Digital.Vertical.Default.Thick</item>
-        <item>Content.Digital.Vertical.Default.Thin</item>
-        <item>Content.Digital.Vertical.Default.Curly</item>
-        <item>Content.Digital.Vertical.Default.Typewriter</item>
+        <item>.Default</item>
+        <item>.Square</item>
+        <item>.Round</item>
+        <item>.Thick</item>
+        <item>.Thin</item>
+        <item>.Curly</item>
+        <item>.Typewriter</item>
     </string-array>
     <string-array name="view_digital_vertical_default_style_titles">
         <item>@string/default_title</item>
@@ -78,13 +94,13 @@
     </string-array>
 
     <string-array name="view_digital_vertical_simple_style_values">
-        <item>Content.Digital.Vertical.Simple.Default</item>
-        <item>Content.Digital.Vertical.Simple.Square</item>
-        <item>Content.Digital.Vertical.Simple.Round</item>
-        <item>Content.Digital.Vertical.Simple.Thick</item>
-        <item>Content.Digital.Vertical.Simple.Thin</item>
-        <item>Content.Digital.Vertical.Simple.Curly</item>
-        <item>Content.Digital.Vertical.Simple.Typewriter</item>
+        <item>.Default</item>
+        <item>.Square</item>
+        <item>.Round</item>
+        <item>.Thick</item>
+        <item>.Thin</item>
+        <item>.Curly</item>
+        <item>.Typewriter</item>
     </string-array>
     <string-array name="view_digital_vertical_simple_style_titles">
         <item>@string/default_title</item>
@@ -97,8 +113,8 @@
     </string-array>
 
     <string-array name="view_analog_text_date_min_style_values">
-        <item>Content.Analog.Default.Square</item>
-        <item>Content.Analog.Default.Rounded</item>
+        <item>.Square</item>
+        <item>.Rounded</item>
     </string-array>
     <string-array name="view_analog_text_date_min_style_titles">
         <item>@string/square_hands</item>
@@ -106,8 +122,8 @@
     </string-array>
 
     <string-array name="view_analog_bars_date_min_style_values">
-        <item>Content.Analog.BarsDate.Square</item>
-        <item>Content.Analog.BarsDate.Rounded</item>
+        <item>.Square</item>
+        <item>.Rounded</item>
     </string-array>
     <string-array name="view_analog_bars_date_min_style_titles">
         <item>@string/square_hands</item>

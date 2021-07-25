@@ -2,6 +2,7 @@
 
 <!--   todo: remove tools:ignore="MissingTranslation" -->
 
+    <string name="monochrome">Monochrome</string>
     <string name="_00_07_">(00:07)</string>
     <string name="_00_7_">(00:7)</string>
     <string name="_07_07_">(07:07)</string>
@@ -146,5 +147,7 @@
     <string name="week_start">Week start</string>
     <string name="when_in">Clock is %s</string>
     <string name="wrist_watch">Wrist watch</string>
+    <string name="blue_seconds">Blue seconds</string>
+    <string name="colors">Colors</string>
 
 </resources>

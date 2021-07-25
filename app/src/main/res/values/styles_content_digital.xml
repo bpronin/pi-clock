@@ -13,6 +13,7 @@
         <item name="contentHoursPaddingTop">-20sp</item>
         <item name="contentHoursTextSize">96sp</item>
         <item name="contentMinutesSeparatorPaddingBottom">-4sp</item>
+        <item name="contentSecondsForeground">?attr/contentForeground</item>
         <item name="contentSecondsPaddingBottom">-6sp</item>
         <item name="contentSecondsPaddingTop">-6sp</item>
         <item name="contentSecondsSeparatorPaddingBottom">0sp</item>
@@ -164,11 +165,11 @@
         <item name="contentWidth">140sp</item>
     </style>
 
-    <style name="Content.Digital.Vertical.Default.Curly" parent="Content.Digital.Default.Curly">
-        <item name="contentMinutesSeparatorPaddingBottom">-2sp</item>
-        <item name="contentMinutesSeparatorPaddingTop">-76sp</item>
+    <style name="Content.Digital.Vertical.Default.Square" parent="Content.Digital.Default.Square">
+        <item name="contentMinutesSeparatorPaddingBottom">-8sp</item>
+        <item name="contentMinutesSeparatorPaddingTop">-58sp</item>
         <item name="contentSecondsSeparatorPaddingBottom">-2sp</item>
-        <item name="contentSecondsSeparatorPaddingTop">-40sp</item>
+        <item name="contentSecondsSeparatorPaddingTop">-26sp</item>
         <item name="contentWidth">140sp</item>
     </style>
 
@@ -177,14 +178,6 @@
         <item name="contentMinutesSeparatorPaddingTop">-72sp</item>
         <item name="contentSecondsSeparatorPaddingBottom">-6sp</item>
         <item name="contentSecondsSeparatorPaddingTop">-36sp</item>
-        <item name="contentWidth">140sp</item>
-    </style>
-
-    <style name="Content.Digital.Vertical.Default.Square" parent="Content.Digital.Default.Square">
-        <item name="contentMinutesSeparatorPaddingBottom">-8sp</item>
-        <item name="contentMinutesSeparatorPaddingTop">-58sp</item>
-        <item name="contentSecondsSeparatorPaddingBottom">-2sp</item>
-        <item name="contentSecondsSeparatorPaddingTop">-26sp</item>
         <item name="contentWidth">140sp</item>
     </style>
 
@@ -204,6 +197,14 @@
         <item name="contentWidth">140sp</item>
     </style>
 
+    <style name="Content.Digital.Vertical.Default.Curly" parent="Content.Digital.Default.Curly">
+        <item name="contentMinutesSeparatorPaddingBottom">-2sp</item>
+        <item name="contentMinutesSeparatorPaddingTop">-76sp</item>
+        <item name="contentSecondsSeparatorPaddingBottom">-2sp</item>
+        <item name="contentSecondsSeparatorPaddingTop">-40sp</item>
+        <item name="contentWidth">140sp</item>
+    </style>
+
     <style name="Content.Digital.Vertical.Default.Typewriter" parent="Content.Digital.Default.Typewriter">
         <item name="contentMinutesSeparatorPaddingBottom">-8sp</item>
         <item name="contentMinutesSeparatorPaddingTop">-80sp</item>
@@ -218,16 +219,12 @@
         <item name="contentSecondsWidth">100sp</item>
     </style>
 
-    <style name="Content.Digital.Vertical.Simple.Curly" parent="Content.Digital.Vertical.Default.Curly">
-        <item name="contentSecondsWidth">100sp</item>
+    <style name="Content.Digital.Vertical.Simple.Square" parent="Content.Digital.Vertical.Default.Square">
+        <item name="contentSecondsWidth">112sp</item>
     </style>
 
     <style name="Content.Digital.Vertical.Simple.Round" parent="Content.Digital.Vertical.Default.Round">
         <item name="contentSecondsWidth">100sp</item>
-    </style>
-
-    <style name="Content.Digital.Vertical.Simple.Square" parent="Content.Digital.Vertical.Default.Square">
-        <item name="contentSecondsWidth">112sp</item>
     </style>
 
     <style name="Content.Digital.Vertical.Simple.Thick" parent="Content.Digital.Vertical.Default.Thick">
@@ -238,8 +235,43 @@
         <item name="contentSecondsWidth">100sp</item>
     </style>
 
+    <style name="Content.Digital.Vertical.Simple.Curly" parent="Content.Digital.Vertical.Default.Curly">
+        <item name="contentSecondsWidth">100sp</item>
+    </style>
+
     <style name="Content.Digital.Vertical.Simple.Typewriter" parent="Content.Digital.Vertical.Default.Typewriter">
         <item name="contentSecondsWidth">100sp</item>
     </style>
+
+    <!-- Digital small seconds blue -->
+
+    <style name="Content.Digital.Default.Default.BlueSeconds" parent="Content.Digital.Default.Default">
+        <item name="contentSecondsForeground">@color/material_light_blue_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Square.BlueSeconds" parent="Content.Digital.Default.Square">
+        <item name="contentSecondsForeground">@color/material_light_blue_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Round.BlueSeconds" parent="Content.Digital.Default.Round">
+        <item name="contentSecondsForeground">@color/material_light_blue_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Thick.BlueSeconds" parent="Content.Digital.Default.Thick">
+        <item name="contentSecondsForeground">@color/material_light_blue_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Thin.BlueSeconds" parent="Content.Digital.Default.Thin">
+        <item name="contentSecondsForeground">@color/material_light_blue_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Curly.BlueSeconds" parent="Content.Digital.Default.Curly">
+        <item name="contentSecondsForeground">@color/material_light_blue_500</item>
+    </style>
+
+    <style name="Content.Digital.Default.Typewriter.BlueSeconds" parent="Content.Digital.Default.Typewriter">
+        <item name="contentSecondsForeground">@color/material_light_blue_500</item>
+    </style>
+
 
 </resources>

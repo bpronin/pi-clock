@@ -200,43 +200,43 @@ open class SharedPreferencesWrapper(private val wrapped: SharedPreferences) :
         fun putStringOptional(
             key: String, value: String?,
             onPut: (String?) -> Unit = {},
-            isOldValueValid: (String) -> Boolean = { true }
+            isOldValueValid: (oldValue: String) -> Boolean = { true }
         ): EditorWrapper = putOptional(key, value, ::putString, onPut, isOldValueValid)
 
         fun putStringSetOptional(
             key: String, values: Set<String>?,
             onPut: (Set<String>?) -> Unit = {},
-            isOldValueValid: (Set<String>) -> Boolean = { true }
+            isOldValueValid: (oldValue: Set<String>) -> Boolean = { true }
         ): EditorWrapper = putOptional(key, values, ::putStringSet, onPut, isOldValueValid)
 
         fun putStringArrayOptional(
             key: String, values: Array<String>?,
             onPut: (Array<String>?) -> Unit = {},
-            isOldValueValid: (Array<String>) -> Boolean = { true }
+            isOldValueValid: (oldValue: Array<String>) -> Boolean = { true }
         ): EditorWrapper = putOptional(key, values, ::putStringArray, onPut, isOldValueValid)
 
         fun putBooleanOptional(
             key: String, value: Boolean,
             onPut: (Boolean?) -> Unit = {},
-            isOldValueValid: (Boolean) -> Boolean = { true }
+            isOldValueValid: (oldValue: Boolean) -> Boolean = { true }
         ): EditorWrapper = putOptional(key, value, ::putBoolean, onPut, isOldValueValid)
 
         fun putIntOptional(
             key: String, value: Int,
             onPut: (Int?) -> Unit = {},
-            isOldValueValid: (Int) -> Boolean = { true }
+            isOldValueValid: (oldValue: Int) -> Boolean = { true }
         ): EditorWrapper = putOptional(key, value, ::putInt, onPut, isOldValueValid)
 
         fun putLongOptional(
             key: String, value: Long,
             onPut: (Long?) -> Unit = {},
-            isOldValueValid: (Long) -> Boolean = { true }
+            isOldValueValid: (oldValue: Long) -> Boolean = { true }
         ): EditorWrapper = putOptional(key, value, ::putLong, onPut, isOldValueValid)
 
         fun putFloatOptional(
             key: String, value: Float,
             onPut: (Float?) -> Unit = {},
-            isOldValueValid: (Float) -> Boolean = { true }
+            isOldValueValid: (oldValue: Float) -> Boolean = { true }
         ): EditorWrapper = putOptional(key, value, ::putFloat, onPut, isOldValueValid)
 
     }

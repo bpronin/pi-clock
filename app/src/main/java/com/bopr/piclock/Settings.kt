@@ -85,6 +85,20 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             it in MIN_BRIGHTNESS..MAX_BRIGHTNESS
         }
 
+        putStringResourceOptional(
+            PREF_CONTENT_LAYOUT,
+            getResName(DEFAULT_LAYOUT),
+            R.array.content_layout_values
+        )
+
+        putStringOptional(PREF_CONTENT_STYLE, ".Default") {
+            isResArrayContains(requireStyleValuesResId(DEFAULT_LAYOUT), it)
+        }
+
+        putStringOptional(PREF_CONTENT_COLORS, "") {
+            isResArrayContains(getColorsValuesResId(DEFAULT_LAYOUT), it)
+        }
+
         putStringSetResourceOptional(
             PREF_TICK_RULES,
             setOf(TICK_ACTIVE),
@@ -121,25 +135,6 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             R.array.content_float_speed_values
         )
 
-        putStringOptional(
-            PREF_CONTENT_LAYOUT,
-            ensureResArrayContains(
-                R.array.content_layout_values,
-                getResName(R.layout.view_digital_default)
-            ),
-            isOldValueValid = { oldLayoutName ->
-                if (isResArrayContains(R.array.content_layout_values, oldLayoutName)) {
-                    getLayoutStyles(oldLayoutName).contains(getString(PREF_CONTENT_STYLE, null))
-                } else
-                    false
-            },
-            onPut = { newLayoutName ->
-                getLayoutStyles(newLayoutName!!).apply {
-                    putString(PREF_CONTENT_STYLE, get(0))
-                }
-            }
-        )
-
         putStringResourceOptional(
             PREF_TICK_SOUND,
             getResName(R.raw.alarm_clock),
@@ -168,14 +163,16 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
     companion object {
 
         private const val SETTINGS_VERSION = 1
+        private const val DEFAULT_LAYOUT = R.layout.view_digital_default
+
         const val SHARED_PREFERENCES_NAME = "com.bopr.piclock_preferences"
+
+        val DEFAULT_DATE_FORMAT: DateFormat = DateFormat.getDateInstance(FULL)
 
         const val SYSTEM_DEFAULT = "system_default"
         const val TICK_ACTIVE = "active"
         const val TICK_INACTIVE = "inactive"
         const val TICK_FLOATING = "floating"
-
-        val DEFAULT_DATE_FORMAT: DateFormat = DateFormat.getDateInstance(FULL)
 
         const val PREF_SETTINGS_VERSION = "settings_version" /* internal */
         const val PREF_TOP_SETTING = "top_setting" /* internal */
@@ -188,6 +185,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         const val PREF_CONTENT_LAYOUT = "content_layout"
         const val PREF_CONTENT_SCALE = "content_scale"
         const val PREF_CONTENT_STYLE = "content_style"
+        const val PREF_CONTENT_COLORS = "content_colors"
         const val PREF_DATE_FORMAT = "date_format"
         const val PREF_DIGITS_ANIMATION = "digits_animation"
         const val PREF_DIGITS_SPLIT_ANIMATION = "digits_split_animation"

@@ -24,6 +24,7 @@
         <attr name="contentSecondsSeparatorPaddingTop" format="dimension" />
         <attr name="contentSecondsTextSize" format="dimension" />
         <attr name="contentSecondsWidth" format="dimension" />
+        <attr name="contentSecondsForeground" format="color" />
         <attr name="contentForeground" format="color" />
         <attr name="contentWidth" format="dimension" />
     </declare-styleable>

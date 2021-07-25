@@ -16,6 +16,12 @@
             <!-- entries for 'content_style' are built dynamically -->
         </ListPreference>
 
+        <ListPreference
+            android:key="content_colors"
+            android:title="@string/colors">
+            <!-- entries for 'content_colors' are built dynamically -->
+        </ListPreference>
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/formats">

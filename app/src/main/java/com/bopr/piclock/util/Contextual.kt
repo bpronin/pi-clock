@@ -15,11 +15,12 @@ interface Contextual {
 
 }
 
-val Context.contextual: Contextual
+val Context.asContextual: Contextual
     get() {
         return object : Contextual {
+
             override fun requireContext(): Context {
-                return this@contextual
+                return this@asContextual
             }
         }
     }

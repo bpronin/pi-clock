@@ -1,6 +1,7 @@
 package com.bopr.piclock.util
 
 import androidx.annotation.*
+import com.bopr.piclock.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,7 +34,7 @@ fun defaultDatetimeFormat(pattern: String) = SimpleDateFormat(pattern, Locale.ge
  */
 private fun Contextual.getResId(defType: String, resName: String): Int {
     if (resName.indexOf("/") != -1) {
-        throw IllegalArgumentException("Resource name must NOT be fully qualified")
+        throw Error("Resource name must NOT be fully qualified")
     }
     return requireContext().run {
         resources.getIdentifier(resName, defType, packageName)
@@ -45,7 +46,7 @@ private fun Contextual.getResId(defType: String, resName: String): Int {
  */
 private fun Contextual.requireResId(defType: String, resName: String): Int {
     return getResId(defType, resName).also {
-        if (it == 0) throw IllegalArgumentException("Resource does not exist: $defType/$resName")
+        if (it == 0) throw Error("Resource does not exist: $defType/$resName")
     }
 }
 
@@ -60,6 +61,9 @@ fun Contextual.requireLayoutResId(resName: String) = requireResId("layout", resN
 
 @StyleRes
 fun Contextual.requireStyleResId(resName: String) = requireResId("style", resName)
+
+@ArrayRes
+fun Contextual.getArrayResId(resName: String) = getResId("array", resName)
 
 @ArrayRes
 fun Contextual.requireArrayResId(resName: String) = requireResId("array", resName)
@@ -121,19 +125,51 @@ fun Contextual.getStringArray(@ArrayRes resId: Int): Array<out String> {
 }
 
 @ArrayRes
-fun Contextual.getStyleValuesResId(@LayoutRes layoutResId: Int): Int {
+fun Contextual.requireStyleValuesResId(@LayoutRes layoutResId: Int): Int {
     return requireArrayResId(getResName(layoutResId) + "_style_values")
     //todo: get rid of it. it can fail at runtime. need some sort of hard references
 }
 
 @ArrayRes
-fun Contextual.getStyleTitlesResId(@LayoutRes layoutResId: Int): Int {
+fun Contextual.requireStyleTitlesResId(@LayoutRes layoutResId: Int): Int {
     return requireArrayResId(getResName(layoutResId) + "_style_titles")
     //todo: get rid of it. it can fail at runtime. need some sort of hard references
 }
 
-fun Contextual.getLayoutStyles(layoutName: String): Array<out String> {
-    return getStringArray(getStyleValuesResId(requireLayoutResId(layoutName)))
+@ArrayRes
+fun Contextual.getColorsValuesResId(@LayoutRes layoutResId: Int): Int {
+    return getArrayResId(getResName(layoutResId) + "_colors_values")
+}
+
+@ArrayRes
+fun Contextual.getColorsTitlesResId(@LayoutRes layoutResId: Int): Int {
+    return getArrayResId(getResName(layoutResId) + "_colors_titles")
+}
+
+//fun Contextual.requireLayoutStyles(layoutName: String): Array<out String> {
+//    return getStringArray(requireStyleValuesResId(requireLayoutResId(layoutName)))
+//}
+
+
+fun Contextual.checkLayoutsResources() {
+    val layoutNames = getStringArray(R.array.content_layout_values)
+    getStringArray(R.array.content_layout_styles).forEachIndexed { index, stylePrefix ->
+        val layoutResId = requireLayoutResId(layoutNames[index])
+        val styles = getStringArray(requireStyleValuesResId(layoutResId))
+        val colorsId = getColorsValuesResId(layoutResId)
+        if (colorsId != 0) {
+            val colors = getStringArray(colorsId)
+            styles.forEach { style ->
+                colors.forEach { color ->
+                    requireStyleResId(stylePrefix + style + color)
+                }
+            }
+        } else {
+            styles.forEach { style ->
+                requireStyleResId(stylePrefix + style)
+            }
+        }
+    }
 }
 
 

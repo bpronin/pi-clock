@@ -2,6 +2,8 @@ package com.bopr.piclock
 
 import android.content.Intent
 import android.os.Bundle
+import com.bopr.piclock.util.asContextual
+import com.bopr.piclock.util.checkLayoutsResources
 import com.bopr.piclock.util.sha512
 import com.bopr.piclock.util.ui.BaseActivity
 
@@ -24,6 +26,7 @@ class MainActivity : BaseActivity<MainFragment>(::MainFragment) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        asContextual.checkLayoutsResources()
         handleDebugIntent()
         settings.validate()
     }

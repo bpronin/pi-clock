@@ -18,6 +18,7 @@ import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_HAND_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_HAND_MOVE_SMOOTH
+import com.bopr.piclock.Settings.Companion.PREF_CONTENT_COLORS
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_FLOAT_INTERVAL
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_LAYOUT
 import com.bopr.piclock.Settings.Companion.PREF_CONTENT_SCALE
@@ -101,6 +102,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             PREF_CONTENT_FLOAT_INTERVAL -> updateFloatIntervalView()
             PREF_CONTENT_SCALE -> updateScaleView()
             PREF_CONTENT_STYLE -> updateStyleView()
+            PREF_CONTENT_COLORS -> updateColorsView()
             PREF_DATE_FORMAT -> updateDateFormatView()
             PREF_DIGITS_ANIMATION -> updateDigitsAnimationView()
             PREF_DIGITS_SPLIT_ANIMATION -> updateDigitsSplitAnimationView()
@@ -238,14 +240,44 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
     private fun updateStyleView() {
         requirePreference<ListPreference>(PREF_CONTENT_STYLE).apply {
             val layoutResId = requireLayoutResId(settings.getString(PREF_CONTENT_LAYOUT))
-            setEntryValues(getStyleValuesResId(layoutResId))
-            setEntries(getStyleTitlesResId(layoutResId))
+            setEntryValues(requireStyleValuesResId(layoutResId))
+            setEntries(requireStyleTitlesResId(layoutResId))
 
             val settingValue = settings.getString(key)
             val valueIndex = findIndexOfValue(settingValue)
             if (valueIndex == -1) {
                 /* this will trigger updateStyleView again */
                 settings.update { putString(PREF_CONTENT_STYLE, entryValues[0].toString()) }
+                return
+            }
+
+            value = settingValue
+            summary = entries[valueIndex]
+            isEnabled = entryValues.size > 1
+        }
+    }
+
+    private fun updateColorsView() {
+        requirePreference<ListPreference>(PREF_CONTENT_COLORS).apply {
+            val layoutResId = requireLayoutResId(settings.getString(PREF_CONTENT_LAYOUT))
+            val valuesResId = getColorsValuesResId(layoutResId)
+            val titlesResId = getColorsTitlesResId(layoutResId)
+
+            if (valuesResId != 0) {
+                setEntryValues(valuesResId)
+                setEntries(titlesResId)
+                isVisible = true
+            } else {
+                entryValues = arrayOf("")
+                entries = arrayOf("none")
+                isVisible = false
+            }
+
+            val settingValue = settings.getString(key)
+            val valueIndex = findIndexOfValue(settingValue)
+            if (valueIndex == -1) {
+                /* this will trigger updateColorView again */
+                settings.update { putString(PREF_CONTENT_COLORS, entryValues[0].toString()) }
                 return
             }
 
