@@ -83,7 +83,7 @@
         android:paddingTop="?attr/contentSecondsPaddingTop"
         android:paddingBottom="?attr/contentSecondsPaddingBottom"
         android:text="44"
-        android:textColor="?attr/contentForeground"
+        android:textColor="?attr/contentSecondsForeground"
         android:textSize="?attr/contentSecondsTextSize"
         tools:ignore="HardcodedText" />
 

@@ -4,7 +4,9 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.widget.Toast
 import com.bopr.piclock.util.Contextual
+import com.bopr.piclock.util.JustForFun
 
+@JustForFun
 internal class EasterEgg(private val context: Context) : Contextual {
 
     private var clicksCount: Int = 0

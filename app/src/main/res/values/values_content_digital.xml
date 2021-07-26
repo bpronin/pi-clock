@@ -69,6 +69,18 @@
         <item>@string/curly</item>
         <item>@string/typewriter</item>
     </string-array>
+    <string-array name="view_digital_vertical_default_colors_values">
+        <item />
+        <item>.BlueSeconds</item>
+        <item>.OrangeSeconds</item>
+        <item>.GreenSeconds</item>
+    </string-array>
+    <string-array name="view_digital_vertical_default_colors_titles">
+        <item>@string/monochrome</item>
+        <item>@string/blue_seconds</item>
+        <item>@string/orange_seconds</item>
+        <item>@string/green_seconds</item>
+    </string-array>
 
     <string-array name="view_digital_vertical_simple_style_values">
         <item>.Default</item>

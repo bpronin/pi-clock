@@ -136,29 +136,45 @@ fun <C : Collection<*>> Contextual.ensureResArrayContainsAll(
 }
 
 @ArrayRes
-fun Contextual.requireStyleValuesResId(@LayoutRes layoutResId: Int): Int {
-    return requireArrayResId(getResName(layoutResId) + "_style_values")
-}
+fun Contextual.getStyleValuesResId(@LayoutRes layoutResId: Int): Int =
+    getArrayResId(getResName(layoutResId) + "_style_values")
 
 @ArrayRes
-fun Contextual.requireStyleTitlesResId(@LayoutRes layoutResId: Int): Int {
-    return requireArrayResId(getResName(layoutResId) + "_style_titles")
-}
+fun Contextual.requireStyleValuesResId(@LayoutRes layoutResId: Int): Int =
+    requireArrayResId(getResName(layoutResId) + "_style_values")
 
 @ArrayRes
-fun Contextual.getColorsValuesResId(@LayoutRes layoutResId: Int): Int {
-    return getArrayResId(getResName(layoutResId) + "_colors_values")
-}
+fun Contextual.requireStyleTitlesResId(@LayoutRes layoutResId: Int): Int =
+    requireArrayResId(getResName(layoutResId) + "_style_titles")
 
 @ArrayRes
-fun Contextual.getColorsTitlesResId(@LayoutRes layoutResId: Int): Int {
-    return getArrayResId(getResName(layoutResId) + "_colors_titles")
-}
+fun Contextual.getColorsValuesResId(@LayoutRes layoutResId: Int): Int =
+    getArrayResId(getResName(layoutResId) + "_colors_values")
+
+@ArrayRes
+fun Contextual.getColorsTitlesResId(@LayoutRes layoutResId: Int): Int =
+    getArrayResId(getResName(layoutResId) + "_colors_titles")
 
 fun Contextual.getLayoutStyleName(layoutName: String, style: String, color: String): String {
-    val layoutIndex = requireResArray(R.array.content_layout_values).indexOf(layoutName)
-    val stylePrefix = requireResArray(R.array.content_layout_styles)[layoutIndex]
-    return stylePrefix + style + color
+    val layoutPrefix = requireResArray(R.array.content_layout_styles)[
+            requireResArray(R.array.content_layout_values).indexOf(layoutName)
+    ]
+
+    val layoutResId = requireLayoutResId(layoutName)
+
+    val styleSuffix = getStyleValuesResId(layoutResId).let { stylesResId ->
+        if (stylesResId != 0) requireResArray(stylesResId).let { styles ->
+            if (styles.contains(style)) style else styles[0]
+        } else ""
+    }
+
+    val colorSuffix = getColorsValuesResId(layoutResId).let { colorsResId ->
+        if (colorsResId != 0) requireResArray(colorsResId).let { colors ->
+            if (colors.contains(color)) color else colors[0]
+        } else ""
+    }
+
+    return layoutPrefix + styleSuffix + colorSuffix
 }
 
 ///**
