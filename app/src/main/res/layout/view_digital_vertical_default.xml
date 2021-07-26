@@ -76,7 +76,7 @@
 
     <com.bopr.piclock.util.ui.SplitAnimatedTextView
         android:id="@+id/seconds_view"
-        android:layout_width="wrap_content"
+        android:layout_width="?attr/contentSecondsWidth"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="?attr/contentFont"
