@@ -102,7 +102,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
         putStringOptional(
             PREF_CONTENT_COLORS,
-            requireResArray(getColorsValuesResId(DEFAULT_LAYOUT))[0]
+            requireResArray(getColorsValuesResId(DEFAULT_LAYOUT))[3]
         ) {
             isResArrayContains(getColorsValuesResId(DEFAULT_LAYOUT), it)
                     && getStyleResId(contentLayoutStyleName) != 0
