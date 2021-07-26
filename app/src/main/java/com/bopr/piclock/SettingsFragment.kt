@@ -44,7 +44,6 @@ import com.bopr.piclock.Settings.Companion.SHARED_PREFERENCES_NAME
 import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.*
 import com.bopr.piclock.util.ui.preference.CustomPreferenceFragment
-import com.bopr.piclock.util.ui.preference.IntListPreference
 import java.text.DateFormatSymbols
 import java.util.*
 
@@ -133,8 +132,9 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         }
     }
 
-    private fun isLayoutOfType(type: ContentLayoutType) =
-        layoutTypeOf(settings.getString(PREF_CONTENT_LAYOUT)) == type
+    private fun isLayoutOfType(type: ContentLayoutType): Boolean {
+        return layoutTypeOf(requireResId(settings.getString(PREF_CONTENT_LAYOUT))) == type
+    }
 
     private fun updatePreferenceVisibility(preference: Preference, visible: Boolean) {
         preference.isVisible = visible
@@ -175,7 +175,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
     }
 
     private fun updateFloatSpeedView() {
-        requirePreference<IntListPreference>(PREF_FLOAT_SPEED).apply {
+        requirePreference<ListPreference>(PREF_FLOAT_SPEED).apply {
             val value = settings.getInt(key)
             val ix = findIndexOfValue(value.toString())
             summary = if (ix >= 0) entries[ix] else null
@@ -239,7 +239,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     private fun updateStyleView() {
         requirePreference<ListPreference>(PREF_CONTENT_STYLE).apply {
-            val layoutResId = requireLayoutResId(settings.getString(PREF_CONTENT_LAYOUT))
+            val layoutResId = requireResId(settings.getString(PREF_CONTENT_LAYOUT))
             setEntryValues(requireStyleValuesResId(layoutResId))
             setEntries(requireStyleTitlesResId(layoutResId))
 
@@ -259,7 +259,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     private fun updateColorsView() {
         requirePreference<ListPreference>(PREF_CONTENT_COLORS).apply {
-            val layoutResId = requireLayoutResId(settings.getString(PREF_CONTENT_LAYOUT))
+            val layoutResId = requireResId(settings.getString(PREF_CONTENT_LAYOUT))
             val valuesResId = getColorsValuesResId(layoutResId)
             val titlesResId = getColorsTitlesResId(layoutResId)
 

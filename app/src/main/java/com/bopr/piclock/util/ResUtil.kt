@@ -8,8 +8,6 @@ import java.util.*
 import java.util.Calendar.DAY_OF_WEEK
 
 private const val RAW = "raw"
-private const val ANIMATOR = "animator"
-private const val LAYOUT = "layout"
 private const val STYLE = "style"
 private const val ARRAY = "array"
 
@@ -96,7 +94,7 @@ private fun Contextual.requireResId(resType: String, resName: String): Int {
 /**
  * Returns ID of resource by its long name or throws an exception when resource does not exist.
  */
-private fun Contextual.requireResId(resName: String): Int {
+fun Contextual.requireResId(resName: String): Int {
     return getResId(resName).also {
         if (it == 0) throw Error("Resource does not exist: $resName")
     }
@@ -118,12 +116,6 @@ fun Contextual.requireTypedResArray(@ArrayRes resId: Int): Array<String?> {
 
 @RawRes
 fun Contextual.requireRawResId(resName: String) = requireResId(RAW, resName)
-
-@AnimatorRes
-fun Contextual.requireAnimatorResId(resName: String) = requireResId(resName)
-
-@LayoutRes
-fun Contextual.requireLayoutResId(resName: String) = requireResId(LAYOUT, resName)
 
 @StyleRes
 fun Contextual.getStyleResId(resName: String) = getResId(STYLE, resName)
@@ -222,12 +214,15 @@ fun Contextual.getColorsValuesResId(@LayoutRes layoutResId: Int): Int =
 fun Contextual.getColorsTitlesResId(@LayoutRes layoutResId: Int): Int =
     getArrayResId(getResShortName(layoutResId) + "_colors_titles")
 
-fun Contextual.getLayoutStyleName(layoutName: String, style: String, color: String): String {
-    val layoutPrefix = requireResArray(R.array.content_layout_styles)[
-            requireResArray(R.array.content_layout_values).indexOf(layoutName)
-    ]
+fun Contextual.getLayoutStyleName(layoutResName: String, style: String, color: String): String {
+    val layoutPrefix = requireTypedResArray(R.array.content_layout_values).run {
+        val layoutIndex = indexOf(layoutResName)
+        if (layoutIndex != -1)
+            requireResArray(R.array.content_layout_styles)[layoutIndex]
+        else ""
+    }
 
-    val layoutResId = requireLayoutResId(layoutName)
+    val layoutResId = requireResId(layoutResName)
 
     val styleSuffix = getStyleValuesResId(layoutResId).let { stylesResId ->
         if (stylesResId != 0) requireResArray(stylesResId).let { styles ->

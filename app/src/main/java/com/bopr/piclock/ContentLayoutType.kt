@@ -1,17 +1,31 @@
 package com.bopr.piclock
 
-enum class ContentLayoutType(internal val prefix: String) {
+enum class ContentLayoutType(private val resIds: Set<Int>) {
 
-    DIGITAL("view_digital"),
-    ANALOG_TEXT_DATE("view_analog_text_date"),
-    ANALOG_BARS_DATE("view_analog_bars_date");
+    DIGITAL(
+        setOf(
+            R.layout.view_digital_default,
+            R.layout.view_digital_simple,
+            R.layout.view_digital_vertical_default,
+            R.layout.view_digital_vertical_simple,
+        )
+    ),
+    ANALOG_TEXT_DATE(
+        setOf(
+            R.layout.view_analog_text_date_min
+        )
+    ),
+    ANALOG_BARS_DATE(
+        setOf(
+            R.layout.view_analog_bars_date_min
+        )
+    );
 
     companion object {
 
-        fun layoutTypeOf(name: String): ContentLayoutType {
-            return values().find { name.startsWith(it.prefix) }
-                ?: throw IllegalArgumentException("Invalid layout name: $name")
-        }
+        fun layoutTypeOf(resId: Int): ContentLayoutType =
+            values().find { it.resIds.contains(resId) }
+                ?: throw IllegalArgumentException("Unregistered layout resource: $resId")
     }
 }
 

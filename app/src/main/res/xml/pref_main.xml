@@ -4,7 +4,7 @@
 
     <PreferenceCategory android:title="@string/appearance">
 
-        <ListPreference
+        <com.bopr.piclock.util.ui.preference.ResListPreference
             android:entries="@array/content_layout_titles"
             android:entryValues="@array/content_layout_values"
             android:key="content_layout"
@@ -77,8 +77,7 @@
 
         </PreferenceCategory>
 
-        <PreferenceCategory
-            android:title="@string/hands">
+        <PreferenceCategory android:title="@string/hands">
 
             <SwitchPreferenceCompat
                 android:key="second_hand_visible"

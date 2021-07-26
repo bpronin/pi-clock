@@ -3,14 +3,14 @@
 
     <string name="developer_sha" translatable="false">637a049c399e085c699e1938d09e2ccfdf08071a66f9ef848edb06fbb751ad02da700f91cd0a8113820a32e98ff04dbb0ec5526c41385548081637392bb37ffd</string>
 
-    <string-array name="content_layout_values">
-        <item>view_digital_default</item>
-        <item>view_digital_simple</item>
-        <item>view_digital_vertical_default</item>
-        <item>view_digital_vertical_simple</item>
-        <item>view_analog_text_date_min</item>
-        <item>view_analog_bars_date_min</item>
-    </string-array>
+    <array name="content_layout_values">
+        <item>@layout/view_digital_default</item>
+        <item>@layout/view_digital_simple</item>
+        <item>@layout/view_digital_vertical_default</item>
+        <item>@layout/view_digital_vertical_simple</item>
+        <item>@layout/view_analog_text_date_min</item>
+        <item>@layout/view_analog_bars_date_min</item>
+    </array>
     <string-array name="content_layout_titles">
         <item>@string/digital_horizontal_small_seconds</item>
         <item>@string/digital_horizontal_big_seconds</item>

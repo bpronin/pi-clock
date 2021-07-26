@@ -260,7 +260,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
     private fun createContentControl() {
         val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
-        val layoutResId = requireLayoutResId(layoutName)
+        val layoutResId = requireResId(layoutName)
         val styleResId = requireStyleResId(settings.contentLayoutStyleName)
 
         if (layoutResId == currentLayoutResId && styleResId == currentStyleResId) return
@@ -278,7 +278,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         }
 
         contentControl.setControl(
-            when (layoutTypeOf(layoutName)) {
+            when (layoutTypeOf(layoutResId)) {
                 DIGITAL -> DigitalClockControl(contentView, settings)
                 ANALOG_TEXT_DATE -> AnalogClockTextDateControl(contentView, settings)
                 ANALOG_BARS_DATE -> AnalogClockBarsDateControl(contentView, settings)

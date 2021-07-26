@@ -63,12 +63,13 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
     private fun EditorWrapper.putTypedResOptional(
         key: String,
         valueRes: Int,
-        valuesRes: Int
+        valuesRes: Int,
+        isOldValueValid: (oldValue: String) -> Boolean = { true }
     ) {
         putStringOptional(
             key, ensureTypedResArrayContains(valuesRes, requireResName(valueRes))
         ) {
-            isTypedResArrayContains(valuesRes, it)
+            isTypedResArrayContains(valuesRes, it) && isOldValueValid(it)
         }
     }
 
@@ -99,9 +100,12 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         putIntOptional(PREF_CONTENT_SCALE, 100) { it in MIN_SCALE..MAX_SCALE }
         putIntOptional(PREF_MUTED_BRIGHTNESS, 30) { it in MIN_BRIGHTNESS..MAX_BRIGHTNESS }
 
-        putStringOptional(PREF_CONTENT_LAYOUT, getResShortName(DEFAULT_LAYOUT)) {
-            isResArrayContains(R.array.content_layout_values, it)
-                    && getStyleResId(contentLayoutStyleName) != 0
+        putTypedResOptional(
+            PREF_CONTENT_LAYOUT,
+            DEFAULT_LAYOUT,
+            R.array.content_layout_values
+        ) {
+            getStyleResId(contentLayoutStyleName) != 0
         }
 
         putStringOptional(
