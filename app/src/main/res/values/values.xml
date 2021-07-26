@@ -78,13 +78,13 @@
         <item />
     </string-array>
 
-    <string-array name="tick_sound_values">
-        <item>alarm_clock</item>
-        <item>clock_tick_tick</item>
-        <item>mantle_clock</item>
-        <item>wooden_wall_clock</item>
-        <item>wrist_watch</item>
-    </string-array>
+    <array name="tick_sound_values">
+        <item>@raw/alarm_clock</item>
+        <item>@raw/clock_tick_tick</item>
+        <item>@raw/mantle_clock</item>
+        <item>@raw/wooden_wall_clock</item>
+        <item>@raw/wrist_watch</item>
+    </array>
     <string-array name="tick_sound_titles">
         <item>@string/alarm_clock</item>
         <item>@string/tick_tick</item>

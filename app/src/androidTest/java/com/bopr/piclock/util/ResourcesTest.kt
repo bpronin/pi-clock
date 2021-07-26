@@ -16,11 +16,11 @@ internal class ResourcesTest : Contextual {
 
     private fun assertResArraysSizeEqual(@ArrayRes vararg arrayResIds: Int) {
         val firstResId = arrayResIds[0]
-        requireResArray(firstResId).apply {
+        requireStringArray(firstResId).apply {
             for (arrayResId in arrayResIds) {
                 assertEquals(
                     "[${getResShortName(firstResId)}] and [${getResShortName(arrayResId)}] sizes do not match ",
-                    size, requireResArray(arrayResId).size
+                    size, requireStringArray(arrayResId).size
                 )
             }
         }
@@ -85,19 +85,19 @@ internal class ResourcesTest : Contextual {
      */
     @Test
     fun testArraysContent() {
-        requireResArray(R.array.content_layout_values).forEach {
+        requireStringArray(R.array.content_layout_values).forEach {
             requireLayoutResId(it)
         }
-        requireResArray(R.array.tick_sound_values).forEach {
+        requireStringArray(R.array.tick_sound_values).forEach {
             if (it.isNotEmpty()) requireRawResId(it)
         }
-        requireResArray(R.array.digits_animation_values).forEach {
+        requireStringArray(R.array.digits_animation_values).forEach {
             if (it.isNotEmpty()) requireAnimatorResId(it)
         }
-        requireResArray(R.array.float_animation_values).forEach {
+        requireStringArray(R.array.float_animation_values).forEach {
             if (it.isNotEmpty()) requireAnimatorResId(it)
         }
-        requireResArray(R.array.clock_hand_animation_values).forEach {
+        requireStringArray(R.array.clock_hand_animation_values).forEach {
             if (it.isNotEmpty()) requireAnimatorResId(it)
         }
     }
@@ -107,13 +107,13 @@ internal class ResourcesTest : Contextual {
      */
     @Test
     fun testLayoutStyles() {
-        requireResArray(R.array.content_layout_styles).forEachIndexed { index, stylePrefix ->
+        requireStringArray(R.array.content_layout_styles).forEachIndexed { index, stylePrefix ->
             val layoutResId =
-                requireLayoutResId(requireResArray(R.array.content_layout_values)[index])
-            val styles = requireResArray(requireStyleValuesResId(layoutResId))
+                requireLayoutResId(requireStringArray(R.array.content_layout_values)[index])
+            val styles = requireStringArray(requireStyleValuesResId(layoutResId))
             val colorsId = getColorsValuesResId(layoutResId)
             if (colorsId != 0) {
-                val colors = requireResArray(colorsId)
+                val colors = requireStringArray(colorsId)
                 styles.forEach { style ->
                     colors.forEach { color ->
                         requireStyleResId(stylePrefix + style + color)

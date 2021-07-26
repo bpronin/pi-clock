@@ -34,17 +34,17 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
     private fun EditorWrapper.putIntResOptional(key: String, value: Int, valuesRes: Int) {
         putIntOptional(
-            key, ensureResArrayContains(valuesRes, value)
+            key, ensureStringArrayContains(valuesRes, value)
         ) {
-            isResArrayContains(valuesRes, it)
+            isStringArrayContains(valuesRes, it)
         }
     }
 
     private fun EditorWrapper.putLongResOptional(key: String, value: Long, valuesRes: Int) {
         putLongOptional(
-            key, ensureResArrayContains(valuesRes, value)
+            key, ensureStringArrayContains(valuesRes, value)
         ) {
-            isResArrayContains(valuesRes, it)
+            isStringArrayContains(valuesRes, it)
         }
     }
 
@@ -54,9 +54,9 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         valuesRes: Int
     ) {
         putStringOptional(
-            key, ensureResArrayContains(valuesRes, value)
+            key, ensureStringArrayContains(valuesRes, value)
         ) {
-            isResArrayContains(valuesRes, it)
+            isStringArrayContains(valuesRes, it)
         }
     }
 
@@ -69,7 +69,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         putStringOptional(
             key, ensureTypedResArrayContains(valuesRes, requireResName(valueRes))
         ) {
-            isTypedResArrayContains(valuesRes, it) && isOldValueValid(it)
+            isTypedArrayContains(valuesRes, it) && isOldValueValid(it)
         }
     }
 
@@ -110,17 +110,17 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
         putStringOptional(
             PREF_CONTENT_STYLE,
-            requireResArray(requireStyleValuesResId(DEFAULT_LAYOUT))[0]
+            requireStringArray(requireStyleValuesResId(DEFAULT_LAYOUT))[0]
         ) {
-            isResArrayContains(requireStyleValuesResId(DEFAULT_LAYOUT), it)
+            isStringArrayContains(requireStyleValuesResId(DEFAULT_LAYOUT), it)
                     && getStyleResId(contentLayoutStyleName) != 0
         }
 
         putStringOptional(
             PREF_CONTENT_COLORS,
-            requireResArray(getColorsValuesResId(DEFAULT_LAYOUT))[3]
+            requireStringArray(getColorsValuesResId(DEFAULT_LAYOUT))[3]
         ) {
-            isResArrayContains(getColorsValuesResId(DEFAULT_LAYOUT), it)
+            isStringArrayContains(getColorsValuesResId(DEFAULT_LAYOUT), it)
                     && getStyleResId(contentLayoutStyleName) != 0
         }
 
@@ -132,13 +132,13 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
         putStringResOptional(
             PREF_HOURS_MINUTES_FORMAT,
-            requireResArray(R.array.hours_minutes_format_values)[if (localeIs24Hour) 0 else 2],
+            requireStringArray(R.array.hours_minutes_format_values)[if (localeIs24Hour) 0 else 2],
             R.array.hours_minutes_format_values
         )
 
         putStringResOptional(
             PREF_SECONDS_FORMAT,
-            requireResArray(R.array.seconds_format_values)[0],
+            requireStringArray(R.array.seconds_format_values)[0],
             R.array.seconds_format_values
         )
 
@@ -150,25 +150,25 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
         putLongResOptional(
             PREF_AUTO_INACTIVATE_DELAY,
-            requireResArray(R.array.auto_inactivate_delay_values)[1].toLong(),
+            requireStringArray(R.array.auto_inactivate_delay_values)[1].toLong(),
             R.array.auto_inactivate_delay_values
         )
 
         putLongResOptional(
             PREF_CONTENT_FLOAT_INTERVAL,
-            requireResArray(R.array.content_float_interval_values)[3].toLong(),
+            requireStringArray(R.array.content_float_interval_values)[3].toLong(),
             R.array.content_float_interval_values
         )
 
         putIntResOptional(
             PREF_FLOAT_SPEED,
-            requireResArray(R.array.content_float_speed_values)[3].toInt(),
+            requireStringArray(R.array.content_float_speed_values)[3].toInt(),
             R.array.content_float_speed_values
         )
 
-        putStringResOptional(
+        putTypedResOptional(
             PREF_TICK_SOUND,
-            getResShortName(R.raw.alarm_clock),
+            R.raw.alarm_clock,
             R.array.tick_sound_values
         )
 

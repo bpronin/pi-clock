@@ -8,7 +8,7 @@ import android.view.animation.LinearInterpolator
 import androidx.core.animation.doOnEnd
 import com.bopr.piclock.util.Contextual
 import com.bopr.piclock.util.property.PROP_VOLUME
-import com.bopr.piclock.util.requireRawResId
+import com.bopr.piclock.util.requireResId
 
 /**
  * Plays tick sounds.
@@ -23,8 +23,7 @@ internal class TickPlayer(private val context: Context) : Contextual {
         }
     }
 
-    private lateinit var sourceName: String
-
+    private var sourceName: String? =null
     private var player: MediaPlayer? = null
 
     var fadingVolume = false
@@ -36,8 +35,8 @@ internal class TickPlayer(private val context: Context) : Contextual {
 
     private fun prepare() {
         if (player == null) {
-            if (sourceName.isNotEmpty()) {
-                player = MediaPlayer.create(context, requireRawResId(sourceName))
+            if (!sourceName.isNullOrEmpty()) {
+                player = MediaPlayer.create(context, requireResId(sourceName!!))
 
                 Log.d(TAG, "Prepared")
             } else {
@@ -48,7 +47,7 @@ internal class TickPlayer(private val context: Context) : Contextual {
         }
     }
 
-    fun setSource(name: String) {
+    fun setSource(name: String?) {
         stop()
         sourceName = name
     }

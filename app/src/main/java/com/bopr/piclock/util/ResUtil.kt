@@ -1,13 +1,15 @@
 package com.bopr.piclock.util
 
-import androidx.annotation.*
+import androidx.annotation.AnyRes
+import androidx.annotation.ArrayRes
+import androidx.annotation.LayoutRes
+import androidx.annotation.StyleRes
 import com.bopr.piclock.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.DAY_OF_WEEK
 
-private const val RAW = "raw"
 private const val STYLE = "style"
 private const val ARRAY = "array"
 
@@ -100,11 +102,11 @@ fun Contextual.requireResId(resName: String): Int {
     }
 }
 
-fun Contextual.requireResArray(@ArrayRes resId: Int): Array<String> {
+fun Contextual.requireStringArray(@ArrayRes resId: Int): Array<String> {
     return requireContext().resources.getStringArray(resId)
 }
 
-fun Contextual.requireTypedResArray(@ArrayRes resId: Int): Array<String?> {
+fun Contextual.requireTypedArray(@ArrayRes resId: Int): Array<String?> {
     return requireContext().resources.obtainTypedArray(resId).run {
         val array = Array(length()) {
             getResName(getResourceId(it, 0))
@@ -113,9 +115,6 @@ fun Contextual.requireTypedResArray(@ArrayRes resId: Int): Array<String?> {
         array
     }
 }
-
-@RawRes
-fun Contextual.requireRawResId(resName: String) = requireResId(RAW, resName)
 
 @StyleRes
 fun Contextual.getStyleResId(resName: String) = getResId(STYLE, resName)
@@ -132,12 +131,12 @@ fun Contextual.requireArrayResId(resName: String) = requireResId(ARRAY, resName)
 /**
  * Returns true if resource array contains specified value.
  */
-fun <T> Contextual.isResArrayContains(@ArrayRes arrayResId: Int, value: T): Boolean {
-    return requireResArray(arrayResId).contains(value.toString())
+fun <T> Contextual.isStringArrayContains(@ArrayRes arrayResId: Int, value: T): Boolean {
+    return requireStringArray(arrayResId).contains(value.toString())
 }
 
-fun Contextual.isTypedResArrayContains(@ArrayRes arrayResId: Int, resName: String): Boolean {
-    return requireTypedResArray(arrayResId).contains(resName)
+fun Contextual.isTypedArrayContains(@ArrayRes arrayResId: Int, resName: String): Boolean {
+    return requireTypedArray(arrayResId).contains(resName)
 }
 
 /**
@@ -147,7 +146,7 @@ fun <V, C : Collection<V>> Contextual.isResArrayContainsAll(
     @ArrayRes arrayResId: Int,
     values: C
 ): Boolean {
-    val array = requireResArray(arrayResId)
+    val array = requireStringArray(arrayResId)
     for (value in values) {
         if (!array.contains(value.toString())) {
             return false
@@ -159,8 +158,8 @@ fun <V, C : Collection<V>> Contextual.isResArrayContainsAll(
 /**
  * Throws an exception if resource array does not contain specified value.
  */
-fun <T> Contextual.ensureResArrayContains(@ArrayRes arrayResId: Int, value: T): T {
-    if (!isResArrayContains(arrayResId, value)) {
+fun <T> Contextual.ensureStringArrayContains(@ArrayRes arrayResId: Int, value: T): T {
+    if (!isStringArrayContains(arrayResId, value)) {
         throw Error("Resource array: ${getResShortName(arrayResId)} does not contain value: $value")
     } else {
         return value
@@ -171,7 +170,7 @@ fun Contextual.ensureTypedResArrayContains(
     @ArrayRes arrayResId: Int,
     resName: String
 ): String {
-    if (!isTypedResArrayContains(arrayResId, resName)) {
+    if (!isTypedArrayContains(arrayResId, resName)) {
         throw Error(
             "Resource array: ${getResName(arrayResId)} does not contain value: $resName"
         )
@@ -215,23 +214,23 @@ fun Contextual.getColorsTitlesResId(@LayoutRes layoutResId: Int): Int =
     getArrayResId(getResShortName(layoutResId) + "_colors_titles")
 
 fun Contextual.getLayoutStyleName(layoutResName: String, style: String, color: String): String {
-    val layoutPrefix = requireTypedResArray(R.array.content_layout_values).run {
+    val layoutPrefix = requireTypedArray(R.array.content_layout_values).run {
         val layoutIndex = indexOf(layoutResName)
         if (layoutIndex != -1)
-            requireResArray(R.array.content_layout_styles)[layoutIndex]
+            requireStringArray(R.array.content_layout_styles)[layoutIndex]
         else ""
     }
 
     val layoutResId = requireResId(layoutResName)
 
     val styleSuffix = getStyleValuesResId(layoutResId).let { stylesResId ->
-        if (stylesResId != 0) requireResArray(stylesResId).let { styles ->
+        if (stylesResId != 0) requireStringArray(stylesResId).let { styles ->
             if (styles.contains(style)) style else styles[0]
         } else ""
     }
 
     val colorSuffix = getColorsValuesResId(layoutResId).let { colorsResId ->
-        if (colorsResId != 0) requireResArray(colorsResId).let { colors ->
+        if (colorsResId != 0) requireStringArray(colorsResId).let { colors ->
             if (colors.contains(color)) color else colors[0]
         } else ""
     }

@@ -9,10 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
-import com.bopr.piclock.util.Contextual
-import com.bopr.piclock.util.HandlerTimer
-import com.bopr.piclock.util.SECOND_DURATION
-import com.bopr.piclock.util.requireResArray
+import com.bopr.piclock.util.*
 
 /**
  * Fragment to browse sounds with preview.
@@ -21,15 +18,15 @@ import com.bopr.piclock.util.requireResArray
  */
 class BrowseSoundFragment : Fragment(), Contextual {
 
-    private val itemValues by lazy { requireResArray(R.array.tick_sound_values) }
-    private val itemNames by lazy { requireResArray(R.array.tick_sound_titles) }
+    private val itemValues by lazy { requireTypedArray(R.array.tick_sound_values) }
+    private val itemNames by lazy { requireStringArray(R.array.tick_sound_titles) }
     private val settings: Settings by lazy { Settings(this) }
     private val timer by lazy { HandlerTimer(SECOND_DURATION, ::onTimer) }
     private val player by lazy { TickPlayer(requireContext()) }
     private var repeatsCounter = 0
 
     private lateinit var recycler: RecyclerView
-    private lateinit var selectedItem: String
+    private var selectedItem: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
