@@ -126,18 +126,18 @@ internal class DigitalClockControl(view: View, settings: Settings) :
     }
 
     private fun updateDigitsAnimation() {
-        val animationName = settings.getString(PREF_DIGITS_ANIMATION)
-        if (animationName.isNotEmpty()) {
-            val resId = requireAnimatorResId(animationName)
-            hoursView.setTextAnimator(resId)
-            minutesView.setTextAnimator(resId)
-            secondsView.setTextAnimator(resId)
+        val animatorName = settings.getString(PREF_DIGITS_ANIMATION)
+        if (animatorName.isNotEmpty()) {
+            val resId = requireAnimatorResId(animatorName)
+            hoursView.setTextAnimators(resId)
+            minutesView.setTextAnimators(resId)
+            secondsView.setTextAnimators(resId)
             dateView.setTextAnimator(resId)
         } else{
-            hoursView.setTextAnimator(null)
-            minutesView.setTextAnimator(null)
-            secondsView.setTextAnimator(null)
-            dateView.setTextAnimator(null)
+            hoursView.setTextAnimators(0)
+            minutesView.setTextAnimators(0)
+            secondsView.setTextAnimators(0)
+            dateView.setTextAnimator(0)
         }
     }
 

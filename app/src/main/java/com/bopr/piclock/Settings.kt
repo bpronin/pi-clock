@@ -60,6 +60,18 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         }
     }
 
+    private fun EditorWrapper.putTypedResOptional(
+        key: String,
+        valueRes: Int,
+        valuesRes: Int
+    ) {
+        putStringOptional(
+            key, ensureTypedResArrayContains(valuesRes, requireResName(valueRes))
+        ) {
+            isTypedResArrayContains(valuesRes, it)
+        }
+    }
+
     private fun EditorWrapper.putStringSetResOptional(
         key: String,
         value: Set<String>,
@@ -87,7 +99,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         putIntOptional(PREF_CONTENT_SCALE, 100) { it in MIN_SCALE..MAX_SCALE }
         putIntOptional(PREF_MUTED_BRIGHTNESS, 30) { it in MIN_BRIGHTNESS..MAX_BRIGHTNESS }
 
-        putStringOptional(PREF_CONTENT_LAYOUT, getResName(DEFAULT_LAYOUT)) {
+        putStringOptional(PREF_CONTENT_LAYOUT, getResShortName(DEFAULT_LAYOUT)) {
             isResArrayContains(R.array.content_layout_values, it)
                     && getStyleResId(contentLayoutStyleName) != 0
         }
@@ -152,25 +164,25 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
         putStringResOptional(
             PREF_TICK_SOUND,
-            getResName(R.raw.alarm_clock),
+            getResShortName(R.raw.alarm_clock),
             R.array.tick_sound_values
         )
 
-        putStringResOptional(
+        putTypedResOptional(
             PREF_DIGITS_ANIMATION,
-            getResName(R.animator.text_fall_accelerate),
+            R.animator.text_fall_accelerate,
             R.array.digits_animation_values
         )
 
-        putStringResOptional(
+        putTypedResOptional(
             PREF_FLOAT_ANIMATION,
-            getResName(R.animator.float_move),
+            R.animator.float_move,
             R.array.float_animation_values
         )
 
-        putStringResOptional(
+        putTypedResOptional(
             PREF_CLOCK_HAND_ANIMATION,
-            getResName(R.animator.clock_handle_rotate_overshot),
+            R.animator.clock_handle_rotate_overshot,
             R.array.clock_hand_animation_values
         )
     }

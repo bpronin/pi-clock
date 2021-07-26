@@ -19,7 +19,7 @@ internal class ResourcesTest : Contextual {
         requireResArray(firstResId).apply {
             for (arrayResId in arrayResIds) {
                 assertEquals(
-                    "[${getResName(firstResId)}] and [${getResName(arrayResId)}] sizes do not match ",
+                    "[${getResShortName(firstResId)}] and [${getResShortName(arrayResId)}] sizes do not match ",
                     size, requireResArray(arrayResId).size
                 )
             }

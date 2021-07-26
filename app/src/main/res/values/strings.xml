@@ -99,6 +99,7 @@
     <string name="layout_specific">Layout specific</string>
     <string name="layout_type">Layout type</string>
     <string name="linear">Linear</string>
+    <string name="anticipate">Anticipate</string>
     <string name="mantle_clock">Mantle clock</string>
     <string name="minutes_separator">Minutes separator</string>
     <string name="monochrome">Monochrome</string>

@@ -106,15 +106,15 @@ class SplitAnimatedTextView : LinearLayout {
         updateViewsText(animated)
     }
 
-    fun setTextAnimator(@AnimatorRes resId: Int) {
+    fun setTextAnimators(@AnimatorRes resId: Int) {
         views.forEach { view ->
             view.setTextAnimator(resId)
         }
     }
 
-    fun setTextAnimator(animator: AnimatorSet?) {
-        views.forEach { view ->
-            view.setTextAnimator(animator)
+    fun setTextAnimators(vararg animator: AnimatorSet?) {
+        views.forEachIndexed { index, view ->
+            view.setTextAnimator(animator[index])
         }
     }
 

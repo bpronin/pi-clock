@@ -149,19 +149,19 @@
         <item>@string/floating</item>
     </string-array>
 
-    <string-array name="digits_animation_values">
-        <item>text_fade_trough_linear</item>
-        <item>text_fall_linear</item>
-        <item>text_fall_accelerate</item>
-        <item>text_fall_bounce</item>
-        <item>text_slide_linear</item>
-        <item>text_slide_accelerate</item>
-        <item>text_slide_bounce</item>
-        <item>text_scale_grow</item>
-        <item>text_scale_shrink</item>
-        <item>text_scale_grow_shrink</item>
+    <array name="digits_animation_values">
+        <item>@animator/text_fade_trough_linear</item>
+        <item>@animator/text_fall_linear</item>
+        <item>@animator/text_fall_accelerate</item>
+        <item>@animator/text_fall_bounce</item>
+        <item>@animator/text_slide_linear</item>
+        <item>@animator/text_slide_accelerate</item>
+        <item>@animator/text_slide_bounce</item>
+        <item>@animator/text_scale_grow</item>
+        <item>@animator/text_scale_shrink</item>
+        <item>@animator/text_scale_grow_shrink</item>
         <item />
-    </string-array>
+    </array>
     <string-array name="digits_animation_titles">
         <item>@string/fade_through</item>
         <item>@string/scroll</item>
@@ -176,12 +176,12 @@
         <item>@string/do_not_animate</item>
     </string-array>
 
-    <string-array name="float_animation_values">
-        <item>float_move</item>
-        <item>float_fade</item>
-        <item>float_move_fade</item>
+    <array name="float_animation_values">
+        <item>@animator/float_move</item>
+        <item>@animator/float_fade</item>
+        <item>@animator/float_move_fade</item>
         <item />
-    </string-array>
+    </array>
     <string-array name="float_animation_titles">
         <item>@string/move</item>
         <item>@string/fade</item>
@@ -189,14 +189,16 @@
         <item>@string/do_not_animate</item>
     </string-array>
 
-    <string-array name="clock_hand_animation_values">
-        <item>clock_handle_rotate_overshot</item>
-        <item>clock_handle_rotate_linear</item>
+    <array name="clock_hand_animation_values">
+        <item>@animator/clock_handle_rotate_overshot</item>
+        <item>@animator/clock_handle_rotate_linear</item>
+        <item>@animator/clock_handle_rotate_anticipate</item>
         <item />
-    </string-array>
+    </array>
     <string-array name="clock_hand_animation_titles">
         <item>@string/overshot</item>
         <item>@string/linear</item>
+        <item>@string/anticipate</item>
         <item>@string/do_not_animate</item>
     </string-array>
 

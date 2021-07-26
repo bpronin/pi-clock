@@ -54,7 +54,7 @@
 
         <PreferenceCategory android:title="@string/digits_animation">
 
-            <ListPreference
+            <com.bopr.piclock.util.ui.preference.ResListPreference
                 android:entries="@array/digits_animation_titles"
                 android:entryValues="@array/digits_animation_values"
                 android:key="digits_animation"
@@ -88,7 +88,7 @@
                 android:key="clock_hand_move_smooth"
                 android:title="@string/hands_smooth" />
 
-            <ListPreference
+            <com.bopr.piclock.util.ui.preference.ResListPreference
                 android:entries="@array/clock_hand_animation_titles"
                 android:entryValues="@array/clock_hand_animation_values"
                 android:key="clock_hand_animation"
@@ -139,7 +139,7 @@
             android:key="content_float_interval"
             android:title="@string/floating_interval" />
 
-        <ListPreference
+        <com.bopr.piclock.util.ui.preference.ResListPreference
             android:entries="@array/float_animation_titles"
             android:entryValues="@array/float_animation_values"
             android:key="float_animation"

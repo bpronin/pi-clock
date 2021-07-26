@@ -35,7 +35,7 @@ fun dayOfWeek(date: Date): Int = Calendar.getInstance().run {
 fun defaultDatetimeFormat(pattern: String) = SimpleDateFormat(pattern, Locale.getDefault())
 
 /**
- * Returns ID of resource by its name.
+ * Returns ID of resource by its short name and type.
  */
 private fun Contextual.getResId(resType: String, resName: String): Int {
     if (resName.indexOf("/") != -1) {
@@ -43,6 +43,44 @@ private fun Contextual.getResId(resType: String, resName: String): Int {
     }
     return requireContext().run {
         resources.getIdentifier(resName, resType, packageName)
+    }
+}
+
+/**
+ * Returns ID of resource by its long name of the form "type/entry".
+ */
+private fun Contextual.getResId(resName: String): Int {
+    return requireContext().run {
+        resources.getIdentifier(resName, null, packageName)
+    }
+}
+
+/**
+ * Returns name of resource ID (short).
+ */
+fun Contextual.getResShortName(@AnyRes resId: Int): String {
+    return requireContext().resources.getResourceEntryName(resId)
+}
+
+/**
+ * Returns long name of resource of the form "type/entry" or null
+ * if resource is invalid.
+ */
+fun Contextual.getResName(@AnyRes resId: Int): String? {
+    return if (resId == 0)
+        null
+    else requireContext().resources.run {
+        "${getResourceTypeName(resId)}/${getResourceEntryName(resId)}"
+    }
+}
+
+/**
+ * Returns long name of resource of the form "type/entry" or throws ana exception
+ * if resource does no exists.
+ */
+fun Contextual.requireResName(@AnyRes resId: Int): String {
+    return requireContext().resources.run {
+        "${getResourceTypeName(resId)}/${getResourceEntryName(resId)}"
     }
 }
 
@@ -55,22 +93,34 @@ private fun Contextual.requireResId(resType: String, resName: String): Int {
     }
 }
 
-fun Contextual.requireResArray(@ArrayRes resId: Int): Array<out String> {
+/**
+ * Returns ID of resource by its long name or throws an exception when resource does not exist.
+ */
+private fun Contextual.requireResId(resName: String): Int {
+    return getResId(resName).also {
+        if (it == 0) throw Error("Resource does not exist: $resName")
+    }
+}
+
+fun Contextual.requireResArray(@ArrayRes resId: Int): Array<String> {
     return requireContext().resources.getStringArray(resId)
 }
 
-/**
- * Returns name of resource ID (short).
- */
-fun Contextual.getResName(@AnyRes resId: Int): String {
-    return requireContext().resources.getResourceEntryName(resId)
+fun Contextual.requireTypedResArray(@ArrayRes resId: Int): Array<String?> {
+    return requireContext().resources.obtainTypedArray(resId).run {
+        val array = Array(length()) {
+            getResName(getResourceId(it, 0))
+        }
+        recycle()
+        array
+    }
 }
 
 @RawRes
 fun Contextual.requireRawResId(resName: String) = requireResId(RAW, resName)
 
 @AnimatorRes
-fun Contextual.requireAnimatorResId(resName: String) = requireResId(ANIMATOR, resName)
+fun Contextual.requireAnimatorResId(resName: String) = requireResId(resName)
 
 @LayoutRes
 fun Contextual.requireLayoutResId(resName: String) = requireResId(LAYOUT, resName)
@@ -94,6 +144,10 @@ fun <T> Contextual.isResArrayContains(@ArrayRes arrayResId: Int, value: T): Bool
     return requireResArray(arrayResId).contains(value.toString())
 }
 
+fun Contextual.isTypedResArrayContains(@ArrayRes arrayResId: Int, resName: String): Boolean {
+    return requireTypedResArray(arrayResId).contains(resName)
+}
+
 /**
  * Returns true if resource array contains all specified values.
  */
@@ -115,9 +169,22 @@ fun <V, C : Collection<V>> Contextual.isResArrayContainsAll(
  */
 fun <T> Contextual.ensureResArrayContains(@ArrayRes arrayResId: Int, value: T): T {
     if (!isResArrayContains(arrayResId, value)) {
-        throw Error("Resource array: ${getResName(arrayResId)} does not contain value: $value")
+        throw Error("Resource array: ${getResShortName(arrayResId)} does not contain value: $value")
     } else {
         return value
+    }
+}
+
+fun Contextual.ensureTypedResArrayContains(
+    @ArrayRes arrayResId: Int,
+    resName: String
+): String {
+    if (!isTypedResArrayContains(arrayResId, resName)) {
+        throw Error(
+            "Resource array: ${getResName(arrayResId)} does not contain value: $resName"
+        )
+    } else {
+        return resName
     }
 }
 
@@ -129,7 +196,7 @@ fun <C : Collection<*>> Contextual.ensureResArrayContainsAll(
     values: C
 ): C {
     if (!isResArrayContainsAll(arrayResId, values)) {
-        throw Error("Resource array: ${getResName(arrayResId)} does not contain values: $values")
+        throw Error("Resource array: ${getResShortName(arrayResId)} does not contain values: $values")
     } else {
         return values
     }
@@ -137,23 +204,23 @@ fun <C : Collection<*>> Contextual.ensureResArrayContainsAll(
 
 @ArrayRes
 fun Contextual.getStyleValuesResId(@LayoutRes layoutResId: Int): Int =
-    getArrayResId(getResName(layoutResId) + "_style_values")
+    getArrayResId(getResShortName(layoutResId) + "_style_values")
 
 @ArrayRes
 fun Contextual.requireStyleValuesResId(@LayoutRes layoutResId: Int): Int =
-    requireArrayResId(getResName(layoutResId) + "_style_values")
+    requireArrayResId(getResShortName(layoutResId) + "_style_values")
 
 @ArrayRes
 fun Contextual.requireStyleTitlesResId(@LayoutRes layoutResId: Int): Int =
-    requireArrayResId(getResName(layoutResId) + "_style_titles")
+    requireArrayResId(getResShortName(layoutResId) + "_style_titles")
 
 @ArrayRes
 fun Contextual.getColorsValuesResId(@LayoutRes layoutResId: Int): Int =
-    getArrayResId(getResName(layoutResId) + "_colors_values")
+    getArrayResId(getResShortName(layoutResId) + "_colors_values")
 
 @ArrayRes
 fun Contextual.getColorsTitlesResId(@LayoutRes layoutResId: Int): Int =
-    getArrayResId(getResName(layoutResId) + "_colors_titles")
+    getArrayResId(getResShortName(layoutResId) + "_colors_titles")
 
 fun Contextual.getLayoutStyleName(layoutName: String, style: String, color: String): String {
     val layoutPrefix = requireResArray(R.array.content_layout_styles)[
@@ -187,7 +254,7 @@ fun Contextual.getLayoutStyleName(layoutName: String, style: String, color: Stri
 //    }
 //}
 
-//fun Contextual.getResFullName(resId: Int): String {
+//fun Contextual.getResRef(resId: Int): String {
 //    return requireContext().resources.run {
 //        "@${getResourceTypeName(resId)}/${getResourceEntryName(resId)}"
 //    }
@@ -201,6 +268,7 @@ fun Contextual.getLayoutStyleName(layoutName: String, style: String, color: Stri
 //    requireContext().resources.getValue(resId, value, true)
 //    return value.string.toString()
 //}
+
 //fun Contextual.getResArray(resId: Int): IntArray {
 //    val array: IntArray
 //    requireContext().resources.obtainTypedArray(resId).apply {
