@@ -15,6 +15,7 @@ interface Contextual {
 
 }
 
+/*
 val Context.asContextual: Contextual
     get() {
         return object : Contextual {
@@ -23,4 +24,4 @@ val Context.asContextual: Contextual
                 return this@asContextual
             }
         }
-    }
+    }*/

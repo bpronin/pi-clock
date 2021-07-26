@@ -10,6 +10,7 @@
         <item name="contentClockHandShapeHour">@drawable/view_analog_min_hour_hand_square</item>
         <item name="contentClockHandShapeMinute">@drawable/view_analog_min_minute_hand_square</item>
         <item name="contentClockHandShapeSecond">@drawable/view_analog_min_second_hand_square</item>
+        <item name="contentSecondsForeground">@color/white</item>
     </style>
 
     <style name="Content.Analog.Default.Rounded" parent="Content.Analog.Default.Square">
@@ -24,6 +25,66 @@
     </style>
 
     <style name="Content.Analog.BarsDate.Rounded" parent="Content.Analog.Default.Rounded">
+    </style>
+    
+    <!-- Analog text date blue seconds -->
+
+    <style name="Content.Analog.Default.Square.BlueSeconds" parent="Content.Analog.Default.Square">
+        <item name="contentSecondsForeground">@color/material_blue_500</item>
+    </style>
+
+    <style name="Content.Analog.Default.Rounded.BlueSeconds" parent="Content.Analog.Default.Rounded">
+        <item name="contentSecondsForeground">@color/material_blue_500</item>
+    </style>
+
+    <!-- Digital text date orange seconds -->
+
+    <style name="Content.Analog.Default.Square.OrangeSeconds" parent="Content.Analog.Default.Square">
+        <item name="contentSecondsForeground">@color/material_orange_500</item>
+    </style>
+
+    <style name="Content.Analog.Default.Rounded.OrangeSeconds" parent="Content.Analog.Default.Rounded">
+        <item name="contentSecondsForeground">@color/material_orange_500</item>
+    </style>
+
+    <!-- Digital text date green seconds -->
+
+    <style name="Content.Analog.Default.Square.GreenSeconds" parent="Content.Analog.Default.Square">
+        <item name="contentSecondsForeground">@color/material_green_500</item>
+    </style>
+
+    <style name="Content.Analog.Default.Rounded.GreenSeconds" parent="Content.Analog.Default.Rounded">
+        <item name="contentSecondsForeground">@color/material_green_500</item>
+    </style>
+
+    <!-- Analog bars date blue seconds -->
+
+    <style name="Content.Analog.BarsDate.Square.BlueSeconds" parent="Content.Analog.BarsDate.Square">
+        <item name="contentSecondsForeground">@color/material_blue_500</item>
+    </style>
+
+    <style name="Content.Analog.BarsDate.Rounded.BlueSeconds" parent="Content.Analog.BarsDate.Rounded">
+        <item name="contentSecondsForeground">@color/material_blue_500</item>
+    </style>
+
+    <!-- Digital bars date orange seconds -->
+
+    <style name="Content.Analog.BarsDate.Square.OrangeSeconds" parent="Content.Analog.BarsDate.Square">
+        <item name="contentSecondsForeground">@color/material_orange_500</item>
+    </style>
+
+    <style name="Content.Analog.BarsDate.Rounded.OrangeSeconds" parent="Content.Analog.BarsDate.Rounded">
+        <item name="contentSecondsForeground">@color/material_orange_500</item>
+    </style>
+
+    <!-- Digital bars date green seconds -->
+
+    <style name="Content.Analog.BarsDate.Square.GreenSeconds" parent="Content.Analog.BarsDate.Square">
+        <item name="contentSecondsForeground">@color/material_green_500</item>
+    </style>
+
+    <style name="Content.Analog.BarsDate.Rounded.GreenSeconds" parent="Content.Analog.BarsDate.Rounded">
+        <item name="contentSecondsForeground">@color/material_green_500</item>
     </style>
 
 </resources>

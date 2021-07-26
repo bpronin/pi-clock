@@ -1,5 +1,6 @@
 package com.bopr.piclock.util.ui
 
+import android.animation.AnimatorSet
 import android.content.Context
 import android.util.AttributeSet
 import android.view.Gravity
@@ -110,6 +111,12 @@ class SplitAnimatedTextView : LinearLayout {
     fun setTextAnimator(@AnimatorRes resId: Int) {
         views.forEach { view ->
             view.setTextAnimator(resId)
+        }
+    }
+
+    fun setTextAnimator(animator: AnimatorSet?) {
+        views.forEach { view ->
+            view.setTextAnimator(animator)
         }
     }
 

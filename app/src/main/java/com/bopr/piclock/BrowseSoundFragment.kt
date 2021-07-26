@@ -12,7 +12,7 @@ import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
 import com.bopr.piclock.util.Contextual
 import com.bopr.piclock.util.HandlerTimer
 import com.bopr.piclock.util.SECOND_DURATION
-import com.bopr.piclock.util.getStringArray
+import com.bopr.piclock.util.requireResArray
 
 /**
  * Fragment to browse sounds with preview.
@@ -21,8 +21,8 @@ import com.bopr.piclock.util.getStringArray
  */
 class BrowseSoundFragment : Fragment(), Contextual {
 
-    private val itemValues by lazy { getStringArray(R.array.tick_sound_values) }
-    private val itemNames by lazy { getStringArray(R.array.tick_sound_titles) }
+    private val itemValues by lazy { requireResArray(R.array.tick_sound_values) }
+    private val itemNames by lazy { requireResArray(R.array.tick_sound_titles) }
     private val settings: Settings by lazy { Settings(this) }
     private val timer by lazy { HandlerTimer(SECOND_DURATION, ::onTimer) }
     private val player by lazy { TickPlayer(requireContext()) }

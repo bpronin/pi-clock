@@ -13,7 +13,7 @@ import com.bopr.piclock.Settings.Companion.PREF_CLOCK_HAND_ANIMATION
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_HAND_MOVE_SMOOTH
 import com.bopr.piclock.Settings.Companion.PREF_SECOND_HAND_VISIBLE
 import com.bopr.piclock.util.forEachChildRecursively
-import com.bopr.piclock.util.getAnimatorResId
+import com.bopr.piclock.util.requireAnimatorResId
 import java.util.*
 import java.util.Calendar.*
 
@@ -53,8 +53,9 @@ internal abstract class AnalogClockControl(private val view: View, settings: Set
 
     private fun updateAnimators() {
         cancelAnimators()
-        val resId = getAnimatorResId(settings.getString(PREF_CLOCK_HAND_ANIMATION))
-        if (resId != 0) {
+        val animationName = settings.getString(PREF_CLOCK_HAND_ANIMATION)
+        if (animationName.isNotEmpty()) {
+            val resId = requireAnimatorResId(animationName)
             secondHandAnimator = loadAnimator(requireContext(), resId).apply {
                 setTarget(secondHandView)
             }

@@ -19,13 +19,20 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
     context.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE)
 ), Contextual {
 
+    val contentLayoutStyleName: String
+        get() = getLayoutStyleName(
+            getString(PREF_CONTENT_LAYOUT),
+            getString(PREF_CONTENT_STYLE),
+            getString(PREF_CONTENT_COLORS)
+        )
+
     constructor(owner: Contextual) : this(owner.requireContext())
 
     override fun requireContext(): Context {
         return context
     }
 
-    private fun EditorWrapper.putIntResourceOptional(key: String, value: Int, valuesRes: Int) {
+    private fun EditorWrapper.putIntResOptional(key: String, value: Int, valuesRes: Int) {
         putIntOptional(
             key, ensureResArrayContains(valuesRes, value)
         ) {
@@ -33,7 +40,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         }
     }
 
-    private fun EditorWrapper.putLongResourceOptional(key: String, value: Long, valuesRes: Int) {
+    private fun EditorWrapper.putLongResOptional(key: String, value: Long, valuesRes: Int) {
         putLongOptional(
             key, ensureResArrayContains(valuesRes, value)
         ) {
@@ -41,7 +48,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         }
     }
 
-    private fun EditorWrapper.putStringResourceOptional(
+    private fun EditorWrapper.putStringResOptional(
         key: String,
         value: String,
         valuesRes: Int
@@ -53,13 +60,13 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         }
     }
 
-    private fun EditorWrapper.putStringSetResourceOptional(
+    private fun EditorWrapper.putStringSetResOptional(
         key: String,
         value: Set<String>,
         valuesRes: Int
     ) {
         putStringSetOptional(
-            key, ensureAllResExists(valuesRes, value)
+            key, ensureResArrayContainsAll(valuesRes, value)
         ) {
             isResArrayContainsAll(valuesRes, it)
         }
@@ -77,83 +84,91 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         putBooleanOptional(PREF_CLOCK_HAND_MOVE_SMOOTH, true)
         putBooleanOptional(PREF_DIGITS_SPLIT_ANIMATION, true)
         putIntOptional(PREF_WEEK_START, localeFirstDayOfWeek)
-        putLongOptional(PREF_CONTENT_FLOAT_INTERVAL, 900000L)  /* 15 min */
-        putIntOptional(PREF_CONTENT_SCALE, 100) {
-            it in MIN_SCALE..MAX_SCALE
-        }
-        putIntOptional(PREF_MUTED_BRIGHTNESS, 20) {
-            it in MIN_BRIGHTNESS..MAX_BRIGHTNESS
+        putIntOptional(PREF_CONTENT_SCALE, 100) { it in MIN_SCALE..MAX_SCALE }
+        putIntOptional(PREF_MUTED_BRIGHTNESS, 30) { it in MIN_BRIGHTNESS..MAX_BRIGHTNESS }
+
+        putStringOptional(PREF_CONTENT_LAYOUT, getResName(DEFAULT_LAYOUT)) {
+            isResArrayContains(R.array.content_layout_values, it)
+                    && getStyleResId(contentLayoutStyleName) != 0
         }
 
-        putStringResourceOptional(
-            PREF_CONTENT_LAYOUT,
-            getResName(DEFAULT_LAYOUT),
-            R.array.content_layout_values
-        )
-
-        putStringOptional(PREF_CONTENT_STYLE, ".Default") {
+        putStringOptional(
+            PREF_CONTENT_STYLE,
+            requireResArray(requireStyleValuesResId(DEFAULT_LAYOUT))[0]
+        ) {
             isResArrayContains(requireStyleValuesResId(DEFAULT_LAYOUT), it)
+                    && getStyleResId(contentLayoutStyleName) != 0
         }
 
-        putStringOptional(PREF_CONTENT_COLORS, "") {
+        putStringOptional(
+            PREF_CONTENT_COLORS,
+            requireResArray(getColorsValuesResId(DEFAULT_LAYOUT))[0]
+        ) {
             isResArrayContains(getColorsValuesResId(DEFAULT_LAYOUT), it)
+                    && getStyleResId(contentLayoutStyleName) != 0
         }
 
-        putStringSetResourceOptional(
+        putStringSetResOptional(
             PREF_TICK_RULES,
             setOf(TICK_ACTIVE),
             R.array.tick_sound_mode_values
         )
 
-        putStringResourceOptional(
+        putStringResOptional(
             PREF_HOURS_MINUTES_FORMAT,
-            if (localeIs24Hour) "HH:mm" else "h:mm",
+            requireResArray(R.array.hours_minutes_format_values)[if (localeIs24Hour) 0 else 2],
             R.array.hours_minutes_format_values
         )
 
-        putStringResourceOptional(
+        putStringResOptional(
             PREF_SECONDS_FORMAT,
-            "ss",
+            requireResArray(R.array.seconds_format_values)[0],
             R.array.seconds_format_values
         )
 
-        putStringResourceOptional(
+        putStringResOptional(
             PREF_DATE_FORMAT,
             SYSTEM_DEFAULT,
             R.array.date_format_values
         )
 
-        putLongResourceOptional(
+        putLongResOptional(
             PREF_AUTO_INACTIVATE_DELAY,
-            5000,
+            requireResArray(R.array.auto_inactivate_delay_values)[1].toLong(),
             R.array.auto_inactivate_delay_values
         )
 
-        putIntResourceOptional(
+        putLongResOptional(
+            PREF_CONTENT_FLOAT_INTERVAL,
+            requireResArray(R.array.content_float_interval_values)[3].toLong(),
+            R.array.content_float_interval_values
+        )
+
+        putIntResOptional(
             PREF_FLOAT_SPEED,
-            100,
+            requireResArray(R.array.content_float_speed_values)[3].toInt(),
             R.array.content_float_speed_values
         )
 
-        putStringResourceOptional(
+        putStringResOptional(
             PREF_TICK_SOUND,
             getResName(R.raw.alarm_clock),
             R.array.tick_sound_values
         )
 
-        putStringResourceOptional(
+        putStringResOptional(
             PREF_DIGITS_ANIMATION,
-            getResName(R.animator.text_fade_trough_linear),
+            getResName(R.animator.text_fall_accelerate),
             R.array.digits_animation_values
         )
 
-        putStringResourceOptional(
+        putStringResOptional(
             PREF_FLOAT_ANIMATION,
             getResName(R.animator.float_move),
             R.array.float_animation_values
         )
 
-        putStringResourceOptional(
+        putStringResOptional(
             PREF_CLOCK_HAND_ANIMATION,
             getResName(R.animator.clock_handle_rotate_overshot),
             R.array.clock_hand_animation_values

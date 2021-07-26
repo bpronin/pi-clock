@@ -246,31 +246,31 @@
     <!-- Digital small seconds blue seconds -->
 
     <style name="Content.Digital.Default.Default.BlueSeconds" parent="Content.Digital.Default.Default">
-        <item name="contentSecondsForeground">@color/material_light_blue_500</item>
+        <item name="contentSecondsForeground">@color/material_blue_500</item>
     </style>
 
     <style name="Content.Digital.Default.Square.BlueSeconds" parent="Content.Digital.Default.Square">
-        <item name="contentSecondsForeground">@color/material_light_blue_500</item>
+        <item name="contentSecondsForeground">@color/material_blue_500</item>
     </style>
 
     <style name="Content.Digital.Default.Round.BlueSeconds" parent="Content.Digital.Default.Round">
-        <item name="contentSecondsForeground">@color/material_light_blue_500</item>
+        <item name="contentSecondsForeground">@color/material_blue_500</item>
     </style>
 
     <style name="Content.Digital.Default.Thick.BlueSeconds" parent="Content.Digital.Default.Thick">
-        <item name="contentSecondsForeground">@color/material_light_blue_500</item>
+        <item name="contentSecondsForeground">@color/material_blue_500</item>
     </style>
 
     <style name="Content.Digital.Default.Thin.BlueSeconds" parent="Content.Digital.Default.Thin">
-        <item name="contentSecondsForeground">@color/material_light_blue_500</item>
+        <item name="contentSecondsForeground">@color/material_blue_500</item>
     </style>
 
     <style name="Content.Digital.Default.Curly.BlueSeconds" parent="Content.Digital.Default.Curly">
-        <item name="contentSecondsForeground">@color/material_light_blue_500</item>
+        <item name="contentSecondsForeground">@color/material_blue_500</item>
     </style>
 
     <style name="Content.Digital.Default.Typewriter.BlueSeconds" parent="Content.Digital.Default.Typewriter">
-        <item name="contentSecondsForeground">@color/material_light_blue_500</item>
+        <item name="contentSecondsForeground">@color/material_blue_500</item>
     </style>
 
     <!-- Digital small seconds orange seconds -->

@@ -28,112 +28,6 @@
         <item>Content.Analog.BarsDate</item>
     </string-array>
 
-    <string-array name="view_digital_default_style_values">
-        <item>.Default</item>
-        <item>.Square</item>
-        <item>.Round</item>
-        <item>.Thick</item>
-        <item>.Thin</item>
-        <item>.Curly</item>
-        <item>.Typewriter</item>
-    </string-array>
-    <string-array name="view_digital_default_style_titles">
-        <item>@string/default_title</item>
-        <item>@string/square</item>
-        <item>@string/round</item>
-        <item>@string/thick</item>
-        <item>@string/thin</item>
-        <item>@string/curly</item>
-        <item>@string/typewriter</item>
-    </string-array>
-    <string-array name="view_digital_default_colors_values">
-        <item />
-        <item>.BlueSeconds</item>
-        <item>.OrangeSeconds</item>
-        <item>.GreenSeconds</item>
-    </string-array>
-    <string-array name="view_digital_default_colors_titles">
-        <item>@string/monochrome</item>
-        <item>@string/blue_seconds</item>
-        <item>@string/orange_seconds</item>
-        <item>@string/green_seconds</item>
-    </string-array>
-
-    <string-array name="view_digital_simple_style_values">
-        <item>.Default</item>
-        <item>.Square</item>
-        <item>.Round</item>
-        <item>.Thick</item>
-        <item>.Thin</item>
-        <item>.Curly</item>
-        <item>.Typewriter</item>
-    </string-array>
-    <string-array name="view_digital_simple_style_titles">
-        <item>@string/default_title</item>
-        <item>@string/square</item>
-        <item>@string/round</item>
-        <item>@string/thick</item>
-        <item>@string/thin</item>
-        <item>@string/curly</item>
-        <item>@string/typewriter</item>
-    </string-array>
-
-    <string-array name="view_digital_vertical_default_style_values">
-        <item>.Default</item>
-        <item>.Square</item>
-        <item>.Round</item>
-        <item>.Thick</item>
-        <item>.Thin</item>
-        <item>.Curly</item>
-        <item>.Typewriter</item>
-    </string-array>
-    <string-array name="view_digital_vertical_default_style_titles">
-        <item>@string/default_title</item>
-        <item>@string/square</item>
-        <item>@string/round</item>
-        <item>@string/thick</item>
-        <item>@string/thin</item>
-        <item>@string/curly</item>
-        <item>@string/typewriter</item>
-    </string-array>
-
-    <string-array name="view_digital_vertical_simple_style_values">
-        <item>.Default</item>
-        <item>.Square</item>
-        <item>.Round</item>
-        <item>.Thick</item>
-        <item>.Thin</item>
-        <item>.Curly</item>
-        <item>.Typewriter</item>
-    </string-array>
-    <string-array name="view_digital_vertical_simple_style_titles">
-        <item>@string/default_title</item>
-        <item>@string/square</item>
-        <item>@string/round</item>
-        <item>@string/thick</item>
-        <item>@string/thin</item>
-        <item>@string/curly</item>
-        <item>@string/typewriter</item>
-    </string-array>
-
-    <string-array name="view_analog_text_date_min_style_values">
-        <item>.Square</item>
-        <item>.Rounded</item>
-    </string-array>
-    <string-array name="view_analog_text_date_min_style_titles">
-        <item>@string/square_hands</item>
-        <item>@string/rounded_hands</item>
-    </string-array>
-
-    <string-array name="view_analog_bars_date_min_style_values">
-        <item>.Square</item>
-        <item>.Rounded</item>
-    </string-array>
-    <string-array name="view_analog_bars_date_min_style_titles">
-        <item>@string/square_hands</item>
-        <item>@string/rounded_hands</item>
-    </string-array>
-
     <string-array name="hours_minutes_format_values">
         <item>HH:mm</item>
         <item>H:mm</item>
@@ -257,12 +151,12 @@
 
     <string-array name="digits_animation_values">
         <item>text_fade_trough_linear</item>
-        <item>text_slide_vertical_linear</item>
-        <item>text_slide_vertical_accelerate</item>
-        <item>text_slide_vertical_bounce</item>
-        <item>text_slide_horizontal_linear</item>
-        <item>text_slide_horizontal_accelerate</item>
-        <item>text_slide_horizontal_bounce</item>
+        <item>text_fall_linear</item>
+        <item>text_fall_accelerate</item>
+        <item>text_fall_bounce</item>
+        <item>text_slide_linear</item>
+        <item>text_slide_accelerate</item>
+        <item>text_slide_bounce</item>
         <item>text_scale_grow</item>
         <item>text_scale_shrink</item>
         <item>text_scale_grow_shrink</item>

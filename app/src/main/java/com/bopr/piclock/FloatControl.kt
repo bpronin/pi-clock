@@ -198,8 +198,9 @@ internal class FloatControl(
 
     private fun updateAnimators() {
         cancelAnimators()
-        val resId = getAnimatorResId(settings.getString(PREF_FLOAT_ANIMATION))
-        if (resId != 0) {
+        val animationName = settings.getString(PREF_FLOAT_ANIMATION)
+        if (animationName.isNotEmpty()) {
+            val resId = requireAnimatorResId(animationName)
             floatAnimator = loadAnimator(requireContext(), resId).apply {
                 extendProperties(CUSTOM_VIEW_PROPERTIES)
                 updateSpeed(settings.getInt(PREF_FLOAT_SPEED))

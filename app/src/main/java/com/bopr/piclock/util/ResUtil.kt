@@ -7,6 +7,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.DAY_OF_WEEK
 
+private const val RAW = "raw"
+private const val ANIMATOR = "animator"
+private const val LAYOUT = "layout"
+private const val STYLE = "style"
+private const val ARRAY = "array"
 
 /**
  * Miscellaneous resource utilities.
@@ -32,41 +37,27 @@ fun defaultDatetimeFormat(pattern: String) = SimpleDateFormat(pattern, Locale.ge
 /**
  * Returns ID of resource by its name.
  */
-private fun Contextual.getResId(defType: String, resName: String): Int {
+private fun Contextual.getResId(resType: String, resName: String): Int {
     if (resName.indexOf("/") != -1) {
         throw Error("Resource name must NOT be fully qualified")
     }
     return requireContext().run {
-        resources.getIdentifier(resName, defType, packageName)
+        resources.getIdentifier(resName, resType, packageName)
     }
 }
 
 /**
  * Returns ID of resource by its name or throws an exception when resource does not exist.
  */
-private fun Contextual.requireResId(defType: String, resName: String): Int {
-    return getResId(defType, resName).also {
-        if (it == 0) throw Error("Resource does not exist: $defType/$resName")
+private fun Contextual.requireResId(resType: String, resName: String): Int {
+    return getResId(resType, resName).also {
+        if (it == 0) throw Error("Resource does not exist: $resType/$resName")
     }
 }
 
-@RawRes
-fun Contextual.getRawResId(resName: String) = getResId("raw", resName)
-
-@AnimatorRes
-fun Contextual.getAnimatorResId(resName: String) = getResId("animator", resName)
-
-@LayoutRes
-fun Contextual.requireLayoutResId(resName: String) = requireResId("layout", resName)
-
-@StyleRes
-fun Contextual.requireStyleResId(resName: String) = requireResId("style", resName)
-
-@ArrayRes
-fun Contextual.getArrayResId(resName: String) = getResId("array", resName)
-
-@ArrayRes
-fun Contextual.requireArrayResId(resName: String) = requireResId("array", resName)
+fun Contextual.requireResArray(@ArrayRes resId: Int): Array<out String> {
+    return requireContext().resources.getStringArray(resId)
+}
 
 /**
  * Returns name of resource ID (short).
@@ -75,11 +66,32 @@ fun Contextual.getResName(@AnyRes resId: Int): String {
     return requireContext().resources.getResourceEntryName(resId)
 }
 
+@RawRes
+fun Contextual.requireRawResId(resName: String) = requireResId(RAW, resName)
+
+@AnimatorRes
+fun Contextual.requireAnimatorResId(resName: String) = requireResId(ANIMATOR, resName)
+
+@LayoutRes
+fun Contextual.requireLayoutResId(resName: String) = requireResId(LAYOUT, resName)
+
+@StyleRes
+fun Contextual.getStyleResId(resName: String) = getResId(STYLE, resName)
+
+@StyleRes
+fun Contextual.requireStyleResId(resName: String) = requireResId(STYLE, resName)
+
+@ArrayRes
+fun Contextual.getArrayResId(resName: String) = getResId(ARRAY, resName)
+
+@ArrayRes
+fun Contextual.requireArrayResId(resName: String) = requireResId(ARRAY, resName)
+
 /**
  * Returns true if resource array contains specified value.
  */
 fun <T> Contextual.isResArrayContains(@ArrayRes arrayResId: Int, value: T): Boolean {
-    return getStringArray(arrayResId).contains(value.toString())
+    return requireResArray(arrayResId).contains(value.toString())
 }
 
 /**
@@ -89,7 +101,7 @@ fun <V, C : Collection<V>> Contextual.isResArrayContainsAll(
     @ArrayRes arrayResId: Int,
     values: C
 ): Boolean {
-    val array = getStringArray(arrayResId)
+    val array = requireResArray(arrayResId)
     for (value in values) {
         if (!array.contains(value.toString())) {
             return false
@@ -112,7 +124,10 @@ fun <T> Contextual.ensureResArrayContains(@ArrayRes arrayResId: Int, value: T): 
 /**
  * Throws an exception if resource array does not contain all specified values.
  */
-fun <C : Collection<*>> Contextual.ensureAllResExists(@ArrayRes arrayResId: Int, values: C): C {
+fun <C : Collection<*>> Contextual.ensureResArrayContainsAll(
+    @ArrayRes arrayResId: Int,
+    values: C
+): C {
     if (!isResArrayContainsAll(arrayResId, values)) {
         throw Error("Resource array: ${getResName(arrayResId)} does not contain values: $values")
     } else {
@@ -120,20 +135,14 @@ fun <C : Collection<*>> Contextual.ensureAllResExists(@ArrayRes arrayResId: Int,
     }
 }
 
-fun Contextual.getStringArray(@ArrayRes resId: Int): Array<out String> {
-    return requireContext().resources.getStringArray(resId)
-}
-
 @ArrayRes
 fun Contextual.requireStyleValuesResId(@LayoutRes layoutResId: Int): Int {
     return requireArrayResId(getResName(layoutResId) + "_style_values")
-    //todo: get rid of it. it can fail at runtime. need some sort of hard references
 }
 
 @ArrayRes
 fun Contextual.requireStyleTitlesResId(@LayoutRes layoutResId: Int): Int {
     return requireArrayResId(getResName(layoutResId) + "_style_titles")
-    //todo: get rid of it. it can fail at runtime. need some sort of hard references
 }
 
 @ArrayRes
@@ -146,32 +155,11 @@ fun Contextual.getColorsTitlesResId(@LayoutRes layoutResId: Int): Int {
     return getArrayResId(getResName(layoutResId) + "_colors_titles")
 }
 
-//fun Contextual.requireLayoutStyles(layoutName: String): Array<out String> {
-//    return getStringArray(requireStyleValuesResId(requireLayoutResId(layoutName)))
-//}
-
-
-fun Contextual.checkLayoutsResources() {
-    val layoutNames = getStringArray(R.array.content_layout_values)
-    getStringArray(R.array.content_layout_styles).forEachIndexed { index, stylePrefix ->
-        val layoutResId = requireLayoutResId(layoutNames[index])
-        val styles = getStringArray(requireStyleValuesResId(layoutResId))
-        val colorsId = getColorsValuesResId(layoutResId)
-        if (colorsId != 0) {
-            val colors = getStringArray(colorsId)
-            styles.forEach { style ->
-                colors.forEach { color ->
-                    requireStyleResId(stylePrefix + style + color)
-                }
-            }
-        } else {
-            styles.forEach { style ->
-                requireStyleResId(stylePrefix + style)
-            }
-        }
-    }
+fun Contextual.getLayoutStyleName(layoutName: String, style: String, color: String): String {
+    val layoutIndex = requireResArray(R.array.content_layout_values).indexOf(layoutName)
+    val stylePrefix = requireResArray(R.array.content_layout_styles)[layoutIndex]
+    return stylePrefix + style + color
 }
-
 
 ///**
 // * Returns ID of resource by its fully qualified path.

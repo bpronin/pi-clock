@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="view_analog_text_date_min_style_values">
+        <item>.Square</item>
+        <item>.Rounded</item>
+    </string-array>
+    <string-array name="view_analog_text_date_min_style_titles">
+        <item>@string/square_hands</item>
+        <item>@string/rounded_hands</item>
+    </string-array>
+
+    <string-array name="view_analog_text_date_min_colors_values">
+        <item />
+        <item>.BlueSeconds</item>
+        <item>.OrangeSeconds</item>
+        <item>.GreenSeconds</item>
+    </string-array>
+    <string-array name="view_analog_text_date_min_colors_titles">
+        <item>@string/monochrome</item>
+        <item>@string/blue_second_hand</item>
+        <item>@string/orange_second_hand</item>
+        <item>@string/green_second_hand</item>
+    </string-array>
+
+    <string-array name="view_analog_bars_date_min_style_values">
+        <item>.Square</item>
+        <item>.Rounded</item>
+    </string-array>
+    <string-array name="view_analog_bars_date_min_style_titles">
+        <item>@string/square_hands</item>
+        <item>@string/rounded_hands</item>
+    </string-array>
+
+    <string-array name="view_analog_bars_date_min_colors_values">
+        <item />
+        <item>.BlueSeconds</item>
+        <item>.OrangeSeconds</item>
+        <item>.GreenSeconds</item>
+    </string-array>
+    <string-array name="view_analog_bars_date_min_colors_titles">
+        <item>@string/monochrome</item>
+        <item>@string/blue_second_hand</item>
+        <item>@string/orange_second_hand</item>
+        <item>@string/green_second_hand</item>
+    </string-array>
+
+</resources>

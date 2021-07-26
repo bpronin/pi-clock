@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.view.ViewGroup.GONE
 import android.widget.TextView
 import androidx.annotation.IntDef
-import androidx.annotation.StyleRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.fragment.app.Fragment
@@ -137,6 +136,8 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
 
     @Mode
     private var mode = MODE_ACTIVE
+    private var currentLayoutResId = 0
+    private var currentStyleResId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -227,9 +228,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         Log.d(TAG, "Setting: $key has changed to: ${settings.all[key]}")
 
         when (key) {
-            PREF_CONTENT_LAYOUT -> {
-                /* do nothing on changes of layout itself. wait for style */
-            }
+            PREF_CONTENT_LAYOUT,
             PREF_CONTENT_STYLE,
             PREF_CONTENT_COLORS -> createContentControl()
         }
@@ -259,24 +258,19 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         Log.d(TAG, "Mode set to: $mode")
     }
 
-    @StyleRes
-    private fun getLayoutStyleRes(layoutName: String, style: String, color: String): Int {
-        val layoutIndex = getStringArray(R.array.content_layout_values).indexOf(layoutName)
-        val stylePrefix = getStringArray(R.array.content_layout_styles)[layoutIndex]
-        return requireStyleResId(stylePrefix + style + color)
-    }
-
     private fun createContentControl() {
         val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
-        val layoutRes = requireLayoutResId(layoutName)
-        val styleRes = getLayoutStyleRes(
-            layoutName,
-            settings.getString(PREF_CONTENT_STYLE),
-            settings.getString(PREF_CONTENT_COLORS)
-        )
+        val layoutResId = requireLayoutResId(layoutName)
+        val styleResId = requireStyleResId(settings.contentLayoutStyleName)
 
-        val contentView =
-            layoutInflater.inflateWithTheme(layoutRes, contentHolderView, false, styleRes)
+        if (layoutResId == currentLayoutResId && styleResId == currentStyleResId) return
+
+        currentLayoutResId = layoutResId
+        currentStyleResId = styleResId
+
+        val contentView = layoutInflater.inflateWithTheme(
+            currentLayoutResId, contentHolderView, false, currentStyleResId
+        )
 
         contentHolderView.apply {
             removeAllViews()
@@ -291,7 +285,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
             }
         )
 
-        Log.d(TAG, "Created content")
+        Log.d(TAG, "Created content: ${settings.contentLayoutStyleName}")
     }
 
     /**

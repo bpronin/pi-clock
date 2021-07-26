@@ -224,8 +224,8 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
     private fun updateTickSoundView() {
         requirePreference<Preference>(PREF_TICK_SOUND).apply {
             val value = settings.getString(key)
-            val index = getStringArray(R.array.tick_sound_values).indexOf(value)
-            summary = getStringArray(R.array.tick_sound_titles)[index]
+            val index = requireResArray(R.array.tick_sound_values).indexOf(value)
+            summary = requireResArray(R.array.tick_sound_titles)[index]
         }
     }
 
@@ -338,7 +338,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             updatePreferenceVisibility(this, isLayoutOfType(DIGITAL))
             value = settings.getString(key)
             val ix = findIndexOfValue(value)
-            val hint = getStringArray(R.array.hours_minutes_format_hints)[ix]
+            val hint = requireResArray(R.array.hours_minutes_format_hints)[ix]
             summary = "${entries[ix]} $hint"
         }
     }
@@ -348,7 +348,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
             updatePreferenceVisibility(this, isLayoutOfType(DIGITAL))
             value = settings.getString(key)
             val ix = findIndexOfValue(value)
-            val hint = getStringArray(R.array.seconds_format_hints)[ix]
+            val hint = requireResArray(R.array.seconds_format_hints)[ix]
             summary = "${entries[ix]} $hint"
         }
     }
@@ -356,7 +356,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
     private fun updateDateFormatView() {
         findPreference<ListPreference>(PREF_DATE_FORMAT)?.apply {
             val date = Date()
-            val patterns = getStringArray(R.array.date_format_values)
+            val patterns = requireResArray(R.array.date_format_values)
             val entryNames = arrayOfNulls<String>(patterns.size)
             for (i in entryNames.indices) {
                 val pattern = patterns[i]

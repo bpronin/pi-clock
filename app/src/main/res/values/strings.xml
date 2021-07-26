@@ -41,6 +41,7 @@
     <string name="auto_inactivate_never_summary">Disabled. Toggle active mode by touching screen</string>
     <string name="auto_inactivate_summary">Hide controls and decrease brightness after %s</string>
     <string name="blink_time_separators">Blink time separators</string>
+    <string name="blue_second_hand">Blue second hand</string>
     <string name="blue_seconds">Blue seconds</string>
     <string name="brightness_info">Brightness %d%%</string>
     <string name="brightness_info_max">Brightness %d%% (max)</string>
@@ -86,6 +87,7 @@
     <string name="gestures">Gestures</string>
     <string name="gestures_disabled_summary">Gestures disabled</string>
     <string name="gestures_enabled_summary">Adjust scale and brightness by swiping across the screen</string>
+    <string name="green_second_hand">Green second hand</string>
     <string name="green_seconds">Green seconds</string>
     <string name="grow_in">Grow in</string>
     <string name="grow_in_shrink_out">Grow in shrink out</string>
@@ -108,6 +110,7 @@
     <string name="no_trailing_zeroes">No trailing zeroes</string>
     <string name="on_monday">on Monday</string>
     <string name="on_sunday">on Sunday</string>
+    <string name="orange_second_hand">Orange second hand</string>
     <string name="orange_seconds">Orange seconds</string>
     <string name="overshot">Overshot</string>
     <string name="round">Round</string>
