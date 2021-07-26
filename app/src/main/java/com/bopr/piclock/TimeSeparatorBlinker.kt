@@ -19,7 +19,7 @@ internal class TimeSeparatorBlinker(
     private val minutesSeparator: View,
     private val secondsSeparator: View
 ) {
-    // TODO: 25.07.2021 анимация - попеременное мигание
+
     private val minutesSeparatorAnimator by lazy {
         ObjectAnimator().apply {
             setProperty(View.ALPHA)

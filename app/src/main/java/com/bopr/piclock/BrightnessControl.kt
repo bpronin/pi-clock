@@ -31,7 +31,7 @@ import kotlin.math.min
  */
 internal class BrightnessControl(private val view: View, settings: Settings) :
     ContentControlAdapter(settings) {
-    //todo: made transparent control view al left side of the screen
+    
     private val gestureDetector by lazy {
         GestureDetectorCompat(requireContext(), object : SimpleOnGestureListener() {
 

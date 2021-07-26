@@ -19,8 +19,6 @@ internal class AutoInactivateControl(
     settings: Settings
 ) : ContentControlAdapter(settings), Destroyable {
 
-    //todo: remove Disabled option and make 1min option
-
     private val handler = Handler(Looper.getMainLooper())
 
     private val task = Runnable {

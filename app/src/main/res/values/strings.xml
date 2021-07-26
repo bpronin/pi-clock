@@ -2,31 +2,30 @@
 
 <!--   todo: remove tools:ignore="MissingTranslation" -->
 
-    <string name="_00_07_">(00:07)</string>
-    <string name="_00_7_">(00:7)</string>
-    <string name="_07_07_">(07:07)</string>
-    <string name="_07_07_AM_">(07:07 AM)</string>
-    <string name="_0_1x">0.1x</string>
-    <string name="_0_3x">0.3x</string>
-    <string name="_0_5x">0.5x</string>
+    <string name="_00_07_" translatable="false">(00:07)</string>
+    <string name="_00_7_" translatable="false">(00:7)</string>
+    <string name="_07_07_" translatable="false">(07:07)</string>
+    <string name="_07_07_AM_" translatable="false">(07:07 AM)</string>
+    <string name="_0_1x" translatable="false">0.1x</string>
+    <string name="_0_3x" translatable="false">0.3x</string>
+    <string name="_0_5x" translatable="false">0.5x</string>
     <string name="_10_second">10 second</string>
     <string name="_10_seconds">10 seconds</string>
     <string name="_12_hour_no_trailing_zeroes">12-hour no trailing zeroes</string>
     <string name="_12_hour_trailing_zeroes">12-hour trailing zeroes</string>
     <string name="_15_minutes">15 minutes</string>
-    <string name="_1_0x">1.0x</string>
+    <string name="_1_0x" translatable="false">1.0x</string>
     <string name="_1_minute">1 minute</string>
     <string name="_24_hour_no_trailing_zeroes">24-hour no trailing zeroes</string>
     <string name="_24_hour_trailing_zeroes">24-hour trailing zeroes</string>
-    <string name="_2_0x">2.0x</string>
+    <string name="_2_0x" translatable="false">2.0x</string>
     <string name="_2_second">2 second</string>
-    <string name="_5_0x">5.0x</string>
+    <string name="_5_0x" translatable="false">5.0x</string>
     <string name="_5_seconds">5 seconds</string>
-    <string name="_7_07_">(7:07)</string>
-    <string name="_7_07_AM_">(7:07 AM)</string>
-    <string name="_never_move">Never move</string>
+    <string name="_7_07_" translatable="false">(7:07)</string>
+    <string name="_7_07_AM_" translatable="false">(7:07 AM)</string>
     <string name="about_label">About app</string>
-    <string name="about_summary">%1$s-%2$s</string>
+    <string name="about_summary" translatable="false">%1$s-%2$s</string>
     <string name="about_version">Version</string>
     <string name="active">Active</string>
     <string name="alarm_clock">Alarm clock</string>
@@ -35,7 +34,7 @@
     <string name="analog_minimalistic_bars_date">Analog minimalistic, bars date</string>
     <string name="analog_minimalistic_text_date">Analog minimalistic, text date</string>
     <string name="animation">Animation</string>
-    <string name="app_name">Pi Clock</string>
+    <string name="app_name" translatable="false">π Clock</string>
     <string name="appearance">Appearance</string>
     <string name="auto_inactivate">Auto-deactivation</string>
     <string name="auto_inactivate_never_summary">Disabled. Toggle active mode by touching screen</string>
@@ -107,9 +106,8 @@
     <string name="move_hands_discretely">Move hour and minute hands discretely</string>
     <string name="move_hands_smooth">Move hour and minute hands smoothly</string>
     <string name="muted_brightness_summary">Muted brightness in inactive mode %d%%</string>
+    <string name="never_move">Never move</string>
     <string name="no_trailing_zeroes">No trailing zeroes</string>
-    <string name="on_monday">on Monday</string>
-    <string name="on_sunday">on Sunday</string>
     <string name="orange_second_hand">Orange second hand</string>
     <string name="orange_seconds">Orange seconds</string>
     <string name="overshot">Overshot</string>
@@ -120,7 +118,7 @@
     <string name="scale_info">Scale %d%%</string>
     <string name="scale_info_max">Scale %d%% (max)</string>
     <string name="scale_info_min">Scale %d%% (min)</string>
-    <string name="scale_summary">%d%%</string>
+    <string name="scale_summary" translatable="false">%d%%</string>
     <string name="scroll">Scroll</string>
     <string name="second_hand">Second hand</string>
     <string name="seconds_format">Seconds</string>

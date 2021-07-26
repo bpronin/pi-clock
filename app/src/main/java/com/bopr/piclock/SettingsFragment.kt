@@ -322,7 +322,6 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
     }
 
     private fun updateAnimationOnView() {
-        //todo: also disable layout animation specified in xml as android:animateLayoutChanges
         requirePreference<SwitchPreferenceCompat>(PREF_ANIMATION_ON).apply {
             summary = getString(
                 if (settings.getBoolean(key))

@@ -22,7 +22,7 @@ internal class SoundControl(context: Context, settings: Settings) : ContentContr
     Destroyable {
 
     private val player = TickPlayer(context)
-    private val fadeDuration = 4000L //todo: make it var
+    private val fadeDuration = 4000L
 
     private var whenActive = false
     private var whenInactive = false

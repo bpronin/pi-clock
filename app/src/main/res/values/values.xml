@@ -97,13 +97,13 @@
         <item>2000</item>
         <item>5000</item>
         <item>10000</item>
-        <item>-1</item>
+        <item>60000</item>
     </string-array>
     <string-array name="auto_inactivate_delay_titles">
         <item>@string/_2_second</item>
         <item>@string/_5_seconds</item>
         <item>@string/_10_seconds</item>
-        <item>@string/disabled</item>
+        <item>@string/_1_minute</item>
     </string-array>
 
     <string-array name="content_float_interval_values">
@@ -118,7 +118,7 @@
         <item>@string/_10_second</item>
         <item>@string/_1_minute</item>
         <item>@string/_15_minutes</item>
-        <item>@string/_never_move</item>
+        <item>@string/never_move</item>
     </string-array>
 
     <string-array name="content_float_speed_values">

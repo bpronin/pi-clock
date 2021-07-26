@@ -63,7 +63,7 @@ internal class AnalogClockTextDateControl(private val view: View, settings: Sett
         super.onSettingChanged(key)
         when (key) {
             PREF_ANIMATION_ON -> updateAnimationOn()
-            PREF_DATE_FORMAT -> updateView() //todo: animate date view when format changed
+            PREF_DATE_FORMAT -> updateView()
         }
     }
 
