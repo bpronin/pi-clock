@@ -261,7 +261,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
     private fun createContentControl() {
         val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
         val layoutResId = requireResId(layoutName)
-        val styleResId = requireStyleResId(settings.contentLayoutStyleName)
+        val styleResId = requireResId(settings.contentLayoutStyleName)
 
         if (layoutResId == currentLayoutResId && styleResId == currentStyleResId) return
 

@@ -3,14 +3,12 @@ package com.bopr.piclock.util
 import androidx.annotation.AnyRes
 import androidx.annotation.ArrayRes
 import androidx.annotation.LayoutRes
-import androidx.annotation.StyleRes
 import com.bopr.piclock.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.DAY_OF_WEEK
 
-private const val STYLE = "style"
 private const val ARRAY = "array"
 
 /**
@@ -34,6 +32,14 @@ fun dayOfWeek(date: Date): Int = Calendar.getInstance().run {
 
 fun defaultDatetimeFormat(pattern: String) = SimpleDateFormat(pattern, Locale.getDefault())
 
+
+/**
+ * Returns name of resource ID (short).
+ */
+fun Contextual.getResShortName(@AnyRes resId: Int): String {
+    return requireContext().resources.getResourceEntryName(resId)
+}
+
 /**
  * Returns ID of resource by its short name and type.
  */
@@ -47,6 +53,16 @@ private fun Contextual.getResId(resType: String, resName: String): Int {
 }
 
 /**
+ * Returns ID of resource by its name or throws an exception when resource does not exist.
+ */
+private fun Contextual.requireResId(resType: String, resName: String): Int {
+    return getResId(resType, resName).also {
+        if (it == 0) throw Error("Resource does not exist: $resType/$resName")
+    }
+}
+
+
+/**
  * Returns ID of resource by its long name of the form "type/entry".
  */
 private fun Contextual.getResId(resName: String): Int {
@@ -56,10 +72,16 @@ private fun Contextual.getResId(resName: String): Int {
 }
 
 /**
- * Returns name of resource ID (short).
+ * Returns ID of resource by its long name or throws an exception when resource does not exist.
  */
-fun Contextual.getResShortName(@AnyRes resId: Int): String {
-    return requireContext().resources.getResourceEntryName(resId)
+fun Contextual.requireResId(resName: String): Int {
+    return getResId(resName).also {
+        if (it == 0) throw Error("Resource does not exist: $resName")
+    }
+}
+
+fun Contextual.isResExists(resName: String): Boolean {
+    return getResId(resName) != 0
 }
 
 /**
@@ -84,24 +106,6 @@ fun Contextual.requireResName(@AnyRes resId: Int): String {
     }
 }
 
-/**
- * Returns ID of resource by its name or throws an exception when resource does not exist.
- */
-private fun Contextual.requireResId(resType: String, resName: String): Int {
-    return getResId(resType, resName).also {
-        if (it == 0) throw Error("Resource does not exist: $resType/$resName")
-    }
-}
-
-/**
- * Returns ID of resource by its long name or throws an exception when resource does not exist.
- */
-fun Contextual.requireResId(resName: String): Int {
-    return getResId(resName).also {
-        if (it == 0) throw Error("Resource does not exist: $resName")
-    }
-}
-
 fun Contextual.requireStringArray(@ArrayRes resId: Int): Array<String> {
     return requireContext().resources.getStringArray(resId)
 }
@@ -115,12 +119,6 @@ fun Contextual.requireTypedArray(@ArrayRes resId: Int): Array<String?> {
         array
     }
 }
-
-@StyleRes
-fun Contextual.getStyleResId(resName: String) = getResId(STYLE, resName)
-
-@StyleRes
-fun Contextual.requireStyleResId(resName: String) = requireResId(STYLE, resName)
 
 @ArrayRes
 fun Contextual.getArrayResId(resName: String) = getResId(ARRAY, resName)
@@ -217,7 +215,7 @@ fun Contextual.getLayoutStyleName(layoutResName: String, style: String, color: S
     val layoutPrefix = requireTypedArray(R.array.content_layout_values).run {
         val layoutIndex = indexOf(layoutResName)
         if (layoutIndex != -1)
-            requireStringArray(R.array.content_layout_styles)[layoutIndex]
+            requireTypedArray(R.array.content_layout_styles)[layoutIndex]
         else ""
     }
 
@@ -238,16 +236,6 @@ fun Contextual.getLayoutStyleName(layoutResName: String, style: String, color: S
     return layoutPrefix + styleSuffix + colorSuffix
 }
 
-///**
-// * Returns ID of resource by its fully qualified path.
-// */
-//fun Contextual.getResId(resPath: String): Int {
-//    return requireContext().run {
-//        val resName = resPath.substringAfter("res/").substringBeforeLast(".")
-//        resources.getIdentifier(resName, null, packageName)
-//    }
-//}
-
 //fun Contextual.getResRef(resId: Int): String {
 //    return requireContext().resources.run {
 //        "@${getResourceTypeName(resId)}/${getResourceEntryName(resId)}"
@@ -261,13 +249,4 @@ fun Contextual.getLayoutStyleName(layoutResName: String, style: String, color: S
 //    val value = TypedValue()
 //    requireContext().resources.getValue(resId, value, true)
 //    return value.string.toString()
-//}
-
-//fun Contextual.getResArray(resId: Int): IntArray {
-//    val array: IntArray
-//    requireContext().resources.obtainTypedArray(resId).apply {
-//        array = IntArray(length()) { getResourceId(it, 0) }
-//        recycle()
-//    }
-//    return array
 //}

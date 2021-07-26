@@ -105,7 +105,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             DEFAULT_LAYOUT,
             R.array.content_layout_values
         ) {
-            getStyleResId(contentLayoutStyleName) != 0
+            isResExists(contentLayoutStyleName)
         }
 
         putStringOptional(
@@ -113,7 +113,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             requireStringArray(requireStyleValuesResId(DEFAULT_LAYOUT))[0]
         ) {
             isStringArrayContains(requireStyleValuesResId(DEFAULT_LAYOUT), it)
-                    && getStyleResId(contentLayoutStyleName) != 0
+                    && isResExists(contentLayoutStyleName)
         }
 
         putStringOptional(
@@ -121,7 +121,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
             requireStringArray(getColorsValuesResId(DEFAULT_LAYOUT))[3]
         ) {
             isStringArrayContains(getColorsValuesResId(DEFAULT_LAYOUT), it)
-                    && getStyleResId(contentLayoutStyleName) != 0
+                    && isResExists(contentLayoutStyleName)
         }
 
         putStringSetResOptional(

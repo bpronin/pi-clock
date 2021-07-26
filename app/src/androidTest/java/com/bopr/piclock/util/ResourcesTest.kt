@@ -86,19 +86,19 @@ internal class ResourcesTest : Contextual {
     @Test
     fun testArraysContent() {
         requireStringArray(R.array.content_layout_values).forEach {
-            requireLayoutResId(it)
+            requireResId(it)
         }
         requireStringArray(R.array.tick_sound_values).forEach {
-            if (it.isNotEmpty()) requireRawResId(it)
+            if (it.isNotEmpty()) requireResId(it)
         }
         requireStringArray(R.array.digits_animation_values).forEach {
-            if (it.isNotEmpty()) requireAnimatorResId(it)
+            if (it.isNotEmpty()) requireResId(it)
         }
         requireStringArray(R.array.float_animation_values).forEach {
-            if (it.isNotEmpty()) requireAnimatorResId(it)
+            if (it.isNotEmpty()) requireResId(it)
         }
         requireStringArray(R.array.clock_hand_animation_values).forEach {
-            if (it.isNotEmpty()) requireAnimatorResId(it)
+            if (it.isNotEmpty()) requireResId(it)
         }
     }
 
@@ -109,7 +109,7 @@ internal class ResourcesTest : Contextual {
     fun testLayoutStyles() {
         requireStringArray(R.array.content_layout_styles).forEachIndexed { index, stylePrefix ->
             val layoutResId =
-                requireLayoutResId(requireStringArray(R.array.content_layout_values)[index])
+                requireResId(requireStringArray(R.array.content_layout_values)[index])
             val styles = requireStringArray(requireStyleValuesResId(layoutResId))
             val colorsId = getColorsValuesResId(layoutResId)
             if (colorsId != 0) {

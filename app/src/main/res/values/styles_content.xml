@@ -1,0 +1,17 @@
+<resources>
+
+    <style name="Content" parent="AppTheme" />
+
+    <style name="Content.Digital.Default" parent="Content" />
+
+    <style name="Content.Digital.Simple" parent="Content" />
+
+    <style name="Content.Digital.Vertical.Default" parent="Content" />
+
+    <style name="Content.Digital.Vertical.Simple" parent="Content" />
+
+    <style name="Content.Analog.Default" parent="Content" />
+
+    <style name="Content.Analog.BarsDate" parent="Content" />
+
+</resources>

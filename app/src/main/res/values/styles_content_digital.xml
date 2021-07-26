@@ -2,7 +2,7 @@
 
     <!-- Digital small seconds -->
 
-    <style name="Content.Digital.Default.Default" parent="AppTheme">
+    <style name="Content.Digital.Default.Default" parent="Content.Digital.Default">
         <item name="contentAmPmTextPaddingTop">-4sp</item>
         <item name="contentAmPmTextSize">30sp</item>
         <item name="contentDateFont">@font/normal_companion</item>

@@ -19,14 +19,14 @@
         <item>@string/analog_minimalistic_text_date</item>
         <item>@string/analog_minimalistic_bars_date</item>
     </string-array>
-    <string-array name="content_layout_styles">
-        <item>Content.Digital.Default</item>
-        <item>Content.Digital.Simple</item>
-        <item>Content.Digital.Vertical.Default</item>
-        <item>Content.Digital.Vertical.Simple</item>
-        <item>Content.Analog.Default</item>
-        <item>Content.Analog.BarsDate</item>
-    </string-array>
+    <array name="content_layout_styles">
+        <item>@style/Content.Digital.Default</item>
+        <item>@style/Content.Digital.Simple</item>
+        <item>@style/Content.Digital.Vertical.Default</item>
+        <item>@style/Content.Digital.Vertical.Simple</item>
+        <item>@style/Content.Analog.Default</item>
+        <item>@style/Content.Analog.BarsDate</item>
+    </array>
 
     <string-array name="hours_minutes_format_values">
         <item>HH:mm</item>

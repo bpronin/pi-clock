@@ -2,7 +2,7 @@
 
     <!-- Analog clock with text date -->
 
-    <style name="Content.Analog.Default.Square" parent="AppTheme">
+    <style name="Content.Analog.Default.Square" parent="Content.Analog.Default">
         <item name="contentDateFont">@font/thick</item>
         <item name="contentDatePaddingTop">8sp</item>
         <item name="contentDateTextSize">26sp</item>
