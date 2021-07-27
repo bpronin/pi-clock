@@ -9,8 +9,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.Calendar.DAY_OF_WEEK
 
-private const val ARRAY = "array"
-
 /**
  * Miscellaneous resource utilities.
  *
@@ -40,34 +38,13 @@ fun Contextual.getResShortName(@AnyRes resId: Int): String {
     return requireContext().resources.getResourceEntryName(resId)
 }
 
-/**
- * Returns ID of resource by its short name and type.
- */
-private fun Contextual.getResId(resType: String, resName: String): Int {
-    if (resName.indexOf("/") != -1) {
-        throw Error("Resource name must NOT be fully qualified")
-    }
-    return requireContext().run {
-        resources.getIdentifier(resName, resType, packageName)
-    }
-}
-
-/**
- * Returns ID of resource by its name or throws an exception when resource does not exist.
- */
-private fun Contextual.requireResId(resType: String, resName: String): Int {
-    return getResId(resType, resName).also {
-        if (it == 0) throw Error("Resource does not exist: $resType/$resName")
-    }
-}
-
 
 /**
  * Returns ID of resource by its long name of the form "type/entry".
  */
-private fun Contextual.getResId(resName: String): Int {
+private fun Contextual.getResId(resName: String?): Int {
     return requireContext().run {
-        resources.getIdentifier(resName, null, packageName)
+        resName?.run { resources.getIdentifier(this, null, packageName) } ?: 0
     }
 }
 
@@ -110,6 +87,13 @@ fun Contextual.requireStringArray(@ArrayRes resId: Int): Array<String> {
     return requireContext().resources.getStringArray(resId)
 }
 
+/**
+ * Returns true if resource array contains specified value.
+ */
+fun <T> Contextual.isStringArrayContains(@ArrayRes arrayResId: Int, value: T): Boolean {
+    return requireStringArray(arrayResId).contains(value.toString())
+}
+
 fun Contextual.requireTypedArray(@ArrayRes resId: Int): Array<String?> {
     return requireContext().resources.obtainTypedArray(resId).run {
         val array = Array(length()) {
@@ -118,19 +102,6 @@ fun Contextual.requireTypedArray(@ArrayRes resId: Int): Array<String?> {
         recycle()
         array
     }
-}
-
-@ArrayRes
-fun Contextual.getArrayResId(resName: String) = getResId(ARRAY, resName)
-
-@ArrayRes
-fun Contextual.requireArrayResId(resName: String) = requireResId(ARRAY, resName)
-
-/**
- * Returns true if resource array contains specified value.
- */
-fun <T> Contextual.isStringArrayContains(@ArrayRes arrayResId: Int, value: T): Boolean {
-    return requireStringArray(arrayResId).contains(value.toString())
 }
 
 fun Contextual.isTypedArrayContains(@ArrayRes arrayResId: Int, resName: String): Boolean {
@@ -191,56 +162,78 @@ fun <C : Collection<*>> Contextual.ensureResArrayContainsAll(
     }
 }
 
-@ArrayRes
-fun Contextual.getStyleValuesResId(@LayoutRes layoutResId: Int): Int =
-    getArrayResId(getResShortName(layoutResId) + "_style_values")
+private fun Contextual.getArrayMapping(
+    @ArrayRes keysArrayResId: Int,
+    @ArrayRes valuesArrayResId: Int,
+    key: String
+) = requireTypedArray(keysArrayResId).indexOf(key).run {
+    if (this != -1) requireTypedArray(valuesArrayResId)[this] else null
+}
+
+private fun Contextual.requireArrayMapping(
+    @ArrayRes keysArrayResId: Int,
+    @ArrayRes valuesArrayResId: Int,
+    key: String
+) = getArrayMapping(keysArrayResId, valuesArrayResId, key)
+    ?: throw Error("Array mapping no t found")
 
 @ArrayRes
-fun Contextual.requireStyleValuesResId(@LayoutRes layoutResId: Int): Int =
-    requireArrayResId(getResShortName(layoutResId) + "_style_values")
+fun Contextual.requireStyleValuesResId(@LayoutRes layoutResId: Int) = requireResId(
+    requireArrayMapping(
+        R.array.content_layout_values,
+        R.array.content_layout_styles_values,
+        requireResName(layoutResId)
+    )
+)
 
 @ArrayRes
-fun Contextual.requireStyleTitlesResId(@LayoutRes layoutResId: Int): Int =
-    requireArrayResId(getResShortName(layoutResId) + "_style_titles")
+fun Contextual.requireStyleTitlesResId(@LayoutRes layoutResId: Int) = requireResId(
+    requireArrayMapping(
+        R.array.content_layout_values, R.array.content_layout_styles_titles,
+        requireResName(layoutResId)
+    )
+)
 
 @ArrayRes
-fun Contextual.getColorsValuesResId(@LayoutRes layoutResId: Int): Int =
-    getArrayResId(getResShortName(layoutResId) + "_colors_values")
+fun Contextual.getColorsValuesResId(@LayoutRes layoutResId: Int) = getResId(
+    getArrayMapping(
+        R.array.content_layout_values, R.array.content_layout_colors_values,
+        requireResName(layoutResId)
+    )
+)
 
 @ArrayRes
-fun Contextual.getColorsTitlesResId(@LayoutRes layoutResId: Int): Int =
-    getArrayResId(getResShortName(layoutResId) + "_colors_titles")
+fun Contextual.requireColorsTitlesResId(@LayoutRes layoutResId: Int) = requireResId(
+    requireArrayMapping(
+        R.array.content_layout_values, R.array.content_layout_colors_titles,
+        requireResName(layoutResId)
+    )
+)
 
 fun Contextual.getLayoutStyleName(layoutResName: String, style: String, color: String): String {
-    val layoutPrefix = requireTypedArray(R.array.content_layout_values).run {
-        val layoutIndex = indexOf(layoutResName)
-        if (layoutIndex != -1)
-            requireTypedArray(R.array.content_layout_styles)[layoutIndex]
-        else ""
-    }
+    val layoutPrefix = getArrayMapping(
+        R.array.content_layout_values, R.array.content_layout_styles, layoutResName
+    ) ?: ""
 
-    val layoutResId = requireResId(layoutResName)
-
-    val styleSuffix = getStyleValuesResId(layoutResId).let { stylesResId ->
-        if (stylesResId != 0) requireStringArray(stylesResId).let { styles ->
+    val styleSuffix = getArrayMapping(
+        R.array.content_layout_values, R.array.content_layout_styles_values, layoutResName
+    )?.let {
+        requireStringArray(requireResId(it)).let { styles ->
             if (styles.contains(style)) style else styles[0]
-        } else ""
-    }
+        }
+    } ?: ""
 
-    val colorSuffix = getColorsValuesResId(layoutResId).let { colorsResId ->
-        if (colorsResId != 0) requireStringArray(colorsResId).let { colors ->
+    val colorSuffix = getArrayMapping(
+        R.array.content_layout_values, R.array.content_layout_colors_values, layoutResName
+    )?.let {
+        requireStringArray(requireResId(it)).let { colors ->
             if (colors.contains(color)) color else colors[0]
-        } else ""
-    }
+        }
+    } ?: ""
+
 
     return layoutPrefix + styleSuffix + colorSuffix
 }
-
-//fun Contextual.getResRef(resId: Int): String {
-//    return requireContext().resources.run {
-//        "@${getResourceTypeName(resId)}/${getResourceEntryName(resId)}"
-//    }
-//}
 
 ///**
 // * Returns resource fully qualified path in form of "res/drawable/pic.jpg"

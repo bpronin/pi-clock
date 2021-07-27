@@ -261,11 +261,10 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         requirePreference<ListPreference>(PREF_CONTENT_COLORS).apply {
             val layoutResId = requireResId(settings.getString(PREF_CONTENT_LAYOUT))
             val valuesResId = getColorsValuesResId(layoutResId)
-            val titlesResId = getColorsTitlesResId(layoutResId)
 
             if (valuesResId != 0) {
                 setEntryValues(valuesResId)
-                setEntries(titlesResId)
+                setEntries(requireColorsTitlesResId(layoutResId))
                 isVisible = true
             } else {
                 entryValues = arrayOf("")

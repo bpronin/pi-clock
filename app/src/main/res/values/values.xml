@@ -27,6 +27,38 @@
         <item>@style/Content.Analog.Default</item>
         <item>@style/Content.Analog.BarsDate</item>
     </array>
+    <array name="content_layout_styles_values">
+        <item>@array/view_digital_default_style_values</item>
+        <item>@array/view_digital_simple_style_values</item>
+        <item>@array/view_digital_vertical_default_style_values</item>
+        <item>@array/view_digital_vertical_simple_style_values</item>
+        <item>@array/view_analog_text_date_min_style_values</item>
+        <item>@array/view_analog_bars_date_min_style_values</item>
+    </array>
+    <array name="content_layout_styles_titles">
+        <item>@array/view_digital_default_style_titles</item>
+        <item>@array/view_digital_simple_style_titles</item>
+        <item>@array/view_digital_vertical_default_style_titles</item>
+        <item>@array/view_digital_vertical_simple_style_titles</item>
+        <item>@array/view_analog_text_date_min_style_titles</item>
+        <item>@array/view_analog_bars_date_min_style_titles</item>
+    </array>
+    <array name="content_layout_colors_values">
+        <item>@array/view_digital_default_colors_values</item>
+        <item />
+        <item>@array/view_digital_vertical_default_colors_values</item>
+        <item />
+        <item>@array/view_analog_text_date_min_colors_values</item>
+        <item>@array/view_analog_text_date_min_colors_values</item>
+    </array>
+    <array name="content_layout_colors_titles">
+        <item>@array/view_digital_default_colors_titles</item>
+        <item />
+        <item>@array/view_digital_vertical_default_colors_titles</item>
+        <item />
+        <item>@array/view_analog_text_date_min_colors_titles</item>
+        <item>@array/view_analog_text_date_min_colors_titles</item>
+    </array>
 
     <string-array name="hours_minutes_format_values">
         <item>HH:mm</item>
