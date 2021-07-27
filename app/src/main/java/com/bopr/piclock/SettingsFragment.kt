@@ -13,7 +13,6 @@ import com.bopr.piclock.ContentLayoutType.*
 import com.bopr.piclock.ContentLayoutType.Companion.layoutTypeOf
 import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
-import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_AUTO_INACTIVATE_DELAY
 import com.bopr.piclock.Settings.Companion.PREF_CLOCK_HAND_ANIMATION
@@ -41,7 +40,6 @@ import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
 import com.bopr.piclock.Settings.Companion.PREF_TOP_SETTING
 import com.bopr.piclock.Settings.Companion.PREF_WEEK_START
 import com.bopr.piclock.Settings.Companion.SHARED_PREFERENCES_NAME
-import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
 import com.bopr.piclock.util.*
 import com.bopr.piclock.util.ui.preference.CustomPreferenceFragment
 import java.text.DateFormatSymbols
@@ -239,9 +237,9 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     private fun updateStyleView() {
         requirePreference<ListPreference>(PREF_CONTENT_STYLE).apply {
-            val layoutResId = requireResId(settings.getString(PREF_CONTENT_LAYOUT))
-            setEntryValues(requireStyleValuesResId(layoutResId))
-            setEntries(requireStyleTitlesResId(layoutResId))
+            val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
+            setEntryValues(requireStyleValuesResId(layoutName))
+            setEntries(requireStyleTitlesResId(layoutName))
 
             val settingValue = settings.getString(key)
             val valueIndex = findIndexOfValue(settingValue)
@@ -259,12 +257,12 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
     private fun updateColorsView() {
         requirePreference<ListPreference>(PREF_CONTENT_COLORS).apply {
-            val layoutResId = requireResId(settings.getString(PREF_CONTENT_LAYOUT))
-            val valuesResId = getColorsValuesResId(layoutResId)
+            val layoutName = settings.getString(PREF_CONTENT_LAYOUT)
+            val valuesResId = getColorsValuesResId(layoutName)
 
             if (valuesResId != 0) {
                 setEntryValues(valuesResId)
-                setEntries(requireColorsTitlesResId(layoutResId))
+                setEntries(requireColorsTitlesResId(layoutName))
                 isVisible = true
             } else {
                 entryValues = arrayOf("")

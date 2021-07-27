@@ -6,9 +6,8 @@ import com.bopr.piclock.BrightnessControl.Companion.MAX_BRIGHTNESS
 import com.bopr.piclock.BrightnessControl.Companion.MIN_BRIGHTNESS
 import com.bopr.piclock.ScaleControl.Companion.MAX_SCALE
 import com.bopr.piclock.ScaleControl.Companion.MIN_SCALE
+import com.bopr.piclock.SoundControl.Companion.TICK_ACTIVE
 import com.bopr.piclock.util.*
-import java.text.DateFormat
-import java.text.DateFormat.FULL
 
 /**
  * Application settings.
@@ -85,110 +84,114 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         }
     }
 
-    fun validate() = update {
-        /* NOTE: clearing settings here will have no effect. it should be done in separate update */
-        putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
-        putBooleanOptional(PREF_TIME_SEPARATORS_BLINKING, true)
-        putBooleanOptional(PREF_ANIMATION_ON, true)
-        putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
-        putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
-        putBooleanOptional(PREF_GESTURES_ENABLED, true)
-        putBooleanOptional(PREF_SECOND_HAND_VISIBLE, true)
-        putBooleanOptional(PREF_CLOCK_HAND_MOVE_SMOOTH, true)
-        putBooleanOptional(PREF_DIGITS_SPLIT_ANIMATION, true)
-        putIntOptional(PREF_WEEK_START, localeFirstDayOfWeek)
-        putIntOptional(PREF_CONTENT_SCALE, 100) { it in MIN_SCALE..MAX_SCALE }
-        putIntOptional(PREF_MUTED_BRIGHTNESS, 30) { it in MIN_BRIGHTNESS..MAX_BRIGHTNESS }
+    fun validate() {
+        update {
+            /* NOTE: clearing settings here will have no effect. it should be done in separate update */
+            putInt(PREF_SETTINGS_VERSION, SETTINGS_VERSION)
+            putBooleanOptional(PREF_TIME_SEPARATORS_BLINKING, true)
+            putBooleanOptional(PREF_ANIMATION_ON, true)
+            putBooleanOptional(PREF_FULLSCREEN_ENABLED, true)
+            putBooleanOptional(PREF_TIME_SEPARATORS_VISIBLE, true)
+            putBooleanOptional(PREF_GESTURES_ENABLED, true)
+            putBooleanOptional(PREF_SECOND_HAND_VISIBLE, true)
+            putBooleanOptional(PREF_CLOCK_HAND_MOVE_SMOOTH, true)
+            putBooleanOptional(PREF_DIGITS_SPLIT_ANIMATION, true)
+            putIntOptional(PREF_WEEK_START, localeFirstDayOfWeek)
+            putIntOptional(PREF_CONTENT_SCALE, 100) { it in MIN_SCALE..MAX_SCALE }
+            putIntOptional(PREF_MUTED_BRIGHTNESS, 30) { it in MIN_BRIGHTNESS..MAX_BRIGHTNESS }
 
-        putTypedResOptional(
-            PREF_CONTENT_LAYOUT,
-            DEFAULT_LAYOUT,
-            R.array.content_layout_values
-        ) {
-            isResExists(contentLayoutStyleName)
+            putTypedResOptional(
+                PREF_CONTENT_LAYOUT,
+                DEFAULT_LAYOUT,
+                R.array.content_layout_values
+            ) {
+                isResExists(contentLayoutStyleName)
+            }
+
+            val layoutName = requireResName(DEFAULT_LAYOUT)
+
+            putStringOptional(
+                PREF_CONTENT_STYLE,
+                requireStringArray(requireStyleValuesResId(layoutName))[0]
+            ) {
+                isStringArrayContains(requireStyleValuesResId(layoutName), it)
+                        && isResExists(contentLayoutStyleName)
+            }
+
+            val colorsResId = getColorsValuesResId(layoutName)
+            putStringOptional(
+                PREF_CONTENT_COLORS,
+                requireStringArray(colorsResId)[3]
+            ) {
+                isStringArrayContains(colorsResId, it) && isResExists(contentLayoutStyleName)
+            }
+
+            putStringSetResOptional(
+                PREF_TICK_RULES,
+                setOf(TICK_ACTIVE),
+                R.array.tick_sound_mode_values
+            )
+
+            putStringResOptional(
+                PREF_HOURS_MINUTES_FORMAT,
+                requireStringArray(R.array.hours_minutes_format_values)[if (localeIs24Hour) 0 else 2],
+                R.array.hours_minutes_format_values
+            )
+
+            putStringResOptional(
+                PREF_SECONDS_FORMAT,
+                requireStringArray(R.array.seconds_format_values)[0],
+                R.array.seconds_format_values
+            )
+
+            putStringResOptional(
+                PREF_DATE_FORMAT,
+                SYSTEM_DEFAULT,
+                R.array.date_format_values
+            )
+
+            putLongResOptional(
+                PREF_AUTO_INACTIVATE_DELAY,
+                requireStringArray(R.array.auto_inactivate_delay_values)[1].toLong(),
+                R.array.auto_inactivate_delay_values
+            )
+
+            putLongResOptional(
+                PREF_CONTENT_FLOAT_INTERVAL,
+                requireStringArray(R.array.content_float_interval_values)[3].toLong(),
+                R.array.content_float_interval_values
+            )
+
+            putIntResOptional(
+                PREF_FLOAT_SPEED,
+                requireStringArray(R.array.content_float_speed_values)[3].toInt(),
+                R.array.content_float_speed_values
+            )
+
+            putTypedResOptional(
+                PREF_TICK_SOUND,
+                R.raw.alarm_clock,
+                R.array.tick_sound_values
+            )
+
+            putTypedResOptional(
+                PREF_DIGITS_ANIMATION,
+                R.animator.text_fall_accelerate,
+                R.array.digits_animation_values
+            )
+
+            putTypedResOptional(
+                PREF_FLOAT_ANIMATION,
+                R.animator.float_move,
+                R.array.float_animation_values
+            )
+
+            putTypedResOptional(
+                PREF_CLOCK_HAND_ANIMATION,
+                R.animator.clock_handle_rotate_overshot,
+                R.array.clock_hand_animation_values
+            )
         }
-
-        putStringOptional(
-            PREF_CONTENT_STYLE,
-            requireStringArray(requireStyleValuesResId(DEFAULT_LAYOUT))[0]
-        ) {
-            isStringArrayContains(requireStyleValuesResId(DEFAULT_LAYOUT), it)
-                    && isResExists(contentLayoutStyleName)
-        }
-
-        putStringOptional(
-            PREF_CONTENT_COLORS,
-            requireStringArray(getColorsValuesResId(DEFAULT_LAYOUT))[3]
-        ) {
-            isStringArrayContains(getColorsValuesResId(DEFAULT_LAYOUT), it)
-                    && isResExists(contentLayoutStyleName)
-        }
-
-        putStringSetResOptional(
-            PREF_TICK_RULES,
-            setOf(TICK_ACTIVE),
-            R.array.tick_sound_mode_values
-        )
-
-        putStringResOptional(
-            PREF_HOURS_MINUTES_FORMAT,
-            requireStringArray(R.array.hours_minutes_format_values)[if (localeIs24Hour) 0 else 2],
-            R.array.hours_minutes_format_values
-        )
-
-        putStringResOptional(
-            PREF_SECONDS_FORMAT,
-            requireStringArray(R.array.seconds_format_values)[0],
-            R.array.seconds_format_values
-        )
-
-        putStringResOptional(
-            PREF_DATE_FORMAT,
-            SYSTEM_DEFAULT,
-            R.array.date_format_values
-        )
-
-        putLongResOptional(
-            PREF_AUTO_INACTIVATE_DELAY,
-            requireStringArray(R.array.auto_inactivate_delay_values)[1].toLong(),
-            R.array.auto_inactivate_delay_values
-        )
-
-        putLongResOptional(
-            PREF_CONTENT_FLOAT_INTERVAL,
-            requireStringArray(R.array.content_float_interval_values)[3].toLong(),
-            R.array.content_float_interval_values
-        )
-
-        putIntResOptional(
-            PREF_FLOAT_SPEED,
-            requireStringArray(R.array.content_float_speed_values)[3].toInt(),
-            R.array.content_float_speed_values
-        )
-
-        putTypedResOptional(
-            PREF_TICK_SOUND,
-            R.raw.alarm_clock,
-            R.array.tick_sound_values
-        )
-
-        putTypedResOptional(
-            PREF_DIGITS_ANIMATION,
-            R.animator.text_fall_accelerate,
-            R.array.digits_animation_values
-        )
-
-        putTypedResOptional(
-            PREF_FLOAT_ANIMATION,
-            R.animator.float_move,
-            R.array.float_animation_values
-        )
-
-        putTypedResOptional(
-            PREF_CLOCK_HAND_ANIMATION,
-            R.animator.clock_handle_rotate_overshot,
-            R.array.clock_hand_animation_values
-        )
     }
 
     companion object {
@@ -197,13 +200,6 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         private const val DEFAULT_LAYOUT = R.layout.view_digital_default
 
         const val SHARED_PREFERENCES_NAME = "com.bopr.piclock_preferences"
-
-        val DEFAULT_DATE_FORMAT: DateFormat = DateFormat.getDateInstance(FULL)
-
-        const val SYSTEM_DEFAULT = "system_default"
-        const val TICK_ACTIVE = "active"
-        const val TICK_INACTIVE = "inactive"
-        const val TICK_FLOATING = "floating"
 
         const val PREF_SETTINGS_VERSION = "settings_version" /* internal */
         const val PREF_TOP_SETTING = "top_setting" /* internal */

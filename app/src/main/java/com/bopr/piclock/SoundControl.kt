@@ -7,9 +7,6 @@ import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
 import com.bopr.piclock.Settings.Companion.PREF_TICK_RULES
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
-import com.bopr.piclock.Settings.Companion.TICK_ACTIVE
-import com.bopr.piclock.Settings.Companion.TICK_FLOATING
-import com.bopr.piclock.Settings.Companion.TICK_INACTIVE
 import com.bopr.piclock.util.Destroyable
 import java.util.*
 
@@ -111,5 +108,9 @@ internal class SoundControl(context: Context, settings: Settings) : ContentContr
     companion object {
 
         private const val TAG = "SoundControl"
+
+        const val TICK_ACTIVE = "active"
+        const val TICK_INACTIVE = "inactive"
+        const val TICK_FLOATING = "floating"
     }
 }

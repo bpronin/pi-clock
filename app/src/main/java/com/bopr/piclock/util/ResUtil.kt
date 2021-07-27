@@ -2,7 +2,6 @@ package com.bopr.piclock.util
 
 import androidx.annotation.AnyRes
 import androidx.annotation.ArrayRes
-import androidx.annotation.LayoutRes
 import com.bopr.piclock.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -10,10 +9,14 @@ import java.util.*
 import java.util.Calendar.DAY_OF_WEEK
 
 /**
- * Miscellaneous resource utilities.
+ * Miscellaneous resource utilities and constants.
  *
  * @author Boris P. ([boprsoft.dev@gmail.com](mailto:boprsoft.dev@gmail.com))
  */
+
+const val SYSTEM_DEFAULT = "system_default"
+
+val DEFAULT_DATE_FORMAT = DateFormat.getDateInstance(DateFormat.FULL)
 
 val localeIs24Hour: Boolean
     get() {
@@ -29,15 +32,6 @@ fun dayOfWeek(date: Date): Int = Calendar.getInstance().run {
 }
 
 fun defaultDatetimeFormat(pattern: String) = SimpleDateFormat(pattern, Locale.getDefault())
-
-
-/**
- * Returns name of resource ID (short).
- */
-fun Contextual.getResShortName(@AnyRes resId: Int): String {
-    return requireContext().resources.getResourceEntryName(resId)
-}
-
 
 /**
  * Returns ID of resource by its long name of the form "type/entry".
@@ -129,7 +123,7 @@ fun <V, C : Collection<V>> Contextual.isResArrayContainsAll(
  */
 fun <T> Contextual.ensureStringArrayContains(@ArrayRes arrayResId: Int, value: T): T {
     if (!isStringArrayContains(arrayResId, value)) {
-        throw Error("Resource array: ${getResShortName(arrayResId)} does not contain value: $value")
+        throw Error("Resource array: ${getResName(arrayResId)} does not contain value: $value")
     } else {
         return value
     }
@@ -156,7 +150,7 @@ fun <C : Collection<*>> Contextual.ensureResArrayContainsAll(
     values: C
 ): C {
     if (!isResArrayContainsAll(arrayResId, values)) {
-        throw Error("Resource array: ${getResShortName(arrayResId)} does not contain values: $values")
+        throw Error("Resource array: ${getResName(arrayResId)} does not contain values: $values")
     } else {
         return values
     }
@@ -175,59 +169,58 @@ private fun Contextual.requireArrayMapping(
     @ArrayRes valuesArrayResId: Int,
     key: String
 ) = getArrayMapping(keysArrayResId, valuesArrayResId, key)
-    ?: throw Error("Array mapping no t found")
+    ?: throw Error("Array mapping does not exist for key: $key")
 
 @ArrayRes
-fun Contextual.requireStyleValuesResId(@LayoutRes layoutResId: Int) = requireResId(
+fun Contextual.requireStyleValuesResId(layoutName: String) = requireResId(
     requireArrayMapping(
-        R.array.content_layout_values,
-        R.array.content_layout_styles_values,
-        requireResName(layoutResId)
+        R.array.content_layout_values, R.array.content_layout_styles_values, layoutName
     )
 )
 
 @ArrayRes
-fun Contextual.requireStyleTitlesResId(@LayoutRes layoutResId: Int) = requireResId(
+fun Contextual.requireStyleTitlesResId(layoutName: String) = requireResId(
     requireArrayMapping(
-        R.array.content_layout_values, R.array.content_layout_styles_titles,
-        requireResName(layoutResId)
+        R.array.content_layout_values, R.array.content_layout_styles_titles, layoutName
     )
 )
 
 @ArrayRes
-fun Contextual.getColorsValuesResId(@LayoutRes layoutResId: Int) = getResId(
+fun Contextual.getColorsValuesResId(layoutName: String) = getResId(
     getArrayMapping(
-        R.array.content_layout_values, R.array.content_layout_colors_values,
-        requireResName(layoutResId)
+        R.array.content_layout_values, R.array.content_layout_colors_values, layoutName
     )
 )
 
 @ArrayRes
-fun Contextual.requireColorsTitlesResId(@LayoutRes layoutResId: Int) = requireResId(
+fun Contextual.requireColorsTitlesResId(layoutName: String) = requireResId(
     requireArrayMapping(
-        R.array.content_layout_values, R.array.content_layout_colors_titles,
-        requireResName(layoutResId)
+        R.array.content_layout_values, R.array.content_layout_colors_titles, layoutName
     )
 )
 
-fun Contextual.getLayoutStyleName(layoutResName: String, style: String, color: String): String {
+fun Contextual.getLayoutStyleName(
+    layoutName: String,
+    styleName: String,
+    colorName: String
+): String {
     val layoutPrefix = getArrayMapping(
-        R.array.content_layout_values, R.array.content_layout_styles, layoutResName
+        R.array.content_layout_values, R.array.content_layout_styles, layoutName
     ) ?: ""
 
     val styleSuffix = getArrayMapping(
-        R.array.content_layout_values, R.array.content_layout_styles_values, layoutResName
+        R.array.content_layout_values, R.array.content_layout_styles_values, layoutName
     )?.let {
         requireStringArray(requireResId(it)).let { styles ->
-            if (styles.contains(style)) style else styles[0]
+            if (styles.contains(styleName)) styleName else styles.first()
         }
     } ?: ""
 
     val colorSuffix = getArrayMapping(
-        R.array.content_layout_values, R.array.content_layout_colors_values, layoutResName
+        R.array.content_layout_values, R.array.content_layout_colors_values, layoutName
     )?.let {
         requireStringArray(requireResId(it)).let { colors ->
-            if (colors.contains(color)) color else colors[0]
+            if (colors.contains(colorName)) colorName else colors.first()
         }
     } ?: ""
 

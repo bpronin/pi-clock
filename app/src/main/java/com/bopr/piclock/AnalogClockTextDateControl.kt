@@ -3,10 +3,10 @@ package com.bopr.piclock
 import android.view.View
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
-import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
+import com.bopr.piclock.util.DEFAULT_DATE_FORMAT
+import com.bopr.piclock.util.SYSTEM_DEFAULT
 import com.bopr.piclock.util.defaultDatetimeFormat
 import com.bopr.piclock.util.ui.AnimatedTextView
 import java.text.DateFormat

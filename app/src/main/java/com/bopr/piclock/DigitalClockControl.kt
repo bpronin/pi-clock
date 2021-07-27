@@ -5,7 +5,6 @@ import android.view.ViewGroup.*
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
-import com.bopr.piclock.Settings.Companion.DEFAULT_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_ANIMATION_ON
 import com.bopr.piclock.Settings.Companion.PREF_DATE_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_DIGITS_ANIMATION
@@ -14,7 +13,8 @@ import com.bopr.piclock.Settings.Companion.PREF_HOURS_MINUTES_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_SECONDS_FORMAT
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_BLINKING
 import com.bopr.piclock.Settings.Companion.PREF_TIME_SEPARATORS_VISIBLE
-import com.bopr.piclock.Settings.Companion.SYSTEM_DEFAULT
+import com.bopr.piclock.util.DEFAULT_DATE_FORMAT
+import com.bopr.piclock.util.SYSTEM_DEFAULT
 import com.bopr.piclock.util.defaultDatetimeFormat
 import com.bopr.piclock.util.requireResId
 import com.bopr.piclock.util.ui.AnimatedTextView
