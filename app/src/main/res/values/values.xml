@@ -45,17 +45,17 @@
     </array>
     <array name="content_layout_colors_values">
         <item>@array/view_digital_default_colors_values</item>
-        <item />
+        <item>@null</item>
         <item>@array/view_digital_vertical_default_colors_values</item>
-        <item />
+        <item>@null</item>
         <item>@array/view_analog_text_date_min_colors_values</item>
         <item>@array/view_analog_text_date_min_colors_values</item>
     </array>
     <array name="content_layout_colors_titles">
         <item>@array/view_digital_default_colors_titles</item>
-        <item />
+        <item>@null</item>
         <item>@array/view_digital_vertical_default_colors_titles</item>
-        <item />
+        <item>@null</item>
         <item>@array/view_analog_text_date_min_colors_titles</item>
         <item>@array/view_analog_text_date_min_colors_titles</item>
     </array>
@@ -192,7 +192,7 @@
         <item>@animator/text_scale_grow</item>
         <item>@animator/text_scale_shrink</item>
         <item>@animator/text_scale_grow_shrink</item>
-        <item />
+        <item>@null</item>
     </array>
     <string-array name="digits_animation_titles">
         <item>@string/fade_through</item>
@@ -212,7 +212,7 @@
         <item>@animator/float_move</item>
         <item>@animator/float_fade</item>
         <item>@animator/float_move_fade</item>
-        <item />
+        <item>@null</item>
     </array>
     <string-array name="float_animation_titles">
         <item>@string/move</item>
@@ -225,7 +225,7 @@
         <item>@animator/clock_handle_rotate_overshot</item>
         <item>@animator/clock_handle_rotate_linear</item>
         <item>@animator/clock_handle_rotate_anticipate</item>
-        <item />
+        <item>@null</item>
     </array>
     <string-array name="clock_hand_animation_titles">
         <item>@string/overshot</item>

@@ -19,7 +19,7 @@ internal class ResourcesTest : Contextual {
         requireStringArray(firstResId).apply {
             for (arrayResId in arrayResIds) {
                 assertEquals(
-                    "[${getResShortName(firstResId)}] and [${getResShortName(arrayResId)}] sizes do not match ",
+                    "[${getResName(firstResId)}] and [${getResName(arrayResId)}] sizes do not match ",
                     size, requireStringArray(arrayResId).size
                 )
             }
@@ -34,7 +34,11 @@ internal class ResourcesTest : Contextual {
         assertResArraysSizeEqual(
             R.array.content_layout_values,
             R.array.content_layout_titles,
-            R.array.content_layout_styles
+            R.array.content_layout_styles,
+            R.array.content_layout_styles_values,
+            R.array.content_layout_styles_titles,
+            R.array.content_layout_colors_values,
+            R.array.content_layout_colors_titles
         )
         assertResArraysSizeEqual(
             R.array.hours_minutes_format_values,
@@ -81,47 +85,63 @@ internal class ResourcesTest : Contextual {
     }
 
     /**
-     * Tests resource arrays containing resource references.
+     * Tests that all resources defined in arrays exist.
      */
     @Test
     fun testArraysContent() {
-        requireStringArray(R.array.content_layout_values).forEach {
-            requireResId(it)
+        requireRefArray(R.array.content_layout_values).forEach {
+            requireResId(it!!)
         }
-        requireStringArray(R.array.tick_sound_values).forEach {
-            if (it.isNotEmpty()) requireResId(it)
+        requireRefArray(R.array.content_layout_titles).forEach {
+            requireResId(it!!)
         }
-        requireStringArray(R.array.digits_animation_values).forEach {
-            if (it.isNotEmpty()) requireResId(it)
+        requireRefArray(R.array.content_layout_styles).forEach {
+            requireResId(it!!)
         }
-        requireStringArray(R.array.float_animation_values).forEach {
-            if (it.isNotEmpty()) requireResId(it)
+        requireRefArray(R.array.content_layout_styles_values).forEach {
+            requireResId(it!!)
         }
-        requireStringArray(R.array.clock_hand_animation_values).forEach {
-            if (it.isNotEmpty()) requireResId(it)
+        requireRefArray(R.array.content_layout_styles_titles).forEach {
+            requireResId(it!!)
+        }
+        requireRefArray(R.array.content_layout_colors_values).forEach {
+            it?.run { requireResId(it) }
+        }
+        requireRefArray(R.array.content_layout_colors_titles).forEach {
+            it?.run { requireResId(it) }
+        }
+        requireRefArray(R.array.tick_sound_values).forEach {
+            requireResId(it!!)
+        }
+        requireRefArray(R.array.digits_animation_values).forEach {
+            it?.run { requireResId(it) }
+        }
+        requireRefArray(R.array.float_animation_values).forEach {
+            it?.run { requireResId(it) }
+        }
+        requireRefArray(R.array.clock_hand_animation_values).forEach {
+            it?.run { requireResId(it) }
         }
     }
 
     /**
-     * Tests that all layouts styles exist.
+     * Tests that all layouts styles resources exist.
      */
     @Test
     fun testLayoutStyles() {
-        requireStringArray(R.array.content_layout_styles).forEachIndexed { index, stylePrefix ->
-            val layoutResId =
-                requireResId(requireStringArray(R.array.content_layout_values)[index])
-            val styles = requireStringArray(requireStyleValuesResId(layoutResId))
-            val colorsId = getColorsValuesResId(layoutResId)
-            if (colorsId != 0) {
-                val colors = requireStringArray(colorsId)
-                styles.forEach { style ->
-                    colors.forEach { color ->
-                        requireStyleResId(stylePrefix + style + color)
+        requireRefArray(R.array.content_layout_values).forEachIndexed { layoutIndex, layoutName ->
+            val baseStyleName = requireRefArray(R.array.content_layout_styles)[layoutIndex]
+            val styleNames = requireStringArray(requireStyleValuesResId(layoutName))
+            val colorsResId = getColorsValuesResId(layoutName)
+            if (colorsResId != 0) {
+                requireStringArray(colorsResId).forEach { colorName ->
+                    styleNames.forEach { styleName ->
+                        requireResId(baseStyleName + styleName + colorName)
                     }
                 }
             } else {
-                styles.forEach { style ->
-                    requireStyleResId(stylePrefix + style)
+                styleNames.forEach { styleName ->
+                    requireResId(baseStyleName + styleName)
                 }
             }
         }

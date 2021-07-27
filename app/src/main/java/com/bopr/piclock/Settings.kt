@@ -66,9 +66,9 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         isOldValueValid: (oldValue: String) -> Boolean = { true }
     ) {
         putStringOptional(
-            key, ensureTypedResArrayContains(valuesRes, requireResName(valueRes))
+            key, ensureRefArrayContains(valuesRes, requireResName(valueRes))
         ) {
-            isTypedArrayContains(valuesRes, it) && isOldValueValid(it)
+            isRefArrayContains(valuesRes, it) && isOldValueValid(it)
         }
     }
 
@@ -78,9 +78,9 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         valuesRes: Int
     ) {
         putStringSetOptional(
-            key, ensureResArrayContainsAll(valuesRes, value)
+            key, ensureStringArrayContainsAll(valuesRes, value)
         ) {
-            isResArrayContainsAll(valuesRes, it)
+            isStringArrayContainsAll(valuesRes, it)
         }
     }
 

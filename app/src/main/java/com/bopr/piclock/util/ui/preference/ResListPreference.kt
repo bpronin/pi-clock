@@ -24,7 +24,7 @@ class ResListPreference : ListPreference {
     }
 
     @Suppress("unused")
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs){
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
         convertEntryValues()
     }
 
@@ -41,7 +41,9 @@ class ResListPreference : ListPreference {
      */
     private fun convertEntryValues() {
         entryValues = entryValues.map { resPath ->
-            (resPath as String).substringAfter("/").substringBeforeLast(".")
+            resPath?.run {
+                toString().substringAfter("/").substringBeforeLast(".")
+            } ?: ""
         }.toTypedArray()
     }
 

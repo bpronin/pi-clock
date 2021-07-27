@@ -222,7 +222,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
     private fun updateTickSoundView() {
         requirePreference<Preference>(PREF_TICK_SOUND).apply {
             summary = requireStringArray(R.array.tick_sound_titles)[
-                    requireTypedArray(R.array.tick_sound_values).indexOf(settings.getString(key))
+                    requireRefArray(R.array.tick_sound_values).indexOf(settings.getString(key))
             ]
         }
     }

@@ -62,9 +62,10 @@ fun Contextual.isResExists(resName: String): Boolean {
 fun Contextual.getResName(@AnyRes resId: Int): String? {
     return if (resId == 0)
         null
-    else requireContext().resources.run {
-        "${getResourceTypeName(resId)}/${getResourceEntryName(resId)}"
-    }
+    else
+        requireContext().resources.run {
+            "${getResourceTypeName(resId)}/${getResourceEntryName(resId)}"
+        }
 }
 
 /**
@@ -88,24 +89,10 @@ fun <T> Contextual.isStringArrayContains(@ArrayRes arrayResId: Int, value: T): B
     return requireStringArray(arrayResId).contains(value.toString())
 }
 
-fun Contextual.requireTypedArray(@ArrayRes resId: Int): Array<String?> {
-    return requireContext().resources.obtainTypedArray(resId).run {
-        val array = Array(length()) {
-            getResName(getResourceId(it, 0))
-        }
-        recycle()
-        array
-    }
-}
-
-fun Contextual.isTypedArrayContains(@ArrayRes arrayResId: Int, resName: String): Boolean {
-    return requireTypedArray(arrayResId).contains(resName)
-}
-
 /**
  * Returns true if resource array contains all specified values.
  */
-fun <V, C : Collection<V>> Contextual.isResArrayContainsAll(
+fun <V, C : Collection<V>> Contextual.isStringArrayContainsAll(
     @ArrayRes arrayResId: Int,
     values: C
 ): Boolean {
@@ -129,11 +116,44 @@ fun <T> Contextual.ensureStringArrayContains(@ArrayRes arrayResId: Int, value: T
     }
 }
 
-fun Contextual.ensureTypedResArrayContains(
+/**
+ * Throws an exception if resource array does not contain all specified values.
+ */
+fun <C : Collection<*>> Contextual.ensureStringArrayContainsAll(
+    @ArrayRes arrayResId: Int,
+    values: C
+): C {
+    if (!isStringArrayContainsAll(arrayResId, values)) {
+        throw Error("Resource array: ${getResName(arrayResId)} does not contain values: $values")
+    } else {
+        return values
+    }
+}
+
+fun Contextual.requireRefArray(@ArrayRes arrayResId: Int): Array<String?> {
+    return requireContext().resources.obtainTypedArray(arrayResId).run {
+        val array = Array(length()) { index ->
+            val resId = getResourceId(index, 0)
+            if (resId == 0 && getType(index) != 0) throw Error(
+                "Expected reference or @null at position: $index " +
+                        "in array: ${getResName(arrayResId)} "
+            )
+            getResName(resId)
+        }
+        recycle()
+        array
+    }
+}
+
+fun Contextual.isRefArrayContains(@ArrayRes arrayResId: Int, resName: String): Boolean {
+    return requireRefArray(arrayResId).contains(resName)
+}
+
+fun Contextual.ensureRefArrayContains(
     @ArrayRes arrayResId: Int,
     resName: String
 ): String {
-    if (!isTypedArrayContains(arrayResId, resName)) {
+    if (!isRefArrayContains(arrayResId, resName)) {
         throw Error(
             "Resource array: ${getResName(arrayResId)} does not contain value: $resName"
         )
@@ -142,58 +162,44 @@ fun Contextual.ensureTypedResArrayContains(
     }
 }
 
-/**
- * Throws an exception if resource array does not contain all specified values.
- */
-fun <C : Collection<*>> Contextual.ensureResArrayContainsAll(
-    @ArrayRes arrayResId: Int,
-    values: C
-): C {
-    if (!isResArrayContainsAll(arrayResId, values)) {
-        throw Error("Resource array: ${getResName(arrayResId)} does not contain values: $values")
-    } else {
-        return values
-    }
-}
-
 private fun Contextual.getArrayMapping(
     @ArrayRes keysArrayResId: Int,
     @ArrayRes valuesArrayResId: Int,
-    key: String
-) = requireTypedArray(keysArrayResId).indexOf(key).run {
-    if (this != -1) requireTypedArray(valuesArrayResId)[this] else null
+    key: String?
+) = requireRefArray(keysArrayResId).indexOf(key).run {
+    if (this != -1) requireRefArray(valuesArrayResId)[this] else null
 }
 
 private fun Contextual.requireArrayMapping(
     @ArrayRes keysArrayResId: Int,
     @ArrayRes valuesArrayResId: Int,
-    key: String
+    key: String?
 ) = getArrayMapping(keysArrayResId, valuesArrayResId, key)
     ?: throw Error("Array mapping does not exist for key: $key")
 
 @ArrayRes
-fun Contextual.requireStyleValuesResId(layoutName: String) = requireResId(
+fun Contextual.requireStyleValuesResId(layoutName: String?) = requireResId(
     requireArrayMapping(
         R.array.content_layout_values, R.array.content_layout_styles_values, layoutName
     )
 )
 
 @ArrayRes
-fun Contextual.requireStyleTitlesResId(layoutName: String) = requireResId(
+fun Contextual.requireStyleTitlesResId(layoutName: String?) = requireResId(
     requireArrayMapping(
         R.array.content_layout_values, R.array.content_layout_styles_titles, layoutName
     )
 )
 
 @ArrayRes
-fun Contextual.getColorsValuesResId(layoutName: String) = getResId(
+fun Contextual.getColorsValuesResId(layoutName: String?) = getResId(
     getArrayMapping(
         R.array.content_layout_values, R.array.content_layout_colors_values, layoutName
     )
 )
 
 @ArrayRes
-fun Contextual.requireColorsTitlesResId(layoutName: String) = requireResId(
+fun Contextual.requireColorsTitlesResId(layoutName: String?) = requireResId(
     requireArrayMapping(
         R.array.content_layout_values, R.array.content_layout_colors_titles, layoutName
     )
