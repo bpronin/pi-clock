@@ -66,7 +66,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         isOldValueValid: (oldValue: String) -> Boolean = { true }
     ) {
         putStringOptional(
-            key, ensureRefArrayContains(valuesRes, requireResName(valueRes))
+            key, ensureRefArrayContains(valuesRes, getResName(valueRes))
         ) {
             isRefArrayContains(valuesRes, it) && isOldValueValid(it)
         }
@@ -108,7 +108,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
                 isResExists(contentLayoutStyleName)
             }
 
-            val layoutName = requireResName(DEFAULT_LAYOUT)
+            val layoutName = getResName(DEFAULT_LAYOUT)
 
             putStringOptional(
                 PREF_CONTENT_STYLE,

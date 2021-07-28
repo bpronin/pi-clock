@@ -1,5 +1,6 @@
 package com.bopr.piclock.util
 
+import android.util.TypedValue.TYPE_NULL
 import androidx.annotation.AnyRes
 import androidx.annotation.ArrayRes
 import com.bopr.piclock.R
@@ -56,23 +57,10 @@ fun Contextual.isResExists(resName: String): Boolean {
 }
 
 /**
- * Returns long name of resource of the form "type/entry" or null
- * if resource is invalid.
- */
-fun Contextual.getResName(@AnyRes resId: Int): String? {
-    return if (resId == 0)
-        null
-    else
-        requireContext().resources.run {
-            "${getResourceTypeName(resId)}/${getResourceEntryName(resId)}"
-        }
-}
-
-/**
  * Returns long name of resource of the form "type/entry" or throws ana exception
  * if resource does no exists.
  */
-fun Contextual.requireResName(@AnyRes resId: Int): String {
+fun Contextual.getResName(@AnyRes resId: Int): String {
     return requireContext().resources.run {
         "${getResourceTypeName(resId)}/${getResourceEntryName(resId)}"
     }
@@ -133,12 +121,15 @@ fun <C : Collection<*>> Contextual.ensureStringArrayContainsAll(
 fun Contextual.requireRefArray(@ArrayRes arrayResId: Int): Array<String?> {
     return requireContext().resources.obtainTypedArray(arrayResId).run {
         val array = Array(length()) { index ->
-            val resId = getResourceId(index, 0)
-            if (resId == 0 && getType(index) != 0) throw Error(
-                "Expected reference or @null at position: $index " +
-                        "in array: ${getResName(arrayResId)} "
-            )
-            getResName(resId)
+            if (getType(index) == TYPE_NULL)
+                null
+            else getResourceId(index, 0).run {
+                if (this == 0) throw Error(
+                    "Expected reference or @null at position: $index in array: " +
+                            "${getResName(arrayResId)} "
+                )
+                getResName(this)
+            }
         }
         recycle()
         array
