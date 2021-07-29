@@ -110,12 +110,12 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
 
             val layoutName = getResName(DEFAULT_LAYOUT)
 
+            val stylesResId = requireStyleValuesResId(layoutName)
             putStringOptional(
                 PREF_CONTENT_STYLE,
-                requireStringArray(requireStyleValuesResId(layoutName))[0]
+                requireStringArray(stylesResId)[0]
             ) {
-                isStringArrayContains(requireStyleValuesResId(layoutName), it)
-                        && isResExists(contentLayoutStyleName)
+                isStringArrayContains(stylesResId, it) && isResExists(contentLayoutStyleName)
             }
 
             val colorsResId = getColorsValuesResId(layoutName)
