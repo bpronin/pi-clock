@@ -68,7 +68,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
         putStringOptional(
             key, ensureRefArrayContains(valuesRes, getResName(valueRes))
         ) {
-            isRefArrayContains(valuesRes, it) && isOldValueValid(it)
+            isRefArrayContains(valuesRes, it) && isResExists(it) && isOldValueValid(it)
         }
     }
 
