@@ -1,4 +1,8 @@
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Properties
+import java.util.TimeZone
+import kotlin.apply
 
 plugins {
     alias(libs.plugins.android.application)
@@ -62,6 +66,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+    testOptions.unitTests.isReturnDefaultValues = true
+
     kotlinOptions {
         jvmTarget = "11"
     }
@@ -76,4 +82,56 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+/* Custom tasks */
+
+tasks.register("updateReleaseInfo") {
+    val file = file("src/main/assets/release.properties")
+
+    doFirst {
+        Properties().apply {
+            file.reader().use(::load)
+
+            val n = getProperty("build_number").toInt() + 1
+            setProperty("build_number", n.toString())
+
+            SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+                setProperty("build_time", format(Date()))
+            }
+            file.writer().use { store(it, "Release properties") }
+
+            println("New build number: $n")
+        }
+    }
+}
+
+tasks.register<Copy>("uploadDebug") {
+    from(
+        fileTree(layout.buildDirectory.dir("outputs/apk/debug")).files
+    )
+    into(localProperties.getProperty("upload_path"))
+    include("**/*.apk")
+}
+
+tasks.register<Copy>("uploadRelease") {
+    from(
+        fileTree(layout.buildDirectory.dir("outputs/apk/release")).files
+    )
+    into(localProperties.getProperty("upload_path"))
+    include("**/*.apk")
+}
+
+tasks.named("preBuild") {
+    finalizedBy("updateReleaseInfo")
+}
+
+afterEvaluate {
+    tasks.named("assembleDebug") {
+        finalizedBy("uploadDebug")
+    }
+    tasks.named("assembleRelease") {
+        finalizedBy("uploadRelease")
+    }
 }
