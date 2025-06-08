@@ -10,24 +10,24 @@ class FloatDropDownPreference : DropDownPreference {
 
     @Suppress("unused")
     constructor(
-        context: Context?,
+        context: Context,
         attrs: AttributeSet?,
         defStyleAttr: Int,
         defStyleRes: Int
     ) : super(context, attrs, defStyleAttr, defStyleRes)
 
     @Suppress("unused")
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
     )
 
     @Suppress("unused")
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
     @Suppress("unused")
-    constructor(context: Context?) : super(context)
+    constructor(context: Context) : super(context)
 
     override fun persistString(value: String): Boolean {
         return persistFloat(value.toFloat())

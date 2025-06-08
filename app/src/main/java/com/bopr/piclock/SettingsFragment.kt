@@ -451,7 +451,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
 
         private var clicksCount = 0
 
-        override fun onPreferenceClick(preference: Preference?): Boolean {
+        override fun onPreferenceClick(preference: Preference): Boolean {
             if (++clicksCount == 4) {
                 clicksCount = 0
                 passwordBox("Enter some secret code") {

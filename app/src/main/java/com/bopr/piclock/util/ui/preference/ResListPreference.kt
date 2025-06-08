@@ -8,7 +8,7 @@ class ResListPreference : ListPreference {
 
     @Suppress("unused")
     constructor(
-        context: Context?,
+        context: Context,
         attrs: AttributeSet?,
         defStyleAttr: Int,
         defStyleRes: Int
@@ -17,19 +17,19 @@ class ResListPreference : ListPreference {
     }
 
     @Suppress("unused")
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context, attrs, defStyleAttr
     ) {
         convertEntryValues()
     }
 
     @Suppress("unused")
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         convertEntryValues()
     }
 
     @Suppress("unused")
-    constructor(context: Context?) : super(context)
+    constructor(context: Context) : super(context)
 
     override fun setEntryValues(entryValuesResId: Int) {
         super.setEntryValues(entryValuesResId)

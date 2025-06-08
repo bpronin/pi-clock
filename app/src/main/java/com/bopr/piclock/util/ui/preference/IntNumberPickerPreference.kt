@@ -15,24 +15,24 @@ class IntNumberPickerPreference : EditTextPreference, CustomDialogPreference {
 
     @Suppress("unused")
     constructor(
-        context: Context?,
+        context: Context,
         attrs: AttributeSet?,
         defStyleAttr: Int,
         defStyleRes: Int
     ) : super(context, attrs, defStyleAttr, defStyleRes)
 
     @Suppress("unused")
-    constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
         defStyleAttr
     )
 
     @Suppress("unused")
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
 
     @Suppress("unused")
-    constructor(context: Context?) : super(context)
+    constructor(context: Context) : super(context)
 
     override fun onGetDefaultValue(a: TypedArray, index: Int): Any {
         return a.getString(index)!!
@@ -42,7 +42,7 @@ class IntNumberPickerPreference : EditTextPreference, CustomDialogPreference {
         setValue(getPersistedInt(value))
     }
 
-    override fun onSaveInstanceState(): Parcelable {
+    override fun onSaveInstanceState(): Parcelable? {
         val superState = super.onSaveInstanceState()
         if (isPersistent) {
             // No need to save instance state since it's persistent
@@ -53,8 +53,8 @@ class IntNumberPickerPreference : EditTextPreference, CustomDialogPreference {
         return myState
     }
 
-    override fun onRestoreInstanceState(state: Parcelable) {
-        if (state.javaClass != SavedState::class.java) {
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        if (state?.javaClass != SavedState::class.java) {
             // Didn't save state for us in onSaveInstanceState
             super.onRestoreInstanceState(state)
             return

@@ -182,7 +182,7 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
 
         private const val TAG = "BrightnessControl"
 
-        private const val SYSTEM_BAR_SWIPE_ZONE = 50
+//        private const val SYSTEM_BAR_SWIPE_ZONE = 50
 
         const val MIN_BRIGHTNESS = 10
         const val MAX_BRIGHTNESS = 100

@@ -30,10 +30,10 @@ class IntEditTextPreferenceFragment : PreferenceDialogFragmentCompat() {
         editText.setText(value.toString())
     }
 
-    override fun needInputMethod(): Boolean {
-        // We want the input method to show, if possible, when dialog is displayed
-        return true
-    }
+//    override fun needInputMethod(): Boolean {
+//        // We want the input method to show, if possible, when dialog is displayed
+//        return true
+//    }
 
     override fun onDialogClosed(positiveResult: Boolean) {
         if (positiveResult) {
