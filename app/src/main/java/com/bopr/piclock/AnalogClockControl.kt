@@ -138,7 +138,7 @@ internal abstract class AnalogClockControl(private val view: View, settings: Set
         if (tick == 1) updateViewsData(canAnimate)
     }
 
-    override fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String?) {
         when (key) {
             PREF_ANIMATION_ON -> updateAnimationOn()
             PREF_CLOCK_HAND_ANIMATION -> updateAnimators()

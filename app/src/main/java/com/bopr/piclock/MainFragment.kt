@@ -224,7 +224,7 @@ class MainFragment : Fragment(), OnSharedPreferenceChangeListener, Contextual {
         timer.resume()
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         Log.d(TAG, "Setting: $key has changed to: ${settings.all[key]}")
 
         when (key) {

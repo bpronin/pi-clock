@@ -31,7 +31,7 @@ internal class IlluminanceDetector(context: Context) : Destroyable {
                 val value = values[0]
                 if (currentValue != value) {
                     currentValue = value
-                    onIlluminanceChange(currentValue / sensor.maximumRange)
+                    sensor?.let { onIlluminanceChange(currentValue / it.maximumRange) }
                 }
             }
         }

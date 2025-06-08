@@ -13,7 +13,7 @@ import java.util.*
 class ReleaseInfo private constructor(
     val buildNumber: String,
     val buildTime: String,
-    val versionName: String
+    val versionName: String?
 ) {
 
     companion object {

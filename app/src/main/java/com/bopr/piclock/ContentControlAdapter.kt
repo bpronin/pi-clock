@@ -31,7 +31,7 @@ internal abstract class ContentControlAdapter(val settings: Settings) : ContentC
         /* does nothing by default */
     }
 
-    override fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String?) {
         /* does nothing by default */
     }
 

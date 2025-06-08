@@ -52,7 +52,7 @@ internal class SoundControl(context: Context, settings: Settings) : ContentContr
         Log.v(TAG, "Rules changed")
     }
 
-    override fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String?) {
         when (key) {
             PREF_TICK_SOUND -> updateSource()
             PREF_TICK_RULES -> updatePlayRules()

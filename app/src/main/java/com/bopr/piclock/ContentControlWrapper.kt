@@ -19,7 +19,7 @@ internal class ContentControlWrapper : ContentControl {
         control.onTimer(time, tick)
     }
 
-    override fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String?) {
         control.onSettingChanged(key)
     }
 

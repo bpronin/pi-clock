@@ -197,7 +197,7 @@ class Settings(private val context: Context) : SharedPreferencesWrapper(
     companion object {
 
         private const val SETTINGS_VERSION = 1
-        private const val DEFAULT_LAYOUT = R.layout.view_digital_default
+        private val DEFAULT_LAYOUT = R.layout.view_digital_default
 
         const val SHARED_PREFERENCES_NAME = "com.bopr.piclock_preferences"
 

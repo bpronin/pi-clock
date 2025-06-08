@@ -12,7 +12,7 @@ interface ContentControl {
 
     fun onTimer(time: Date, tick: Int)
 
-    fun onSettingChanged(key: String)
+    fun onSettingChanged(key: String?)
 
     fun onModeChanged(@Mode newMode: Int, animate: Boolean)
 }

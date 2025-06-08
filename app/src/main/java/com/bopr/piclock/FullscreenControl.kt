@@ -117,7 +117,7 @@ internal class FullscreenControl(
         enabled = settings.getBoolean(PREF_FULLSCREEN_ENABLED)
     }
 
-    override fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String?) {
         if (key == PREF_FULLSCREEN_ENABLED) updateEnabled()
     }
 

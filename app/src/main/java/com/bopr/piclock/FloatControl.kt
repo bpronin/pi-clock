@@ -230,7 +230,7 @@ internal class FloatControl(
         }
     }
 
-    override fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String?) {
         when (key) {
             PREF_CONTENT_FLOAT_INTERVAL -> updateInterval()
             PREF_ANIMATION_ON -> updateAnimationOn()

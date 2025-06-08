@@ -60,7 +60,7 @@ internal class AutoInactivateControl(
         delay = settings.getLong(PREF_AUTO_INACTIVATE_DELAY)
     }
 
-    override fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String?) {
         if (key == PREF_AUTO_INACTIVATE_DELAY) updateDelay()
     }
 

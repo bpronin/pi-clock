@@ -37,7 +37,7 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
 
             override fun onScroll(
                 e1: MotionEvent?,
-                e2: MotionEvent?,
+                e2: MotionEvent,
                 distanceX: Float,
                 distanceY: Float
             ): Boolean {
@@ -91,13 +91,13 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
             addListener(object : AnimatorListenerAdapter() {
                 var canceled = false
 
-                override fun onAnimationCancel(animation: Animator?) {
+                override fun onAnimationCancel(animation: Animator) {
                     Log.v(TAG, "Canceled fade")
 
                     canceled = true
                 }
 
-                override fun onAnimationEnd(animation: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     if (canceled) return
 
                     Log.v(TAG, "End fade")
@@ -138,7 +138,7 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
         settings.update { putInt(PREF_MUTED_BRIGHTNESS, toPercents(savedAlpha)) }
     }
 
-    override fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String?) {
         when (key) {
             PREF_MUTED_BRIGHTNESS -> loadBrightness()
             PREF_GESTURES_ENABLED -> loadGesturesState()

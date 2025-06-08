@@ -59,7 +59,7 @@ internal class AnalogClockTextDateControl(private val view: View, settings: Sett
         }
     }
 
-    override fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String?) {
         super.onSettingChanged(key)
         when (key) {
             PREF_ANIMATION_ON -> updateAnimationOn()

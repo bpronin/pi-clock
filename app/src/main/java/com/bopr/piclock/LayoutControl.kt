@@ -68,7 +68,7 @@ internal class LayoutControl(
         }
     }
 
-    override fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String?) {
         if (key == PREF_FULLSCREEN_ENABLED) {
             /* when the setting is disabled we need to recreate activity to reset entire layout */
             requireRecreateActivity = !settings.getBoolean(PREF_FULLSCREEN_ENABLED)

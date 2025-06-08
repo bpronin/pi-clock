@@ -168,7 +168,7 @@ internal class DigitalClockControl(view: View, settings: Settings) :
         blinker.onTimer(currentTime, tick)
     }
 
-    override fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String?) {
         when (key) {
             PREF_ANIMATION_ON -> updateAnimationOn()
             PREF_HOURS_MINUTES_FORMAT -> updateHoursMinutesViews()

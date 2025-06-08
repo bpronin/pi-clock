@@ -34,7 +34,7 @@ internal class ScaleControl(private val view: View, settings: Settings) :
     private val gestureDetector by lazy {
         GestureDetector(requireContext(), object : SimpleOnGestureListener() {
 
-            override fun onDoubleTap(e: MotionEvent?): Boolean {
+            override fun onDoubleTap(e: MotionEvent): Boolean {
                 Log.v(TAG, "Double tap detected")
 
                 viewScale = 1f
@@ -47,7 +47,7 @@ internal class ScaleControl(private val view: View, settings: Settings) :
     private val scaleGestureDetector by lazy {
         ScaleGestureDetector(requireContext(), object : SimpleOnScaleGestureListener() {
 
-            override fun onScaleBegin(detector: ScaleGestureDetector?): Boolean {
+            override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
                 Log.v(TAG, "Start pinching")
 
                 pinched = true
@@ -62,7 +62,7 @@ internal class ScaleControl(private val view: View, settings: Settings) :
                 return true
             }
 
-            override fun onScaleEnd(detector: ScaleGestureDetector?) {
+            override fun onScaleEnd(detector: ScaleGestureDetector) {
                 Log.v(TAG, "End pinching")
 
                 saveScale()
@@ -175,7 +175,7 @@ internal class ScaleControl(private val view: View, settings: Settings) :
         settings.update { putInt(PREF_CONTENT_SCALE, toPercents(savedScale)) }
     }
 
-    override fun onSettingChanged(key: String) {
+    override fun onSettingChanged(key: String?) {
         when (key) {
             PREF_CONTENT_SCALE -> loadScale(true)
             PREF_GESTURES_ENABLED -> loadGesturesState()

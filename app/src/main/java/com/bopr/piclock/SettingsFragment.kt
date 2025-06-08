@@ -87,7 +87,7 @@ class SettingsFragment : CustomPreferenceFragment(), OnSharedPreferenceChangeLis
         super.onStop()
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         /* NOTE!: do not use preferenceView's value field in updateXXXView methods to check
             current setting state. The value field changes later than we need */
         when (key) {
