@@ -1,15 +1,25 @@
 package com.bopr.piclock
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
 import android.view.LayoutInflater.from
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.RadioButton
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bopr.piclock.Settings.Companion.PREF_TICK_SOUND
-import com.bopr.piclock.util.*
+import com.bopr.piclock.util.Contextual
+import com.bopr.piclock.util.HandlerTimer
+import com.bopr.piclock.util.SECOND_DURATION
+import com.bopr.piclock.util.requireRefArray
+import com.bopr.piclock.util.requireStringArray
 
 /**
  * Fragment to browse sounds with preview.
@@ -30,8 +40,6 @@ class BrowseSoundFragment : Fragment(), Contextual {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setHasOptionsMenu(true)
         selectedItem = settings.getString(PREF_TICK_SOUND)
     }
 
@@ -45,29 +53,35 @@ class BrowseSoundFragment : Fragment(), Contextual {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        requireActivity().addMenuProvider(object : MenuProvider{
+            override fun onCreateMenu(
+                menu: Menu,
+                menuInflater: MenuInflater
+            ) {
+                menuInflater.inflate(R.menu.browse_sound, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    android.R.id.home -> {
+                        requireActivity().finish()
+                        true
+                    }
+                    R.id.action_save -> {
+                        settings.update { putString(PREF_TICK_SOUND, selectedItem) }
+                        requireActivity().finish()
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+        })
+
         return inflater.inflate(R.layout.fragment_browse_sound, container, false).apply {
             recycler = findViewById<RecyclerView>(R.id.list).apply {
                 adapter = ListAdapter()
             }
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.browse_sound, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                requireActivity().finish()
-                true
-            }
-            R.id.action_save -> {
-                settings.update { putString(PREF_TICK_SOUND, selectedItem) }
-                requireActivity().finish()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 

@@ -5,7 +5,12 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.view.View.*
+import android.view.View.SYSTEM_UI_FLAG_FULLSCREEN
+import android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+import android.view.View.SYSTEM_UI_FLAG_IMMERSIVE
+import android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+import android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+import android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
 import android.view.WindowInsets.Type.systemBars
 import android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
@@ -65,7 +70,7 @@ internal class FullscreenControl(
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             activity.window.apply {
-                setDecorFitsSystemWindows(false)
+//                setDecorFitsSystemWindows(false)
                 insetsController?.systemBarsBehavior = BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
         }

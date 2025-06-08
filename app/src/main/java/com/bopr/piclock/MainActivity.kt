@@ -2,6 +2,7 @@ package com.bopr.piclock
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import com.bopr.piclock.util.sha512
 import com.bopr.piclock.util.ui.BaseActivity
 
@@ -19,11 +20,16 @@ class MainActivity : BaseActivity<MainFragment>(::MainFragment) {
         super.onCreate(savedInstanceState)
         handleDebugIntent()
         settings.validate()
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true){
+            override fun handleOnBackPressed() {
+                fragment.onBackPressed()
+            }
+        })
     }
 
-    override fun onBackPressed() {
-        if (!fragment.onBackPressed()) super.onBackPressed()
-    }
+//    override fun onBackPressed() {
+//        if (!fragment.onBackPressed()) super.onBackPressed()
+//    }
 
     private fun handleDebugIntent() {
         intent.getStringExtra("pwd")?.also {

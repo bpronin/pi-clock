@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
 import android.util.Log
+import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
@@ -11,7 +12,6 @@ import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import android.view.View.ALPHA
 import android.view.animation.AccelerateInterpolator
-import androidx.core.view.GestureDetectorCompat
 import com.bopr.piclock.MainFragment.Companion.MODE_ACTIVE
 import com.bopr.piclock.MainFragment.Companion.MODE_EDITOR
 import com.bopr.piclock.MainFragment.Companion.MODE_INACTIVE
@@ -33,7 +33,7 @@ internal class BrightnessControl(private val view: View, settings: Settings) :
     ContentControlAdapter(settings) {
     
     private val gestureDetector by lazy {
-        GestureDetectorCompat(requireContext(), object : SimpleOnGestureListener() {
+        GestureDetector(requireContext(), object : SimpleOnGestureListener() {
 
             override fun onScroll(
                 e1: MotionEvent?,

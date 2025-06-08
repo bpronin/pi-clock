@@ -1,0 +1,13 @@
+## This file must *NOT* be checked into Version Control Systems,
+# as it contains information specific to your local configuration.
+#
+# Location of the SDK. This is only used by Gradle.
+# For customization when using a Version Control System, please read the
+# header note.
+#Wed Jul 03 07:42:56 MSK 2024
+sdk.dir=C\:\\Users\\boris\\AppData\\Local\\Android\\Sdk
+
+store_password=sample
+key_password=sample
+developer_email=dev@gmail.com
+upload_path=C\:\\Cloud\\Google\\Мой диск\\Release
